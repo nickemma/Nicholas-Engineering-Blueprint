@@ -27,6 +27,12 @@
 | 11. API specification | 23. Future improvements |
 | 12. (in file structure) | 24. Lessons learned |
 
-The charters below are specified in prose and tables (diagrams are described precisely enough to render in draw.io or Excalidraw and commit to assets/). Each is written to be the DESIGN_DOC.md that anchors its repo. Interconnection is explicit: every system names what it consumes from earlier flagships and what it provides to later ones.
+The charters below are specified in prose and tables (diagrams described precisely
+enough to render in draw.io or Excalidraw). Each charter is **frozen intent**: written
+once, before the build, and thereafter append-only. It is not the repo's documentation.
 
 **The interconnection map, one more time:** EMBER fronts everything → LATTICE proves distributed systems → MERIDIAN provides secrets/policy/lease/audit → VEYRONIX consumes MERIDIAN + operates services → TESSERA is served behind EMBER, operated like VEYRONIX → SYNAPSE-AI governs TESSERA’s agents using MERIDIAN’s lineage and EMBER’s data plane. One platform, told as six repos.
+
+A charter's requirements are never corrected to match what shipped. Divergence is the
+point: at level exit an **As built** section is appended — predicted beside actual,
+what was cut, what moved to LATER.md — and the original stands unedited beside it.
