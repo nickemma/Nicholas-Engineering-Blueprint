@@ -20,7 +20,7 @@ repositories, linked below.
 
 | Level | Weeks | Flagship | Status |
 |---|---|---|---|
-| I — Engineering Foundations | 1–5 | [EMBER](docs/part-6-flagships/ember.md) — edge gateway from raw sockets | ○ planned |
+| I — Engineering Foundations | 1–5 | edge gateway from raw sockets | Done |
 | II — Distributed Systems | 6–15 | [LATTICE](docs/part-6-flagships/lattice.md) — search engine on a hand-built KV store · [MERIDIAN](docs/part-6-flagships/meridian.md) re-examined | ○ planned |
 | III — Platform Engineering | 16–23 | [VEYRONIX](docs/part-6-flagships/veyronix.md) — internal developer platform | ◐ in progress |
 | IV — AI Infrastructure | 24–32 | [TESSERA](docs/part-6-flagships/tessera.md) — LLM inference platform vs vLLM | ○ planned |
