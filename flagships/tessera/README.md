@@ -5,18 +5,12 @@ Its architecture, API, threat model, runbook, and benchmark results live there, 
 as of `main`. This directory holds what the code cannot: intent, prediction, surprise,
 and judgment.
 
-- Charter (frozen intent) — [/docs/part-6-flagships/tessera.md](../../docs/part-6-flagships/tessera.md)
-- Repository standard — [Chapter 40b](../../docs/part-6-flagships/repo-standard.md)
-- [calibration.md](calibration.md) — every prediction, predicted beside actual
-- [as-built.md](as-built.md) — written at level exit, never before
-- Detours triggered by this build — [/detours](../../detours)
-
-**Status:** ○ not started — predictions need numbers before freezing (Chapter 40b §8)
+**Status:** ○ not started
 
 ## Behavior ladder (Module 4)
 
 Charter point 3 decomposed into shippable increments. Written at kickoff; see
-[Chapter 40b §5](../../docs/part-6-flagships/repo-standard.md).
+[Repo Standard](../../docs/part-6-flagships/repo-standard.md).
 
 | | Behavior | Satisfies charter point 3 |
 |---|---|---|
@@ -33,5 +27,5 @@ Charter point 3 decomposed into shippable increments. Written at kickoff; see
 
 ## Session log
 
-| # | Date | Shipped | Tag | Detours | Loose end |
-|---|---|---|---|---|---|
+| # | Date | Shipped | Tag | Loose end |
+|---|---|---|---|---|
