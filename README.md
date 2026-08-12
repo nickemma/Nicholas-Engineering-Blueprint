@@ -2,75 +2,88 @@
 
 **Nicholas Emmanuel builds secure, reliable distributed systems and AI infrastructure at scale.**
 
-This repository is a living, versioned engineering handbook — the operating system for a deliberate
-40-week program (and beyond) of building six interconnected infrastructure systems, in public,
-ahead of the **MSE in Software Systems & Cybersecurity at the University of Pennsylvania**.
+A 49-week apprenticeship in distributed systems and AI infrastructure — taught from zero, built in public, and documented including the parts that broke.
 
-It is not a portfolio and not a code dump. It is the *thinking layer*: the plan, the design docs,
-the tradeoffs, the reading, and a weekly audit trail. The systems themselves live in their own
-repositories, linked below.
+Nineteen stages. Roughly 196 lessons. Every stage answers one question and ends with something running that didn't run before.
 
-> *Software engineering is not the act of writing code. It is the discipline of designing systems
-> that continue to function correctly under changing requirements, increasing scale, operational
-> failures, evolving security threats, and human collaboration.* — [The Credo](docs/part-1-engineering-vision.md)
+**The goal is not completed courses.** By the end: design, implement, secure, operate, and explain a production-grade distributed AI infrastructure system.
+
+> *Software engineering is not the act of writing code. It is the discipline of designing systems that continue to function correctly under changing requirements, increasing scale, operational failures, evolving security threats, and human collaboration.* — [The credo](docs/vision.md)
+
+**New here?** → [START-HERE.md](START-HERE.md)
 
 ---
 
-## Progress dashboard
+## Where I am
 
-| Level | Weeks | Flagship | Status |
+See [PROGRESS.md](PROGRESS.md) for the live position.
+
+| Layer | Stages | Question | Status |
 |---|---|---|---|
-| I — Engineering Foundations | 1–5 | edge gateway from raw sockets | Done |
-| II — Distributed Systems | 6–15 | [LATTICE](docs/part-6-flagships/lattice.md) — search engine on a hand-built KV store · [MERIDIAN](docs/part-6-flagships/meridian.md) re-examined | ○ planned |
-| III — Platform Engineering | 16–23 | [VEYRONIX](docs/part-6-flagships/veyronix.md) — internal developer platform | ◐ in progress |
-| IV — AI Infrastructure | 24–32 | [TESSERA](docs/part-6-flagships/tessera.md) — LLM inference platform vs vLLM | ○ planned |
-| V — Security & Governance | 33–38 | [SYNAPSE-AI](docs/part-6-flagships/synapse-ai.md) — AI governance plane (core) | ○ planned |
-| VI — Engineering Leadership | 39–40 + ∞ | SYNAPSE-AI capstone + red team | ○ planned |
+| I — One machine | [S1](stages/s01-how-a-computer-runs-your-code)–S4 | How does a computer run your code, and serve many users? | ◐ in progress |
+| II — Running things | S5–S6 | How do you package software, and what does serving a model require? | ○ |
+| III — Data that survives | S7–S10 | How does data survive crashes, replication, and disagreement? | ○ |
+| IV — Operating at scale | S11–S13 | How do you run it, watch it, and defend it? | ○ |
+| V — AI infrastructure | S14–S18 | How do you serve models as a platform? | ○ |
+| VI — Proving it | S19 | Can you design one from scratch and defend it? | ○ |
 
-**Shipped already:** [MERIDIAN](https://github.com/nickemma/meridian) · [ATLAS](https://github.com/nickemma/atlas)
+Full map: [docs/curriculum-tree.md](docs/curriculum-tree.md)
+
+---
 
 ## Navigation
 
-| Part | Contents |
+| | |
 |---|---|
-| [I — Engineering Vision & Career Strategy](docs/part-1-engineering-vision.md) | Identity, market strategy, philosophy & credo, skills matrix, success metrics |
-| [II — Learning Architecture & Framework](docs/part-2-learning-architecture.md) | The learning system, weekly planner, engineering standards, writing system, this repo's layout |
-| [III — The Six Engineering Levels](docs/part-3-levels/README.md) | Each level as a full mini-course: theory → labs → flagship → exit criteria |
-| [IV — Open Source & Personal Brand](docs/part-4-open-source-and-brand.md) | The ten-stage OSS ladder; every public surface aligned to one identity |
-| [V — Interview Prep & Job Search](docs/part-5-interview-prep.md) | System design from my own systems, pattern-first coding, STAR, the targeted search engine |
-| [VI — Flagship Projects & Portfolio](docs/part-6-flagships/README.md) | Six organization-grade charters + portfolio standards |
-| [VII — Resource Library & Appendices](docs/part-7-resources.md) | Books, papers, blogs, RFCs, talks, repos — tiered; templates & checklists |
-
-**Working directories:** [`/weekly-reviews`](weekly-reviews) (the Sunday audit trail) ·
-[`/reading-log`](reading-log) (~1 paper/week) · [`/flagships`](flagships) (per-system design artifacts) ·
-[`/templates`](templates) · [`/assets`](assets)
-
-## Metrics snapshot
-
-Updated at each level exit. Full scoreboard in [Part I](docs/part-1-engineering-vision.md).
-
-| Metric | Now | Week 40 target |
-|---|---|---|
-| Flagship systems live | 2 | 6 |
-| Flagship essays published | 0 | 5 |
-| Reading-log entries | 0 | ~40 |
-| Merged OSS PRs | 0 | 15+ |
-| Weekly reviews committed | 0 | 40 |
-
-## The printed edition
-
-Each versioned release of this handbook ships the seven parts as formatted documents —
-see [Releases](../../releases). The markdown in `/docs` is the living source of truth.
-
-## Follow along
-
-[Website](https://techieemma.vercel.app) · [GitHub](https://github.com/nickemma) ·
-[LinkedIn](https://linkedin.com/in/techieemma) · [Medium](https://techieemma.medium.com) ·
-[X](https://twitter.com/techieemma)
+| [START-HERE.md](START-HERE.md) | For anyone following along |
+| [PROGRESS.md](PROGRESS.md) | Current position, stage bars, failures survived |
+| [docs/curriculum-tree.md](docs/curriculum-tree.md) | All 19 stages, what each teaches, where the flagships land |
+| [docs/how-this-works.md](docs/how-this-works.md) | The teaching contract — the cycle, the lesson types, the advancement rule |
+| [docs/vision.md](docs/vision.md) | Identity, why this path, outcomes, metrics |
+| [docs/learning-system.md](docs/learning-system.md) | The learning system, weekly cadence, engineering standards |
+| [stages/](stages) | One folder per stage — lessons, labs, experiments, failures, reflections |
+| [flagships/](flagships) | Design artifacts for the systems (code lives in its own repos) |
+| [templates/](templates) · [weekly-reviews/](weekly-reviews) | The working directories |
 
 ---
 
-*Version 1.1 · July 2026 · This handbook is itself maintained as a system: versioned
-([CHANGELOG](CHANGELOG.md)), reviewed quarterly, and re-scored at every level exit.*
+## The systems
+
+| System | What it is | Code |
+|---|---|---|
+| **TESSERA** | LLM inference platform — multi-tenant gateway, token budgets, measured cost per token. Goes live in S6 and stays running to the end. | [nickemma/tessera](https://github.com/nickemma/tessera) |
+| **LATTICE** | Distributed search and retrieval — OpenSearch on Kubernetes, hybrid keyword + vector. Becomes Tessera's retrieval tier in S17. | [nickemma/lattice](https://github.com/nickemma/lattice) |
+| **SYNAPSE-AI** | AI agent governance plane — identity, delegation, consent, and audit. Treats AI agents as users with the same governance controls as humans. S19 | [nickemma/synapse-ai](https://github.com/nickemma/synapse-ai) |
+| **MERIDIAN** · | Shipped previously. | [meridian](https://github.com/nickemma/meridian) · |
+
+---
+
+## Scoreboard
+
+Reviewed at every stage exit.
+
+| Metric | Now | Target |
+|---|---|---|
+| Stages completed | 0 | 19 |
+| Lessons written up | 0 | ~196 |
+| Failures survived and documented | 0 | 40+ |
+| Stage projects running | 0 | 8 |
+| Published pieces | 0 | 12 |
+| Weekly reviews committed | 0 | 49 |
+| Days the inference gateway has been up | — | 240+ |
+
+The last row is the one that matters most. Operating is a duration, not a drill.
+
+---
+
+## Following along
+
+Every lesson contains the plain-English explanation, the exact commands, the code, and what broke. Fork it and build alongside — the `breaks/` folder in each stage is where the real learning is.
+
+[Website](https://techieemma.vercel.app) · [GitHub](https://github.com/nickemma) · [LinkedIn](https://linkedin.com/in/techieemma) · [Medium](https://techieemma.medium.com) · [X](https://twitter.com/techieemma)
+
+---
+
+*v2.0 · August 2026 · Living source of truth. See [CHANGELOG.md](CHANGELOG.md).*
 
 *Build · Secure · Lead*
