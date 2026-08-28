@@ -18,10 +18,10 @@ Next:     L1 · What a program actually is
 ## Stage 1 — How does a computer run your code? (0/16)
 
 ```
-[░░░░░░░░░░░░░░░░] 0/16
+[█░░░░░░░░░░░░░░░] 1/16
 ```
 
-- ○ L1 · What a program actually is · 🧠🔬
+- ✓ L1 · What a program actually is · 🧠🔬
 - ○ L2 · Memory — what your program is holding · 🧠🔬
 - ○ L3 · The CPU, and why some code is 100× slower · 🧠🔬
 - ○ L4 · The kernel — the referee · 🧠🔬
@@ -45,7 +45,7 @@ Next:     L1 · What a program actually is
 ## Stages ahead
 
 ```
-S1  Computer runs your code        [░░░░░░░░░░░░░░░░] 0/16
+S1  Computer runs your code        [█░░░░░░░░░░░░░░░] 1/16
 S2  OS keeps programs apart        [░░░░░░░░] 0/8
 S3  Two machines talk              [░░░░░░░░░░░░] 0/12
 S4  One machine serves many        [░░░░░░░░░░] 0/10
