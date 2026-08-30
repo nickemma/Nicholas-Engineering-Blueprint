@@ -1,89 +1,37 @@
-# The Nicholas Emmanuel Engineering Blueprint
+# Distributed Systems & AI Infrastructure
 
-**Nicholas Emmanuel builds secure, reliable distributed systems and AI infrastructure at scale.**
+This is a build-first path to becoming a Distributed Systems & AI Infrastructure Engineer.
 
-A 49-week apprenticeship in distributed systems and AI infrastructure — taught from zero, built in public, and documented including the parts that broke.
+## The destination
 
-Nineteen stages. Roughly 196 lessons. Every stage answers one question and ends with something running that didn't run before.
+Be able to **design, build, secure, and operate production-grade distributed AI infrastructure**—and explain the trade-offs when it fails or has to scale.
 
-**The goal is not completed courses.** By the end: design, implement, secure, operate, and explain a production-grade distributed AI infrastructure system.
+## The new approach
 
-> *Software engineering is not the act of writing code. It is the discipline of designing systems that continue to function correctly under changing requirements, increasing scale, operational failures, evolving security threats, and human collaboration.* — [The credo](docs/vision.md)
+We will build one evolving system. It starts as a tiny Go service and grows, only when the next problem makes a new idea necessary:
 
-**New here?** → [START-HERE.md](START-HERE.md)
+```text
+request service
+  → reliable API
+  → API + worker
+  → durable data
+  → replicated state
+  → operated platform
+  → model gateway
+  → secure, multi-tenant AI platform
+```
 
----
+There is no giant syllabus to finish before building. For every milestone, we will:
 
-## Where I am
+1. Build a small, working version.
+2. Learn the smallest set of ideas needed to understand it.
+3. Break it deliberately and fix it.
+4. Explain what happened in plain English.
 
-See [PROGRESS.md](PROGRESS.md) for the live position.
+We do not advance because a calendar says so. We advance when the demo works, the failure makes sense, and you can explain the decision you made.
 
-| Layer | Stages | Question | Status |
-|---|---|---|---|
-| I — One machine | [S1](stages/s01-how-a-computer-runs-your-code)–S4 | How does a computer run your code, and serve many users? | ◐ in progress |
-| II — Running things | S5–S6 | How do you package software, and what does serving a model require? | ○ |
-| III — Data that survives | S7–S10 | How does data survive crashes, replication, and disagreement? | ○ |
-| IV — Operating at scale | S11–S13 | How do you run it, watch it, and defend it? | ○ |
-| V — AI infrastructure | S14–S18 | How do you serve models as a platform? | ○ |
-| VI — Proving it | S19 | Can you design one from scratch and defend it? | ○ |
+## Start here
 
-Full map: [docs/curriculum-tree.md](docs/curriculum-tree.md)
+Read [the roadmap](plan/structure.md). Start with **Phase 0** only; nothing beyond it is required yet.
 
----
-
-## Navigation
-
-| | |
-|---|---|
-| [START-HERE.md](START-HERE.md) | For anyone following along |
-| [PROGRESS.md](PROGRESS.md) | Current position, stage bars, failures survived |
-| [docs/curriculum-tree.md](docs/curriculum-tree.md) | All 19 stages, what each teaches, where the flagships land |
-| [docs/how-this-works.md](docs/how-this-works.md) | The teaching contract — the cycle, the lesson types, the advancement rule |
-| [docs/vision.md](docs/vision.md) | Identity, why this path, outcomes, metrics |
-| [docs/learning-system.md](docs/learning-system.md) | The learning system, weekly cadence, engineering standards |
-| [stages/](stages) | One folder per stage — lessons, labs, experiments, failures, reflections |
-| [flagships/](flagships) | Design artifacts for the systems (code lives in its own repos) |
-| [templates/](templates) · [weekly-reviews/](weekly-reviews) | The working directories |
-
----
-
-## The systems
-
-| System | What it is | Code |
-|---|---|---|
-| **TESSERA** | LLM inference platform — multi-tenant gateway, token budgets, measured cost per token. Goes live in S6 and stays running to the end. | [nickemma/tessera](https://github.com/nickemma/tessera) |
-| **LATTICE** | Distributed search and retrieval — OpenSearch on Kubernetes, hybrid keyword + vector. Becomes Tessera's retrieval tier in S17. | [nickemma/lattice](https://github.com/nickemma/lattice) |
-| **SYNAPSE-AI** | AI agent governance plane — identity, delegation, consent, and audit. Treats AI agents as users with the same governance controls as humans. S19 | [nickemma/synapse-ai](https://github.com/nickemma/synapse-ai) |
-| **MERIDIAN** · | Shipped previously. | [meridian](https://github.com/nickemma/meridian) · |
-
----
-
-## Scoreboard
-
-Reviewed at every stage exit.
-
-| Metric | Now | Target |
-|---|---|---|
-| Stages completed | 0 | 19 |
-| Lessons written up | 0 | ~196 |
-| Failures survived and documented | 0 | 40+ |
-| Stage projects running | 0 | 8 |
-| Published pieces | 0 | 12 |
-| Weekly reviews committed | 0 | 49 |
-| Days the inference gateway has been up | — | 240+ |
-
-The last row is the one that matters most. Operating is a duration, not a drill.
-
----
-
-## Following along
-
-Every lesson contains the plain-English explanation, the exact commands, the code, and what broke. Fork it and build alongside — the `breaks/` folder in each stage is where the real learning is.
-
-[Website](https://techieemma.vercel.app) · [GitHub](https://github.com/nickemma) · [LinkedIn](https://linkedin.com/in/techieemma) · [Medium](https://techieemma.medium.com) · [X](https://twitter.com/techieemma)
-
----
-
-*v2.0 · August 2026 · Living source of truth. See [CHANGELOG.md](CHANGELOG.md).*
-
-*Build · Secure · Lead*
+This repository intentionally begins with just this README and the roadmap. We will add a project folder only when we begin that project.
