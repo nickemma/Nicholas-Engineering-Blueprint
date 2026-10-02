@@ -1,37 +1,28 @@
-# Distributed Systems & AI Infrastructure
+# KESTREL — Community Health Data, Shared Safely
 
-This is a build-first path to becoming a Distributed Systems & AI Infrastructure Engineer.
+KESTREL is a research-led distributed systems project with a public-interest goal: help community health organizations make better use of shared information while keeping custody of sensitive records and continuing to work through unreliable connectivity.
 
-## The destination
+The working research question is:
 
-Be able to **design, build, secure, and operate production-grade distributed AI infrastructure**—and explain the trade-offs when it fails or has to scale.
+> How can small, resource-constrained health organizations produce timely, trustworthy cross-site summaries when their data must remain under local control and their network connections are intermittent?
 
-## The new approach
+The project will investigate local-first storage, authorized data sharing, auditable queries, and safe recovery after disconnection. It will measure freshness, availability, latency, bandwidth, and the privacy risks of each design. It will begin with synthetic or public data; use of sensitive real-world data would require appropriate partners, consent, and ethics review.
 
-We will build one evolving system. It starts as a tiny Go service and grows, only when the next problem makes a new idea necessary:
+This is not an AI product looking for a use case. The core system is useful without AI. Privacy-preserving distributed analysis or machine learning can be explored later only if a real user need justifies it and the project can evaluate the added privacy and operational costs.
+
+## Build toward the question
 
 ```text
-request service
-  → reliable API
-  → API + worker
-  → durable data
-  → replicated state
-  → operated platform
-  → model gateway
-  → secure, multi-tenant AI platform
+small request service
+  → reliable service
+  → local data and audit trail
+  → sites that share data safely
+  → useful operation through network outages
+  → measured privacy, reliability, and usability
 ```
 
-There is no giant syllabus to finish before building. For every milestone, we will:
-
-1. Build a small, working version.
-2. Learn the smallest set of ideas needed to understand it.
-3. Break it deliberately and fix it.
-4. Explain what happened in plain English.
-
-We do not advance because a calendar says so. We advance when the demo works, the failure makes sense, and you can explain the decision you made.
+Each step teaches a systems concept needed by the research question. We build a small capability, make its guarantee explicit, test what happens when it fails, and keep evidence that another person can reproduce.
 
 ## Start here
 
-Read [the roadmap](plan/structure.md). Start with **Phase 0** only; nothing beyond it is required yet.
-
-This repository intentionally begins with just this README and the roadmap. We will add a project folder only when we begin that project.
+Read [the roadmap](plan/structure.md) for the learning order and [the project brief](project.md) for the current research direction. Begin with **Phase 0** only. The later phases are a plan; the current hands-on work is the small Go request service.

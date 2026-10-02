@@ -1,6 +1,6 @@
 # Curriculum
 
-The companion to [`structure.md`](structure.md). The roadmap says **what** we build and in what order. This file says **how**: which languages and tools enter at each phase, which foundation gaps we close there, what to read (book, chapter, and timing), which careers each phase opens, and how it all prepares for a research MSc in secure distributed systems.
+The companion to [`plan/structure.md`](plan/structure.md). The roadmap says what we build and in what order. This file adds the foundations, references, and career connections for KESTREL's research-led distributed-systems path.
 
 > The rule from the roadmap still holds: **one active phase, one project, one next problem.** Reading and gap-filling serve the build. They never replace it.
 
@@ -8,14 +8,14 @@ The companion to [`structure.md`](structure.md). The roadmap says **what** we bu
 
 ## 1. Destination
 
-A **Distributed Systems & AI Infrastructure Engineer** who can design, build, secure, operate, and explain a production-grade distributed AI platform, and who arrives at a thesis-based MSc ready to do research in **secure distributed systems**.
+A **Distributed Systems Engineer** who can design, build, secure, evaluate, and explain infrastructure for a validated public-interest need, and who is prepared to do research in distributed systems, networking, privacy, or systems software.
 
 Two outcomes, one path:
 
 | Outcome | What proves it |
 |---|---|
-| Industry-ready | A deployed, observable, multi-tenant AI platform with incident reports, runbooks, and a threat model |
-| Research-ready | Paper notes, a reproduced result, a tested consensus implementation, and a short technical report on a failure or security property you measured |
+| Industry-ready | A reliable, observable system with failure evidence, operational notes, and a threat model |
+| Research-ready | A precise question, baseline, reproducible evaluation, paper notes, and a report on a systems, network, or privacy trade-off |
 
 ---
 
@@ -27,7 +27,7 @@ Two outcomes, one path:
 | **Rust** | Phase 3 (after the Rust Bridge) | Storage engine, data-plane hot paths, security-sensitive parsing, the mTLS sidecar | Memory safety without garbage collection; used in databases, proxies, and increasingly in infrastructure security |
 | **SQL** | Phase 3 | Postgres job store | Every infrastructure role needs it |
 | **Bash** | Phase 0, continuous | Automation, diagnostics | Linux fluency |
-| **Python** | Phase 6 | Model runtimes, benchmarks, analysis notebooks | The AI serving ecosystem is Python |
+| **Python** | As needed | Analyze measurements or prototype a specific privacy-preserving query | Use it when the experiment benefits from it |
 | **HCL (Terraform)** | Phase 5 | Cloud infrastructure as code | Required by cloud and platform roles |
 | **TLA+** | Phase 4 (light), research track | Specifying and model-checking protocols | Standard in distributed systems research and at companies running consensus |
 
@@ -46,13 +46,13 @@ These are the gaps identified for the target roles. Each is filled in the phase 
 | **Concurrency** (threads, locks, races) | 1 | Concurrent requests and `go test -race` |
 | **Networking: sockets, TCP, UDP, DNS** | 2, 5 | Two processes talking; `tcpdump`, `ss`, `dig` |
 | **Storage and crash consistency** | 3 | `fsync`, write-ahead logs, recovery after a kill |
-| **Memory: virtual memory, paging, allocation** | Rust Bridge, 6 | Rust ownership; the KV cache is paging for GPUs |
+| **Memory: virtual memory, paging, allocation** | Rust Bridge, 3–5 | Understand process and storage behavior when it becomes relevant |
 | **Clocks, partitions, consensus** | 4 | Killing and partitioning nodes with `tc netem` and `iptables` |
 | **OS isolation: namespaces, cgroups** | 5 | What a container actually is |
-| **Performance analysis** | 5, 6 | USE method, `perf`, flame graphs, GPU utilization |
-| **IP, routing, load balancing, data-center networks** | 5, 7 | Kubernetes networking, service routing |
-| **Applied cryptography, TLS, PKI** | 7, 8 | Signed API keys, mTLS between services |
-| **Web and API security** | 0–1 (validation), 7–8 | Tenant isolation, authorization bugs |
+| **Performance analysis** | 5–7 | Latency, bandwidth, availability, and resource use under constrained links |
+| **IP, routing, load balancing, data-center networks** | 5 | Kubernetes networking, site routing, network emulation |
+| **Applied cryptography, TLS, PKI** | 6, 8 | Site identity, protected communication, and revocable authorization |
+| **Web and API security** | 0–1, 6–8 | Input validation, access-control errors, and query authorization |
 | **Systems security** (capabilities, seccomp, supply chain) | 8 | Hardening the deployed platform |
 | **Algorithms and coding interviews** | Parallel track, always | See section 7 |
 | **System design breadth** | Parallel track, from Phase 2 | See section 7 |
@@ -407,172 +407,77 @@ Reading rule: read a chapter **after** you've felt the problem in code, never be
 **Careers opened:** **SRE, Platform Engineer, DevOps Engineer, Cloud/Infrastructure Engineer.** This is the point to start applying seriously.
 - Optional certifications: CKA, AWS Solutions Architect Associate, Terraform Associate.
 
-**Next:** the platform runs general services. Phase 6 asks what changes when the workload is an LLM.
+**Next:** the platform runs general services. Phase 6 asks how sites can share only approved information safely.
 
 ---
 
-### Phase 6: Serve a model through it
-*Estimated: 6 weeks*
+### Phase 6: Share approved information safely
+*Estimated: scope after the research question is validated*
 
-**Build:** a model runtime behind the existing gateway with **streaming** responses. Start with llama.cpp or Ollama on CPU, then vLLM on a rented GPU. Add a benchmark harness.
+**Build:** a narrow cross-site query path over synthetic or public records. A site owner can approve or reject a request; the system returns only the approved summary and records an auditable decision.
 
 **Learn:**
-- tokens and tokenizers
-- context windows
-- transformer inference at a working level
-- prefill vs decode
-- the KV cache and why it's memory-bound
-- batching, including continuous batching
-- quantization
-- GPU memory and utilization
-- latency metrics: TTFT (time to first token), TPOT (time per output token), throughput, and the trade-offs between them
-- honest benchmarking methodology
+- site and user identity, authorization, least privilege;
+- data minimization and purpose limitation;
+- what aggregate answers can reveal, especially across repeated or combined queries;
+- privacy/utility trade-offs and the limits of a policy check;
+- safe behavior when identity, policy, or a remote site is unavailable.
 
-**Gap-fill:**
-- **Memory paging applied to GPUs:** PagedAttention is virtual memory for the KV cache
-- CPU vs GPU execution
-- PCIe and NUMA basics
+**Tools:** OIDC or signed workload identity, TLS/mTLS, a small policy layer, structured audit events, synthetic datasets, and a query harness. Add differential privacy or secure multi-party computation only if the chosen query and threat model call for them.
 
-**Tools:** Python, `uv` or `pip`, llama.cpp, Ollama, vLLM, Hugging Face `transformers` and `tokenizers` (a Rust library with Python bindings; use it from your Rust code too), `nvidia-smi`, DCGM exporter, server-sent events, a cloud GPU rental, Jupyter for analysis.
+**Read:** use Anderson's *Security Engineering* sections on access control and distributed systems; Kurose & Ross on endpoint authentication and TLS; then select primary privacy-preserving data-analysis papers that address the exact data and query pattern. Read after defining the threat model.
 
-**Read:**
+**Proof:** show allowed, denied, expired, replayed, and repeated-query cases. Explain exactly what information each site learns and what remains exposed.
 
-| When | Source | Chapters / sections |
-|---|---|---|
-| Week 1 | OSTEP | Re-read Ch. 18–20 (paging, TLBs, smaller tables) with the KV cache in mind |
-| Week 2 | **Paper (add):** *Attention Is All You Need* (2017) | §1–3 only (the architecture), for vocabulary |
-| Week 3 | **Paper (add):** Orca, continuous batching (OSDI 2022) | Full |
-| Week 3 | **Paper (add):** vLLM / PagedAttention (SOSP 2023) | Full |
-| Week 4 | **Paper (add):** *The Tail at Scale* (Dean & Barroso, 2013) | Full |
-| Week 5 | Systems Performance excerpt | Re-read 6.4–6.6 and compare with GPU utilization analysis |
+**Careers opened:** strengthens infrastructure security, privacy engineering, and distributed-systems profiles. This phase alone does not qualify someone for a privacy-research or security-specialist role.
 
-**Proof:** measure time-to-first-token, tokens per second, and the bottleneck, including a graph and an explanation.
-
-**Careers opened:** **AI Infrastructure / LLM Inference / MLOps** (entry).
-- **ML Engineer** is still not covered; it needs a separate track in model training and evaluation.
-
-**Next:** one model and one user is a demo. Phase 7 makes it a shared, economical platform.
+**Next:** correct enforcement does not establish that the service helps its intended users. Phase 7 tests utility and cost.
 
 ---
 
-### Phase 7: Turn it into a shared AI platform
-*Estimated: 8 weeks*
+### Phase 7: Test utility and systems trade-offs
+*Estimated: set after partners and an evaluation scope are identified*
 
-**Build:** a **multi-tenant AI gateway** with:
-- authentication (API keys signed with HMAC)
-- per-tenant quotas and budgets
-- token-bucket rate limiting
-- usage metering
-- model routing with fallback
-- response caching
-- retrieval (RAG) with pgvector
-- autoscaling
+**Build:** a reproducible experiment comparing a simple centralized baseline with one or more local-first or replicated designs. Use synthetic or public workloads first; involve domain experts to check whether the selected questions and summaries matter.
 
 **Learn:**
-- tenant isolation (noisy neighbors)
-- admission control and priority
-- rate-limiting algorithms
-- cache design and invalidation
-- load balancing
-- autoscaling signals
-- cost accounting
-- authorization models
-- control plane vs data plane
+- how to state a hypothesis and choose a fair baseline;
+- workload design and reproducible measurement;
+- network emulation for latency, bandwidth limits, outages, and recovery;
+- how freshness, availability, response time, bandwidth, privacy exposure, and operator effort interact;
+- responsible stakeholder feedback and research-ethics boundaries.
 
-**Gap-fill:**
-- **Applied crypto:** HMAC, key storage, key rotation
-- **API and web security:** authentication, sessions, access control bugs
-- Load balancing internals
+**Tools:** `tc netem`, a workload generator, Go benchmarks or a small Python analysis notebook, versioned experiment configuration, and scripts that reproduce tables and plots.
 
-**Tools:** Redis (rate limiting), PostgreSQL with pgvector, JWT/JWS libraries, Kubernetes HPA or KEDA, Envoy (optional), OpenTelemetry for per-tenant metrics.
-- **Optional Rust:** the rate-limiter hot path.
+**Read:** prioritize the evaluation sections of systems papers close to the final question. Use *Site Reliability Engineering* for availability and operational metrics, and Kurose & Ross for relevant network behavior. Select domain and ethics guidance with qualified collaborators before any human-subject study.
 
-**Read:**
+**Proof:** another person can rerun the comparison. Report negative results, uncertainty, privacy limits, and cases where the centralized baseline performs better.
 
-| When | Source | Chapters / sections |
-|---|---|---|
-| Week 1 | **Paper:** Borg, re-read §2 and §5 (quota, priority, admission, isolation) | Sections as listed |
-| Week 1 | Kubernetes in Action | Ch. 15 *Automatic Scaling*; Ch. 16 *Advanced Scheduling* (taints for GPU nodes) |
-| Week 2 | Understanding Distributed Systems | Part III: *Functional decomposition*, *Partitioning*, *Duplication* (load balancing, caching) |
-| Week 2 | Site Reliability Engineering | Ch. 19 *Load Balancing at the Frontend*; Ch. 20 *Load Balancing in the Datacenter* |
-| Week 3, with API keys | *Cryptography for Developers* (St Denis & Johnson, 2006) | Ch. 1 *Introduction* (threat models); Ch. 5 *Hash Functions*; Ch. 6 *MAC Algorithms* |
-| Week 3 | Kurose & Ross | 8.1–8.3 (network security, crypto principles, integrity and signatures) |
-| Week 4, with authentication | Web Application Hacker's Handbook | Ch. 6 *Attacking Authentication*; Ch. 7 *Attacking Session Management*; Ch. 8 *Attacking Access Controls* |
-| Week 5 | Security Engineering | Ch. 6 *Access Control* |
-| Week 6 | **Paper (add):** Zanzibar, Google's authorization system (2019) | Full |
-| Week 7 | Platform Engineering excerpt | Ch. 12 *Your Platforms Are Trusted*; Ch. 13 *Your Platforms Manage Complexity* |
-| Week 7 | Team Topologies | Ch. 6–7 (team-first boundaries, interaction modes) |
-| Optional | DDIA | Ch. 10 *Batch Processing* (skim) |
+**Careers opened:** adds evidence for distributed systems, performance, and applied research roles. Human-subject research requires appropriate institutional review and domain collaboration.
 
-**Proof:** a noisy tenant cannot exceed its limit or starve another tenant, backed by a load test and graphs.
-
-**Careers opened:** **AI Platform Engineer, MLOps, Platform Engineer (senior-leaning).**
-
-**Next:** it works and scales. Phase 8 asks whether you can defend it under failure *and* attack.
+**Next:** Phase 8 consolidates the security, reliability, and reproducibility evidence into a defensible capstone.
 
 ---
 
-### Phase 8: Prove it is secure and resilient
-*Estimated: 8 weeks, including a second game-day block*
+### Phase 8: Defend the design and publish the evidence
+*Estimated: scope after the capstone question is stable*
 
-**Build:**
-- a threat model and a hardened deployment;
-- mTLS between services (a Rust sidecar using `rustls`, or a service mesh);
-- a secrets manager, OIDC identity, and policy-as-code authorization;
-- a signed and verifiable supply chain;
-- fuzzing of your Rust storage parser;
-- LLM-specific defenses;
-- chaos experiments and a final design review.
+**Build:** a hardened prototype and a technical report that states the user need, research question, architecture, threat model, baseline, measurements, failures, limitations, and open questions.
 
 **Learn:**
-- threat modelling (STRIDE)
-- security in distributed systems: trust, authentication, authorization, and the Byzantine failure model
-- PKI and certificates, mTLS, TLS 1.3
-- secret management
-- least privilege
-- supply-chain security (SBOMs, signing, provenance)
-- container hardening
-- the OWASP Top 10 and the OWASP Top 10 for LLM Applications (prompt injection, data leakage)
-- side channels in multi-tenant systems
-- chaos engineering
-- incident response
+- threat modeling and security in distributed systems;
+- PKI, TLS 1.3, mTLS, secrets handling, and least privilege;
+- supply-chain evidence, software composition, and signed artifacts;
+- fuzzing, chaos experiments, incident response, and recovery;
+- reproducible systems research and clear claims.
 
-**Gap-fill:**
-- **Systems security:** Linux users, capabilities, seccomp, AppArmor/SELinux basics, audit logging
-- **Network security:** firewalls, intrusion detection, TLS internals
-- Cryptographic primitives in more depth
+**Tools:** STRIDE worksheets, an OIDC provider, Vault or SOPS as appropriate, OPA or a small explicit policy layer, `rustls` or a service mesh, Syft, cosign/Sigstore, Trivy, fuzzing tools, network fault injection, and a report notebook.
 
-**Tools:** STRIDE worksheets, HashiCorp Vault or SOPS, an OIDC provider (Keycloak or Dex), Open Policy Agent or Kyverno, cert-manager, `rustls`, Linkerd or Istio (optional), Syft (SBOM), cosign/Sigstore (signing), Trivy and Grype (scanning), `cargo-fuzz`, `govulncheck`, Falco (optional), Chaos Mesh, OWASP ZAP.
+**Read:** Anderson, *Security Engineering*, especially opponents, distributed systems, secure development, and assurance; van Steen & Tanenbaum on distributed systems security; Kurose & Ross on TLS and firewalls; selected primary papers tied directly to the capstone claim.
 
-**Read:**
+**Proof:** present the system, demonstrate a failure and an attempted policy bypass, explain the observed result, and provide reproducible measurements and limitations. Do not claim legal compliance or production readiness from a prototype.
 
-| When | Source | Chapters / sections |
-|---|---|---|
-| Week 1, threat model | Security Engineering | Ch. 2 *Who Is the Opponent?*; Ch. 7 *Distributed Systems* (essential) |
-| Week 1 | van Steen & Tanenbaum | Ch. 9 *Security* (all of it) |
-| Week 2, mTLS | Kurose & Ross | 8.4 *End-Point Authentication*; 8.6 *Securing TCP Connections: TLS*; 8.9 *Firewalls and IDS* |
-| Week 2 | Security Engineering | Ch. 5 *Cryptography* |
-| Week 2 | Cryptography for Developers | Ch. 3 *Random Number Generation*; Ch. 7 *Encrypt and Authenticate Modes*; Ch. 9 *Public Key Algorithms*. **Dated (2006):** pair with current guidance on TLS 1.3, X25519, and Ed25519. Ch. 2 *ASN.1* only if you parse X.509 yourself. |
-| Week 3 | Kubernetes in Action | Ch. 12 *Securing the API Server*; Ch. 13 *Securing Cluster Nodes and the Network* |
-| Week 3 | Kurose & Ross | 1.6 *Networks Under Attack*; 8.7 *IPsec and VPNs* (skim) |
-| Week 4, self-assessment | Web Application Hacker's Handbook | Ch. 10 *Attacking Back-End Components*; Ch. 11 *Application Logic*; Ch. 17 *Application Architecture*; Ch. 21 *Methodology* (use as a checklist against your own platform) |
-| Week 5 | Security Engineering | Ch. 19 *Side Channels*; Ch. 21 *Network Attack and Defence* |
-| Week 6 | Security Engineering | Ch. 27 *Secure Systems Development*; Ch. 28 *Assurance and Sustainability* |
-| Week 6 | **Paper (add):** in-toto, supply-chain integrity (USENIX Security 2019) | Full |
-| Week 7 | Site Reliability Engineering | Ch. 17 *Testing for Reliability*; Ch. 27 *Reliable Product Launches at Scale*; Appendix E *Launch Coordination Checklist* |
-| Week 7 | **Paper (add):** *The Byzantine Generals Problem* (Lamport, Shostak, Pease, 1982) | Full; this bridges into the research track |
-| Optional | Security Engineering | Ch. 8 *Economics*; Ch. 10 *Boundaries* |
-| Skip | Web Application Hacker's Handbook | Ch. 12–13 (browser attacks) and Ch. 16 (native code) are outside this platform's scope |
-
-**Game days (week 8):** security and policy faults from the handbook catalogue, such as an expired intermediate certificate, an over-broad policy, a leaked-then-revoked key you must prove was never used, or a gap in the audit chain.
-
-**Proof:** present the architecture, handle failure scenarios live, and show the security and operations evidence (threat model, SBOM, signatures, chaos results, incident reports).
-
-**Careers opened:** stronger versions of all previous roles, plus **Cloud Security Engineer, DevSecOps Engineer, Infrastructure/Product Security Engineer.**
-- Optional certification: CKS.
-- Penetration testing and SOC/detection roles still need their own track.
-
-**Next:** the industry path is complete. The research track (section 6) continues into the MSc.
+**Careers opened:** strengthens distributed systems, SRE/platform, infrastructure security, and research applications. Penetration testing, SOC, and detection roles need separate training; specialist security roles also expect substantial practice.
 
 ---
 
@@ -631,14 +536,12 @@ Reading rule: read a chapter **after** you've felt the problem in code, never be
 | Gilbert & Lynch, *Brewer's Conjecture* (CAP proof, 2002) | 4 |
 | DeCandia et al., *Dynamo* (2007) | 4 |
 | Kyle Kingsbury, Jepsen analyses (jepsen.io) | 4, 5 |
-| Dean & Barroso, *The Tail at Scale* (2013) | 6 |
-| Vaswani et al., *Attention Is All You Need* (2017) | 6 |
-| Yu et al., *Orca* (OSDI 2022) | 6 |
-| Kwon et al., *vLLM / PagedAttention* (SOSP 2023) | 6 |
-| Pang et al., *Zanzibar* (USENIX ATC 2019) | 7 |
+| Nissenbaum, *Privacy in Context* | 6–7 |
+| Primary work on privacy-preserving data analysis, selected after the query model is defined | 6–7 |
+| Papers on offline-first or geo-distributed systems, selected for the chosen workload | 5–7 |
 | Torres-Arias et al., *in-toto* (USENIX Security 2019) | 8 |
 | Lamport, Shostak, Pease, *The Byzantine Generals Problem* (1982) | 8 |
-| OWASP Top 10 and OWASP Top 10 for LLM Applications | 8 |
+| OWASP Top 10 | 8 |
 | Keshav, *How to Read a Paper* | Research track, read first |
 
 ---
@@ -646,7 +549,7 @@ Reading rule: read a chapter **after** you've felt the problem in code, never be
 ## 6. Research track: preparing for a thesis MSc
 
 **Targets:** University of Waterloo (MMath, Computer Science, thesis) and UBC (MSc Computer Science, thesis, Vancouver).
-**Interest:** secure distributed systems, and distributed systems broadly.
+**Interest:** (Systems and Networking) secure distributed systems, and distributed systems broadly.
 
 ### What admissions committees and supervisors look for
 - evidence you can do research: read papers critically, form a question, run an honest experiment, and write it up;
@@ -665,8 +568,9 @@ The build gives you the fundamentals. This track adds the other two.
    - one question it leaves open.
 2. **Reproduce one result.** For example, reproduce a Raft or VR behavior under partition, or reproduce a Jepsen-style anomaly in a real database, and document where your numbers differ.
 3. **Write one technical report** (4–6 pages, in LaTeX) from Phase 4 or Phase 8. Examples:
-   - "Measuring leader-election latency under asymmetric partitions";
-   - "Fuzzing a log-structured storage engine: bugs found and their causes."
+   - "How freshness and availability trade off under intermittent site connectivity";
+   - "What can a site infer from repeated cross-site aggregate queries?";
+   - "How does local-first replication affect recovery and operator effort?"
 
    This becomes a writing sample and a strong basis for your statement of purpose.
 4. **Specify one protocol in TLA+** and model-check a safety property.
@@ -684,8 +588,8 @@ Read one or two papers per area and note which ones pull you in. Your statement 
 | Testing distributed systems | Jepsen analyses; *Simple Testing Can Prevent Most Critical Failures* (OSDI 2014) |
 | Authorization at scale | Zanzibar (2019) |
 | Supply-chain integrity | in-toto (2019) |
-| Confidential computing / trusted hardware | Start with Security Engineering Ch. 18–20 context, then SGX-based system papers |
-| Security of ML / LLM serving systems | OWASP LLM Top 10, then recent USENIX Security and IEEE S&P papers |
+| Privacy-preserving distributed analysis | Select current primary papers after defining the data, query, and adversary model |
+| Systems analysis tools | Dinv, ShiViz, NetCheck, and specification-mining work from Systopia |
 
 ### Research groups to study (verify current faculty and intake before contacting anyone)
 - **Waterloo, Cheriton School of Computer Science:**
@@ -728,11 +632,9 @@ These come from section 8 of your *Blueprint, Built* handbook. The build does no
 | Site Reliability Engineer | Full | Phase 5 | Real on-call experience |
 | Platform Engineer | Full | Phase 5, stronger at 7 | Operator/controller depth (optional VEYRONIX work) |
 | Cloud / Infrastructure Engineer | Full | Phase 5 | A second cloud provider, optionally |
-| AI Infrastructure / LLM Platform / MLOps | Full | Phase 6, stronger at 7 | GPU kernels (CUDA/Triton) for specialist roles |
 | Systems Engineer | Full (ops sense); strong (systems-software sense) | Phase 3–5 | Deeper C, kernel, and OS internals for kernel-level roles |
-| Security Engineer | Strong for cloud security, DevSecOps, infrastructure/product security | Phase 8 | A separate offensive/defensive track for pentesting and SOC roles |
-| ML Engineer | Partial (serving only) | Phase 6 | A separate track: linear algebra, statistics, PyTorch, training, evaluation |
-| Backend / DevOps Engineer | Full | Phase 1–5 | none |
+| Security / Privacy Engineer | Strong foundation for infrastructure security and privacy engineering | Phase 6–8 | Dedicated security and privacy research practice for specialist roles |
+| Backend / DevOps / DevSecOps Engineer | Full | Phase 1–5 | none |
 | Storage / Database Engineer | Strong | Phase 3–4 | The real *Database Internals* book and a larger storage project |
 
 ---
@@ -750,10 +652,10 @@ This assumes 12–15 focused hours a week alongside the BSc and client work. It 
 | 3: Durable data | 6 |
 | 4: Distributed state | 10 |
 | 5: Operations | 8 |
-| 6: Model serving | 6 |
-| 7: AI platform | 8 |
+| 6: Safe shared queries | scope after the question is validated |
+| 7: Utility and evaluation | scope with domain partners |
 | 8: Capstone | 8 |
-| **Total** | **~59 weeks (about 14–16 months with normal slippage)** |
+| **Total** | **Re-estimate after the research question and evaluation partners are set** |
 
 For MSc preparation, the phases that matter most are **0–4** plus the research habits in section 6. If the MSc starts in fall 2027, having Phase 4 and one technical report complete before then is a realistic and valuable goal.
 

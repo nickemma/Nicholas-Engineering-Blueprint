@@ -1,0 +1,26 @@
+name: Request service
+
+on:
+  push:
+    paths:
+      - 'projects/00-request-service/**'
+      - '.github/workflows/request-service.yml'
+  pull_request:
+    paths:
+      - 'projects/00-request-service/**'
+      - '.github/workflows/request-service.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: projects/00-request-service/go.mod
+      - name: Test finished reference
+        run: go test ./...
+        working-directory: projects/00-request-service
+      - name: Test lesson build
+        run: go test ./...
+        working-directory: projects/00-request-service/lesson-01
