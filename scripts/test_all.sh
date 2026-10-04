@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Run every check CI runs: lesson code blocks match their step files, and every
-# Go module under lessons/ and dsa/ is formatted, vetted, and passes its tests.
+# Go module, Python project and Rust crate under lessons/ and dsa/ is
+# formatted, linted, and passes its tests.
 #
 # Usage, from the repository root:  bash scripts/test_all.sh
 
@@ -25,5 +26,22 @@ while IFS= read -r modfile; do
     failed=1
   fi
 done < <(find lessons dsa -name go.mod -not -path '*/practice/*' 2>/dev/null | sort)
+
+while IFS= read -r pyproject; do
+  dir="$(dirname "$pyproject")"
+  echo "== $dir"
+  if ! (cd "$dir" && uv run --locked ruff format --check -q . && uv run --locked ruff check -q . \
+        && uv run --locked pytest -q); then
+    failed=1
+  fi
+done < <(find lessons dsa -name pyproject.toml -not -path '*/practice/*' -not -path '*/.venv/*' 2>/dev/null | sort)
+
+while IFS= read -r cargo; do
+  dir="$(dirname "$cargo")"
+  echo "== $dir"
+  if ! (cd "$dir" && cargo fmt --check && cargo clippy -q --all-targets -- -D warnings && cargo test -q); then
+    failed=1
+  fi
+done < <(find lessons dsa -name Cargo.toml -not -path '*/practice/*' -not -path '*/target/*' 2>/dev/null | sort)
 
 exit "$failed"

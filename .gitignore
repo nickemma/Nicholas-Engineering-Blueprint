@@ -12,3 +12,6 @@ lessons/**/practice/
 __pycache__/
 .venv/
 .pytest_cache/
+
+# Rust
+target/
