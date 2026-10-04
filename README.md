@@ -1,28 +1,33 @@
-# KESTREL — Community Health Data, Shared Safely
+# Nicholas Engineering Blueprint
 
-KESTREL is a research-led distributed systems project with a public-interest goal: help community health organizations make better use of shared information while keeping custody of sensitive records and continuing to work through unreliable connectivity.
+A complete, beginner-to-advanced path through systems engineering. You learn it by building one real system: **KESTREL**, a research prototype that lets small health organisations share approved summaries while keeping their records local and working through unreliable networks.
 
-The working research question is:
-
-> How can small, resource-constrained health organizations produce timely, trustworthy cross-site summaries when their data must remain under local control and their network connections are intermittent?
-
-The project will investigate local-first storage, authorized data sharing, auditable queries, and safe recovery after disconnection. It will measure freshness, availability, latency, bandwidth, and the privacy risks of each design. It will begin with synthetic or public data; use of sensitive real-world data would require appropriate partners, consent, and ethics review.
-
-This is not an AI product looking for a use case. The core system is useful without AI. Privacy-preserving distributed analysis or machine learning can be explored later only if a real user need justifies it and the project can evaluate the added privacy and operational costs.
-
-## Build toward the question
-
-```text
-small request service
-  → reliable service
-  → local data and audit trail
-  → sites that share data safely
-  → useful operation through network outages
-  → measured privacy, reliability, and usability
-```
-
-Each step teaches a systems concept needed by the research question. We build a small capability, make its guarantee explicit, test what happens when it fails, and keep evidence that another person can reproduce.
+Every phase is taught end to end. Each lesson gives you the full code, the exact commands, real expected output, a deliberate way to break it, and tests. Interview practice runs alongside: data structures and algorithms, and system design for infrastructure, distributed systems, platform and ML roles.
 
 ## Start here
 
-Read [the roadmap](plan/structure.md) for the learning order and [the project brief](project.md) for the current research direction. Begin with **Phase 0** only. The later phases are a plan; the current hands-on work is the small Go request service.
+1. Read **[JOURNEY.md](JOURNEY.md)**, the single map: what you'll build, the route, the gaps each phase closes, the patterns you'll use, and which roles each phase prepares you for.
+2. Begin **[Phase 0](lessons/00-request-service/README.md)**. It assumes no prior Go, Linux or HTTP.
+3. Start the **[DSA track](dsa/README.md)** at the same time. Add the **[system-design track](system-design/README.md)** at Phase 2.
+
+## Repository map
+
+| Folder | What it holds |
+|---|---|
+| [lessons/](lessons) | One folder per phase, with a guide, runnable step snapshots, exercises and an answer sheet |
+| [dsa/](dsa/README.md) | Algorithm patterns in Go and Python, linked to the real systems that use them |
+| [system-design/](system-design/README.md) | A rubric, an interview script and designs by track, linked back to the code |
+| [scripts/](scripts) | `test_all.sh` runs every check CI runs. `check_teaching.py` keeps lesson code identical to the step files |
+| [notes/](notes) | The author's personal notes: decisions, failures, research track, own answers |
+
+## Check everything locally
+
+~~~bash
+bash scripts/test_all.sh
+~~~
+
+This needs Go 1.26+ and Python 3. It verifies that every code block in the lessons matches its step files, then formats, vets and tests every step.
+
+## Scope
+
+KESTREL uses **synthetic or public data only**. It is a learning and research prototype, not a clinical system. It makes no diagnoses and claims no legal compliance. See [JOURNEY.md §2](JOURNEY.md#2-what-were-building-and-why).
