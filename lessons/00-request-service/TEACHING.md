@@ -16,23 +16,23 @@ The guide is split into steps. Each step has the same parts:
 |---|---|
 | **The problem** | Why this step exists: what is missing or broken without it |
 | **New ideas** | Each new word or concept, defined before you need it |
-| **The code** | The complete code. It is identical to the matching folder in `steps/`, and CI checks that |
+| **The code** | The code for this step, explained line by line. You type it yourself. (CI builds the code from this guide on every change, so every step is known to work.) |
 | **Run it** | The exact commands and the output you should see |
 | **Break it** | A deliberate mistake. Predict what will happen, then run it. This is where most of the learning happens |
 | **Explain it** | Questions to answer in your own words in [learned.md](learned.md) |
 | **Read** | A specific chapter, and why now is the right time to read it |
 
-The `steps/` folder holds a runnable snapshot after each step:
+The steps build one program, a little at a time:
 
-| Step | Folder | What it adds |
-|---|---|---|
-| 1 | [steps/01-hello](steps/01-hello) | A program that prints and exits |
-| 3 | [steps/02-first-server](steps/02-first-server) | A server with one route |
-| 4 | [steps/03-json-health](steps/03-json-health) | A JSON response and a method check |
-| 5 | [steps/04-greeting-and-validation](steps/04-greeting-and-validation) | A router, a greeting, and input validation |
-| 6 | [steps/05-tests](steps/05-tests) | Tests at three levels. This is the finished Phase 0 service |
+| Step | What you add |
+|---|---|
+| 1 | A program that prints and exits |
+| 3 | A server with one route |
+| 4 | A JSON response and a method check |
+| 5 | A router, a greeting, and input validation |
+| 6 | Tests at three levels: the finished Phase 0 service |
 
-You type your own copy in a `practice/` folder. When something doesn't work, compare your file with the snapshot. Don't copy from it before you've tried.
+You type everything yourself, in a `practice/` folder, as you read. There's no finished version to copy. When something doesn't work, read the error message carefully, compare it with the explanation, and check [If it goes wrong](#if-it-goes-wrong). Working that out is a large part of the learning.
 
 If something goes wrong at any point, check [If it goes wrong](#if-it-goes-wrong) at the end.
 
@@ -86,7 +86,7 @@ pwd
 | Command | What it does |
 |---|---|
 | `pwd` | Prints the current directory ("print working directory"). Use it whenever you're unsure where you are |
-| `ls` | Lists what is in the current directory. In `lessons/00-request-service` you should see `README.md`, `TEACHING.md`, `learned.md`, `exercises.md` and `steps` |
+| `ls` | Lists what is in the current directory. In `lessons/00-request-service` you should see `README.md`, `TEACHING.md`, `learned.md` and `exercises.md` |
 | `cd path` | Changes the current directory |
 | `mkdir -p practice` | Makes a folder called `practice`. `-p` means "don't complain if it already exists" |
 
@@ -100,21 +100,15 @@ go mod init kestrel-phase0
 
 This writes one file, `go.mod`, which names the module and records the Go version. Run `ls` to see it. It doesn't create any code yet.
 
-You'll use one more command to compare your work with the snapshots:
-
-~~~bash
-diff go.mod ../steps/01-hello/go.mod
-~~~
-
-`diff` prints the lines that differ between two files. **No output means the files are identical.** The output may differ slightly here if your Go version is newer, and that's fine.
-
 ---
 
 ## Step 1: A program and a process
+<!-- run: go mod init kestrel-phase0 -->
+
 
 **The problem.** Before a program can answer requests, you need to know how Go source code becomes something that runs.
 
-<!-- file: steps/01-hello/main.go -->
+<!-- file: main.go -->
 ~~~go
 package main
 
@@ -169,9 +163,10 @@ Delete the binary so it doesn't clutter your folder: `rm hello`.
 
 `./main.go:6:6` means "file main.go, line 6, column 6". The compiler checks names before it builds anything, so the program never starts. Get into the habit of reading the first error line carefully: it nearly always tells you the file, the position and the cause. Change it back.
 
-**Compare.** `diff main.go ../steps/01-hello/main.go` should print nothing.
 
 **Explain it** in learned.md: what is the difference between a program and a process? What did `go run .` do that `go build` didn't?
+
+<!-- run: go vet ./... && go run . | grep -qx "Hello, Kestrel!" -->
 
 ---
 
@@ -225,7 +220,7 @@ You'll write `localhost` sometimes: it's a name that resolves to the loopback ad
 
 Replace `main.go` with:
 
-<!-- file: steps/02-first-server/main.go -->
+<!-- file: main.go -->
 ~~~go
 package main
 
@@ -326,6 +321,8 @@ Stop the server with **Ctrl+C** in its terminal. Ctrl+C sends the process an *in
 
 **Read.** You've now watched a process stay alive and stopped it. Read *Operating Systems: Three Easy Pieces* (OSTEP, free at [ostep.org](https://pages.cs.wisc.edu/~remzi/OSTEP/)): Chapter 2, *Introduction*, Chapter 4, *The Process*, and the first half of Chapter 5, *Process API*. Read with these questions: what is a process, how does it differ from the program file, and what does the OS keep track of for each one? Skip system-call details you don't follow yet.
 
+<!-- run: go mod tidy && test -z "$(gofmt -l .)" && go vet ./... && go test -race -count=1 ./... -->
+
 ---
 
 ## Step 4: Give the response a contract
@@ -339,7 +336,7 @@ Stop the server with **Ctrl+C** in its terminal. Ctrl+C sends the process an *in
 
 Replace `main.go` with:
 
-<!-- file: steps/03-json-health/main.go -->
+<!-- file: main.go -->
 ~~~go
 package main
 
@@ -435,9 +432,10 @@ method not allowed
 2. **Move the header line** `w.Header().Set("Content-Type", ...)` to *after* the `Encode` block. GET now returns `Content-Type: text/plain; charset=utf-8`. The body went out first, so the headers had already been sent, and Go guessed the type from the body. Restore it.
 3. **Lowercase the field**: rename `Status` to `status` in both places. Predict the body, then check it. The program still compiles, but the body is `{}`: the encoder can't see an unexported field. Now run `go vet .`, which catches it: `struct field status has json tag but is not exported`. That's why `go vet` is part of the everyday checks in step 6.
 
-**Compare:** `diff main.go ../steps/03-json-health/main.go`
 
 **Explain it:** why is the status code part of the contract, not a decoration? What exactly happened when you deleted `return`?
+
+<!-- run: go mod tidy && test -z "$(gofmt -l .)" && go vet ./... && go test -race -count=1 ./... -->
 
 ---
 
@@ -458,7 +456,7 @@ The contract for this step:
 
 Replace `main.go` with:
 
-<!-- file: steps/04-greeting-and-validation/main.go -->
+<!-- file: main.go -->
 ~~~go
 package main
 
@@ -597,11 +595,12 @@ The single quotes stop the shell from treating `?` and `&` as special characters
 
 **Break it.** Delete the four lines that check `r.URL.Path != "/"` in `greet`, restart, and request `/unknown`. You get `200 OK` with the greeting: the catch-all answered a path it was never meant to. A wrong 200 is worse than a 404, because the caller believes it worked. Restore the check.
 
-**Compare:** `diff main.go ../steps/04-greeting-and-validation/main.go`
 
 **Explain it:** for `GET /greet?name=Ada`, which patterns match, which handler runs, and why? Why does `greet` need its own path check?
 
 **Read.** Now that you've rejected hostile input yourself, skim the [OWASP API Security Top 10](https://owasp.org/API-Security/editions/2023/en/0x11-t10/) introduction and *API8: Security Misconfiguration*. If you have *The Web Application Hacker's Handbook* (2nd ed.), skim Chapter 3, on how applications receive client-controlled input.
+
+<!-- run: go mod tidy && test -z "$(gofmt -l .)" && go vet ./... && go test -race -count=1 ./... -->
 
 ---
 
@@ -611,10 +610,18 @@ The single quotes stop the shell from treating `?` and `&` as special characters
 
 ### 6a. A first test: call the handler directly
 
-Create `main_test.go` next to `main.go`. Go treats any file ending in `_test.go` as test code. Start with just this function, plus the imports it needs (`net/http`, `net/http/httptest`, `testing`):
+Create `main_test.go` next to `main.go`. Go treats any file ending in `_test.go` as test code. Start with one test:
 
-<!-- excerpt: steps/05-tests/main_test.go -->
+<!-- file: main_test.go -->
 ~~~go
+package main
+
+import (
+	"net/http"
+	"net/http/httptest"
+	"testing"
+)
+
 func TestHealthReturnsOK(t *testing.T) {
 	request := httptest.NewRequest(http.MethodGet, "/health", nil)
 	response := httptest.NewRecorder()
@@ -629,6 +636,8 @@ func TestHealthReturnsOK(t *testing.T) {
 	}
 }
 ~~~
+
+<!-- run: go test ./... -->
 
 **New ideas.**
 
@@ -662,9 +671,32 @@ The test names the file and line, what it got and what it wanted. **When a test 
 
 The 6a test proves `health` works, but not that `/health` reaches it. If you misspelled the route in `newMux`, it would still pass. So the next level sends requests through the router.
 
-Write one test per behaviour in a **table**: a list of cases, each with an input and an expected output, run in a loop. Add `net/url` and `strings` to the imports, then:
+Write one test per behaviour in a **table**: a list of cases, each with an input and an expected output, run in a loop. First add `net/url` and `strings` to the imports. Change:
 
-<!-- excerpt: steps/05-tests/main_test.go -->
+<!-- edit: main_test.go -->
+~~~go
+import (
+	"net/http"
+	"net/http/httptest"
+	"testing"
+)
+~~~
+
+to:
+
+~~~go
+import (
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"strings"
+	"testing"
+)
+~~~
+
+Then add this test at the end of the file:
+
+<!-- append: main_test.go -->
 ~~~go
 func TestRoutes(t *testing.T) {
 	fortyAccents := url.QueryEscape(strings.Repeat("é", 40))
@@ -729,7 +761,9 @@ go test -v -run TestRoutes
 
 ### 6c. Test over a real connection
 
-<!-- excerpt: steps/05-tests/main_test.go -->
+Add this test at the end of `main_test.go`:
+
+<!-- append: main_test.go -->
 ~~~go
 func TestServerOverRealConnection(t *testing.T) {
 	server := httptest.NewServer(newMux())
@@ -754,7 +788,23 @@ func TestServerOverRealConnection(t *testing.T) {
 }
 ~~~
 
-`httptest.NewServer` starts a real HTTP server on a random free port on the loopback address. `http.Get` is a real HTTP client: this request goes through the operating system's networking, like curl's does. `defer` means "run this when the function ends, however it ends", which guarantees the server is shut down and the body closed. Add `io` to the imports.
+`httptest.NewServer` starts a real HTTP server on a random free port on the loopback address. `http.Get` is a real HTTP client: this request goes through the operating system's networking, like curl's does. `defer` means "run this when the function ends, however it ends", which guarantees the server is shut down and the body closed. It reads the body with `io.ReadAll`, so add `io` to the imports:
+
+<!-- edit: main_test.go -->
+~~~go
+import (
+	"net/http"
+~~~
+
+becomes:
+
+~~~go
+import (
+	"io"
+	"net/http"
+~~~
+
+<!-- run: go test ./... -->
 
 ### What each level proves
 
@@ -767,7 +817,12 @@ func TestServerOverRealConnection(t *testing.T) {
 
 No single check proves everything, so you use several. Phase 1 adds a fifth: checking what happens when many requests arrive at once.
 
-**The complete file** is [steps/05-tests/main_test.go](steps/05-tests/main_test.go). Add the remaining two small tests from it, `TestHealthSetsJSONContentType` and `TestHealthRejectsPost`, by reading them and then writing them yourself.
+**Your turn.** Write two more tests yourself, using the ones above as a pattern:
+
+- `TestHealthSetsJSONContentType`: `GET /health` has the header `Content-Type: application/json`. (Read a response header with `response.Header().Get("Content-Type")`.)
+- `TestHealthRejectsPost`: `POST /health` returns 405, **and** its `Allow` header is `GET`.
+
+Run `go test -v` and check that both appear and pass. Then break `health` on purpose (delete the `Allow` line) and confirm your second test catches it.
 
 ### The everyday checks
 
@@ -795,7 +850,8 @@ You wrote code first and tests second. **TDD** flips the order, in a three-beat 
 
 From Phase 1 on, every feature is built this way. Practise now with the first two exercises in [exercises.md](exercises.md).
 
-**Compare:** `diff main.go ../steps/05-tests/main.go` and `diff main_test.go ../steps/05-tests/main_test.go`. Small differences in your tests are fine if they check the same things.
+
+<!-- run: go mod tidy && test -z "$(gofmt -l .)" && go vet ./... && go test -race -count=1 ./... -->
 
 ---
 
@@ -803,7 +859,7 @@ From Phase 1 on, every feature is built this way. Practise now with the first tw
 
 **The problem.** Work that exists only on your laptop can be lost. Nobody else can see it, and it may secretly depend on something only your machine has. You'll now rebuild Phase 0 in **your own** GitHub repository and have GitHub test it on every push.
 
-This is also the **rebuild rule** used at the end of every phase: close the guide and the snapshots, and build it again from the contract tables and your notes. Looking up Go documentation is allowed, but copying the lesson code is not. If you can rebuild it, you understand it. If you can't, the spot where you got stuck is exactly what to review.
+This is also the **rebuild rule** used at the end of every phase: close the guide, and build it again from the contract tables and your notes. Looking up Go documentation is allowed, but copying the lesson code is not. If you can rebuild it, you understand it. If you can't, the spot where you got stuck is exactly what to review.
 
 > **Run locally.** These steps need your GitHub account, so CI can't check them for you. The expected results are described for each one.
 

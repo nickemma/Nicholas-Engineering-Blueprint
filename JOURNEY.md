@@ -138,12 +138,9 @@ A demo that works is not a result. Each major feature answers a question, compar
 
 ~~~text
 lessons/03-durable-auditable-data/
-  README.md       goal, prerequisites, time, what you'll build, gaps closed, patterns
-  TEACHING.md     the full lesson, one chapter per step
-  steps/
-    01-.../       a runnable, tested snapshot after each step
-    02-.../
-  exercises.md    test-driven exercises and stretch challenges, no solutions
+  README.md       the syllabus: what the phase covers, outcomes, prerequisites, the exercise project
+  TEACHING.md     the lesson: explanations plus a type-along build, with the code inline
+  exercises.md    a different project you build alone, with a clear picture of the finished result
   learned.md      your answer sheet: explanations plus evidence
 ~~~
 
@@ -155,7 +152,7 @@ Every step in every TEACHING.md has the same parts. [Phase 0](lessons/00-request
 |---|---|
 | **The problem** | What is missing or broken without this step |
 | **New ideas** | Every new term, defined before you use it |
-| **The code** | Complete and identical to `steps/NN`. CI checks that with [scripts/check_teaching.py](scripts/check_teaching.py) |
+| **The code** | Shown inline: the whole file the first time, then exact edits. You type it. CI rebuilds the code from the guide with [scripts/check_guides.py](scripts/check_guides.py), so every step is known to work |
 | **Run it** | Exact commands and real expected output |
 | **Break it** | A deliberate mistake: predict, run, explain |
 | **Explain it** | Questions you answer in learned.md, with evidence |

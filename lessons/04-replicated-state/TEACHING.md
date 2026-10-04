@@ -1,6 +1,6 @@
 # Phase 4: Replicate approved state through failure
 
-> **Status: being rebuilt.** This phase is being rewritten to the [Phase 0](../00-request-service/TEACHING.md) standard: full code in `steps/`, real expected output, and CI checks. Until then, this page and TEACHING.md are an outline, and the authoritative plan for this phase is in [JOURNEY.md](../../JOURNEY.md#4-the-route).
+> **Status: being rebuilt.** This phase is being rewritten to the [Phase 0](../00-request-service/TEACHING.md) standard: a type-along guide with the code inline, real expected output, and CI checks. Until then, this page and TEACHING.md are an outline, and the authoritative plan for this phase is in [JOURNEY.md](../../JOURNEY.md#4-the-route).
 
 This self-study lesson builds and tests the Raft core for a three-node key/value state-machine workload. It first lets you inspect a maintained Raft library, then guides you through the protocol implementation in the supplied Go lab and uses its simulator to test elections, replication, persistence, and snapshots. The stored values are synthetic metadata, never source health records.
 

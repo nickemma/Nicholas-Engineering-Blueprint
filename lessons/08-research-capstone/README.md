@@ -1,6 +1,6 @@
 # Phase 8: defend the design and publish reproducible evidence
 
-> **Status: being rebuilt.** This phase is being rewritten to the [Phase 0](../00-request-service/TEACHING.md) standard: full code in `steps/`, real expected output, and CI checks. Until then, this page and TEACHING.md are an outline, and the authoritative plan for this phase is in [JOURNEY.md](../../JOURNEY.md#4-the-route).
+> **Status: being rebuilt.** This phase is being rewritten to the [Phase 0](../00-request-service/TEACHING.md) standard: a type-along guide with the code inline, real expected output, and CI checks. Until then, this page and TEACHING.md are an outline, and the authoritative plan for this phase is in [JOURNEY.md](../../JOURNEY.md#4-the-route).
 
 This page previews the concepts, tools, readings, and exit evidence. The capstone uses the claims and limits supported by the completed phases; it remains useful when a result is negative or a domain assumption changes. Follow the full [self-study teaching guide](TEACHING.md) and record your work in [learned.md](learned.md).
 

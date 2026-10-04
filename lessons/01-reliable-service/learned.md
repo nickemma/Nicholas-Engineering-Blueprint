@@ -45,5 +45,5 @@ Fill this in as you finish each step of [TEACHING.md](TEACHING.md), then again f
 
 - What I rebuilt without help:
 - What I had to look up, and where:
-- How my design differs from the snapshot, and why:
+- How my design differs from the guide, and why:
 - What is still unclear:

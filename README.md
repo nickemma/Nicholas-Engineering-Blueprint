@@ -14,11 +14,11 @@ Every phase is taught end to end. Each lesson gives you the full code, the exact
 
 | Folder | What it holds |
 |---|---|
-| [lessons/](lessons) | One folder per phase, with a guide, runnable step snapshots, exercises and an answer sheet |
+| [lessons/](lessons) | One folder per phase: a syllabus, a type-along guide, an exercise project and an answer sheet |
 | [dsa/](dsa/README.md) | Algorithm patterns in Go and Python, linked to the real systems that use them |
 | [system-design/](system-design/README.md) | A rubric, an interview script and designs by track, linked back to the code |
-| [scripts/](scripts) | `test_all.sh` runs every check CI runs. `check_teaching.py` keeps lesson code identical to the step files |
-| [notes/](notes) | The author's personal notes: decisions, failures, research track, own answers |
+| [scripts/](scripts) | `test_all.sh` runs every check CI runs. `check_guides.py` rebuilds each guide's code from the guide itself and tests it |
+| [notes/](notes) | Self-tests for each phase (`notes/learned/`), plus the author's decisions, failures and research track |
 
 ## Check everything locally
 

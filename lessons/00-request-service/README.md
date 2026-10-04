@@ -2,59 +2,61 @@
 
 **Question:** what actually happens between typing a command and getting an answer from a web service?
 
-**You build:** a Go HTTP service with `GET /`, `GET /greet?name=...` and `GET /health`. It validates its input, has tests at three levels, and runs CI in your own GitHub repository.
+**Time:** about 2 weeks at 12–15 hours a week. **Prerequisites:** none. This is the start.
 
-**Time:** about 2 weeks at 12–15 hours a week. **Prerequisites:** none.
+## Syllabus
 
-| File | Use it for |
-|---|---|
-| [TEACHING.md](TEACHING.md) | The lesson. Start here and follow it in order |
-| [steps/](steps) | A runnable snapshot after each step. Compare your work with these; don't copy them |
-| [exercises.md](exercises.md) | Test-driven exercises for after the checkpoint |
-| [learned.md](learned.md) | The answer sheet you fill in from your own observations |
+| Step | Topic | You'll learn |
+|---|---|---|
+| 0 | The terminal | Commands, flags and arguments, paths, `pwd`/`ls`/`cd`/`mkdir`, Go modules |
+| 1 | A program and a process | Packages, functions, compiling, `go run` vs `go build`, compiler errors |
+| 2 | Requests and responses | Client and server, methods, paths, headers, bodies, status codes, URLs, ports, loopback |
+| 3 | Your first server | Handlers, routes, `ListenAndServe`, the request path, `ss`, pipes, Ctrl+C |
+| 4 | A response contract | Structs, JSON, exported fields, method checks, 405 and `Allow`, why `return` matters |
+| 5 | A router and validation | `ServeMux` matching rules, the catch-all `/`, query strings, validation, characters vs bytes |
+| 6 | Tests at three levels | Handler tests, table-driven router tests, real-connection tests, TDD, `gofmt`/`vet`/`-race` |
+| 7 | Your own repo and CI | Git, GitHub, a GitHub Actions workflow, a red-then-green history |
 
 ## What you'll be able to do
 
-- Use a terminal to move around, run programs and inspect a running process and its port.
-- Read and write a small Go program: packages, functions, structs, errors and constants.
-- Explain an HTTP request and response: method, path, query, status, headers and body.
+- Use a terminal to move around, run programs, and inspect a running process and its port.
+- Read and write a small Go program: packages, functions, structs, errors, constants.
+- Explain an HTTP request and response: method, path, query, status, headers, body.
 - Explain how Go's router picks a handler, and where the method is checked.
 - Validate untrusted input, and say what validation does and doesn't protect against.
 - Write handler tests, table-driven router tests and a real-connection test, and say what each proves.
-- Use Git and GitHub Actions to keep your work reproducible.
+- Keep your work reproducible with Git and GitHub Actions.
+
+## How to work through it
+
+1. Follow [TEACHING.md](TEACHING.md) in order, typing every piece of code yourself in `practice/`.
+2. Answer [learned.md](learned.md) from your own observations as you go.
+3. Rebuild the service from memory in your own `kestrel` repository (step 7).
+4. Build the exercise project, **[tempconv](exercises.md)**, a temperature-conversion service, on your own. The exercise page describes exactly what the finished service does.
+5. Take the [self-test](../../notes/learned/00-request-service.md) without notes.
 
 ## Gaps this phase closes
 
-These rows link back to the [foundation-gap ledger](../../JOURNEY.md#5-foundation-gap-ledger).
+These rows link to the [foundation-gap ledger](../../JOURNEY.md#5-foundation-gap-ledger).
 
 | Gap | Where in the lesson | Evidence you'll have |
 |---|---|---|
 | Shell basics: paths, commands, pipes | Steps 0 and 3 | Commands in your notes; `ss` output showing your process |
 | Program vs process | Steps 1 and 3 | `go build` + `./hello`; `ss -ltnp` |
 | HTTP fundamentals | Steps 2–5 | curl transcripts for 200, 400, 404 and 405 |
-| Go basics | Steps 1–6 | Your working service |
-| Testing and TDD | Step 6 and exercises | A red-then-green test run |
+| Go basics | Steps 1–6 | Your working service, and tempconv |
+| Testing and TDD | Step 6 and the exercise | A red-then-green test run |
 | Git, GitHub and CI | Step 7 | A red-then-green CI history in your own repository |
-| First input-validation habit | Step 5 | Boundary tests at 40 and 41 characters |
+| First input-validation habit | Step 5 and the exercise | Boundary tests (40/41 characters, 0 K) |
 
 ## Patterns introduced
 
-These link to the [patterns ledger](../../JOURNEY.md#6-patterns-ledger).
+These link to the [patterns ledger](../../JOURNEY.md#6-patterns-ledger):
 
+- **Guard clauses:** check, reject and `return` early.
 - **Table-driven tests:** many cases, one loop.
 - **Test-driven development:** red, green, refactor.
-- **Guard clauses:** check, reject and `return` early, so the main logic below never sees bad input.
-
-## Run the finished service
-
-~~~bash
-cd lessons/00-request-service/steps/05-tests
-go test -v ./...
-go run .
-~~~
-
-In a second terminal, run `curl -i http://127.0.0.1:8080/health`.
 
 ## Next
 
-Phase 1 turns this into a jobs service that many clients use at once. Overlapping requests, slow work, bad input and shutting down all start to matter. Continue with [Phase 1](../01-reliable-service/README.md).
+[Phase 1](../01-reliable-service/README.md) turns this into a jobs service that many clients use at once. Overlapping requests, slow work, bad input and shutting down all start to matter.

@@ -1,6 +1,6 @@
 # Phase 8: Defend the design and publish reproducible evidence
 
-> **Status: being rebuilt.** This phase is being rewritten to the [Phase 0](../00-request-service/TEACHING.md) standard: full code in `steps/`, real expected output, and CI checks. Until then, this page and TEACHING.md are an outline, and the authoritative plan for this phase is in [JOURNEY.md](../../JOURNEY.md#4-the-route).
+> **Status: being rebuilt.** This phase is being rewritten to the [Phase 0](../00-request-service/TEACHING.md) standard: a type-along guide with the code inline, real expected output, and CI checks. Until then, this page and TEACHING.md are an outline, and the authoritative plan for this phase is in [JOURNEY.md](../../JOURNEY.md#4-the-route).
 
 This is the final self-study lesson. It turns the working KESTREL prototype and the evidence from Phases 0–7 into a reviewable research artifact. The goal is clear claims with reproducible evidence and stated limits, not a claim that a prototype is production-ready.
 
