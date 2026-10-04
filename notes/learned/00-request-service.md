@@ -1,64 +1,69 @@
-# Phase 0 learning record — request service
+# Phase 0 self-test
 
-Complete this after working through the guided teaching in `TEACHING.md`. Write from memory in your own words; use the explanations in the guide while learning, then explain the ideas in your own words. Attach command output or a short note showing where each claim was verified.
+Answer these from memory, without the guide or the code, then check yourself against [the lesson](../../lessons/00-request-service/TEACHING.md) and by running the [step snapshots](../../lessons/00-request-service/steps). Where a question says "predict", write your prediction **before** you run anything.
 
-## What I built
+## A. Terminal and process
 
-- What the greeting server does: It return the value with the request service up
-- What `/health` does: checks if the status is ok
-- How `/greet` handles a valid name, and what it rejects: with argument passed for example name=ada, and it rejects if the name argument is not passed or is more than 40 characters long
-- What the server returns for a wrong path or method: 404 not found
-- How I ran the service and tested it: i ran go run . and on the second terminal tested it using curl -i http://localhost:8080/
+1. What does `pwd` print, and why do relative paths depend on it?
+2. You run `go build -o hello .` and then `ls -l hello`. Is `hello` a program or a process? When does it become the other one?
+3. What does `ss -ltnp | grep 8080` show, and what does each of `-l`, `-t`, `-n` and `-p` do? What does the `|` do?
+4. A server is running in terminal 1. You press Ctrl+C. What happens to the process, and what happens to your source files?
+5. Predict: you start the step 3 server twice, in two terminals. What does the second one print, and why?
 
-## How a request travels
+## B. HTTP
 
-Explain the path from the `curl` command through the listening server, route/mux, handler, response, and back to `curl`. Name which part runs once at startup and which part runs for each request.
+6. Name the five parts of an HTTP request and response this phase uses: method, path, ..., ..., .... Which parts are in the request, and which in the response?
+7. What do `127.0.0.1` and `8080` each mean in `http://127.0.0.1:8080/health`?
+8. Give the status code and meaning for each case: success, bad input from the client, unknown path, wrong method on a real path.
+9. Why must a 405 response include an `Allow` header?
+10. What does `curl -i` show that plain `curl` doesn't? What does `-X POST` do?
 
-My explanation:
+## C. Reading the code
 
-## What I think I learned
+11. In `http.HandleFunc("/health", health)`, why are there no parentheses after the second `health`? When does `health` actually run?
+12. What is `w`, and what is `r`? Where does text written with `fmt.Println` go, and where does text written with `fmt.Fprintln(w, ...)` go?
+13. Why is the struct field `Status` capitalised? Predict the body if it were lowercase. Which command warns you about it?
+14. What does `` `json:"status"` `` do?
+15. Predict the full response body for `POST /health` if the `return` after `methodNotAllowed(...)` were deleted. Explain why.
+16. Predict the `Content-Type` of `GET /health` if `w.Header().Set("Content-Type", ...)` were moved below the `Encode` call. Explain why.
 
-- A program versus a running process: A program is the list of instruction we gave to the code for example main.go and a process is how/when we run the program
-- What the listener and port do: the listener listens to the numbered door the port points to from the server
-- How the method and path select behavior: I don't understand this?
-- Why request input is checked before being used: so it returns the actual thing we want rather than taking any form sent
-- What the handler writes and how status codes are chosen: the handler write the functions we choose while the status code returns the value we want the user to see/understand
-- What `httptest` proves, and what `curl` proves: httptest proves that what the program write is correct and curl is how we check it against the running process
-- Why the handler returns immediately after writing an error: because of the return we want to close/stop immediately after an error so it doesn't try to retry till it produceses success which is then a lie
+## D. Routing
 
-## Evidence
+17. Which handler runs for each path, and why? `/health`, `/greet?name=Ada`, `/`, `/unknown`, `/greet/extra`.
+18. What is the difference between the patterns `/greet` and `/greet/`?
+19. Why does `greet` check `r.URL.Path != "/"` itself? What goes wrong without the check?
+20. Does Go's router in Phase 0 choose a handler by method, by path, or both? Where is the other one checked?
+21. Give two reasons the finished service builds its own `ServeMux` in `newMux()` instead of using the default router.
 
-| Claim | Evidence or command | Result |
-|---|---|---|
-| Greeting route works |yes or curl -i http://localhost:8080/| HTTP/1.1 200 OK|
-| Valid greeting input works; missing or overlong input is rejected |yes or curl -i 'http://localhost:8080/greet?name=Emma!' | HTTP/1.1 200 OK (Hello, Emma!)|
-| Health route returns JSON and `200` |yes (HTTP/1.1 200 OK) |{"status":"ok"} |
-| Unknown path returns `404`; unsupported method returns `405` |yes | 404 page not found |
-| Tests pass |yes |yes |
-| Changing the expected health response makes a test fail, and restoring it makes the test pass |yes | yes |
-| The test workflow runs in CI | yes |pass |
+## E. Validation
 
-## Phase 0 task checklist
+22. Predict the status for each: `/greet?name=Ada`, `/greet`, `/greet?name=%20%20`, `/greet?name=` followed by 40 `a`s, then 41 `a`s.
+23. What does `strings.TrimSpace` change about the rules, and why does it matter for a name of only spaces?
+24. Why use `utf8.RuneCountInString` rather than `len`? Give an input where the two disagree.
+25. The handler echoes the name back. Under what change would that become a security bug?
+26. Validation "is a contract, not a guarantee of safety". Explain that sentence with an example.
 
-- [x] I can run the project from its lesson folder after a clean checkout.
-- [x] I can exercise the routes with `curl` and describe the responses.
-- [x] I can change the response, update or observe a failing test, and repair it.
-- [x] I can explain the request flow without reading the walkthrough.
-- [x] Formatting, tests, and the CI check pass.
-- [x] I recorded one design choice or behavior I would improve next.
+## F. Tests
 
-## Next-day transfer to Kestrel
+27. What does a handler test (calling `health(response, request)` directly) prove? What does it **not** prove?
+28. What does a router test (`mux.ServeHTTP`) add?
+29. What does `httptest.NewServer` add that the router test doesn't?
+30. What does curl against `go run .` prove that no test in `main_test.go` proves?
+31. In a table-driven test, what does `t.Run(tt.name, ...)` give you?
+32. Why test 40 **and** 41 characters?
+33. Write the command that runs only the `TestRoutes` subtests whose names start with `greet`. Why is the `^` needed?
+34. You change `"ok"` to `"ready"`. Which tests fail, and why does each one fail?
+35. Describe red, green and refactor. Why must you see the test fail first?
+36. Coverage is 87%. Name the code that isn't covered and say whether that is a problem.
 
-Complete this only after Phase 0 is reviewed. Rebuild the same behavior in Kestrel from memory, without copying the lesson files. Then record:
+## G. Tooling and CI
 
-- What I recreated without help: The healthcheck
-- What I had to look up: mux
-- Test and `curl` evidence: curl -i http://localhost:8080/health
-- What differed from the learning build and why: Nothing
-- What I want reviewed: flow
+37. What do `gofmt -l .`, `go vet ./...` and `go test -race ./...` each check?
+38. What question does CI answer that running tests on your laptop doesn't?
+39. In the workflow file, what do `on`, `runs-on`, `uses: actions/checkout` and `go-version-file` each do?
+40. Why name files explicitly in `git add` instead of using `git add .`?
 
-## Still unclear / next question
+## H. Explain it whole
 
-- What still feels uncertain: nothing
-- What I want reviewed: mux vs gin/chi
-- What I will try to reproduce from memory tomorrow: I tried a post method and it works fine
+41. Without notes, draw the path of `curl -i 'http://127.0.0.1:8080/greet?name=Ada'` from the keyboard to the printed response, naming every component and what it does.
+42. Rebuild the finished Phase 0 service from a blank folder in 30 minutes, with tests. Which parts did you need to look up?
