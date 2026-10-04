@@ -1,6 +1,6 @@
 # Phase 0 self-test
 
-Answer these from memory, without the guide or the code, then check yourself against [the lesson](../../lessons/00-request-service/TEACHING.md) and by running the [step snapshots](../../lessons/00-request-service/steps). Where a question says "predict", write your prediction **before** you run anything.
+Answer these from memory, without the guide or the code, then check yourself against [the lesson](../../lessons/00-request-service/TEACHING.md). Where a question says "predict", write your prediction **before** you run anything.
 
 ## A. Terminal and process
 

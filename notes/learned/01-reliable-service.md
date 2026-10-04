@@ -1,6 +1,6 @@
 # Phase 1 self-test
 
-Answer from memory, then check yourself against [the lesson](../../lessons/01-reliable-service/TEACHING.md) and the [snapshots](../../lessons/01-reliable-service/steps). Write each "predict" answer before running anything.
+Answer from memory, then check yourself against [the lesson](../../lessons/01-reliable-service/TEACHING.md). Write each "predict" answer before running anything.
 
 ## A. Layers and design
 

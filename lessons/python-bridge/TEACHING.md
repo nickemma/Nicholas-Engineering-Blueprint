@@ -8,14 +8,14 @@ Phase 1 left you with a service that *feels* fast. This bridge teaches Python by
 
 **Why Python now:** from Phase 2 on, every experiment (killing workers, partitions, slow networks, the Phase 7 evaluation and ML pipeline) is driven and analysed in Python. Go builds the system; Python measures it and, later, learns from its data.
 
-| Step | Snapshot | What it adds |
-|---|---|---|
-| 1 | [steps/01-first-script](steps/01-first-script) | Python, uv, a first function and a first test |
-| 2 | [steps/02-percentiles](steps/02-percentiles) | Percentiles, dataclasses, parametrised tests |
-| 3 | [steps/03-package-cli](steps/03-package-cli) | A real package and a command-line interface |
-| 4 | [steps/04-http-client](steps/04-http-client) | Classes, exceptions, and an HTTP client tested without a network |
-| 5 | [steps/05-async-load](steps/05-async-load) | `asyncio`, open-loop load, and coordinated omission |
-| 6 | [steps/06-analysis](steps/06-analysis) | pandas, matplotlib, and three real experiments |
+| Step | What you add |
+|---|---|
+| 1 | Python, uv, a first function and a first test |
+| 2 | Percentiles, dataclasses, parametrised tests |
+| 3 | A real package and a command-line interface |
+| 4 | Classes, exceptions, and an HTTP client tested without a network |
+| 5 | `asyncio`, open-loop load, and coordinated omission |
+| 6 | pandas, matplotlib, and three real experiments |
 
 ## Install uv
 
@@ -47,6 +47,7 @@ You know Go now. Most of Python maps across directly. These are the differences 
 ---
 
 ## Step 1: A first script, a first function, a first test
+<!-- run: uv init --bare --name kload --python 3.12 && uv python pin 3.12 -->
 
 **The problem.** You need the basics: running Python, isolating a project's dependencies, writing a function, and testing it.
 
@@ -65,11 +66,33 @@ uv init --bare --name kload --python 3.12
 uv add --dev pytest ruff
 ~~~
 
-`uv init --bare` writes a minimal `pyproject.toml`. `uv add --dev` adds the tools and writes `uv.lock`. Compare your `pyproject.toml` with [the snapshot's](steps/01-first-script/pyproject.toml), and copy across its `[tool.ruff]` settings.
+`uv init --bare` writes a minimal `pyproject.toml`, and `uv add --dev` adds the tools and writes `uv.lock`. Open `pyproject.toml` and make it match this. Fill in the description, and add the `[tool.ruff]` section, which sets the line length and turns on extra lint rules: `E`/`F` for errors, `I` for import order, `B` for likely bugs, `UP` for modern syntax.
+
+<!-- file: pyproject.toml -->
+~~~toml
+[project]
+name = "kload"
+version = "0.1.0"
+description = "Load generation and latency analysis for the KESTREL jobs API"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "ruff>=0.8",
+]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+~~~
 
 Create `hello.py`:
 
-<!-- file: steps/01-first-script/hello.py -->
+<!-- file: hello.py -->
 ~~~python
 """The first Python program: print, variables, a list and a loop."""
 
@@ -101,7 +124,7 @@ slow: 250 ms
 
 Now a function and its test. Create `stats.py`:
 
-<!-- file: steps/01-first-script/stats.py -->
+<!-- file: stats.py -->
 ~~~python
 """Summary statistics for request latencies."""
 
@@ -125,7 +148,7 @@ def summarize(values: list[float]) -> dict[str, float]:
 
 Create `test_stats.py`:
 
-<!-- file: steps/01-first-script/test_stats.py -->
+<!-- file: test_stats.py -->
 ~~~python
 import pytest
 
@@ -180,6 +203,8 @@ uv run ruff check .
 
 **Explain it:** what does `.venv` contain, and why does each project get its own? What happens to the rest of a function after `raise`?
 
+<!-- run: uv run ruff format --check . && uv run ruff check . && uv run pytest -q -->
+
 ---
 
 ## Step 2: Why averages lie: percentiles
@@ -197,7 +222,7 @@ uv run ruff check .
 
 Replace `stats.py`:
 
-<!-- file: steps/02-percentiles/stats.py -->
+<!-- file: stats.py -->
 ~~~python
 """Summary statistics for request latencies."""
 
@@ -254,10 +279,57 @@ def summarize(values: Sequence[float]) -> Summary:
 - Lists are indexed from 0, so rank 1 is `ordered[0]`.
 - `Summary(count=..., ...)` passes **keyword arguments** by name, so the order can't get mixed up.
 
-The tests ([full file](steps/02-percentiles/test_stats.py)) pin down the method with a 10-value example, the mutation rule, the error cases, and the motivating example:
+The tests pin down the method with a 10-value example, the mutation rule, the error cases, and the motivating example:
 
-<!-- excerpt: steps/02-percentiles/test_stats.py -->
+<!-- file: test_stats.py -->
 ~~~python
+import pytest
+
+from stats import Summary, percentile, summarize
+
+
+@pytest.mark.parametrize(
+    ("p", "expected"),
+    [
+        (50, 5),
+        (90, 9),
+        (95, 10),
+        (100, 10),
+        (10, 1),
+        (1, 1),
+    ],
+)
+def test_percentile_nearest_rank(p, expected):
+    values = [3, 1, 4, 10, 5, 9, 2, 6, 8, 7]
+    assert percentile(values, p) == expected
+
+
+def test_percentile_does_not_change_the_input():
+    values = [3, 1, 2]
+    percentile(values, 50)
+    assert values == [3, 1, 2]
+
+
+def test_percentile_of_one_value():
+    assert percentile([42.0], 99) == 42.0
+
+
+@pytest.mark.parametrize("p", [0, -1, 101])
+def test_percentile_rejects_p_out_of_range(p):
+    with pytest.raises(ValueError, match="p must be in"):
+        percentile([1, 2, 3], p)
+
+
+def test_percentile_rejects_empty_input():
+    with pytest.raises(ValueError, match="empty"):
+        percentile([], 50)
+
+
+def test_summarize():
+    values = [float(v) for v in range(1, 101)]
+    assert summarize(values) == Summary(count=100, mean=50.5, p50=50, p95=95, p99=99, max=100)
+
+
 def test_one_slow_request_moves_the_tail_not_the_median():
     values = [10.0] * 99 + [5000.0]
     summary = summarize(values)
@@ -265,6 +337,11 @@ def test_one_slow_request_moves_the_tail_not_the_median():
     assert summary.p99 == 10.0
     assert summary.max == 5000.0
     assert summary.mean == pytest.approx(59.9)
+
+
+def test_summarize_rejects_empty_input():
+    with pytest.raises(ValueError):
+        summarize([])
 ~~~
 
 `[10.0] * 99` makes a list of 99 tens. `pytest.approx` compares floating-point numbers with a tolerance, because `0.1 + 0.2 != 0.3` in binary floating point.
@@ -293,6 +370,8 @@ The function silently reordered the **caller's** list. In Python, lists are pass
 
 **Explain it:** why is the mean misleading for latency? What does p99 = 40 ms tell a user, and what doesn't it tell them?
 
+<!-- run: uv run ruff format --check . && uv run ruff check . && uv run pytest -q -->
+
 ---
 
 ## Step 3: A package and a command line
@@ -306,7 +385,7 @@ The function silently reordered the **caller's** list. In Python, lists are pass
 - `argparse` parses command-line arguments, including subcommands, `--help`, and errors for bad input.
 - `main(argv: list[str] | None = None)` takes its arguments as a parameter. It's the same trick as Phase 1's `run(getenv)`: tests call `main(["summarize", path])` without starting a process. `list[str] | None` means "a list of strings, or `None`".
 
-To convert your practice folder, run `uv init --package` in a fresh folder, or reshape it by hand to match [the snapshot](steps/03-package-cli):
+Reshape your practice folder into this layout:
 
 ~~~text
 pyproject.toml
@@ -317,7 +396,32 @@ tests/test_stats.py       (now imports from kload.stats)
 tests/test_cli.py
 ~~~
 
-<!-- file: steps/03-package-cli/src/kload/cli.py -->
+Move the files you already have:
+
+<!-- run: mkdir -p src/kload tests && mv stats.py src/kload/stats.py && mv test_stats.py tests/test_stats.py && touch src/kload/__init__.py -->
+~~~bash
+mkdir -p src/kload tests
+mv stats.py src/kload/stats.py
+mv test_stats.py tests/test_stats.py
+touch src/kload/__init__.py
+~~~
+
+`touch` creates an empty file, and an empty `__init__.py` is enough to make `src/kload` a package. The test's import changes because `stats` now lives inside `kload`. In `tests/test_stats.py`, change:
+
+<!-- edit: tests/test_stats.py -->
+~~~python
+from stats import Summary, percentile, summarize
+~~~
+
+to:
+
+~~~python
+from kload.stats import Summary, percentile, summarize
+~~~
+
+Now create the command line, `src/kload/cli.py`:
+
+<!-- file: src/kload/cli.py -->
 ~~~python
 """The kload command line."""
 
@@ -363,7 +467,81 @@ if __name__ == "__main__":
 - `set_defaults(handler=cmd_summarize)` attaches the function to the subcommand, so `main` can call `args.handler(args)` without an `if`/`else` chain. Functions are values in Python, just as in Go.
 - `if __name__ == "__main__":` is true only when the file is run directly, not when it's imported.
 
-The CLI tests ([tests/test_cli.py](steps/03-package-cli/tests/test_cli.py)) use pytest's built-in **fixtures**. Naming a parameter `tmp_path` gives the test a fresh temporary folder, and `capsys` captures what was printed.
+The CLI tests in `tests/test_cli.py` (below) use pytest's built-in **fixtures**. Naming a parameter `tmp_path` gives the test a fresh temporary folder, and `capsys` captures what was printed.
+
+Make these changes to `pyproject.toml`:
+
+Change:
+
+<!-- edit: pyproject.toml -->
+~~~toml
+
+[dependency-groups]
+~~~
+
+to:
+
+~~~toml
+
+[project.scripts]
+kload = "kload.cli:main"
+
+[dependency-groups]
+~~~
+
+Change:
+
+<!-- edit: pyproject.toml -->
+~~~toml
+
+[tool.ruff]
+~~~
+
+to:
+
+~~~toml
+
+[build-system]
+requires = ["uv_build>=0.12.7,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.ruff]
+~~~
+
+Create `tests/test_cli.py`:
+
+<!-- file: tests/test_cli.py -->
+~~~python
+import pytest
+
+from kload.cli import main
+
+
+def test_summarize_prints_each_statistic(tmp_path, capsys):
+    data = tmp_path / "latencies.txt"
+    data.write_text("12 15\n11 250\n14\n")
+
+    assert main(["summarize", str(data)]) == 0
+
+    out = capsys.readouterr().out
+    assert "count: 5" in out
+    assert "  p50: 14" in out
+    assert "  max: 250" in out
+
+
+def test_unknown_command_exits_with_usage_error(capsys):
+    with pytest.raises(SystemExit) as caught:
+        main(["fly"])
+    assert caught.value.code == 2
+    assert "invalid choice" in capsys.readouterr().err
+
+
+def test_bad_number_in_file_raises(tmp_path):
+    data = tmp_path / "latencies.txt"
+    data.write_text("12 fast\n")
+    with pytest.raises(ValueError):
+        main(["summarize", str(data)])
+~~~
 
 **Run it.**
 
@@ -395,6 +573,8 @@ The exit status is 2: argparse's convention for "usage error". `test_unknown_com
 
 **Explain it:** why does `main` accept `argv` instead of reading `sys.argv` itself? What is an `__init__.py` for?
 
+<!-- run: uv run ruff format --check . && uv run ruff check . && uv run pytest -q -->
+
 ---
 
 ## Step 4: An HTTP client, tested without a network
@@ -410,9 +590,12 @@ The exit status is 2: argparse's convention for "usage error". `test_unknown_com
 - `match` / `case` is **structural pattern matching**: Python's `switch`, which can match on shapes like `("GET", "/health")`.
 - `*expected` collects any number of positional arguments into a tuple: `_check(response, 200, 504)`.
 
-Add httpx with `uv add httpx`. Then create `src/kload/client.py`:
+Add httpx with `uv add httpx`.
 
-<!-- file: steps/04-http-client/src/kload/client.py -->
+<!-- run: uv add httpx -->
+ Then create `src/kload/client.py`:
+
+<!-- file: src/kload/client.py -->
 ~~~python
 """A small client for the Phase 1 jobs API."""
 
@@ -494,20 +677,153 @@ def _check(response: httpx.Response, *expected: int) -> dict[str, Any]:
 - `_check` starts with `_`, so it's private by convention.
 - `run_job` accepts **504** as a success, because the Phase 1 contract says a 504 still returns the (now failed) job.
 
-The test's fake API ([full file](steps/04-http-client/tests/test_client.py)):
+The test's fake API and its fixture, from `tests/test_client.py` above:
 
-<!-- excerpt: steps/04-http-client/tests/test_client.py -->
+<!-- file: tests/test_client.py -->
 ~~~python
+import json
+
+import httpx
+import pytest
+
+from kload.client import ApiError, Job, JobsClient
+
+
+def fake_api(request: httpx.Request) -> httpx.Response:
+    """Pretends to be the Phase 1 API, just enough for these tests."""
+    job = {"id": 1, "state": "queued", "description": "resize", "duration_ms": 50}
+    match (request.method, request.url.path):
+        case ("GET", "/health"):
+            return httpx.Response(200, json={"status": "ok"})
+        case ("POST", "/jobs"):
+            body = json.loads(request.content)
+            if not body["description"]:
+                return httpx.Response(
+                    400, json={"error": "description must be between 1 and 200 characters"}
+                )
+            return httpx.Response(201, json=job)
+        case ("GET", "/jobs/1"):
+            return httpx.Response(200, json=job)
+        case ("POST", "/jobs/1/run"):
+            return httpx.Response(200, json=job | {"state": "completed"})
+        case ("POST", "/jobs/2/run"):
+            failed = job | {"id": 2, "state": "failed", "failure_reason": "deadline exceeded"}
+            return httpx.Response(504, json=failed)
+        case _:
+            return httpx.Response(404, json={"error": "job not found"})
+
+
 @pytest.fixture
 def client():
     http = httpx.Client(base_url="http://kestrel.test", transport=httpx.MockTransport(fake_api))
     with http:
         yield JobsClient(http)
+
+
+def test_health(client):
+    assert client.health() == "ok"
+
+
+def test_create_job(client):
+    assert client.create_job("resize", duration_ms=50) == Job(
+        id=1, state="queued", description="resize", duration_ms=50
+    )
+
+
+def test_run_job(client):
+    assert client.run_job(1).state == "completed"
+
+
+def test_run_past_deadline_returns_the_failed_job(client):
+    job = client.run_job(2)
+    assert (job.state, job.failure_reason) == ("failed", "deadline exceeded")
+
+
+def test_api_error_carries_status_and_message(client):
+    with pytest.raises(ApiError) as caught:
+        client.create_job("")
+    assert caught.value.status == 400
+    assert "description" in caught.value.message
+
+
+def test_unknown_job(client):
+    with pytest.raises(ApiError, match="404: job not found"):
+        client.get_job(99)
 ~~~
 
 A **fixture** is a function pytest runs to provide a test argument. `yield` hands the value to the test, and after the test, execution continues past the `yield` and the `with` block closes the client. That's setup and teardown in one function. `with` is Python's equivalent of Go's `defer Close()`.
 
-Also add a `smoke` subcommand to the CLI (see [cli.py](steps/04-http-client/src/kload/cli.py)): it checks health, creates a job, and runs it.
+Also add a `smoke` subcommand to the CLI. It checks health, creates a job, and runs it; the changes to `cli.py` follow.
+
+Make these changes to `src/kload/cli.py`:
+
+Change:
+
+<!-- edit: src/kload/cli.py -->
+~~~python
+
+from kload.stats import summarize
+~~~
+
+to:
+
+~~~python
+
+import httpx
+
+from kload.client import ApiError, JobsClient
+from kload.stats import summarize
+~~~
+
+Change:
+
+<!-- edit: src/kload/cli.py -->
+~~~python
+
+def build_parser() -> argparse.ArgumentParser:
+~~~
+
+to:
+
+~~~python
+
+def cmd_smoke(args: argparse.Namespace) -> int:
+    with httpx.Client(base_url=args.url, timeout=10) as http:
+        client = JobsClient(http)
+        try:
+            print(f"health: {client.health()}")
+            job = client.create_job("smoke test", duration_ms=args.duration_ms)
+            print(f"created job {job.id}: {job.state}")
+            job = client.run_job(job.id)
+            print(f"ran job {job.id}: {job.state} {job.failure_reason}".rstrip())
+        except (ApiError, httpx.HTTPError) as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 1
+    return 0
+
+
+def build_parser() -> argparse.ArgumentParser:
+~~~
+
+Change:
+
+<!-- edit: src/kload/cli.py -->
+~~~python
+    p.set_defaults(handler=cmd_summarize)
+    return parser
+~~~
+
+to:
+
+~~~python
+    p.set_defaults(handler=cmd_summarize)
+
+    p = sub.add_parser("smoke", help="create and run one job against a live API")
+    p.add_argument("--url", default="http://127.0.0.1:8080")
+    p.add_argument("--duration-ms", type=int, default=100)
+    p.set_defaults(handler=cmd_smoke)
+    return parser
+~~~
 
 **Run it.** Start the Phase 1 server in another terminal, then:
 
@@ -539,6 +855,8 @@ FAILED tests/test_client.py::test_run_past_deadline_returns_the_failed_job - ...
 The fake API played the Phase 1 contract's 504 case, and the client no longer honoured it. Restore it. Clients must implement *every* row of a contract, not only the happy path.
 
 **Explain it:** why does `JobsClient` take an `httpx.Client` instead of a URL? What does `MockTransport` let you test that a real server makes hard?
+
+<!-- run: uv run ruff format --check . && uv run ruff check . && uv run pytest -q -->
 
 ---
 
@@ -572,7 +890,7 @@ sequenceDiagram
 
 Create `src/kload/load.py`:
 
-<!-- file: steps/05-async-load/src/kload/load.py -->
+<!-- file: src/kload/load.py -->
 ~~~python
 """Load generation: open-loop (correct) and closed-loop (misleading)."""
 
@@ -677,12 +995,62 @@ Read it slowly:
 - Transport failures become `status=0` with the exception's class name. A load test must record failures, not crash on them.
 - `(one(i) for i in range(total))` is a **generator expression**, and `*` spreads it into arguments for `gather`.
 
-Results are saved by [results.py](steps/05-async-load/src/kload/results.py) as raw CSV, plus a JSON file of the settings that produced them. **Keep raw data, not just summaries.** Anyone can recompute any statistic later, and the settings file says how to reproduce the run.
+Results are saved by `results.py` (below) as raw CSV, plus a JSON file of the settings that produced them. **Keep raw data, not just summaries.** Anyone can recompute any statistic later, and the settings file says how to reproduce the run.
 
 ### The test that proves the difference
 
-<!-- excerpt: steps/05-async-load/tests/test_load.py -->
+<!-- file: tests/test_load.py -->
 ~~~python
+import asyncio
+
+import httpx
+import pytest
+
+from kload.load import Result, run_closed_loop, run_open_loop
+from kload.stats import percentile
+
+
+def get_health(client: httpx.AsyncClient):
+    return client.get("/health")
+
+
+def async_client(handler) -> httpx.AsyncClient:
+    return httpx.AsyncClient(base_url="http://kestrel.test", transport=httpx.MockTransport(handler))
+
+
+async def ok(request: httpx.Request) -> httpx.Response:
+    return httpx.Response(200, json={"status": "ok"})
+
+
+def test_open_loop_sends_rate_times_duration_requests():
+    async def scenario():
+        async with async_client(ok) as client:
+            return await run_open_loop(client, get_health, rate=50, duration_s=0.4)
+
+    results = asyncio.run(scenario())
+    assert len(results) == 20
+    assert all(r.status == 200 for r in results)
+    assert [round(r.scheduled_s, 3) for r in results[:3]] == [0.0, 0.02, 0.04]
+
+
+def test_transport_errors_are_recorded_not_raised():
+    async def refuse(request: httpx.Request) -> httpx.Response:
+        raise httpx.ConnectError("connection refused", request=request)
+
+    async def scenario():
+        async with async_client(refuse) as client:
+            return await run_open_loop(client, get_health, rate=20, duration_s=0.1)
+
+    results = asyncio.run(scenario())
+    assert {(r.status, r.error) for r in results} == {(0, "ConnectError")}
+
+
+@pytest.mark.parametrize(("rate", "duration"), [(0, 1), (10, 0), (-1, 1)])
+def test_open_loop_rejects_bad_arguments(rate, duration):
+    with pytest.raises(ValueError):
+        asyncio.run(run_open_loop(None, get_health, rate=rate, duration_s=duration))
+
+
 class StallingServer:
     """Answers instantly, except for one request that freezes the whole server.
 
@@ -703,9 +1071,212 @@ class StallingServer:
             if self.seen == self.stall_on:
                 await asyncio.sleep(self.stall_s)
         return httpx.Response(200)
+
+
+def p95_ms(results: list[Result]) -> float:
+    return percentile([r.latency_s * 1000 for r in results], 95)
+
+
+def test_closed_loop_hides_a_stall_that_open_loop_reveals():
+    """A 0.5 s stall during a 1 s run at 50 requests per second.
+
+    Real users would have sent about 25 requests during the stall, and every
+    one of them would have waited. The closed loop sends none of them, so
+    its p95 stays small. The open loop sends them on schedule and records the
+    wait.
+    """
+
+    async def closed():
+        async with async_client(StallingServer(stall_on=10, stall_s=0.5)) as client:
+            return await run_closed_loop(client, get_health, count=50)
+
+    async def open_():
+        async with async_client(StallingServer(stall_on=10, stall_s=0.5)) as client:
+            return await run_open_loop(client, get_health, rate=50, duration_s=1.0)
+
+    closed_p95 = p95_ms(asyncio.run(closed()))
+    open_p95 = p95_ms(asyncio.run(open_()))
+
+    assert closed_p95 < 50, f"closed-loop p95 = {closed_p95:.1f} ms"
+    assert open_p95 > 200, f"open-loop p95 = {open_p95:.1f} ms"
 ~~~
 
 `__call__` makes an instance callable like a function, so it can serve as the mock transport's handler while keeping state (`seen`) between calls. The test runs both generators against a 0.5-second stall. It asserts that the closed loop's p95 stays under 50 ms (the stall hidden in one sample) while the open loop's p95 is over 200 ms (the stall visible across about 25 requests).
+
+Create `tests/test_results.py`:
+
+<!-- file: tests/test_results.py -->
+~~~python
+import csv
+
+from kload.load import Result
+from kload.results import write_results
+
+
+def test_write_results_saves_rows_and_settings(tmp_path):
+    path = tmp_path / "out" / "run.csv"
+    results = [Result(0.0, 0.004, 200), Result(0.01, 0.0, 0, "ConnectError")]
+
+    settings_path = write_results(results, path, {"rate": 5, "target": "health"})
+
+    with path.open() as f:
+        rows = list(csv.DictReader(f))
+    assert rows[1] == {
+        "scheduled_s": "0.01",
+        "latency_s": "0.0",
+        "status": "0",
+        "error": "ConnectError",
+    }
+    assert settings_path.read_text() == '{\n  "rate": 5,\n  "target": "health"\n}\n'
+~~~
+
+Create `src/kload/results.py`:
+
+<!-- file: src/kload/results.py -->
+~~~python
+"""Save a run's raw results next to the settings that produced them."""
+
+import csv
+import json
+from dataclasses import asdict, fields
+from pathlib import Path
+from typing import Any
+
+from kload.load import Result
+
+
+def write_results(results: list[Result], path: Path, settings: dict[str, Any]) -> Path:
+    """Write results as CSV, plus a JSON file with the settings beside it.
+
+    Raw results, not just a summary, let anyone recompute any statistic
+    later. The settings file records how to reproduce the run. Returns the
+    settings file's path.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=[field.name for field in fields(Result)])
+        writer.writeheader()
+        for result in results:
+            writer.writerow(asdict(result))
+
+    settings_path = path.with_suffix(".json")
+    settings_path.write_text(json.dumps(settings, indent=2, sort_keys=True) + "\n")
+    return settings_path
+~~~
+
+Make these changes to `src/kload/cli.py`:
+
+Change:
+
+<!-- edit: src/kload/cli.py -->
+~~~python
+import argparse
+import sys
+~~~
+
+to:
+
+~~~python
+import argparse
+import asyncio
+import sys
+~~~
+
+Change:
+
+<!-- edit: src/kload/cli.py -->
+~~~python
+from kload.client import ApiError, JobsClient
+from kload.stats import summarize
+
+~~~
+
+to:
+
+~~~python
+from kload.client import ApiError, JobsClient
+from kload.load import RequestFn, run_closed_loop, run_open_loop
+from kload.results import write_results
+from kload.stats import summarize
+
+TARGETS: dict[str, RequestFn] = {
+    "health": lambda client: client.get("/health"),
+    "create": lambda client: client.post("/jobs", json={"description": "load test"}),
+}
+
+~~~
+
+Change:
+
+<!-- edit: src/kload/cli.py -->
+~~~python
+
+def build_parser() -> argparse.ArgumentParser:
+~~~
+
+to:
+
+~~~python
+
+def cmd_load(args: argparse.Namespace) -> int:
+    async def go():
+        # Keep every connection open between requests. httpx keeps only 20 idle
+        # connections by default, so at high rates it would keep opening new
+        # ones, and the generator would measure its own handshakes.
+        limits = httpx.Limits(
+            max_connections=args.max_in_flight, max_keepalive_connections=args.max_in_flight
+        )
+        async with httpx.AsyncClient(base_url=args.url, timeout=10, limits=limits) as client:
+            if args.mode == "closed":
+                count = round(args.rate * args.duration)
+                return await run_closed_loop(client, TARGETS[args.target], count)
+            return await run_open_loop(
+                client,
+                TARGETS[args.target],
+                rate=args.rate,
+                duration_s=args.duration,
+                max_in_flight=args.max_in_flight,
+            )
+
+    results = asyncio.run(go())
+    settings = {k: v for k, v in vars(args).items() if k != "handler"}
+    settings_path = write_results(results, Path(args.out), settings)
+    print(f"wrote {len(results)} results to {args.out} (settings: {settings_path})")
+    return 0
+
+
+def build_parser() -> argparse.ArgumentParser:
+~~~
+
+Change:
+
+<!-- edit: src/kload/cli.py -->
+~~~python
+    p.set_defaults(handler=cmd_smoke)
+    return parser
+~~~
+
+to:
+
+~~~python
+    p.set_defaults(handler=cmd_smoke)
+
+    p = sub.add_parser("load", help="send open-loop load and save raw results")
+    p.add_argument("--url", default="http://127.0.0.1:8080")
+    p.add_argument("--target", choices=sorted(TARGETS), default="health")
+    p.add_argument(
+        "--mode",
+        choices=["open", "closed"],
+        default="open",
+        help="closed sends rate*duration requests back to back (for comparison only)",
+    )
+    p.add_argument("--rate", type=float, required=True, help="requests per second")
+    p.add_argument("--duration", type=float, required=True, help="seconds")
+    p.add_argument("--max-in-flight", type=int, default=200)
+    p.add_argument("--out", default="results/run.csv")
+    p.set_defaults(handler=cmd_load)
+    return parser
+~~~
 
 **Run it.** With the Phase 1 server running:
 
@@ -731,6 +1302,8 @@ With only one request allowed in flight, requests queue *inside the generator* w
 
 **Read.** Gil Tene's talk *How NOT to Measure Latency* (search for it on YouTube or InfoQ). It's the classic explanation of coordinated omission. Carry this question in: which of your past benchmarks used a closed loop?
 
+<!-- run: uv run ruff format --check . && uv run ruff check . && uv run pytest -q -->
+
 ---
 
 ## Step 6: Analysis, plots, and three real experiments
@@ -744,10 +1317,31 @@ With only one request allowed in flight, requests queue *inside the generator* w
 - **matplotlib** draws plots. `matplotlib.use("Agg")` draws to image files without opening a window, which is what you want on servers and in CI.
 - A **log scale** on the histogram's y-axis keeps the rare slow requests visible next to thousands of fast ones.
 
-The full module is [analyze.py](steps/06-analysis/src/kload/analyze.py). The important function:
+The most important function, from `analyze.py` above:
 
-<!-- excerpt: steps/06-analysis/src/kload/analyze.py -->
+<!-- file: src/kload/analyze.py -->
 ~~~python
+"""Turn raw results into a report and plots."""
+
+from pathlib import Path
+
+import matplotlib
+
+matplotlib.use("Agg")  # draw to files; no window needed
+
+import matplotlib.pyplot as plt  # noqa: E402
+import pandas as pd  # noqa: E402
+
+from kload.stats import percentile  # noqa: E402
+
+
+def load_results(path: Path) -> pd.DataFrame:
+    df = pd.read_csv(path, keep_default_na=False)
+    df["latency_ms"] = df["latency_s"] * 1000
+    df["ok"] = df["status"].between(200, 399)
+    return df
+
+
 def report(df: pd.DataFrame) -> dict[str, float]:
     """Headline numbers. Percentiles cover successful requests only."""
     if df.empty:
@@ -763,6 +1357,32 @@ def report(df: pd.DataFrame) -> dict[str, float]:
         "p99_ms": round(percentile(ok, 99), 2) if ok else float("nan"),
         "max_ms": round(max(ok), 2) if ok else float("nan"),
     }
+
+
+def per_second(df: pd.DataFrame) -> pd.DataFrame:
+    """Requests, errors and p95 latency for each second of the run."""
+    second = df["scheduled_s"].astype(int).rename("second")
+    grouped = df.groupby(second)
+    return pd.DataFrame(
+        {
+            "requests": grouped.size(),
+            "errors": grouped["ok"].apply(lambda ok: int((~ok).sum())),
+            "p95_ms": grouped["latency_ms"].apply(lambda s: round(percentile(s.tolist(), 95), 2)),
+        }
+    )
+
+
+def plot(df: pd.DataFrame, path: Path) -> None:
+    """Latency over time (spot stalls) and a histogram (see the shape of the tail)."""
+    fig, (timeline, histogram) = plt.subplots(1, 2, figsize=(11, 4))
+    timeline.scatter(df["scheduled_s"], df["latency_ms"], s=4, c=~df["ok"], cmap="coolwarm")
+    timeline.set(xlabel="scheduled time (s)", ylabel="latency (ms)", title="Latency over time")
+    histogram.hist(df["latency_ms"], bins=50)
+    histogram.set(xlabel="latency (ms)", ylabel="requests", title="Latency distribution")
+    histogram.set_yscale("log")
+    fig.tight_layout()
+    fig.savefig(path, dpi=120)
+    plt.close(fig)
 ~~~
 
 - `df.loc[df["ok"], "latency_ms"]` selects the `latency_ms` column for rows where `ok` is true. Errors are excluded from latency percentiles and reported separately as `error_rate`: a fast failure isn't a fast success.
@@ -770,7 +1390,9 @@ def report(df: pd.DataFrame) -> dict[str, float]:
 - `x if condition else y` is Python's inline conditional.
 - It reuses your own `percentile`, so every number matches the definition you tested in step 2. (pandas' own `quantile` interpolates between values by default, and gives slightly different answers.)
 
-Add `pandas` and `matplotlib` with `uv add`, add the `analyze` subcommand, and the `--mode closed` option used in experiment 2 (see [cli.py](steps/06-analysis/src/kload/cli.py)).
+<!-- run: uv add pandas matplotlib -->
+
+Add `pandas` and `matplotlib` with `uv add pandas matplotlib`, add the `analyze` subcommand, and the `--mode closed` option used in experiment 2; the `cli.py` changes follow.
 
 ### Experiment 1: the baseline
 
@@ -835,6 +1457,111 @@ At 400 requests per second, the **Python generator** hit one full CPU core. It f
 With `--max-in-flight 200`, the freeze experiment produced tails of around **7 seconds**, not 1. During that run, the kernel's TCP counters (`nstat -az | grep TCPSynRetrans`) showed **44 SYN retransmissions**. During the freeze the generator tried to open many new connections, and some of those attempts were retried with TCP's backoff of 1, 2 then 4 seconds. A 1-second freeze turned into a 7-second tail. Don't take this explanation on trust: in Phase 2 you'll capture the packets and confirm or refute it. Writing down "observed X; hypothesis Y; how I'll test it" is what research practice looks like.
 
 **Explain it:** why does the open-loop latency stay high after the freeze ends? How would you prove a load generator isn't the bottleneck?
+
+Create `tests/test_analyze.py`:
+
+<!-- file: tests/test_analyze.py -->
+~~~python
+from kload.analyze import load_results, per_second, plot, report
+from kload.load import Result
+from kload.results import write_results
+
+
+def sample(tmp_path):
+    results = [Result(i * 0.01, 0.005, 200) for i in range(150)]
+    results[120] = Result(1.2, 0.0, 0, "ConnectError")
+    results[130] = Result(1.3, 0.9, 200)
+    path = tmp_path / "run.csv"
+    write_results(results, path, {"rate": 100})
+    return load_results(path)
+
+
+def test_report(tmp_path):
+    numbers = report(sample(tmp_path))
+    assert numbers["requests"] == 150
+    assert numbers["error_rate"] == round(1 / 150, 4)
+    assert numbers["p50_ms"] == 5.0
+    assert numbers["max_ms"] == 900.0
+
+
+def test_per_second(tmp_path):
+    table = per_second(sample(tmp_path))
+    assert table["requests"].tolist() == [100, 50]
+    assert table["errors"].tolist() == [0, 1]
+
+
+def test_plot_writes_a_png(tmp_path):
+    out = tmp_path / "plot.png"
+    plot(sample(tmp_path), out)
+    assert out.read_bytes()[:8] == b"\x89PNG\r\n\x1a\n"
+~~~
+
+Make these changes to `src/kload/cli.py`:
+
+Change:
+
+<!-- edit: src/kload/cli.py -->
+~~~python
+import asyncio
+import sys
+~~~
+
+to:
+
+~~~python
+import asyncio
+import json
+import sys
+~~~
+
+Change:
+
+<!-- edit: src/kload/cli.py -->
+~~~python
+
+def build_parser() -> argparse.ArgumentParser:
+~~~
+
+to:
+
+~~~python
+
+def cmd_analyze(args: argparse.Namespace) -> int:
+    from kload.analyze import load_results, per_second, plot, report
+
+    df = load_results(Path(args.file))
+    print(json.dumps(report(df), indent=2))
+    print(per_second(df).to_string())
+    if args.plot:
+        plot(df, Path(args.plot))
+        print(f"plot saved to {args.plot}")
+    return 0
+
+
+def build_parser() -> argparse.ArgumentParser:
+~~~
+
+Change:
+
+<!-- edit: src/kload/cli.py -->
+~~~python
+    p.set_defaults(handler=cmd_load)
+    return parser
+~~~
+
+to:
+
+~~~python
+    p.set_defaults(handler=cmd_load)
+
+    p = sub.add_parser("analyze", help="report and plot a results file")
+    p.add_argument("file")
+    p.add_argument("--plot", help="write a PNG here")
+    p.set_defaults(handler=cmd_analyze)
+    return parser
+~~~
+
+<!-- run: uv run ruff format --check . && uv run ruff check . && uv run pytest -q -->
 
 ---
 

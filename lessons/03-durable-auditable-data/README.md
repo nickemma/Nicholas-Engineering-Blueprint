@@ -1,6 +1,6 @@
 # Phase 3: make local records durable and auditable
 
-> **Status: being rebuilt.** This phase is being rewritten to the [Phase 0](../00-request-service/TEACHING.md) standard: full code in `steps/`, real expected output, and CI checks. Until then, this page and TEACHING.md are an outline, and the authoritative plan for this phase is in [JOURNEY.md](../../JOURNEY.md#4-the-route).
+> **Status: being rebuilt.** This phase is being rewritten to the [Phase 0](../00-request-service/TEACHING.md) standard: a type-along guide with the code inline, real expected output, and CI checks. Until then, this page and TEACHING.md are an outline, and the authoritative plan for this phase is in [JOURNEY.md](../../JOURNEY.md#4-the-route).
 
 Phase 3 builds a PostgreSQL-backed jobs service and a separate Rust append-only log experiment. The database remains the service's authoritative state; the Rust log is a deliberately small way to observe file formats, checksums, synchronization, recovery, and compaction. It is not a production database.
 

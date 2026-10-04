@@ -1,56 +1,113 @@
-# Phase 0 exercises
+# Phase 0 exercise: tempconv, a temperature-conversion service
 
-Do these after the checkpoint in [TEACHING.md](TEACHING.md). Use test-driven development (TDD) for every exercise: write the failing test first (red), make it pass (green), then tidy up (refactor). Do them in your own `kestrel` repository and push each one so CI checks it.
+Build this **on your own**, in a new repository, after the [checkpoint](TEACHING.md#checkpoint-are-you-ready-for-phase-1). It uses every idea from Phase 0 (a Go HTTP server, routing, method checks, JSON, input validation, three levels of tests, CI), but on a problem the guide never showed you. There's no solution anywhere in this repository, on purpose. This page describes exactly what the finished service does, so you always know what you're aiming at.
 
-There are no solutions here on purpose. Each exercise says what "done" looks like.
+## What you're building
 
-## 1. Name the service in the health response (TDD warm-up)
+`tempconv` is a small web service that converts temperatures between Celsius (`C`), Fahrenheit (`F`) and Kelvin (`K`). A caller sends a value and two units, and gets the converted value back as JSON. It rejects anything it can't convert, with a clear reason.
 
-Change the health contract to `{"status":"ok","service":"kestrel"}`.
+## The finished result
 
-1. **Red:** update the expected body in your health tests first. Run `go test` and read the failure.
-2. **Green:** add a `Service` field with the right JSON tag.
-3. **Refactor:** is the expected JSON now repeated in several tests? Put it in one constant.
+### Contract
 
-**Done when:** the tests pass, `curl` shows the new body, and you can explain why the test failed before the code changed.
+| Request | Response |
+|---|---|
+| `GET /health` | `200`, `Content-Type: application/json`, body `{"status":"ok"}` |
+| `GET /convert?value=V&from=U1&to=U2` | `200`, `Content-Type: application/json`, body `{"value":V,"from":"U1","to":"U2","result":R}` |
+| `/convert` with `value` missing or not a number | `400`, body `value must be a number` |
+| `/convert` with `from` or `to` missing, or not one of `C`, `F`, `K` | `400`, body `unit must be one of C, F, K` |
+| `/convert` where the input is below absolute zero (below 0 K) | `400`, body `temperature is below absolute zero` |
+| Any method other than GET on `/health` or `/convert` | `405`, with header `Allow: GET` |
+| Any other path, including `/` | `404` |
 
-## 2. Support HEAD on /health (TDD)
+### Rules
 
-`HEAD` is `GET` without a body. Load balancers often use it to check health cheaply.
+- Conversions use the standard formulas: F = C × 9/5 + 32, and K = C + 273.15.
+- `result` is **rounded to 2 decimal places**. Floating-point arithmetic isn't exact: 98.6 °F converts to 36.99999999999999 °C before rounding, and must be reported as `37`.
+- Converting a unit to itself is allowed and returns the same value.
+- Units are case-sensitive: `c` is rejected.
+- The service listens on `127.0.0.1:8080` and uses its own `ServeMux`, built by a function your tests can call.
 
-- Write a table case expecting `HEAD /health` to return 200. Watch it fail with 405.
-- Allow `HEAD` in `health`, and make the `Allow` header on a 405 say `GET, HEAD`.
+### Structure
 
-**Done when:** `curl -I http://127.0.0.1:8080/health` (capital `-I` sends HEAD) shows `200 OK`, and the 405 test checks the new `Allow` value.
+- `main.go`, with one handler per route, a `newMux()` function, and conversion logic in plain functions that know nothing about HTTP (for example, `toCelsius(value, unit)` and `fromCelsius(value, unit)`).
+- `main_test.go`, with tests at all three levels: the conversion functions, the router (a table test), and one real connection (`httptest.NewServer`).
+- `.github/workflows/test.yml`, running `gofmt`, `go vet` and `go test -race` on every push.
 
-## 3. Return JSON errors
+## Sample session
 
-Plain-text errors are hard for programs to read. Change every error response to JSON, for example `{"error":"name must be between 1 and 40 characters"}`, with `Content-Type: application/json`.
+With the finished service running:
 
-- Write a helper `writeError(w, status, message)` and replace every `http.Error` call with it.
-- Update the table test to check the content type of error responses.
+~~~text
+$ curl -i 'http://127.0.0.1:8080/convert?value=100&from=C&to=F'
+HTTP/1.1 200 OK
+Content-Type: application/json
 
-**Done when:** every 400, 404 and 405 response is JSON, including the 404 from the catch-all route.
+{"value":100,"from":"C","to":"F","result":212}
 
-**Think about:** the router's own 404 for `/unknown` is written by `greet`, so you control it. Which responses would you *not* control if you used a pattern without a catch-all?
+$ curl -s 'http://127.0.0.1:8080/convert?value=98.6&from=F&to=C'
+{"value":98.6,"from":"F","to":"C","result":37}
 
-## 4. Make the port configurable
+$ curl -s 'http://127.0.0.1:8080/convert?value=0&from=K&to=C'
+{"value":0,"from":"K","to":"C","result":-273.15}
 
-Read the listen address from an environment variable named `LISTEN_ADDR`, falling back to `127.0.0.1:8080` when it isn't set.
+$ curl -s 'http://127.0.0.1:8080/convert?value=300&from=K&to=F'
+{"value":300,"from":"K","to":"F","result":80.33}
 
-- Use `os.Getenv`. Keep the logic in a small function, `listenAddressFromEnv()`, so you can test it with `t.Setenv`.
-- Try `LISTEN_ADDR=127.0.0.1:9090 go run .` and curl port 9090.
+$ curl -i 'http://127.0.0.1:8080/convert?value=-300&from=C&to=K'
+HTTP/1.1 400 Bad Request
 
-**Done when:** a test covers both the default and the override, and you can explain what an *environment variable* is. Phase 1 builds on this.
+temperature is below absolute zero
 
-## 5. Stretch: reject names with control characters
+$ curl -i 'http://127.0.0.1:8080/convert?value=hot&from=C&to=F'
+HTTP/1.1 400 Bad Request
 
-Decide on a rule, write it down as part of the contract, then implement it test-first. For example, only allow letters, spaces, hyphens and apostrophes. Look at the `unicode` package.
+value must be a number
 
-**Done when:** your contract table, your tests and your code all agree, and you can explain one name your rule wrongly rejects. Every validation rule has trade-offs.
+$ curl -i 'http://127.0.0.1:8080/convert?value=10&from=C&to=X'
+HTTP/1.1 400 Bad Request
 
-## 6. Stretch: compare a router library
+unit must be one of C, F, K
 
-Rebuild only `/health` and `/greet` in two tiny throwaway programs, one with [chi](https://github.com/go-chi/chi) and one with [Gin](https://gin-gonic.com/en/docs/quickstart/). Don't change your main service.
+$ curl -i -X POST 'http://127.0.0.1:8080/convert?value=10&from=C&to=F'
+HTTP/1.1 405 Method Not Allowed
+Allow: GET
 
-**Write down:** what each library does for you that you wrote by hand (method checks, 404/405, reading the query), and what it hides. Which one still uses standard `http.Handler` functions?
+method not allowed
+
+$ curl -i http://127.0.0.1:8080/
+HTTP/1.1 404 Not Found
+
+404 page not found
+~~~
+
+Other headers, such as `Date` and `Content-Length`, are left out above; yours will have them.
+
+## Acceptance checks
+
+You're done when all of these are true:
+
+1. Every row of the contract table has at least one test.
+2. The conversion functions have table tests covering all six unit pairs, plus same-unit conversions.
+3. The router test includes the boundaries: exactly 0 K is accepted, and anything below it is rejected.
+4. The rounding case `98.6 F → C = 37` has a test.
+5. One test starts a real server with `httptest.NewServer` and calls `/convert` over a real connection.
+6. Every command in the sample session produces the output shown.
+7. `gofmt -l .` prints nothing, and `go vet ./...` and `go test -race ./...` pass.
+8. Your repository's CI run is green, and its history shows one red run that you fixed.
+
+## Stretch goals
+
+- Accept lowercase units too (`c`, `f`, `k`), and decide whether the response echoes the input or the canonical uppercase form. Write the rule down, then test it.
+- Add `GET /units`, returning `[{"symbol":"C","name":"Celsius"}, ...]`.
+- Return errors as JSON (`{"error":"..."}`) with `Content-Type: application/json`, and make every error test check the content type.
+
+## Hints
+
+These point back to the guide; they aren't code.
+
+- Reading the query, validating, and returning early: step 5 (`greetName`).
+- The `Allow` header and 405: step 4.
+- Why `/` matches everything, and how to return 404 for it: step 5 (routing rules).
+- Rounding: look up `math.Round` and think about how to round to 2 places, not 0.
+- `strconv.ParseFloat` turns text into a number and returns an error if it can't.

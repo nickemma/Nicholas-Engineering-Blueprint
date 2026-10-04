@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Run every check CI runs: lesson code blocks match their step files, and every
-# Go module, Python project and Rust crate under lessons/ and dsa/ is
-# formatted, linted, and passes its tests.
+# Run every check CI runs: every lesson guide is rebuilt from its own code
+# blocks and its checks pass, and every Go module, Python project and Rust
+# crate under dsa/ is formatted, linted, and passes its tests.
 #
 # Usage, from the repository root:  bash scripts/test_all.sh
 
@@ -9,10 +9,11 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-echo "== lesson code blocks"
-python3 scripts/check_teaching.py
-
 failed=0
+
+echo "== lesson guides"
+python3 scripts/check_guides.py || failed=1
+
 while IFS= read -r modfile; do
   dir="$(dirname "$modfile")"
   echo "== $dir"

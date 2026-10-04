@@ -1,6 +1,6 @@
 # Phase 7: Evaluate utility, privacy, and usability
 
-> **Status: being rebuilt.** This phase is being rewritten to the [Phase 0](../00-request-service/TEACHING.md) standard: full code in `steps/`, real expected output, and CI checks. Until then, this page and TEACHING.md are an outline, and the authoritative plan for this phase is in [JOURNEY.md](../../JOURNEY.md#4-the-route).
+> **Status: being rebuilt.** This phase is being rewritten to the [Phase 0](../00-request-service/TEACHING.md) standard: a type-along guide with the code inline, real expected output, and CI checks. Until then, this page and TEACHING.md are an outline, and the authoritative plan for this phase is in [JOURNEY.md](../../JOURNEY.md#4-the-route).
 
 This self-study lesson tests whether local-first sharing helps the stated users enough to justify its latency, bandwidth, operational work, and privacy trade-offs. The main path is a reproducible systems experiment. A short, separate Python/AI sampler provides high-level career breadth without making AI a requirement of KESTREL.
 

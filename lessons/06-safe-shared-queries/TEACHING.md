@@ -1,6 +1,6 @@
 # Phase 6: Enforce safe cross-site queries
 
-> **Status: being rebuilt.** This phase is being rewritten to the [Phase 0](../00-request-service/TEACHING.md) standard: full code in `steps/`, real expected output, and CI checks. Until then, this page and TEACHING.md are an outline, and the authoritative plan for this phase is in [JOURNEY.md](../../JOURNEY.md#4-the-route).
+> **Status: being rebuilt.** This phase is being rewritten to the [Phase 0](../00-request-service/TEACHING.md) standard: a type-along guide with the code inline, real expected output, and CI checks. Until then, this page and TEACHING.md are an outline, and the authoritative plan for this phase is in [JOURNEY.md](../../JOURNEY.md#4-the-route).
 
 This self-study lesson adds a narrow, policy-checked query for synthetic records assigned to two site IDs. Its local practice harness uses one PostgreSQL instance with site-scoped rows so the policy and audit behavior can be tested on one computer; the Kestrel transfer preserves separate site custody. It begins by stating who can ask what, then implements trusted identity context, authorization, minimal disclosure, and auditable decisions. It does not use clinical records.
 

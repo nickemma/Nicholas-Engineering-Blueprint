@@ -1,6 +1,6 @@
 # Phase 3: Make local records durable and auditable
 
-> **Status: being rebuilt.** This phase is being rewritten to the [Phase 0](../00-request-service/TEACHING.md) standard: full code in `steps/`, real expected output, and CI checks. Until then, this page and TEACHING.md are an outline, and the authoritative plan for this phase is in [JOURNEY.md](../../JOURNEY.md#4-the-route).
+> **Status: being rebuilt.** This phase is being rewritten to the [Phase 0](../00-request-service/TEACHING.md) standard: a type-along guide with the code inline, real expected output, and CI checks. Until then, this page and TEACHING.md are an outline, and the authoritative plan for this phase is in [JOURNEY.md](../../JOURNEY.md#4-the-route).
 
 This is a self-study lesson. Follow it in order. Each section explains the idea, tells you exactly what to build, gives you a check, and says what that check proves. Work in a disposable practice copy with synthetic data. Keep this lesson open while learning, then close it for the Kestrel transfer at the end.
 

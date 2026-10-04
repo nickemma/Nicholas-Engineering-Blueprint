@@ -12,18 +12,18 @@ Phase 0 answered one request. Real services answer many requests at once from ca
 
 ## How this guide works
 
-The step parts are the same as Phase 0: **the problem, new ideas, the code, run it, break it, explain it, read.** Every code block with a file name matches the snapshot exactly, and CI checks that.
+The step parts are the same as Phase 0: **the problem, new ideas, the code, run it, break it, explain it, read.** You type all the code yourself, in your `practice/` folder, as you read. The first time a file appears you get the whole file; after that you get precise edits ("change this to that", "add this at the end"). CI builds the code from this guide on every change, so every step is known to work. There's no finished version to copy, by design.
 
-| Step | Snapshot | What it adds |
-|---|---|---|
-| 1 | [steps/01-domain](steps/01-domain) | What a job is; legal state changes; tests first |
-| 2 | [steps/02-repository](steps/02-repository) | A storage interface and an in-memory store; your first data race |
-| 3 | [steps/03-service](steps/03-service) | Use cases, dependency injection, and a race a mutex can't fix |
-| 4 | [steps/04-http-api](steps/04-http-api) | HTTP routes, strict JSON, and mapping errors to status codes |
-| 5 | [steps/05-composition-root](steps/05-composition-root) | Wiring everything in `main`; configuration; server timeouts |
-| 6 | [steps/06-deadlines](steps/06-deadlines) | Request deadlines and cancellation |
-| 7 | [steps/07-observability](steps/07-observability) | Structured logs, metrics, panic recovery, middleware order |
-| 8 | [steps/08-graceful-shutdown](steps/08-graceful-shutdown) | Signals and graceful shutdown. This is the finished Phase 1 service |
+| Step | What you add |
+|---|---|
+| 1 | What a job is; legal state changes; tests first |
+| 2 | A storage interface and an in-memory store; your first data race |
+| 3 | Use cases, dependency injection, and a race a mutex can't fix |
+| 4 | HTTP routes, strict JSON, and mapping errors to status codes |
+| 5 | Wiring everything in `main`; configuration; server timeouts |
+| 6 | Request deadlines and cancellation |
+| 7 | Structured logs, metrics, panic recovery, middleware order |
+| 8 | Signals and graceful shutdown |
 
 ## Setup
 
@@ -80,6 +80,8 @@ Each layer only knows about the one below it, through an interface where it matt
 ---
 
 ## Step 1: The domain, written test-first
+<!-- run: go mod init kestrel -->
+
 
 **The problem.** In Phase 0 the rules lived inside handlers. A job service has more rules: a description must be 1–200 characters, the duration must be in range, and a job can go from `queued` to `running`, but never from `completed` back to `running`. If those rules live in HTTP code, every new entry point (a CLI, a queue consumer in Phase 2) has to copy them, and copies drift. The rules belong in one place that knows nothing about HTTP: the **domain**.
 
@@ -105,7 +107,7 @@ Each layer only knows about the one below it, through an interface where it matt
 
 **Write the test first.** Create `internal/jobs/job_test.go`:
 
-<!-- file: steps/01-domain/internal/jobs/job_test.go -->
+<!-- file: internal/jobs/job_test.go -->
 ~~~go
 package jobs
 
@@ -229,7 +231,7 @@ Notice what the tests pin down: the trimming rule, both sides of the 200-charact
 
 **Now make it pass.** Create `internal/jobs/job.go`:
 
-<!-- file: steps/01-domain/internal/jobs/job.go -->
+<!-- file: internal/jobs/job.go -->
 ~~~go
 // Package jobs is the domain: what a job is, which states it can be in, and
 // which changes between states are allowed. It knows nothing about HTTP or
@@ -371,6 +373,8 @@ You'll see each subtest pass, including names like `TestTransitions/queued->runn
 
 **Explain it:** why do the domain functions take `now time.Time` as a parameter instead of calling `time.Now()`? What does making `Description` a type buy you, compared with a plain `string`?
 
+<!-- run: go mod tidy && test -z "$(gofmt -l .)" && go vet ./... && go test -race -count=1 ./... -->
+
 ---
 
 ## Step 2: A repository, and your first data race
@@ -385,7 +389,7 @@ You'll see each subtest pass, including names like `TestTransitions/queued->runn
 
 Create `internal/jobs/repository.go`:
 
-<!-- file: steps/02-repository/internal/jobs/repository.go -->
+<!-- file: internal/jobs/repository.go -->
 ~~~go
 package jobs
 
@@ -429,7 +433,7 @@ type Repository interface {
 
 Create `internal/memstore/store.go`:
 
-<!-- file: steps/02-repository/internal/memstore/store.go -->
+<!-- file: internal/memstore/store.go -->
 ~~~go
 // Package memstore keeps jobs in this process's memory. Everything it holds
 // is lost when the process exits.
@@ -509,10 +513,81 @@ Details that matter:
 - `ctx.Err()` is non-nil once the context is cancelled or past its deadline. Checking it first means a request that has already been abandoned doesn't do any more work.
 - The lock covers only the map and counter, never slow work. A lock held during slow work makes every other request wait.
 
-The concurrency test (the full file is [store_test.go](steps/02-repository/internal/memstore/store_test.go)):
+Create the store's tests in `internal/memstore/store_test.go`. The one to study closely is `TestConcurrentCreateIDsAreUnique`:
 
-<!-- excerpt: steps/02-repository/internal/memstore/store_test.go -->
+<!-- file: internal/memstore/store_test.go -->
 ~~~go
+package memstore
+
+import (
+	"context"
+	"errors"
+	"sync"
+	"testing"
+	"time"
+
+	"kestrel/internal/jobs"
+)
+
+func newJob(t *testing.T) jobs.Job {
+	t.Helper()
+	job, err := jobs.New("resize", 0, time.Now())
+	if err != nil {
+		t.Fatalf("jobs.New: %v", err)
+	}
+	return job
+}
+
+func TestCreateAssignsIDsAndGetReturnsJob(t *testing.T) {
+	store := New()
+	ctx := context.Background()
+
+	first, _ := store.Create(ctx, newJob(t))
+	second, _ := store.Create(ctx, newJob(t))
+	if first.ID != 1 || second.ID != 2 {
+		t.Fatalf("IDs = %d, %d, want 1, 2", first.ID, second.ID)
+	}
+
+	got, err := store.Get(ctx, second.ID)
+	if err != nil {
+		t.Fatalf("Get: %v", err)
+	}
+	if got != second {
+		t.Fatalf("Get = %+v, want %+v", got, second)
+	}
+}
+
+func TestGetUnknownJob(t *testing.T) {
+	if _, err := New().Get(context.Background(), 42); !errors.Is(err, jobs.ErrNotFound) {
+		t.Fatalf("error = %v, want %v", err, jobs.ErrNotFound)
+	}
+}
+
+func TestUpdateChecksExpectedState(t *testing.T) {
+	store := New()
+	ctx := context.Background()
+	job, _ := store.Create(ctx, newJob(t))
+
+	_ = job.Start(time.Now())
+	if err := store.Update(ctx, job, jobs.StateQueued); err != nil {
+		t.Fatalf("first Update: %v", err)
+	}
+	if err := store.Update(ctx, job, jobs.StateQueued); !errors.Is(err, jobs.ErrConflict) {
+		t.Fatalf("stale Update error = %v, want %v", err, jobs.ErrConflict)
+	}
+	if err := store.Update(ctx, jobs.Job{ID: 99}, jobs.StateQueued); !errors.Is(err, jobs.ErrNotFound) {
+		t.Fatalf("unknown Update error = %v, want %v", err, jobs.ErrNotFound)
+	}
+}
+
+func TestCancelledContextIsRefused(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	if _, err := New().Create(ctx, newJob(t)); !errors.Is(err, context.Canceled) {
+		t.Fatalf("error = %v, want %v", err, context.Canceled)
+	}
+}
+
 // Run with -race. Without the mutex, the race detector reports concurrent
 // map writes here, and the IDs may repeat.
 func TestConcurrentCreateIDsAreUnique(t *testing.T) {
@@ -594,6 +669,8 @@ How to read the report: one goroutine **read** memory at line 30 (`s.nextID++` r
 
 **Explain it:** why does the `jobs` package define `Repository` instead of `memstore` defining it? Why store jobs by value rather than by pointer?
 
+<!-- run: go mod tidy && test -z "$(gofmt -l .)" && go vet ./... && go test -race -count=1 ./... -->
+
 ---
 
 ## Step 3: The service, and a race a mutex can't fix
@@ -610,7 +687,7 @@ How to read the report: one goroutine **read** memory at line 30 (`s.nextID++` r
 
 Create `internal/jobs/service.go`:
 
-<!-- file: steps/03-service/internal/jobs/service.go -->
+<!-- file: internal/jobs/service.go -->
 ~~~go
 package jobs
 
@@ -755,10 +832,107 @@ sequenceDiagram
 
 The mutex makes each **call** safe. It doesn't make the **sequence** of calls one step. This is called a **check-then-act** race, or a **lost update**. The fix is **compare-and-swap**: `Update(ctx, job, StateQueued)` means "store this only if the state is *still* queued". The store checks and writes under one lock, so the second request gets `ErrConflict`. This is also called **optimistic concurrency control**. Phase 3 does the same thing in SQL with `UPDATE ... WHERE state = $expected`.
 
-The test (full file: [service_test.go](steps/03-service/internal/jobs/service_test.go)):
+Create `internal/jobs/service_test.go`. Study `slowGetRepository` and `TestConcurrentRunStartsJobOnce` closely:
 
-<!-- excerpt: steps/03-service/internal/jobs/service_test.go -->
+<!-- file: internal/jobs/service_test.go -->
 ~~~go
+package jobs_test
+
+import (
+	"context"
+	"errors"
+	"sync"
+	"testing"
+	"time"
+
+	"kestrel/internal/jobs"
+	"kestrel/internal/memstore"
+)
+
+var fixedNow = time.Date(2026, 10, 4, 12, 0, 0, 0, time.UTC)
+
+func fixedClock() time.Time { return fixedNow }
+
+func instantWork(context.Context, jobs.Job) error { return nil }
+
+func TestCreateValidatesAndStores(t *testing.T) {
+	svc := jobs.NewService(memstore.New(), jobs.WithClock(fixedClock))
+	ctx := context.Background()
+
+	job, err := svc.Create(ctx, "  resize  ", time.Second)
+	if err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	if job.ID == 0 || job.Description != "resize" || job.State != jobs.StateQueued || !job.CreatedAt.Equal(fixedNow) {
+		t.Fatalf("job = %+v", job)
+	}
+
+	if _, err := svc.Create(ctx, "", 0); !errors.Is(err, jobs.ErrInvalidDescription) {
+		t.Fatalf("empty description error = %v", err)
+	}
+	if _, err := svc.Create(ctx, "resize", time.Hour); !errors.Is(err, jobs.ErrInvalidDuration) {
+		t.Fatalf("long duration error = %v", err)
+	}
+}
+
+func TestRunCompletesJob(t *testing.T) {
+	svc := jobs.NewService(memstore.New(), jobs.WithClock(fixedClock), jobs.WithWork(instantWork))
+	ctx := context.Background()
+	job, _ := svc.Create(ctx, "resize", 0)
+
+	done, err := svc.Run(ctx, job.ID)
+	if err != nil {
+		t.Fatalf("Run: %v", err)
+	}
+	if done.State != jobs.StateCompleted {
+		t.Fatalf("state = %s, want completed", done.State)
+	}
+	stored, _ := svc.Get(ctx, job.ID)
+	if stored.State != jobs.StateCompleted {
+		t.Fatalf("stored state = %s, want completed", stored.State)
+	}
+}
+
+func TestRunTwiceIsRefused(t *testing.T) {
+	svc := jobs.NewService(memstore.New(), jobs.WithWork(instantWork))
+	ctx := context.Background()
+	job, _ := svc.Create(ctx, "resize", 0)
+
+	if _, err := svc.Run(ctx, job.ID); err != nil {
+		t.Fatalf("first Run: %v", err)
+	}
+	if _, err := svc.Run(ctx, job.ID); !errors.Is(err, jobs.ErrInvalidTransition) {
+		t.Fatalf("second Run error = %v, want %v", err, jobs.ErrInvalidTransition)
+	}
+}
+
+func TestRunUnknownJob(t *testing.T) {
+	svc := jobs.NewService(memstore.New())
+	if _, err := svc.Run(context.Background(), 7); !errors.Is(err, jobs.ErrNotFound) {
+		t.Fatalf("error = %v, want %v", err, jobs.ErrNotFound)
+	}
+}
+
+func TestRunRecordsDeadlineAsFailure(t *testing.T) {
+	svc := jobs.NewService(memstore.New())
+	job, _ := svc.Create(context.Background(), "slow", 2*time.Second)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Millisecond)
+	defer cancel()
+
+	failed, err := svc.Run(ctx, job.ID)
+	if !errors.Is(err, jobs.ErrWorkFailed) || !errors.Is(err, context.DeadlineExceeded) {
+		t.Fatalf("error = %v, want work failed by deadline", err)
+	}
+	if failed.State != jobs.StateFailed || failed.FailureReason != "deadline exceeded" {
+		t.Fatalf("job = %+v, want failed by deadline", failed)
+	}
+	stored, _ := svc.Get(context.Background(), job.ID)
+	if stored.State != jobs.StateFailed {
+		t.Fatalf("stored state = %s, want failed even though ctx was cancelled", stored.State)
+	}
+}
+
 // slowGetRepository wraps a real repository and pauses after every Get. That
 // widens the gap between Run's Get and its Update, so a race that would
 // otherwise happen once in a thousand runs happens every time.
@@ -770,6 +944,52 @@ func (r slowGetRepository) Get(ctx context.Context, id jobs.ID) (jobs.Job, error
 	job, err := r.Repository.Get(ctx, id)
 	time.Sleep(5 * time.Millisecond)
 	return job, err
+}
+
+// The store's mutex protects the map, but Get-then-Update is two separate
+// operations. Only the compare-and-swap in Update makes Run safe when two
+// requests race for the same job.
+func TestConcurrentRunStartsJobOnce(t *testing.T) {
+	var mu sync.Mutex
+	runs := 0
+	countingWork := func(context.Context, jobs.Job) error {
+		mu.Lock()
+		runs++
+		mu.Unlock()
+		time.Sleep(10 * time.Millisecond)
+		return nil
+	}
+	svc := jobs.NewService(slowGetRepository{memstore.New()}, jobs.WithWork(countingWork))
+	ctx := context.Background()
+	job, _ := svc.Create(ctx, "resize", 0)
+
+	const callers = 20
+	errs := make(chan error, callers)
+	var wg sync.WaitGroup
+	for range callers {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			_, err := svc.Run(ctx, job.ID)
+			errs <- err
+		}()
+	}
+	wg.Wait()
+	close(errs)
+
+	succeeded := 0
+	for err := range errs {
+		switch {
+		case err == nil:
+			succeeded++
+		case errors.Is(err, jobs.ErrConflict), errors.Is(err, jobs.ErrInvalidTransition):
+		default:
+			t.Fatalf("unexpected error: %v", err)
+		}
+	}
+	if succeeded != 1 || runs != 1 {
+		t.Fatalf("succeeded = %d, work ran %d times; want 1 and 1", succeeded, runs)
+	}
 }
 ~~~
 
@@ -791,9 +1011,8 @@ Without the slow repository the test usually passes even with the bug: the windo
 
 ### Keeping the record honest after a cancellation
 
-`Run`'s last `Update` uses `context.WithoutCancel(ctx)`: a context that keeps the request's values but is **never** cancelled. Why?
+`Run`'s last `Update` uses `context.WithoutCancel(ctx)`: a context that keeps the request's values but is **never** cancelled. Why? Look again at this test from the file you just typed:
 
-<!-- excerpt: steps/03-service/internal/jobs/service_test.go -->
 ~~~go
 func TestRunRecordsDeadlineAsFailure(t *testing.T) {
 	svc := jobs.NewService(memstore.New())
@@ -829,6 +1048,8 @@ The deadline stopped the work, which is right. But the same expired context also
 
 **Explain it:** draw the check-then-act race. Why doesn't the mutex prevent it? Why doesn't `-race` detect it? What does `WithoutCancel` protect against?
 
+<!-- run: go mod tidy && test -z "$(gofmt -l .)" && go vet ./... && go test -race -count=1 ./... -->
+
 ---
 
 ## Step 4: The HTTP API
@@ -849,7 +1070,7 @@ The deadline stopped the work, which is right. But the same expired context also
 
 Create `internal/httpapi/json.go`:
 
-<!-- file: steps/04-http-api/internal/httpapi/json.go -->
+<!-- file: internal/httpapi/json.go -->
 ~~~go
 package httpapi
 
@@ -939,7 +1160,7 @@ func writeError(w http.ResponseWriter, status int, message string) {
 
 Create `internal/httpapi/handler.go`:
 
-<!-- file: steps/04-http-api/internal/httpapi/handler.go -->
+<!-- file: internal/httpapi/handler.go -->
 ~~~go
 // Package httpapi translates HTTP to and from the jobs use cases. It owns
 // status codes, JSON shapes and request limits, and holds no business rules.
@@ -1101,7 +1322,7 @@ Things to notice:
 
 Create `cmd/api/main.go` so you can run it:
 
-<!-- file: steps/04-http-api/cmd/api/main.go -->
+<!-- file: cmd/api/main.go -->
 ~~~go
 // Command api runs the KESTREL jobs service.
 package main
@@ -1125,10 +1346,83 @@ func main() {
 }
 ~~~
 
-The table test for bad requests is in [handler_test.go](steps/04-http-api/internal/httpapi/handler_test.go). Each row is one line of the contract:
+Create `internal/httpapi/handler_test.go`. The table test for bad requests, `TestCreateRejectsBadRequests`, matters most: each row is one line of the contract.
 
-<!-- excerpt: steps/04-http-api/internal/httpapi/handler_test.go -->
+<!-- file: internal/httpapi/handler_test.go -->
 ~~~go
+package httpapi
+
+import (
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
+
+	"kestrel/internal/jobs"
+	"kestrel/internal/memstore"
+)
+
+func newTestHandler() http.Handler {
+	return NewHandler(jobs.NewService(memstore.New()))
+}
+
+func do(t *testing.T, h http.Handler, method, target, body string) *httptest.ResponseRecorder {
+	t.Helper()
+	request := httptest.NewRequest(method, target, strings.NewReader(body))
+	if body != "" {
+		request.Header.Set("Content-Type", "application/json")
+	}
+	response := httptest.NewRecorder()
+	h.ServeHTTP(response, request)
+	return response
+}
+
+func decode(t *testing.T, r *httptest.ResponseRecorder) jobResponse {
+	t.Helper()
+	var job jobResponse
+	if err := json.Unmarshal(r.Body.Bytes(), &job); err != nil {
+		t.Fatalf("decode %q: %v", r.Body.String(), err)
+	}
+	return job
+}
+
+func TestHealth(t *testing.T) {
+	response := do(t, newTestHandler(), http.MethodGet, "/health", "")
+	if response.Code != http.StatusOK || response.Body.String() != "{\"status\":\"ok\"}\n" {
+		t.Fatalf("got %d %q", response.Code, response.Body.String())
+	}
+}
+
+func TestCreateThenGet(t *testing.T) {
+	h := newTestHandler()
+
+	created := do(t, h, http.MethodPost, "/jobs", `{"description":"resize","duration_ms":50}`)
+	if created.Code != http.StatusCreated {
+		t.Fatalf("POST status = %d, body %s", created.Code, created.Body)
+	}
+	job := decode(t, created)
+	if job.ID != 1 || job.State != "queued" || job.DurationMS != 50 {
+		t.Fatalf("created = %+v", job)
+	}
+	if got := created.Header().Get("Location"); got != "/jobs/1" {
+		t.Fatalf("Location = %q, want /jobs/1", got)
+	}
+
+	fetched := do(t, h, http.MethodGet, "/jobs/1", "")
+	if fetched.Code != http.StatusOK || decode(t, fetched).Description != "resize" {
+		t.Fatalf("GET = %d %s", fetched.Code, fetched.Body)
+	}
+}
+
+func TestCreateRejectsBadRequests(t *testing.T) {
+	tests := []struct {
+		name        string
+		contentType string
+		body        string
+		wantStatus  int
+		wantError   string
+	}{
 		{"wrong content type", "text/plain", `{"description":"x"}`, http.StatusUnsupportedMediaType, "Content-Type must be application/json"},
 		{"empty body", "application/json", ``, http.StatusBadRequest, "request body is empty"},
 		{"malformed JSON", "application/json", `{"description":`, http.StatusBadRequest, "request body is not valid JSON"},
@@ -1138,6 +1432,67 @@ The table test for bad requests is in [handler_test.go](steps/04-http-api/intern
 		{"missing description", "application/json", `{}`, http.StatusBadRequest, jobs.ErrInvalidDescription.Error()},
 		{"duration too long", "application/json", `{"description":"x","duration_ms":60000}`, http.StatusBadRequest, jobs.ErrInvalidDuration.Error()},
 		{"oversized body", "application/json", `{"description":"` + strings.Repeat("a", 2000) + `"}`, http.StatusRequestEntityTooLarge, "request body must not exceed 1024 bytes"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			request := httptest.NewRequest(http.MethodPost, "/jobs", strings.NewReader(tt.body))
+			request.Header.Set("Content-Type", tt.contentType)
+			response := httptest.NewRecorder()
+			newTestHandler().ServeHTTP(response, request)
+
+			if response.Code != tt.wantStatus {
+				t.Fatalf("status = %d, want %d (body %s)", response.Code, tt.wantStatus, response.Body)
+			}
+			var got errorResponse
+			_ = json.Unmarshal(response.Body.Bytes(), &got)
+			if got.Error != tt.wantError {
+				t.Fatalf("error = %q, want %q", got.Error, tt.wantError)
+			}
+		})
+	}
+}
+
+func TestGetErrors(t *testing.T) {
+	h := newTestHandler()
+	tests := []struct {
+		target string
+		want   int
+	}{
+		{"/jobs/99", http.StatusNotFound},
+		{"/jobs/abc", http.StatusBadRequest},
+		{"/jobs/0", http.StatusBadRequest},
+		{"/jobs/-3", http.StatusBadRequest},
+	}
+	for _, tt := range tests {
+		if got := do(t, h, http.MethodGet, tt.target, "").Code; got != tt.want {
+			t.Errorf("GET %s = %d, want %d", tt.target, got, tt.want)
+		}
+	}
+}
+
+func TestRouterRejectsWrongMethod(t *testing.T) {
+	response := do(t, newTestHandler(), http.MethodDelete, "/jobs/1", "")
+	if response.Code != http.StatusMethodNotAllowed {
+		t.Fatalf("status = %d, want 405", response.Code)
+	}
+	if allow := response.Header().Get("Allow"); !strings.Contains(allow, "GET") {
+		t.Fatalf("Allow = %q, want it to list GET", allow)
+	}
+}
+
+func TestRunCompletesThenConflicts(t *testing.T) {
+	h := newTestHandler()
+	do(t, h, http.MethodPost, "/jobs", `{"description":"resize","duration_ms":10}`)
+
+	first := do(t, h, http.MethodPost, "/jobs/1/run", "")
+	if first.Code != http.StatusOK || decode(t, first).State != "completed" {
+		t.Fatalf("first run = %d %s", first.Code, first.Body)
+	}
+	second := do(t, h, http.MethodPost, "/jobs/1/run", "")
+	if second.Code != http.StatusConflict {
+		t.Fatalf("second run = %d, want 409", second.Code)
+	}
+}
 ~~~
 
 **Run it.** Run `go run ./cmd/api` (the path names the package that has `main`). Then, in a second terminal:
@@ -1193,6 +1548,8 @@ Now stop the server and start it again, then `curl -i http://127.0.0.1:8080/jobs
 
 **Explain it:** why does `httpapi` define `JobService` rather than using `*jobs.Service` directly? What's the difference between 400, 409 and 500 in this API?
 
+<!-- run: go mod tidy && test -z "$(gofmt -l .)" && go vet ./... && go test -race -count=1 ./... -->
+
 ---
 
 ## Step 5: The composition root and configuration
@@ -1209,7 +1566,7 @@ Now stop the server and start it again, then `curl -i http://127.0.0.1:8080/jobs
   - `ReadTimeout` and `WriteTimeout` bound the whole request and response;
   - `IdleTimeout` closes kept-alive connections nobody is using.
 
-<!-- file: steps/05-composition-root/cmd/api/main.go -->
+<!-- file: cmd/api/main.go -->
 ~~~go
 // Command api runs the KESTREL jobs service.
 //
@@ -1281,6 +1638,36 @@ func run(getenv func(string) string) error {
 
 `fmt.Fprintln(os.Stderr, err)` writes to **standard error**, the stream for problems. Standard output is for normal output. `os.Exit(1)` ends the process with a **non-zero exit status**, which tells the shell, CI or Kubernetes that it failed.
 
+
+Create `cmd/api/main_test.go`:
+
+<!-- file: cmd/api/main_test.go -->
+~~~go
+package main
+
+import "testing"
+
+func env(values map[string]string) func(string) string {
+	return func(key string) string { return values[key] }
+}
+
+func TestLoadConfig(t *testing.T) {
+	cfg, err := loadConfig(env(nil))
+	if err != nil || cfg.ListenAddr != "127.0.0.1:8080" {
+		t.Fatalf("defaults = %+v, %v", cfg, err)
+	}
+
+	cfg, err = loadConfig(env(map[string]string{"LISTEN_ADDR": "0.0.0.0:9000"}))
+	if err != nil || cfg.ListenAddr != "0.0.0.0:9000" {
+		t.Fatalf("override = %+v, %v", cfg, err)
+	}
+
+	if _, err := loadConfig(env(map[string]string{"LISTEN_ADDR": "8080"})); err == nil {
+		t.Error("LISTEN_ADDR without a host:port form was accepted")
+	}
+}
+~~~
+
 **Run it.**
 
 ~~~bash
@@ -1299,6 +1686,8 @@ exit status 1
 The service refused to start with bad configuration. **Fail fast** at startup is far better than half-working until the first request.
 
 **Explain it:** what is the composition root, and why does only `main` create concrete types? What does `ReadHeaderTimeout` defend against?
+
+<!-- run: go mod tidy && test -z "$(gofmt -l .)" && go vet ./... && go test -race -count=1 ./... -->
 
 ---
 
@@ -1323,7 +1712,7 @@ The service refused to start with bad configuration. **Fail fast** at startup is
 
 Create `internal/httpapi/middleware.go`:
 
-<!-- file: steps/06-deadlines/internal/httpapi/middleware.go -->
+<!-- file: internal/httpapi/middleware.go -->
 ~~~go
 package httpapi
 
@@ -1346,9 +1735,21 @@ func withTimeout(d time.Duration, next http.Handler) http.Handler {
 
 `defer cancel()` releases the timer the context holds, even if the request finishes early. Always call the `cancel` you're given; `go vet` warns if you don't. `http.HandlerFunc(...)` turns an ordinary function into an `http.Handler`.
 
-In `handler.go`, `NewHandler` gains functional options, the same pattern as the service:
+In `handler.go`, `NewHandler` gains functional options, the same pattern as the service.
 
-<!-- excerpt: steps/06-deadlines/internal/httpapi/handler.go -->
+Make these changes to `internal/httpapi/handler.go`:
+
+Change:
+
+<!-- edit: internal/httpapi/handler.go -->
+~~~go
+// NewHandler builds the routes. Each pattern names a method and a path, so
+// the router itself answers 405 for a known path with the wrong method.
+func NewHandler(service JobService) http.Handler {
+~~~
+
+to:
+
 ~~~go
 type config struct {
 	requestTimeout time.Duration
@@ -1369,19 +1770,38 @@ func NewHandler(service JobService, opts ...Option) http.Handler {
 		opt(&cfg)
 	}
 
-	h := &handlers{jobs: service}
-	mux := http.NewServeMux()
-	mux.HandleFunc("GET /health", h.health)
-	mux.HandleFunc("POST /jobs", h.createJob)
-	mux.HandleFunc("GET /jobs/{id}", h.getJob)
-	mux.HandleFunc("POST /jobs/{id}/run", h.runJob)
-	return withTimeout(cfg.requestTimeout, mux)
-}
 ~~~
 
-`runJob` now tells deadline, cancellation and domain errors apart:
+Change:
 
-<!-- excerpt: steps/06-deadlines/internal/httpapi/handler.go -->
+<!-- edit: internal/httpapi/handler.go -->
+~~~go
+	return mux
+~~~
+
+to:
+
+~~~go
+	return withTimeout(cfg.requestTimeout, mux)
+~~~
+
+Change:
+
+<!-- edit: internal/httpapi/handler.go -->
+~~~go
+	job, err := h.jobs.Run(r.Context(), id)
+	if err != nil {
+		h.writeDomainError(w, r, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, toResponse(job))
+}
+
+func parseID(w http.ResponseWriter, r *http.Request) (jobs.ID, bool) {
+~~~
+
+to:
+
 ~~~go
 	job, err := h.jobs.Run(r.Context(), id)
 	switch {
@@ -1395,9 +1815,238 @@ func NewHandler(service JobService, opts ...Option) http.Handler {
 		h.writeDomainError(w, r, err)
 	}
 }
+
+func parseID(w http.ResponseWriter, r *http.Request) (jobs.ID, bool) {
 ~~~
 
-`main.go` reads `REQUEST_TIMEOUT` (default `2s`) with a small helper, `durationFromEnv`, and passes `httpapi.WithRequestTimeout(cfg.RequestTimeout)`. The server's `WriteTimeout` becomes the request timeout plus five seconds, so the server never cuts off a response the handler is still allowed to write. See [main.go](steps/06-deadlines/cmd/api/main.go).
+
+The last change makes `runJob` tell deadline, cancellation and domain errors apart.
+
+`main.go` reads `REQUEST_TIMEOUT` (default `2s`) with a small helper, `durationFromEnv`, and passes `httpapi.WithRequestTimeout(cfg.RequestTimeout)`. The server's `WriteTimeout` becomes the request timeout plus five seconds, so the server never cuts off a response the handler is still allowed to write. Those `main.go` changes follow.
+
+
+
+Make these changes to `internal/httpapi/handler_test.go`:
+
+Change:
+
+<!-- edit: internal/httpapi/handler_test.go -->
+~~~go
+	"testing"
+
+~~~
+
+to:
+
+~~~go
+	"testing"
+	"time"
+
+~~~
+
+Change:
+
+<!-- edit: internal/httpapi/handler_test.go -->
+~~~go
+func newTestHandler() http.Handler {
+	return NewHandler(jobs.NewService(memstore.New()))
+~~~
+
+to:
+
+~~~go
+func newTestHandler(opts ...Option) http.Handler {
+	return NewHandler(jobs.NewService(memstore.New()), opts...)
+~~~
+
+Add this at the end of the file:
+
+<!-- append: internal/httpapi/handler_test.go -->
+~~~go
+func TestRunPastDeadlineReturns504AndFailsJob(t *testing.T) {
+	h := newTestHandler(WithRequestTimeout(50 * time.Millisecond))
+	do(t, h, http.MethodPost, "/jobs", `{"description":"slow","duration_ms":2000}`)
+
+	start := time.Now()
+	response := do(t, h, http.MethodPost, "/jobs/1/run", "")
+	if elapsed := time.Since(start); elapsed > time.Second {
+		t.Fatalf("run took %v; the deadline should have stopped it near 50ms", elapsed)
+	}
+	if response.Code != http.StatusGatewayTimeout {
+		t.Fatalf("status = %d, want 504", response.Code)
+	}
+	if job := decode(t, response); job.State != "failed" || job.FailureReason != "deadline exceeded" {
+		t.Fatalf("job = %+v", job)
+	}
+	if job := decode(t, do(t, h, http.MethodGet, "/jobs/1", "")); job.State != "failed" {
+		t.Fatalf("stored state = %s, want failed", job.State)
+	}
+}
+~~~
+
+
+
+
+Make these changes to `cmd/api/main.go`:
+
+Change:
+
+<!-- edit: cmd/api/main.go -->
+~~~go
+	ListenAddr string
+~~~
+
+to:
+
+~~~go
+	ListenAddr     string
+	RequestTimeout time.Duration
+~~~
+
+Change:
+
+<!-- edit: cmd/api/main.go -->
+~~~go
+		ListenAddr: "127.0.0.1:8080",
+~~~
+
+to:
+
+~~~go
+		ListenAddr:     "127.0.0.1:8080",
+		RequestTimeout: 2 * time.Second,
+~~~
+
+Change:
+
+<!-- edit: cmd/api/main.go -->
+~~~go
+	}
+	return cfg, nil
+}
+~~~
+
+to:
+
+~~~go
+	}
+	var err error
+	if cfg.RequestTimeout, err = durationFromEnv(getenv, "REQUEST_TIMEOUT", cfg.RequestTimeout); err != nil {
+		return config{}, err
+	}
+	return cfg, nil
+}
+
+func durationFromEnv(getenv func(string) string, name string, fallback time.Duration) (time.Duration, error) {
+	v := getenv(name)
+	if v == "" {
+		return fallback, nil
+	}
+	d, err := time.ParseDuration(v)
+	if err != nil || d <= 0 {
+		return 0, fmt.Errorf("%s must be a positive duration such as 2s, got %q", name, v)
+	}
+	return d, nil
+}
+~~~
+
+Change:
+
+<!-- edit: cmd/api/main.go -->
+~~~go
+	handler := httpapi.NewHandler(service)
+~~~
+
+to:
+
+~~~go
+	handler := httpapi.NewHandler(service, httpapi.WithRequestTimeout(cfg.RequestTimeout))
+~~~
+
+Change:
+
+<!-- edit: cmd/api/main.go -->
+~~~go
+		WriteTimeout:      15 * time.Second,
+~~~
+
+to:
+
+~~~go
+		WriteTimeout:      cfg.RequestTimeout + 5*time.Second,
+~~~
+
+
+
+
+Make these changes to `cmd/api/main_test.go`:
+
+Change:
+
+<!-- edit: cmd/api/main_test.go -->
+~~~go
+import "testing"
+~~~
+
+to:
+
+~~~go
+import (
+	"testing"
+	"time"
+)
+~~~
+
+Change:
+
+<!-- edit: cmd/api/main_test.go -->
+~~~go
+	if err != nil || cfg.ListenAddr != "127.0.0.1:8080" {
+~~~
+
+to:
+
+~~~go
+	if err != nil || cfg.ListenAddr != "127.0.0.1:8080" || cfg.RequestTimeout != 2*time.Second {
+~~~
+
+Change:
+
+<!-- edit: cmd/api/main_test.go -->
+~~~go
+	cfg, err = loadConfig(env(map[string]string{"LISTEN_ADDR": "0.0.0.0:9000"}))
+	if err != nil || cfg.ListenAddr != "0.0.0.0:9000" {
+		t.Fatalf("override = %+v, %v", cfg, err)
+~~~
+
+to:
+
+~~~go
+	cfg, err = loadConfig(env(map[string]string{"LISTEN_ADDR": "0.0.0.0:9000", "REQUEST_TIMEOUT": "500ms"}))
+	if err != nil || cfg.ListenAddr != "0.0.0.0:9000" || cfg.RequestTimeout != 500*time.Millisecond {
+		t.Fatalf("overrides = %+v, %v", cfg, err)
+~~~
+
+Change:
+
+<!-- edit: cmd/api/main_test.go -->
+~~~go
+	}
+}
+~~~
+
+to:
+
+~~~go
+	}
+	for _, bad := range []string{"soon", "-1s", "0s"} {
+		if _, err := loadConfig(env(map[string]string{"REQUEST_TIMEOUT": bad})); err == nil {
+			t.Errorf("REQUEST_TIMEOUT=%q was accepted", bad)
+		}
+	}
+}
+~~~
+
 
 **Run it.** Start the server with a 1-second deadline: `REQUEST_TIMEOUT=1s go run ./cmd/api`. Then:
 
@@ -1435,6 +2084,8 @@ Exit code 28 is curl's "operation timed out". When curl hung up, the server noti
 
 **Read.** *Understanding Distributed Systems* (Vitillo), Part IV, the chapters on downstream resiliency and timeouts. Carry this question in: how do you choose a deadline, and what happens to a caller's caller when you exceed it?
 
+<!-- run: go mod tidy && test -z "$(gofmt -l .)" && go vet ./... && go test -race -count=1 ./... -->
+
 ---
 
 ## Step 7: Logs, metrics and panic recovery
@@ -1455,7 +2106,7 @@ Exit code 28 is curl's "operation timed out". When curl hung up, the server noti
 
 The finished `internal/httpapi/middleware.go`:
 
-<!-- file: steps/07-observability/internal/httpapi/middleware.go -->
+<!-- file: internal/httpapi/middleware.go -->
 ~~~go
 package httpapi
 
@@ -1542,7 +2193,7 @@ func routeOf(r *http.Request) string {
 
 Create `internal/httpapi/metrics.go`:
 
-<!-- file: steps/07-observability/internal/httpapi/metrics.go -->
+<!-- file: internal/httpapi/metrics.go -->
 ~~~go
 package httpapi
 
@@ -1600,10 +2251,121 @@ func (m *Metrics) instrument(next http.Handler) http.Handler {
 
 This is the first third-party dependency. Run `go get github.com/prometheus/client_golang@latest`. Go records the exact version in `go.mod` and the checksums in `go.sum`. Commit both: they make the build reproducible.
 
-`NewHandler` gains `WithLogger` and `WithMetrics` options, and wraps the router in a fixed order:
+`NewHandler` gains `WithLogger` and `WithMetrics` options, and wraps the router in a fixed order.
 
-<!-- excerpt: steps/07-observability/internal/httpapi/handler.go -->
+Make these changes to `internal/httpapi/handler.go`:
+
+Change:
+
+<!-- edit: internal/httpapi/handler.go -->
 ~~~go
+	jobs JobService
+~~~
+
+to:
+
+~~~go
+	jobs   JobService
+	logger *slog.Logger
+~~~
+
+Change:
+
+<!-- edit: internal/httpapi/handler.go -->
+~~~go
+type config struct {
+	requestTimeout time.Duration
+~~~
+
+to:
+
+~~~go
+type config struct {
+	logger         *slog.Logger
+	metrics        *Metrics
+	requestTimeout time.Duration
+~~~
+
+Change:
+
+<!-- edit: internal/httpapi/handler.go -->
+~~~go
+
+// WithRequestTimeout bounds how long any one request may run.
+~~~
+
+to:
+
+~~~go
+
+func WithLogger(logger *slog.Logger) Option {
+	return func(c *config) { c.logger = logger }
+}
+
+func WithMetrics(metrics *Metrics) Option {
+	return func(c *config) { c.metrics = metrics }
+}
+
+// WithRequestTimeout bounds how long any one request may run.
+~~~
+
+Change:
+
+<!-- edit: internal/httpapi/handler.go -->
+~~~go
+// NewHandler builds the routes and gives every request a deadline.
+~~~
+
+to:
+
+~~~go
+// NewHandler builds the routes and wraps them in middleware. The outermost
+// middleware runs first on the way in and last on the way out.
+~~~
+
+Change:
+
+<!-- edit: internal/httpapi/handler.go -->
+~~~go
+	cfg := config{requestTimeout: 2 * time.Second}
+~~~
+
+to:
+
+~~~go
+	cfg := config{
+		logger:         slog.New(slog.DiscardHandler),
+		requestTimeout: 2 * time.Second,
+	}
+~~~
+
+Change:
+
+<!-- edit: internal/httpapi/handler.go -->
+~~~go
+	h := &handlers{jobs: service}
+~~~
+
+to:
+
+~~~go
+	h := &handlers{jobs: service, logger: cfg.logger}
+~~~
+
+Change:
+
+<!-- edit: internal/httpapi/handler.go -->
+~~~go
+	return withTimeout(cfg.requestTimeout, mux)
+~~~
+
+to:
+
+~~~go
+	if cfg.metrics != nil {
+		mux.Handle("GET /metrics", cfg.metrics.Handler())
+	}
+
 	// Logging and metrics must receive the same *http.Request the router
 	// does, so they can read the route it matched (r.Pattern). withTimeout
 	// makes a copy of the request with r.WithContext, so it goes outside them.
@@ -1617,6 +2379,33 @@ This is the first third-party dependency. Run `go get github.com/prometheus/clie
 	return handler
 ~~~
 
+Change:
+
+<!-- edit: internal/httpapi/handler.go -->
+~~~go
+		// The client hung up. There is nobody left to answer.
+~~~
+
+to:
+
+~~~go
+		h.logger.Info("client went away during run", "job_id", id)
+~~~
+
+Change:
+
+<!-- edit: internal/httpapi/handler.go -->
+~~~go
+		slog.Error("unexpected error", "method", r.Method, "path", r.URL.Path, "error", err)
+~~~
+
+to:
+
+~~~go
+		h.logger.Error("unexpected error", "method", r.Method, "path", r.URL.Path, "error", err)
+~~~
+
+
 Wrapping happens inside-out, so the request passes through **recover → timeout → log → metrics → router** on the way in, and back out in reverse:
 
 ~~~mermaid
@@ -1624,7 +2413,167 @@ flowchart LR
     REQ[request] --> RC[withRecover] --> TO[withTimeout] --> LG[withRequestLog] --> MT[metrics] --> MUX[router + handler]
 ~~~
 
-`main.go` now builds a JSON logger, `slog.New(slog.NewJSONHandler(stdout, nil))`, and passes it plus `httpapi.NewMetrics()` to `NewHandler`. See [main.go](steps/07-observability/cmd/api/main.go).
+`main.go` now builds a JSON logger, `slog.New(slog.NewJSONHandler(stdout, nil))`, and passes it plus `httpapi.NewMetrics()` to `NewHandler`. Those `main.go` changes follow.
+
+
+
+Make these changes to `internal/httpapi/handler_test.go`:
+
+Change:
+
+<!-- edit: internal/httpapi/handler_test.go -->
+~~~go
+import (
+	"encoding/json"
+	"net/http"
+~~~
+
+to:
+
+~~~go
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"io"
+	"log/slog"
+	"net/http"
+~~~
+
+Add this at the end of the file:
+
+<!-- append: internal/httpapi/handler_test.go -->
+~~~go
+func TestRequestLogUsesRoutePattern(t *testing.T) {
+	var logs bytes.Buffer
+	logger := slog.New(slog.NewJSONHandler(&logs, nil))
+	h := newTestHandler(WithLogger(logger))
+
+	do(t, h, http.MethodGet, "/jobs/42", "")
+
+	var record map[string]any
+	if err := json.Unmarshal(logs.Bytes(), &record); err != nil {
+		t.Fatalf("log line %q: %v", logs.String(), err)
+	}
+	if record["route"] != "GET /jobs/{id}" || record["status"] != float64(404) {
+		t.Fatalf("log record = %v", record)
+	}
+}
+
+func TestMetricsCountRequests(t *testing.T) {
+	h := newTestHandler(WithMetrics(NewMetrics()))
+	do(t, h, http.MethodGet, "/health", "")
+	do(t, h, http.MethodGet, "/health", "")
+
+	body := do(t, h, http.MethodGet, "/metrics", "").Body.String()
+	want := `http_requests_total{code="200",method="GET",route="GET /health"} 2`
+	if !strings.Contains(body, want) {
+		t.Fatalf("metrics missing %q:\n%s", want, body)
+	}
+}
+
+type panickingService struct{ JobService }
+
+func (panickingService) Get(context.Context, jobs.ID) (jobs.Job, error) { panic("boom") }
+
+func TestPanicBecomes500(t *testing.T) {
+	h := NewHandler(panickingService{}, WithLogger(slog.New(slog.NewTextHandler(io.Discard, nil))))
+	response := do(t, h, http.MethodGet, "/jobs/1", "")
+	if response.Code != http.StatusInternalServerError {
+		t.Fatalf("status = %d, want 500", response.Code)
+	}
+}
+~~~
+
+
+
+
+Make these changes to `cmd/api/main.go`:
+
+Change:
+
+<!-- edit: cmd/api/main.go -->
+~~~go
+	"log"
+~~~
+
+to:
+
+~~~go
+	"io"
+	"log/slog"
+~~~
+
+Change:
+
+<!-- edit: cmd/api/main.go -->
+~~~go
+	if err := run(os.Getenv); err != nil {
+~~~
+
+to:
+
+~~~go
+	if err := run(os.Getenv, os.Stdout); err != nil {
+~~~
+
+Change:
+
+<!-- edit: cmd/api/main.go -->
+~~~go
+// run builds the service from its configuration and serves it. Taking the
+// environment as a parameter instead of calling os.Getenv inside is what
+// makes it testable.
+func run(getenv func(string) string) error {
+~~~
+
+to:
+
+~~~go
+// run builds the service from its configuration and serves it. It takes
+// its environment and output as parameters so tests can supply their own.
+func run(getenv func(string) string, stdout io.Writer) error {
+~~~
+
+Change:
+
+<!-- edit: cmd/api/main.go -->
+~~~go
+		return err
+	}
+
+	service := jobs.NewService(memstore.New())
+	handler := httpapi.NewHandler(service, httpapi.WithRequestTimeout(cfg.RequestTimeout))
+~~~
+
+to:
+
+~~~go
+		return err
+	}
+	logger := slog.New(slog.NewJSONHandler(stdout, nil))
+
+	service := jobs.NewService(memstore.New())
+	handler := httpapi.NewHandler(service,
+		httpapi.WithLogger(logger),
+		httpapi.WithMetrics(httpapi.NewMetrics()),
+		httpapi.WithRequestTimeout(cfg.RequestTimeout),
+	)
+~~~
+
+Change:
+
+<!-- edit: cmd/api/main.go -->
+~~~go
+	log.Printf("listening on http://%s", cfg.ListenAddr)
+~~~
+
+to:
+
+~~~go
+	logger.Info("listening", "addr", cfg.ListenAddr)
+~~~
+
 
 **Run it.** Run `REQUEST_TIMEOUT=1s go run ./cmd/api`, make a few requests of each kind, then:
 
@@ -1668,6 +2617,8 @@ Every route became `unmatched`. `r.WithContext` returns a **copy** of the reques
 
 **Read.** *Site Reliability Engineering* (free at sre.google), Ch. 6, *Monitoring Distributed Systems*. Carry this question in: which of your metrics would page someone at 3 a.m., and which are just for dashboards?
 
+<!-- run: go mod tidy && test -z "$(gofmt -l .)" && go vet ./... && go test -race -count=1 ./... -->
+
 ---
 
 ## Step 8: Signals and graceful shutdown
@@ -1690,7 +2641,9 @@ Every route became `unmatched`. `r.WithContext` returns a **copy** of the reques
 
 The finished `cmd/api/main.go`:
 
-<!-- file: steps/08-graceful-shutdown/cmd/api/main.go -->
+Update `cmd/api/main.go` so it matches this:
+
+<!-- file: cmd/api/main.go -->
 ~~~go
 // Command api runs the KESTREL jobs service.
 //
@@ -1846,11 +2799,138 @@ sequenceDiagram
 - The shutdown context is built from `context.Background()`, not from `ctx`. `ctx` is already cancelled at this point, and a grace period derived from it would be zero.
 - After `Shutdown`, `Serve` returns `http.ErrServerClosed`. That's the normal case, not an error.
 
-The test that proves it (full file: [main_test.go](steps/08-graceful-shutdown/cmd/api/main_test.go)) starts the server on a free port, begins a 300 ms run, cancels the context 100 ms in, and checks three things:
+The test that proves it, in `cmd/api/main_test.go` below, starts the server on a free port, begins a 300 ms run, cancels the context 100 ms in, and checks three things:
 
 - the in-flight request still gets `200` with `completed`;
 - `run` returns `nil`;
 - a new request afterwards is refused.
+
+
+Update `cmd/api/main_test.go` so it matches this:
+
+<!-- file: cmd/api/main_test.go -->
+~~~go
+package main
+
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"io"
+	"net/http"
+	"strings"
+	"sync"
+	"testing"
+	"time"
+)
+
+func env(values map[string]string) func(string) string {
+	return func(key string) string { return values[key] }
+}
+
+func TestLoadConfig(t *testing.T) {
+	cfg, err := loadConfig(env(nil))
+	if err != nil || cfg.ListenAddr != "127.0.0.1:8080" || cfg.RequestTimeout != 2*time.Second {
+		t.Fatalf("defaults = %+v, %v", cfg, err)
+	}
+
+	cfg, err = loadConfig(env(map[string]string{"LISTEN_ADDR": "0.0.0.0:9000", "REQUEST_TIMEOUT": "500ms"}))
+	if err != nil || cfg.ListenAddr != "0.0.0.0:9000" || cfg.RequestTimeout != 500*time.Millisecond {
+		t.Fatalf("overrides = %+v, %v", cfg, err)
+	}
+
+	if _, err := loadConfig(env(map[string]string{"LISTEN_ADDR": "8080"})); err == nil {
+		t.Error("LISTEN_ADDR without a host:port form was accepted")
+	}
+	for _, bad := range []string{"soon", "-1s", "0s"} {
+		if _, err := loadConfig(env(map[string]string{"SHUTDOWN_GRACE": bad})); err == nil {
+			t.Errorf("SHUTDOWN_GRACE=%q was accepted", bad)
+		}
+	}
+}
+
+// syncBuffer lets the server goroutine write logs while the test reads them.
+type syncBuffer struct {
+	mu  sync.Mutex
+	buf bytes.Buffer
+}
+
+func (s *syncBuffer) Write(p []byte) (int, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.buf.Write(p)
+}
+
+func (s *syncBuffer) String() string {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.buf.String()
+}
+
+func TestGracefulShutdownFinishesInFlightRequest(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	addrCh := make(chan string, 1)
+	runErr := make(chan error, 1)
+	var logs syncBuffer
+	go func() {
+		runErr <- run(ctx, env(map[string]string{"LISTEN_ADDR": "127.0.0.1:0"}), &logs, func(addr string) { addrCh <- addr })
+	}()
+	base := "http://" + <-addrCh
+
+	create, err := http.Post(base+"/jobs", "application/json", strings.NewReader(`{"description":"slow","duration_ms":300}`))
+	if err != nil {
+		t.Fatalf("create: %v", err)
+	}
+	create.Body.Close()
+
+	// Start a 300ms run, then ask the server to stop while it is in flight.
+	type result struct {
+		status int
+		state  string
+		err    error
+	}
+	inFlight := make(chan result, 1)
+	go func() {
+		resp, err := http.Post(base+"/jobs/1/run", "application/json", nil)
+		if err != nil {
+			inFlight <- result{err: err}
+			return
+		}
+		defer resp.Body.Close()
+		var body struct{ State string }
+		_ = json.NewDecoder(resp.Body).Decode(&body)
+		inFlight <- result{status: resp.StatusCode, state: body.State}
+	}()
+	time.Sleep(100 * time.Millisecond)
+	cancel()
+
+	got := <-inFlight
+	if got.err != nil || got.status != http.StatusOK || got.state != "completed" {
+		t.Fatalf("in-flight request: status=%d state=%q err=%v; graceful shutdown should let it finish", got.status, got.state, got.err)
+	}
+	if err := <-runErr; err != nil {
+		t.Fatalf("run returned %v", err)
+	}
+
+	if _, err := http.Get(base + "/health"); err == nil {
+		t.Fatal("server still accepted a request after shutdown")
+	}
+	for _, msg := range []string{`"msg":"shutting down"`, `"msg":"stopped"`} {
+		if !strings.Contains(logs.String(), msg) {
+			t.Errorf("logs missing %s:\n%s", msg, logs.String())
+		}
+	}
+}
+
+func TestRunFailsOnBadConfig(t *testing.T) {
+	err := run(context.Background(), env(map[string]string{"REQUEST_TIMEOUT": "fast"}), io.Discard, nil)
+	if err == nil || !strings.Contains(err.Error(), "REQUEST_TIMEOUT") {
+		t.Fatalf("error = %v, want a REQUEST_TIMEOUT config error", err)
+	}
+}
+~~~
 
 **Run it.** Build the binary so you can find it by name: `go build -o api ./cmd/api && ./api`. Then in a second terminal:
 
@@ -1923,13 +3003,15 @@ seq 1 200 | xargs -P 20 -I{} curl -s -o /dev/null -w '%{http_code}\n' \
 
 **Read.** CSAPP §8.1–8.2 and §8.4–8.5 (processes and signals), and OSTEP Ch. 5 (*Process API*). Carry this question in: what exactly happens, step by step, between pressing Ctrl+C and your `select` waking up?
 
+<!-- run: go mod tidy && test -z "$(gofmt -l .)" && go vet ./... && go test -race -count=1 ./... -->
+
 ---
 
 ## Rebuild it yourself
 
-Close this guide and the snapshots. In your own `kestrel` repository (from Phase 0), rebuild Phase 1 from the **contract table**, the **layer diagram** and your notes. Use TDD: a failing test before each piece of code. You may look up Go documentation, but don't copy the lesson code.
+Close this guide. In your own `kestrel` repository (from Phase 0), rebuild Phase 1 from the **contract table**, the **layer diagram** and your notes. Use TDD: a failing test before each piece of code. You may look up Go documentation, but don't copy the lesson code.
 
-Then compare your version with [steps/08-graceful-shutdown](steps/08-graceful-shutdown). Differences are fine if your tests prove the same contract. Record what you rebuilt, what you looked up, and every place where your design differs and why.
+Then compare your version with the code in this guide. Differences are fine if your tests prove the same contract. Record what you rebuilt, what you looked up, and every place where your design differs and why.
 
 ## Checkpoint
 

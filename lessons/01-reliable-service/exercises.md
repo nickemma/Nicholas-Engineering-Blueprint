@@ -1,53 +1,138 @@
-# Phase 1 exercises
+# Phase 1 exercise: shortlinks, a URL shortener
 
-Do these in your own `kestrel` repository after the checkpoint. Use TDD for every one: a failing test first. Each exercise says what "done" looks like. There are no solutions on purpose.
+Build this **on your own**, in a new repository (or a new folder of your `kestrel` repository), after the [checkpoint](TEACHING.md#checkpoint). It uses every Phase 1 idea on a new problem:
+- layers, ports and adapters, and dependency injection;
+- a domain with rules;
+- a race the mutex can't fix;
+- strict JSON, deadlines, logs and metrics;
+- graceful shutdown.
 
-## 1. Cancel a queued job
+There's no solution in this repository. This page describes exactly what the finished service does.
 
-Add `POST /jobs/{id}/cancel`. Only a `queued` job may be cancelled, and it moves to a new state, `cancelled`.
+## What you're building
 
-- Start in the domain: add the state and the transition to `allowed`, plus a `Cancel` method, with table tests for every legal and illegal transition.
-- Add `Service.Cancel` using compare-and-swap, then the handler.
+`shortlinks` turns long URLs into short aliases. `POST /links` stores a URL under an alias, either one you choose or a generated one. Visiting `/r/{alias}` redirects to the URL and counts the visit. Many users can create links and follow them at once, and the service must stay exact: an alias is never given out twice, and no visit is lost.
 
-**Done when:** cancelling a running or completed job returns 409; two concurrent cancels produce exactly one success (adapt `slowGetRepository`); `Run` on a cancelled job returns 409.
+## The finished result
 
-## 2. JSON for the router's own errors
+### Contract
 
-The router's 404 and 405 responses are plain text. Make every response JSON.
+| Request | Success | Errors |
+|---|---|---|
+| `GET /health` | `200` `{"status":"ok"}` | — |
+| `POST /links` with `{"url": "...", "alias": "..."}` (alias optional) | `201`, the link as JSON, and `Location: /links/{alias}` | `400` invalid URL or alias; `409` alias already taken; `413` body over 4 KiB; `415` not `application/json` |
+| `GET /links/{alias}` | `200`, the link as JSON | `404` no such alias |
+| `GET /r/{alias}` | `302 Found`, `Location: <the url>`, and the link's `visits` goes up by exactly 1 | `404` no such alias |
+| `DELETE /links/{alias}` | `204 No Content` | `404` no such alias |
+| Wrong method on a known path | — | `405` with `Allow` |
 
-- Hint: you can't change the router's messages, but you can catch them. One way is a catch-all route, `mux.HandleFunc("/", ...)`, for 404s. 405s are harder: think about what middleware could see.
+All error bodies are JSON: `{"error":"..."}`.
 
-**Done when:** a table test checks that every error status this API can return has `Content-Type: application/json`.
+The link's JSON shape:
 
-## 3. List jobs with pagination
+~~~json
+{"alias":"go-docs","url":"https://go.dev/doc/","visits":0,"created_at":"2026-10-04T12:00:00Z"}
+~~~
 
-Add `GET /jobs?state=queued&limit=20&after=40`.
+### Rules
 
-- Add a `List(ctx, filter)` method to `Repository`. Every implementation must now provide it, which is the cost of a wide interface. Is there a smaller design?
-- Validate the query parameters: an unknown state returns 400; `limit` must be between 1 and 100.
-- Return the results in ID order, plus the `next` cursor.
+- `url` must be an absolute `http` or `https` URL with a host, at most 2,048 characters. Anything else is a 400 with `{"error":"url must be an absolute http or https URL"}`.
+- `alias`, if given, must be 3–32 characters from `a-z`, `0-9` and `-`. Anything else is a 400 with `{"error":"alias must be 3-32 characters of a-z, 0-9 and -"}`.
+- A generated alias is 7 random characters from `a-z` and `0-9`. If it collides with an existing one, try again; it must never overwrite.
+- **An alias is claimed exactly once.** If 100 requests try to create the same alias at the same moment, exactly one gets `201` and the other 99 get `409`.
+- **No visit is lost.** After 1,000 concurrent requests to `/r/{alias}`, `visits` is exactly 1,000.
+- Every request has a deadline (`REQUEST_TIMEOUT`, default `2s`). The server has read-header, read, write and idle timeouts.
+- The service logs one JSON line per request (method, route pattern, status, duration), and **never logs URLs**: they can contain private tokens.
+- `/metrics` exposes `http_requests_total{route,method,code}`, `http_request_duration_seconds`, and `links_created_total`.
+- SIGTERM and SIGINT trigger a graceful shutdown, bounded by `SHUTDOWN_GRACE` (default `10s`).
+- Configuration comes from the environment: `LISTEN_ADDR` (default `127.0.0.1:8080`), `REQUEST_TIMEOUT` and `SHUTDOWN_GRACE`. Bad values stop the service at startup with a clear message.
 
-**Done when:** 250 jobs come back in exactly 13 pages with no duplicates and none missing, and the test proves it.
+### Structure
 
-## 4. Limit concurrent runs (a first look at saturation)
+~~~text
+cmd/shortlinks/main.go          composition root: config, wiring, server, graceful shutdown
+internal/links/link.go          domain: Link, Alias and URL value objects, validation
+internal/links/repository.go    the Repository port the domain needs
+internal/links/service.go       use cases: Create, Get, Visit, Delete
+internal/memstore/store.go      an in-memory adapter: map plus mutex
+internal/httpapi/               handlers, strict JSON, middleware, metrics
+~~~
 
-Allow at most `MAX_CONCURRENT_RUNS` (default 4) runs at once. Further run requests get `503 Service Unavailable` with a `Retry-After: 1` header, not a queue.
+The domain imports nothing from `httpapi` or `memstore`. The service receives its repository, clock and alias generator through its constructor, so tests can inject fixed ones.
 
-- Hint: a buffered channel of size N works as a semaphore. Use a non-blocking `select` with `default`.
-- Add a gauge metric, `jobs_running`.
+## Sample session
 
-**Done when:** a test starts N+1 slow runs and sees exactly one 503, and `jobs_running` goes back to 0 afterwards. Explain why rejecting is better than queueing here. (Phase 2 comes back to this as **backpressure**.)
+~~~text
+$ curl -i -X POST http://127.0.0.1:8080/links -H 'Content-Type: application/json' \
+    -d '{"url":"https://go.dev/doc/","alias":"go-docs"}'
+HTTP/1.1 201 Created
+Content-Type: application/json
+Location: /links/go-docs
 
-## 5. A request ID through logs
+{"alias":"go-docs","url":"https://go.dev/doc/","visits":0,"created_at":"2026-10-04T12:00:00Z"}
 
-Give each request an ID: take it from an incoming `X-Request-ID` header if present (validated), or generate one. Return it in the response header and include it in every log line for that request.
+$ curl -i -X POST http://127.0.0.1:8080/links -H 'Content-Type: application/json' \
+    -d '{"url":"https://example.com/","alias":"go-docs"}'
+HTTP/1.1 409 Conflict
 
-- Hint: store it in the context with a private key type, and use `slog`'s `With` to build a logger per request.
+{"error":"alias already taken"}
 
-**Done when:** a test sends two concurrent requests and checks that each one's log lines carry only its own ID.
+$ curl -s -X POST http://127.0.0.1:8080/links -H 'Content-Type: application/json' -d '{"url":"https://example.com/"}'
+{"alias":"k3x9q2a","url":"https://example.com/","visits":0,"created_at":"2026-10-04T12:00:01Z"}
 
-## 6. Stretch: an idle-timeout experiment
+$ curl -i http://127.0.0.1:8080/r/go-docs
+HTTP/1.1 302 Found
+Location: https://go.dev/doc/
 
-Write a tiny client that opens a TCP connection to the server and sends one header byte every 2 seconds.
+$ curl -s http://127.0.0.1:8080/links/go-docs
+{"alias":"go-docs","url":"https://go.dev/doc/","visits":1,"created_at":"2026-10-04T12:00:00Z"}
 
-**Done when:** you can show, with timestamps, the server closing the connection after `ReadHeaderTimeout`, and explain what would happen without it.
+$ curl -i -X POST http://127.0.0.1:8080/links -H 'Content-Type: application/json' -d '{"url":"ftp://x"}'
+HTTP/1.1 400 Bad Request
+
+{"error":"url must be an absolute http or https URL"}
+
+$ curl -i -X POST http://127.0.0.1:8080/links -H 'Content-Type: application/json' -d '{"url":"https://x.org","alias":"No Spaces!"}'
+HTTP/1.1 400 Bad Request
+
+{"error":"alias must be 3-32 characters of a-z, 0-9 and -"}
+
+$ curl -i -X DELETE http://127.0.0.1:8080/links/go-docs
+HTTP/1.1 204 No Content
+
+$ curl -i http://127.0.0.1:8080/r/go-docs
+HTTP/1.1 404 Not Found
+
+{"error":"link not found"}
+~~~
+
+The generated alias (`k3x9q2a`) and the timestamps will differ. Every other part of each response must match.
+
+## Acceptance checks
+
+You're done when all of these are true:
+
+1. Every row of the contract table has a test.
+2. The domain has table tests for URL and alias validation, including both sides of every length limit.
+3. **Alias race:** a test runs 100 goroutines that create the same alias, and asserts exactly one 201 and 99 409s. It fails if you remove your concurrency protection, even when run without `-race`. (Hint: you may need to widen the race window the way `slowGetRepository` did.)
+4. **Visit counter:** a test makes 1,000 concurrent visits, then asserts `visits == 1000`, under `go test -race`.
+5. A deadline test: with a repository that stalls longer than `REQUEST_TIMEOUT`, the request returns promptly with an error status, not after the stall.
+6. A log test proves URLs never appear in log output.
+7. A metrics test reads `/metrics` and finds `links_created_total`.
+8. A graceful-shutdown test proves an in-flight request finishes after shutdown begins.
+9. Every command in the sample session behaves as shown.
+10. `gofmt`, `go vet` and `go test -race ./...` pass, and CI is green.
+
+## Stretch goals
+
+- Add `expires_at` to `POST /links`. Expired links return `410 Gone`. Inject the clock so the test doesn't wait.
+- Rate-limit `POST /links` to 10 per second per client IP, returning `429` with `Retry-After` (look up the token-bucket algorithm).
+- Add `GET /links?limit=20&after=go-docs` with stable cursor pagination.
+
+## Hints
+
+- "Claim an alias exactly once" is a check-then-act problem. Revisit step 3: what made `Run` safe wasn't the mutex.
+- "No lost visits" is a read-modify-write problem. Where should the `+1` happen so that it's under one lock?
+- `net/url.Parse` parses URLs, and its result has `Scheme` and `Host` fields.
+- `crypto/rand` generates random aliases; think about what happens on a collision.
+- `http.Redirect(w, r, url, http.StatusFound)` writes a redirect.
