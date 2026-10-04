@@ -1,49 +1,49 @@
-# Phase 1 learning record
+# Phase 1: what I learned
 
-Answer after completing [TEACHING.md](TEACHING.md). Explain in your own words and point to a command, test, or output that supports each answer. If you cannot answer, return to that step, run the check, and write down what changed in your understanding.
+Fill this in as you finish each step of [TEACHING.md](TEACHING.md), then again from memory after the rebuild. Every answer needs evidence: a command and its output, a test name, or a link. Keep your filled-in copy in your own `kestrel` repository.
 
-## Build and contract
+## Explain it
 
-1. What information makes something a job, and which component owns the job's state?
-2. Why does POST return 201 while a successful GET returns 200?
-3. What is the difference between an invalid request, an unknown job ID, and a job that cannot make the requested transition?
-4. Show the curl command and response for creating and fetching one job.
+| Step | Question | My answer | Evidence |
+|---|---|---|---|
+| 1 | Why do the domain functions take `now` as a parameter instead of calling `time.Now()`? | | |
+| 1 | What does making `Description` its own type buy, compared with a plain `string`? | | |
+| 1 | Why are the allowed transitions a map instead of `if` statements? | | |
+| 2 | Why does `jobs` define `Repository`, not `memstore`? Which way does the dependency point? | | |
+| 2 | Why store jobs by value instead of by pointer? | | |
+| 2 | Read your race report: which line, which goroutines, read or write? | | |
+| 3 | Draw the check-then-act race in `Run`. Why doesn't the mutex prevent it? | | |
+| 3 | Why does `go test -race` pass when the compare-and-swap is removed? | | |
+| 3 | What would happen without `context.WithoutCancel` in the final `Update`? | | |
+| 4 | Why does `httpapi` define its own `JobService` interface? | | |
+| 4 | Give one request that returns each of 400, 404, 405, 409, 413 and 415, and say why | | |
+| 5 | What is the composition root? What does `ReadHeaderTimeout` defend against? | | |
+| 6 | Trace a client disconnect from the socket to `Simulate` | | |
+| 6 | 504 vs a client timeout: what does the server see in each case, and what does it record? | | |
+| 7 | Why log and label by route pattern instead of path? | | |
+| 7 | Name the golden signals and which metric gives each one | | |
+| 7 | Why did moving `withTimeout` inside the logger turn every route into `unmatched`? | | |
+| 8 | SIGINT, SIGTERM, SIGKILL: which can a program handle? | | |
+| 8 | Why is the shutdown context built from `context.Background()`? | | |
+| 8 | What does graceful shutdown **not** protect against? | | |
 
-## Process, concurrency, and cancellation
+## Evidence checklist
 
-5. What is a goroutine? How is it different from a process?
-6. What two operations could overlap when two requests update the map? What exactly does the mutex protect?
-7. What did the race detector report before the repair, and what test did you run after the repair?
-8. When does a request context become cancelled? What does the timeout test prove, and what does it not prove?
-9. What happened to a job after you restarted the process? Why?
-10. What did graceful shutdown wait for, and what happened when its deadline was reached?
-
-## Reliability and security
-
-11. Which resource limits did you add? Give the bad request you used to test each limit.
-12. What is in the request log? What data did you deliberately leave out?
-13. How would changing from net/http to chi alter routing? What would Gin add? Which parts of HTTP remain the same?
-14. Name one guarantee the service now makes and one guarantee it still does not make.
-
-## Evidence
-
-| Claim | Evidence to attach | Your observed result |
+| Claim | Command or test | Result |
 |---|---|---|
-| A valid request creates and fetches one job | curl output plus test name | |
-| Invalid input is rejected according to the contract | curl or test cases | |
-| Concurrent map access is protected | race-detector output and concurrent test | |
-| Cancellation is passed through to work | cancellation test or log | |
-| Shutdown is bounded | terminal observation and process/socket check | |
-| Restart loses the in-memory jobs | before/after restart output | |
+| Create, get and run work end to end | | |
+| Every row of the contract table has a test | | |
+| A data race was caught by `-race`, then fixed | | |
+| The lost-update test fails without compare-and-swap and passes with it | | |
+| A slow run returns 504 and the job is stored as `failed` | | |
+| A client disconnect leaves the job `failed` with reason `cancelled` | | |
+| `/metrics` shows counts by route and code | | |
+| Graceful shutdown let an in-flight request finish | | |
+| Restarting the process loses every job (and I can explain why) | | |
 
-## Kestrel transfer
+## Rebuild from memory
 
-Close this lesson and its implementation before rebuilding the feature in Kestrel. Keep only the API contract and your own notes visible.
-
-- What did I design from the contract without looking at lesson code?
-- What behavior did I test first, and why?
-- What did I have to look up in official Go documentation?
-- Show one successful request, one rejected request, one concurrency test, and the race check.
-- What differs from the lesson design, and what evidence supports my choice?
-- What can I now explain about process memory, goroutines, locks, cancellation, and shutdown without using memorized definitions?
-- What question remains unclear?
+- What I rebuilt without help:
+- What I had to look up, and where:
+- How my design differs from the snapshot, and why:
+- What is still unclear:

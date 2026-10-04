@@ -1,47 +1,70 @@
 # Phase 1: make one service reliable
 
-> **Status: being rebuilt.** This phase is being rewritten to the [Phase 0](../00-request-service/TEACHING.md) standard: full code in `steps/`, real expected output, and CI checks. Until then, this page and TEACHING.md are an outline, and the authoritative plan for this phase is in [JOURNEY.md](../../JOURNEY.md#4-the-route).
+**Question:** what happens when requests overlap, stall, contain bad input, or arrive while the process is stopping?
 
-This page previews the concepts, tools, readings, and exit evidence. Follow the full [self-study teaching guide](TEACHING.md) and record your work in [learned.md](learned.md).
+**You build:** a jobs API (`POST /jobs`, `GET /jobs/{id}`, `POST /jobs/{id}/run`). It's layered as domain → service → repository → HTTP, built test-first, and has strict input handling, compare-and-swap updates, request deadlines, structured logs, Prometheus metrics and graceful shutdown.
 
-The complete read-at-the-right-time list is embedded at the end of [TEACHING.md](TEACHING.md). You can study the guide without looking up chapters in another document.
+**Time:** about 4 weeks. **Prerequisites:** [Phase 0](../00-request-service/README.md).
 
-## Question and build
+| File | Use it for |
+|---|---|
+| [TEACHING.md](TEACHING.md) | The lesson. Follow it in order |
+| [steps/](steps) | Eight runnable snapshots. `08-graceful-shutdown` is the finished service |
+| [exercises.md](exercises.md) | Test-driven exercises for after the checkpoint |
+| [learned.md](learned.md) | Your answer sheet |
 
-Can one Go service accept and track jobs safely when requests overlap, take too long, or the process is asked to stop?
+## What you'll be able to do
 
-Grow the Phase 0 server into an in-memory jobs API with POST /jobs and GET /jobs/{id}. State is volatile by design; Phase 3 will make it durable.
+- Structure a Go service in layers and explain which package may depend on which.
+- Use interfaces as ports, inject dependencies through constructors, and wire them in one composition root.
+- Model rules as a state machine with entities and value objects.
+- Explain goroutines and shared memory; cause, detect and fix a data race.
+- Explain why a mutex doesn't fix check-then-act races, and fix one with compare-and-swap.
+- Reject hostile input precisely: content type, size, unknown fields, trailing data.
+- Propagate deadlines and cancellation with `context`, and keep the record honest when work is cancelled.
+- Emit structured logs and Prometheus metrics with sensible labels; recover from panics.
+- Handle SIGTERM with a graceful shutdown, and say what that does and doesn't protect.
 
-## Teach in this order
+## Gaps this phase closes
 
-1. **Define the job contract.** Explain a job as data with an ID and state. Introduce Go structs, JSON request/response bodies, status codes, and error cases before implementing the routes.
-2. **Make requests have a deadline.** Introduce context as a cancellation/deadline signal carried through a request. Add timeouts and explain what the caller sees when work takes too long.
-3. **Allow requests to overlap.** Demonstrate two requests arriving at once. Explain goroutines and shared memory before protecting the map with a mutex. Use tests to expose and then repair a race.
-4. **Bound resource use.** Read configuration from environment variables. Add structured logs and basic request/job metrics, defining each field before using it.
-5. **Stop without abandoning work.** Run the server as a process; inspect it with ps/lsof. Explain Ctrl+C, SIGTERM, file descriptors, and graceful shutdown. Load it while stopping.
-6. **Threat-check the API.** Try malformed or hostile inputs and confirm limits, timeouts, and error behavior.
+These rows link to the [foundation-gap ledger](../../JOURNEY.md#5-foundation-gap-ledger).
 
-At each step, show the expected output, name what the test proves, and include a diagnosis example before asking for an explanation.
+| Gap | Where in the lesson | Evidence you'll have |
+|---|---|---|
+| Code organisation and design patterns (row 6) | Steps 1–5 | The layered service; the `slowGetRepository` test |
+| Processes, signals, file descriptors (row 7) | Step 8 | SIGTERM shutdown log; `/proc/PID/fd` listing |
+| Concurrency, locks, races (row 8) | Steps 2–3 | A race report, then a clean run; the lost-update test |
+| Testing and TDD (row 5) | Every step | Tests written first; deliberate failures |
+| API security habits (row 28) | Step 4 | 400/413/415 table tests |
+| Observability, first steps (row 23) | Step 7 | `/metrics` output and JSON logs |
 
-## Foundations closed
+## Patterns introduced
 
-- Processes, signals, file descriptors, limits, and Linux process inspection.
-- Concurrency, goroutines, mutexes, and Go race detection.
-- Context cancellation, timeouts, and first threat-modeling habits.
-- Continued Bash, Git, HTTP, and Go practice.
+These link to the [patterns ledger](../../JOURNEY.md#6-patterns-ledger):
 
-Networking internals, durable storage, and multi-node behavior remain for later phases.
+- **Layered architecture** and **ports and adapters**: `jobs` defines `Repository`; `memstore` implements it.
+- **Repository**: `jobs.Repository`.
+- **Dependency injection** with a **composition root**: `NewService(repo, ...)`, wired in `cmd/api/main.go`.
+- **Functional options**: `WithClock`, `WithWork`, `WithLogger`, `WithMetrics`, `WithRequestTimeout`.
+- **Entity, value object, state machine** (tactical DDD): `Job`, `Description`, `allowed`.
+- **Optimistic concurrency** (compare-and-swap): `Update(ctx, job, expected)`.
+- **Middleware / decorator**: `withTimeout`, `withRequestLog`, `withRecover`, `slowGetRepository`.
+- **Timeouts and deadline propagation**, and **graceful shutdown**.
 
-## Reading placement
+## Run the finished service
 
-- Before shared-state work: OSTEP Chapters 26–28.
-- After inducing a race: OSTEP Chapters 29–30 and 32; CSAPP Chapter 12 §§12.1 and 12.3–12.7.
-- Before shutdown: CSAPP Chapter 8 sections on processes and signals; OSTEP Chapter 5 process API as needed.
-- After metrics: SRE Chapter 6; read timeout sections in *Understanding Distributed Systems* when adding deadlines.
-- After the service works: DDIA Chapter 1. Read the API-security and Security Engineering selections after input/error handling.
+~~~bash
+cd lessons/01-reliable-service/steps/08-graceful-shutdown
+go test -race ./...
+go run ./cmd/api
+~~~
 
-## Exit evidence and career signal
+In a second terminal:
 
-Show a concurrent request, a rejected request, a race check, and graceful shutdown under load. Save a short operational note with the expected and observed result.
+~~~bash
+curl -i -X POST http://127.0.0.1:8080/jobs -H 'Content-Type: application/json' -d '{"description":"hello","duration_ms":200}'
+~~~
 
-This strengthens backend engineering evidence and introduces SRE language such as timeouts and golden signals. It does not yet establish on-call experience or durable job processing.
+## Next
+
+Every job still lives inside one process, and running one ties up the caller's request until it finishes. The [Python Bridge](../python-bridge/README.md) first teaches you to *measure* this service under load. [Phase 2](../02-connected-services/README.md) then moves the work to a separate worker behind a queue.
