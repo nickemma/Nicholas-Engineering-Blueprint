@@ -79,9 +79,13 @@ def check(markdown: Path) -> list[str]:
 
 def main(args: list[str]) -> int:
     roots = [Path(a) for a in args] or [Path("lessons")]
+    skip = {".venv", "node_modules", "target", "practice"}
     files = []
     for root in roots:
-        files.extend(sorted(root.rglob("*.md")) if root.is_dir() else [root])
+        if root.is_dir():
+            files.extend(p for p in sorted(root.rglob("*.md")) if not skip & set(p.parts))
+        else:
+            files.append(root)
 
     errors = [error for markdown in files for error in check(markdown)]
     checked = sum(1 for markdown in files for _ in blocks(markdown))

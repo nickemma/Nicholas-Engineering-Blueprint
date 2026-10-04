@@ -1,32 +1,62 @@
 # Python Bridge: measure what you built
 
-> **Status: planned.** This bridge is written after Phase 1 is rebuilt, because it measures the Phase 1 service. The outline below is the plan. The authoritative route is in [JOURNEY.md](../../JOURNEY.md#4-the-route).
-
 **Question:** your Phase 1 service "feels fast". How fast is it, for whom, and how would you know if a change made it worse?
 
-**You build:** a Python command-line load generator that drives the Phase 1 jobs API at a chosen rate, records every request's latency and status, and writes them to a CSV file. A second script turns that file into percentiles and plots. Both have pytest tests.
+**You build:** `kload`, a tested Python command-line tool:
+- a client for the Phase 1 API;
+- an open-loop async load generator;
+- raw results saved with their settings;
+- percentile reports and plots.
 
-**Time:** about 2 weeks. **Prerequisites:** Phase 1 finished and running.
+You then use it for three real experiments: a baseline, a server freeze measured two ways, and finding the point where the tool itself becomes the bottleneck.
 
-## Planned steps
+**Time:** about 2 weeks. **Prerequisites:** [Phase 1](../01-reliable-service/README.md), with its server running.
 
-| Step | You learn | You build |
+| File | Use it for |
+|---|---|
+| [TEACHING.md](TEACHING.md) | The lesson |
+| [steps/](steps) | Six runnable uv projects. `06-analysis` is the finished tool |
+| [exercises.md](exercises.md) | Exercises for after the checkpoint |
+| [learned.md](learned.md) | Your answer sheet |
+
+## What you'll be able to do
+
+- Write, package, lint and test Python with uv, ruff and pytest.
+- Use Python's core data structures, classes, dataclasses, exceptions, comprehensions, closures and pattern matching.
+- Build a CLI with argparse, and test it without starting a process.
+- Write an HTTP client with dependency injection, and test it with a mock transport.
+- Use `asyncio` for concurrent I/O, and bound it with a semaphore.
+- Explain why averages hide latency problems, and compute percentiles correctly.
+- Explain and demonstrate coordinated omission; build an open-loop generator.
+- Analyse results with pandas and plot them with matplotlib; check that the measuring tool isn't the bottleneck.
+
+## Gaps this phase closes
+
+These rows link to the [foundation-gap ledger](../../JOURNEY.md#5-foundation-gap-ledger).
+
+| Gap | Where | Evidence |
 |---|---|---|
-| 1 | Installing Python with `uv`, virtual environments, running a script | `hello.py`; `uv init`; `uv run` |
-| 2 | Values, types, lists, dicts, functions, type hints | A function that summarises a list of latencies |
-| 3 | pytest; TDD in Python | Tests for the summary function, written first |
-| 4 | Modules, packages, the standard library, `argparse` | A CLI: `kload --url ... --rate 50 --duration 30s` |
-| 5 | HTTP from Python with `httpx`; errors and timeouts | A load generator that sends one request at a time |
-| 6 | `asyncio`: concurrency without threads | The same generator at a fixed request rate, with many requests in flight |
-| 7 | Files and CSV; reproducibility (seeds, recording the configuration) | Raw results saved alongside the run configuration |
-| 8 | pandas basics; percentiles; why averages hide the tail | `analyze.py` reports p50/p95/p99 and the error rate |
-| 9 | Plotting with matplotlib | Latency-over-time and distribution plots |
-| 10 | Coordinated omission (a classic measurement mistake) | An experiment that shows it and fixes it |
+| Python and its tooling (row 9) | Steps 1–6 | The `kload` package, with tests and lint passing |
+| Measurement and experimental method (row 10) | Steps 2, 5, 6 | The baseline, freeze and saturation experiments, with saved settings |
+| Testing and TDD (row 5) | Every step | pytest suites with fixtures, parametrisation and fakes |
 
-## Gaps this closes
+## Patterns introduced
 
-Python language and tooling (ledger row 9), and measurement and experimental method (row 10). See the [foundation-gap ledger](../../JOURNEY.md#5-foundation-gap-ledger).
+- **Dependency injection in Python**: `JobsClient(http)`, `run_open_loop(client, request, ..., clock=...)`.
+- **Fakes over mocks**: `MockTransport(fake_api)` and `StallingServer` model behaviour instead of recording calls.
+- **Keep raw data plus settings** for reproducibility.
+- **Open-loop measurement**.
 
-## Why it comes here
+## Run the finished tool
 
-From Phase 2 on, every experiment (killing workers, partitions, impaired networks, the Phase 7 evaluation) is driven and analysed with these tools. The Phase 7 ML pipeline builds on the same Python base.
+~~~bash
+cd lessons/python-bridge/steps/06-analysis
+uv run pytest
+uv run kload smoke                               # needs the Phase 1 server running
+uv run kload load --rate 100 --duration 5 --out results/run.csv
+uv run kload analyze results/run.csv --plot results/run.png
+~~~
+
+## Next
+
+[Phase 2](../02-connected-services/README.md) splits the service across processes and a message broker. `kload` is the tool you'll use to measure what that costs and what it buys.
