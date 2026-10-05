@@ -31,7 +31,7 @@ Answer from memory, then check yourself against [the lesson](../../lessons/02-co
 19. What does prefetch 1 do, and why does it matter for slow jobs?
 20. What is a quorum queue, and what protocol keeps its copies in agreement?
 21. Which two RabbitMQ behaviours surprised the integration tests? How does the code handle each one?
-22. Why does the adapter republish with an `x-kestrel-attempt` header instead of nacking with requeue?
+22. Why does the adapter republish with an `x-runway-attempt` header instead of nacking with requeue?
 23. Narrate exactly what happens when a worker is killed with SIGKILL one second into a four-second job.
 24. What is crash-only design, and why does the API exit when it loses the broker?
 
