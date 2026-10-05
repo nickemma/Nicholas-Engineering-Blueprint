@@ -25,8 +25,12 @@ types and runs, so it can follow along in a scratch directory:
 
     <!-- run: go test ./... -->
 
+    <!-- continue: ../01-reliable-service/TEACHING.md -->
+
 file blocks create or replace a file. edit blocks change part of one.
-append blocks add to the end of one, after a blank line. run
+append blocks add to the end of one, after a blank line. continue replays
+another guide first (path relative to this guide), for a phase that starts
+from the previous phase's code. run
 commands execute in the scratch directory and must succeed. Code blocks
 without a marker are illustrations and are not checked.
 
@@ -41,7 +45,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-MARKER = re.compile(r"^<!--\s*(file|edit|append|run):\s*(.+?)\s*-->\s*$")
+MARKER = re.compile(r"^<!--\s*(file|edit|append|run|continue):\s*(.+?)\s*-->\s*$")
 FENCE = re.compile(r"^(`{3,}|~{3,})")
 
 
@@ -86,7 +90,7 @@ def actions(guide: Path):
             continue
         kind, arg = match.groups()
         line = i + 1
-        if kind == "run":
+        if kind in ("run", "continue"):
             yield line, kind, arg, None
             i += 1
         elif kind in ("file", "append"):
@@ -98,40 +102,49 @@ def actions(guide: Path):
             yield line, kind, arg, (old, new)
 
 
+def replay(guide: Path, workdir: Path) -> int:
+    """Carry out every action in guide inside workdir. Return how many there were."""
+    steps = 0
+    for line, kind, arg, content in actions(guide):
+        steps += 1
+        where = f"{guide}:{line}"
+        if kind == "continue":
+            steps += replay((guide.parent / arg).resolve(), workdir)
+        elif kind == "file":
+            path = workdir / arg
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(content, encoding="utf-8")
+        elif kind == "append":
+            path = workdir / arg
+            if not path.is_file():
+                raise GuideError(f"{where}: append to {arg}, which doesn't exist yet")
+            text = path.read_text(encoding="utf-8").rstrip("\n")
+            path.write_text(text + "\n\n" + content, encoding="utf-8")
+        elif kind == "edit":
+            path = workdir / arg
+            if not path.is_file():
+                raise GuideError(f"{where}: edit of {arg}, which doesn't exist yet")
+            text = path.read_text(encoding="utf-8")
+            old, new = content[0].rstrip("\n"), content[1].rstrip("\n")
+            if not new.strip() and text.count(old + "\n\n") == 1:
+                old += "\n\n"  # a deletion also removes the blank line that followed
+            count = text.count(old)
+            if count != 1:
+                raise GuideError(f"{where}: text to replace appears {count} times in {arg}")
+            path.write_text(text.replace(old, new, 1), encoding="utf-8")
+        else:
+            result = subprocess.run(["bash", "-c", arg], cwd=workdir, capture_output=True, text=True)
+            if result.returncode != 0:
+                output = (result.stdout + result.stderr).strip()[-3000:]
+                output = output or f"(no output; exit status {result.returncode})"
+                raise GuideError(f"{where}: `{arg}` failed:\n{output}")
+    return steps
+
+
 def check(guide: Path, keep: bool) -> bool:
     workdir = Path(tempfile.mkdtemp(prefix="guide-"))
-    steps = 0
     try:
-        for line, kind, arg, content in actions(guide):
-            steps += 1
-            where = f"{guide}:{line}"
-            if kind == "file":
-                path = workdir / arg
-                path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_text(content, encoding="utf-8")
-            elif kind == "append":
-                path = workdir / arg
-                if not path.is_file():
-                    raise GuideError(f"{where}: append to {arg}, which doesn't exist yet")
-                text = path.read_text(encoding="utf-8").rstrip("\n")
-                path.write_text(text + "\n\n" + content, encoding="utf-8")
-            elif kind == "edit":
-                path = workdir / arg
-                if not path.is_file():
-                    raise GuideError(f"{where}: edit of {arg}, which doesn't exist yet")
-                text = path.read_text(encoding="utf-8")
-                old, new = content
-                count = text.count(old.rstrip("\n"))
-                if count != 1:
-                    raise GuideError(f"{where}: text to replace appears {count} times in {arg}")
-                path.write_text(text.replace(old.rstrip("\n"), new.rstrip("\n"), 1), encoding="utf-8")
-            else:
-                result = subprocess.run(
-                    ["bash", "-c", arg], cwd=workdir, capture_output=True, text=True
-                )
-                if result.returncode != 0:
-                    output = (result.stdout + result.stderr).strip()[-3000:]
-                    raise GuideError(f"{where}: `{arg}` failed:\n{output}")
+        steps = replay(guide.resolve(), workdir)
         print(f"ok   {guide} ({steps} steps)")
         return True
     except GuideError as err:
