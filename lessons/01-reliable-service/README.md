@@ -32,7 +32,7 @@
 
 1. Follow [TEACHING.md](TEACHING.md) in order, typing every piece of code yourself.
 2. Answer [learned.md](learned.md) as you go.
-3. Rebuild the service from memory in your own `kestrel` repository.
+3. Rebuild the service from memory in your own `runway` repository.
 4. Build the exercise project, **[shortlinks](exercises.md)**, a URL shortener, on your own. The exercise page shows exactly what the finished service does.
 5. Take the [self-test](../../notes/learned/01-reliable-service.md).
 

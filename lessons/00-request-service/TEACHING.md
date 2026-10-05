@@ -95,7 +95,7 @@ Your last `pwd` should end with `lessons/00-request-service/practice`. This fold
 Now create a Go **module**, which is Go's name for a project:
 
 ~~~bash
-go mod init kestrel-phase0
+go mod init runway-phase0
 ~~~
 
 This writes one file, `go.mod`, which names the module and records the Go version. Run `ls` to see it. It doesn't create any code yet.
@@ -103,7 +103,7 @@ This writes one file, `go.mod`, which names the module and records the Go versio
 ---
 
 ## Step 1: A program and a process
-<!-- run: go mod init kestrel-phase0 -->
+<!-- run: go mod init runway-phase0 -->
 
 
 **The problem.** Before a program can answer requests, you need to know how Go source code becomes something that runs.
@@ -115,7 +115,7 @@ package main
 import "fmt"
 
 func main() {
-	fmt.Println("Hello, Kestrel!")
+	fmt.Println("Hello, Runway!")
 }
 ~~~
 
@@ -126,7 +126,7 @@ Create `main.go` in your `practice` folder with exactly this content. In VS Code
 - `package main`: Go code is organised into packages. The name `main` is special: it means "this builds into a program you can run".
 - `import "fmt"` makes the standard `fmt` (format) package available. A package is a named collection of ready-made functions.
 - `func main() { ... }` defines a **function** named `main`. A function is a named block of work. When the program starts, Go runs `main`, and when `main` ends, the program ends.
-- `fmt.Println("Hello, Kestrel!")` **calls** the `Println` function from `fmt`: run it now, with this input. The text in quotes is a **string**, a piece of text. `Println` prints it followed by a newline.
+- `fmt.Println("Hello, Runway!")` **calls** the `Println` function from `fmt`: run it now, with this input. The text in quotes is a **string**, a piece of text. `Println` prints it followed by a newline.
 - Braces `{ }` mark where a block starts and ends. Parentheses `( )` hold a function's inputs.
 - Go is **case-sensitive**: `Println` and `PrintLn` are different names.
 
@@ -137,7 +137,7 @@ go run .
 ~~~
 
 ~~~text
-Hello, Kestrel!
+Hello, Runway!
 ~~~
 
 `go run .` compiles the module in the current directory (`.`) and starts it. **Compiling** means translating the source code into machine instructions the computer runs directly.
@@ -157,7 +157,7 @@ Delete the binary so it doesn't clutter your folder: `rm hello`.
 **Break it.** Change `Println` to `PrintLn`, predict what happens, then run `go run .`:
 
 ~~~text
-# kestrel-phase0
+# runway-phase0
 ./main.go:6:6: undefined: fmt.PrintLn (but have Println)
 ~~~
 
@@ -166,7 +166,7 @@ Delete the binary so it doesn't clutter your folder: `rm hello`.
 
 **Explain it** in learned.md: what is the difference between a program and a process? What did `go run .` do that `go build` didn't?
 
-<!-- run: go vet ./... && go run . | grep -qx "Hello, Kestrel!" -->
+<!-- run: go vet ./... && go run . | grep -qx "Hello, Runway!" -->
 
 ---
 
@@ -292,7 +292,7 @@ ss -ltnp | grep 8080
 ~~~
 
 ~~~text
-LISTEN 0  4096  127.0.0.1:8080  0.0.0.0:*  users:(("kestrel-phase0",pid=186900,fd=4))
+LISTEN 0  4096  127.0.0.1:8080  0.0.0.0:*  users:(("runway-phase0",pid=186900,fd=4))
 ~~~
 
 `ss` lists network sockets. `-l` shows only listening ones, `-t` TCP, `-n` numbers instead of names and `-p` the owning process. The `|` (a **pipe**) sends the output of `ss` into `grep`, which keeps only lines containing `8080`. You can see your process name (from the module name), its process ID and the port it holds. On macOS, use `lsof -iTCP:8080 -sTCP:LISTEN` instead.
@@ -654,7 +654,7 @@ go test
 
 ~~~text
 PASS
-ok  	kestrel-phase0	0.004s
+ok  	runway-phase0	0.004s
 ~~~
 
 **Break it: watch a test catch a change.** In `main.go`, change `Status: "ok"` to `Status: "ready"`, then run `go test`:
@@ -836,7 +836,7 @@ go test -race -cover ./...
 |---|---|---|
 | `gofmt -l .` | Lists files not in Go's standard layout. `gofmt -w .` fixes them | Nothing |
 | `go vet ./...` | Finds suspicious code that compiles but is probably wrong | Nothing |
-| `go test -race -cover ./...` | Runs every test, watches for unsafe memory sharing (Phase 1 explains this), and reports how much code the tests ran | `ok  kestrel-phase0  ...  coverage: 87.1% of statements` |
+| `go test -race -cover ./...` | Runs every test, watches for unsafe memory sharing (Phase 1 explains this), and reports how much code the tests ran | `ok  runway-phase0  ...  coverage: 87.1% of statements` |
 
 `./...` means "this folder and every folder below it". Coverage isn't 100% because `main()` itself and the JSON-write error branch never run in tests. That's acceptable: coverage shows what *wasn't* exercised, and is not a target to maximise.
 
@@ -863,14 +863,14 @@ This is also the **rebuild rule** used at the end of every phase: close the guid
 
 > **Run locally.** These steps need your GitHub account, so CI can't check them for you. The expected results are described for each one.
 
-1. On GitHub, create a new **empty** repository named `kestrel`: no README, no licence.
+1. On GitHub, create a new **empty** repository named `runway`: no README, no licence.
 2. On your computer, *outside* the Blueprint folder:
 
    ~~~bash
-   mkdir -p ~/code/kestrel
-   cd ~/code/kestrel
+   mkdir -p ~/code/runway
+   cd ~/code/runway
    git init
-   go mod init github.com/YOUR-USERNAME/kestrel
+   go mod init github.com/YOUR-USERNAME/runway
    ~~~
 
    `git init` makes this folder a Git repository. The module name now matches where the code will live, which is the convention for real projects.
@@ -912,7 +912,7 @@ This is also the **rebuild rule** used at the end of every phase: close the guid
    git add main.go main_test.go go.mod .github/workflows/test.yml
    git commit -m "Phase 0: request service with tests and CI"
    git branch -M main
-   git remote add origin git@github.com:YOUR-USERNAME/kestrel.git
+   git remote add origin git@github.com:YOUR-USERNAME/runway.git
    git push -u origin main
    ~~~
 

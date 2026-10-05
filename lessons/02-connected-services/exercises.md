@@ -109,7 +109,7 @@ You're done when all of these are true:
 1. Every row of the HTTP contract has a test.
 2. Unit tests cover the delivery state machine, transient-vs-permanent classification (a table over status codes), backoff ceilings (deterministic, with an injected random source) and the per-host breaker (with a fake clock).
 3. A signing test: a receiver can verify `Webhook-Signature` with the secret, and a changed body fails verification.
-4. Integration tests against real RabbitMQ (skipped without `KESTREL_AMQP_URL`) show redelivery after a consumer stops, and dead-lettering of an unreadable command.
+4. Integration tests against real RabbitMQ (skipped without `RUNWAY_AMQP_URL`) show redelivery after a consumer stops, and dead-lettering of an unreadable command.
 5. **The kill test:** kill a worker with SIGKILL mid-delivery to a slow receiver. The receiver sees the same `Webhook-Id` twice, and the delivery ends `delivered`, once.
 6. **The isolation test:** with one receiver down and another healthy, the healthy receiver's p95 delivery latency is within 20% of its latency when both are healthy. Measure it with your Python tools.
 7. The idempotent `POST /events` test: two identical requests with one key create one set of deliveries.

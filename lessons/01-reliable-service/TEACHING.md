@@ -33,10 +33,10 @@ From the repository root:
 cd lessons/01-reliable-service
 mkdir -p practice
 cd practice
-go mod init kestrel
+go mod init runway
 ~~~
 
-The module is called `kestrel` this time because the code is split into packages that import each other by path, such as `kestrel/internal/jobs`.
+The module is called `runway` this time because the code is split into packages that import each other by path, such as `runway/internal/jobs`.
 
 ### The contract
 
@@ -80,7 +80,7 @@ Each layer only knows about the one below it, through an interface where it matt
 ---
 
 ## Step 1: The domain, written test-first
-<!-- run: go mod init kestrel -->
+<!-- run: go mod init runway -->
 
 
 **The problem.** In Phase 0 the rules lived inside handlers. A job service has more rules: a description must be 1–200 characters, the duration must be in range, and a job can go from `queued` to `running`, but never from `completed` back to `running`. If those rules live in HTTP code, every new entry point (a CLI, a queue consumer in Phase 2) has to copy them, and copies drift. The rules belong in one place that knows nothing about HTTP: the **domain**.
@@ -443,7 +443,7 @@ import (
 	"context"
 	"sync"
 
-	"kestrel/internal/jobs"
+	"runway/internal/jobs"
 )
 
 // Store implements jobs.Repository. Its mutex protects the map and the ID
@@ -526,7 +526,7 @@ import (
 	"testing"
 	"time"
 
-	"kestrel/internal/jobs"
+	"runway/internal/jobs"
 )
 
 func newJob(t *testing.T) jobs.Job {
@@ -649,13 +649,13 @@ go test -race ./...
 ==================
 WARNING: DATA RACE
 Read at 0x00c0000c86d8 by goroutine 11:
-  kestrel/internal/memstore.(*Store).Create()
+  runway/internal/memstore.(*Store).Create()
       /.../internal/memstore/store.go:30 +0x94
-  kestrel/internal/memstore.TestConcurrentCreateIDsAreUnique.func1()
+  runway/internal/memstore.TestConcurrentCreateIDsAreUnique.func1()
       /.../internal/memstore/store_test.go:85 +0x1b8
 
 Previous write at 0x00c0000c86d8 by goroutine 13:
-  kestrel/internal/memstore.(*Store).Create()
+  runway/internal/memstore.(*Store).Create()
       /.../internal/memstore/store.go:30 +0xaf
   ...
 ==================
@@ -845,8 +845,8 @@ import (
 	"testing"
 	"time"
 
-	"kestrel/internal/jobs"
-	"kestrel/internal/memstore"
+	"runway/internal/jobs"
+	"runway/internal/memstore"
 )
 
 var fixedNow = time.Date(2026, 10, 4, 12, 0, 0, 0, time.UTC)
@@ -1174,7 +1174,7 @@ import (
 	"strconv"
 	"time"
 
-	"kestrel/internal/jobs"
+	"runway/internal/jobs"
 )
 
 // JobService is what the handlers need. It is defined here, where it is
@@ -1324,16 +1324,16 @@ Create `cmd/api/main.go` so you can run it:
 
 <!-- file: cmd/api/main.go -->
 ~~~go
-// Command api runs the KESTREL jobs service.
+// Command api runs the Runway jobs service.
 package main
 
 import (
 	"log"
 	"net/http"
 
-	"kestrel/internal/httpapi"
-	"kestrel/internal/jobs"
-	"kestrel/internal/memstore"
+	"runway/internal/httpapi"
+	"runway/internal/jobs"
+	"runway/internal/memstore"
 )
 
 func main() {
@@ -1359,8 +1359,8 @@ import (
 	"strings"
 	"testing"
 
-	"kestrel/internal/jobs"
-	"kestrel/internal/memstore"
+	"runway/internal/jobs"
+	"runway/internal/memstore"
 )
 
 func newTestHandler() http.Handler {
@@ -1568,7 +1568,7 @@ Now stop the server and start it again, then `curl -i http://127.0.0.1:8080/jobs
 
 <!-- file: cmd/api/main.go -->
 ~~~go
-// Command api runs the KESTREL jobs service.
+// Command api runs the Runway jobs service.
 //
 // main is the composition root: the one place that builds every concrete
 // dependency and wires them together. Nothing below it creates its own.
@@ -1582,9 +1582,9 @@ import (
 	"os"
 	"time"
 
-	"kestrel/internal/httpapi"
-	"kestrel/internal/jobs"
-	"kestrel/internal/memstore"
+	"runway/internal/httpapi"
+	"runway/internal/jobs"
+	"runway/internal/memstore"
 )
 
 func main() {
@@ -2645,7 +2645,7 @@ Update `cmd/api/main.go` so it matches this:
 
 <!-- file: cmd/api/main.go -->
 ~~~go
-// Command api runs the KESTREL jobs service.
+// Command api runs the Runway jobs service.
 //
 // main is the composition root: the one place that builds every concrete
 // dependency and wires them together. Nothing below it creates its own.
@@ -2664,9 +2664,9 @@ import (
 	"syscall"
 	"time"
 
-	"kestrel/internal/httpapi"
-	"kestrel/internal/jobs"
-	"kestrel/internal/memstore"
+	"runway/internal/httpapi"
+	"runway/internal/jobs"
+	"runway/internal/memstore"
 )
 
 func main() {
@@ -3009,7 +3009,7 @@ seq 1 200 | xargs -P 20 -I{} curl -s -o /dev/null -w '%{http_code}\n' \
 
 ## Rebuild it yourself
 
-Close this guide. In your own `kestrel` repository (from Phase 0), rebuild Phase 1 from the **contract table**, the **layer diagram** and your notes. Use TDD: a failing test before each piece of code. You may look up Go documentation, but don't copy the lesson code.
+Close this guide. In your own `runway` repository (from Phase 0), rebuild Phase 1 from the **contract table**, the **layer diagram** and your notes. Use TDD: a failing test before each piece of code. You may look up Go documentation, but don't copy the lesson code.
 
 Then compare your version with the code in this guide. Differences are fine if your tests prove the same contract. Record what you rebuilt, what you looked up, and every place where your design differs and why.
 
@@ -3029,7 +3029,7 @@ You're ready for the Python Bridge when you can, without the guide:
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| `package kestrel/internal/jobs is not in std` | The module isn't named `kestrel`, or you're outside it | Check the first line of `go.mod`; run from the folder that contains it |
+| `package runway/internal/jobs is not in std` | The module isn't named `runway`, or you're outside it | Check the first line of `go.mod`; run from the folder that contains it |
 | `import cycle not allowed` | `jobs` imports `memstore` and `memstore` imports `jobs` | The domain must never import storage. Put tests that need both in `package jobs_test` |
 | `use of internal package ... not allowed` | Importing `internal/` from another module | Only code inside this module can use `internal/` |
 | `fatal error: concurrent map writes` | A map write without the lock | Lock every map access; run `go test -race` |

@@ -1,6 +1,6 @@
 # Phase 1 exercise: shortlinks, a URL shortener
 
-Build this **on your own**, in a new repository (or a new folder of your `kestrel` repository), after the [checkpoint](TEACHING.md#checkpoint). It uses every Phase 1 idea on a new problem:
+Build this **on your own**, in a new repository (or a new folder of your `runway` repository), after the [checkpoint](TEACHING.md#checkpoint). It uses every Phase 1 idea on a new problem:
 - layers, ports and adapters, and dependency injection;
 - a domain with rules;
 - a race the mutex can't fix;

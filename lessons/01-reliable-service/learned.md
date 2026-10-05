@@ -1,6 +1,6 @@
 # Phase 1: what I learned
 
-Fill this in as you finish each step of [TEACHING.md](TEACHING.md), then again from memory after the rebuild. Every answer needs evidence: a command and its output, a test name, or a link. Keep your filled-in copy in your own `kestrel` repository.
+Fill this in as you finish each step of [TEACHING.md](TEACHING.md), then again from memory after the rebuild. Every answer needs evidence: a command and its output, a test name, or a link. Keep your filled-in copy in your own `runway` repository.
 
 ## Explain it
 

@@ -19,7 +19,7 @@ jobs:
           --health-timeout 10s
           --health-retries 20
     env:
-      KESTREL_AMQP_URL: amqp://guest:guest@localhost:5672/
+      RUNWAY_AMQP_URL: amqp://guest:guest@localhost:5672/
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-go@v7
