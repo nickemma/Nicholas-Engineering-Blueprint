@@ -1,37 +1,45 @@
-# Rust Bridge: prepare for durable storage
+# Rust Bridge: bytes, ownership and a log that survives crashes
 
-> **Status: being rebuilt.** This phase is being rewritten to the [Phase 0](../00-request-service/TEACHING.md) standard: a type-along guide with the code inline, real expected output, and CI checks. Until then, this page and TEACHING.md are an outline, and the authoritative plan for this phase is in [JOURNEY.md](../../JOURNEY.md#4-the-route).
+**Question:** what do bytes on disk, memory ownership and thread safety really look like, when a language makes you say them explicitly?
 
-This page previews the concepts, tools, readings, and exit evidence. Follow the full [self-study teaching guide](TEACHING.md) and record your work in [learned.md](learned.md). This prerequisite is before Phase 3, not a numbered phase.
+**Time:** about 3 weeks. **Prerequisites:** [Phase 2](../02-connected-services/README.md); Rust installed with rustup.
 
-The Rust, memory, and concurrency readings are embedded at the end of [TEACHING.md](TEACHING.md), beside each exercise.
+## Syllabus
 
-## Question and build
+| Step | Topic | You'll learn |
+|---|---|---|
+| 1 | A first program | Immutability by default, types, arrays and slices, `Option`, exhaustive `match`, iterators and closures, macros, tests, `cargo fmt`, `clippy` |
+| 2 | Ownership and borrowing | Stack vs heap, the three ownership rules, moves, `&` and `&mut`, `String` vs `&str`, lifetimes, learning from compiler errors |
+| 3 | Errors as values | `Result`, enums with data, traits (`Display`, `Error`), `derive`, `?`, overflow-safe arithmetic, `Debug` vs `Display` |
+| 4 | Bytes and a record format | Length-prefixed framing, little-endian encoding, CRC-32C from scratch, known-answer tests, zero-copy decoding, untrusted lengths |
+| 5 | A log file that survives crashes | The page cache and `fsync`, append-only files, torn writes, recovery, refusing real corruption, what recovery can't tell apart |
+| 6 | Threads, safely | `Send` and `Sync`, `Arc` and `Mutex`, channels, a single owning writer, a deadlock the compiler can't catch |
 
-What is a record when it is only bytes on disk, and how does Rust make ownership of those bytes explicit?
+## What you'll be able to do
 
-Build three small programs: a command-line tool that reads/writes a binary file, a checksummed record format, and a threaded counter.
+- Read and write idiomatic Rust, and fix ownership and borrowing errors by reasoning, not trial and error.
+- Design a binary record format, and implement and test a checksum.
+- Explain exactly when a write is durable, and build recovery from torn writes.
+- Use the type system to rule out data races, and recognise the concurrency bugs it doesn't rule out.
 
-## Teach in this order
+## How to work through it
 
-1. Install/check the Rust toolchain and create a Cargo project. Explain source, package, compiler, and test commands by comparison with the Go work already known.
-2. Introduce variables, types, functions, enums, structs, and pattern matching through the record parser.
-3. Add Result and error propagation. Make invalid length, version, and checksum behavior explicit.
-4. Introduce ownership and borrowing only when the parser needs to pass bytes without copying. Read one borrow-checker error and repair it by understanding who owns the buffer.
-5. Use byte slices and file I/O to encode/decode a record. Explain endianness and record length.
-6. Add a checksum and tests for truncation/corruption. Then introduce threads and Send/Sync using the counter.
-7. Compare stack/heap and virtual address space concepts with the same small program.
+1. Follow [TEACHING.md](TEACHING.md), typing every piece of code yourself.
+2. Do the torn-write and corruption experiments on your own log files.
+3. Answer [learned.md](learned.md).
+4. Build the exercise project, **[bitlog](exercises.md)**, a Bitcask-style key-value store, on your own.
+5. Take the [self-test](../../notes/learned/rust-bridge.md).
 
-## Foundations closed
+## Gaps this phase closes
 
-Rust ownership, borrowing, lifetimes, Result, traits/generics, Send/Sync, basic memory layout, and binary files. This gives the vocabulary needed for Phase 3; it is not a general Rust specialization course.
+These rows link to the [foundation-gap ledger](../../JOURNEY.md#5-foundation-gap-ledger).
 
-## Reading placement
+| Gap | Where | Evidence |
+|---|---|---|
+| Memory and ownership (row 14) | Steps 1–2, 6 | The compiler errors you produced and fixed |
+| Files, `fsync`, crash consistency (row 17) | Step 5 | The torn-write and corruption experiments |
+| Concurrency and races (row 8) | Step 6 | A race that doesn't compile; the deadlock that does |
 
-Use the Rust Book Chapters 1–10, 13, 15, and 16 alongside the matching code. Read OSTEP Chapters 13, 14, and 17 after observing the process's memory behavior; read CSAPP Chapter 9 during virtual-memory discussion. Use *Rust Atomics and Locks* Chapters 1–2 with the threaded counter.
+## Next
 
-## Exit evidence
-
-Explain one borrow-checker error in your own words; encode, decode, and reject a corrupted record; show a race that Rust's type rules prevent.
-
-The bridge is preparation for the Phase 3 storage experiment, not a switch away from Go for the API/control plane.
+[Phase 3](../03-durable-auditable-data/README.md) uses `klog` as Runway's audit log, fed from Kafka, alongside PostgreSQL.

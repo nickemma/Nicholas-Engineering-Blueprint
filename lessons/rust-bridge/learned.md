@@ -1,32 +1,38 @@
-# Rust Bridge learning record
+# Rust Bridge: what I learned
 
-Complete after [TEACHING.md](TEACHING.md). Use your own words and attach tests or compiler output.
+Fill this in as you go, with evidence: compiler output, test names, hex dumps, experiment transcripts.
 
-1. What is the difference between a Rust source file, a Cargo package, and a running process?
-2. Show the record layout and explain why writer and reader must agree on field width and byte order.
-3. What does the length limit protect? Why must it be checked before allocating memory?
-4. What was the borrow-checker error you produced? Draw who owned the bytes and who borrowed them. Why would the invalid reference outlive its owner?
-5. What error does Result represent, and how does your program report it?
-6. What does CRC32C detect? What security guarantee does it not provide?
-7. What does Arc provide in the counter? What does Mutex provide?
-8. What is the connection between a Vec, process virtual memory, and file bytes?
+## Explain it
+
+| Step | Question | My answer | Evidence |
+|---|---|---|---|
+| 1 | Why is immutability the default? What does returning `Option` force the caller to do? | | |
+| 2 | State the three ownership rules. Explain move, `&` and `&mut` with an example of each | | |
+| 2 | Why does "many readers or one writer" rule out data races? | | |
+| 2 | Why does `join` take `Vec<String>` but `longest_word` take `&str`? | | |
+| 3 | What does `?` do, exactly? Why use `checked_mul`? | | |
+| 3 | `Debug` vs `Display`: who is each for? | | |
+| 4 | Why a length prefix? Why say little-endian explicitly? | | |
+| 4 | What can a CRC detect, and what can't it? Why did only the known-answer test catch the wrong polynomial? | | |
+| 5 | When is a write durable? What does `fsync` cost? | | |
+| 5 | Why can only the last record be torn? What can klog's recovery *not* tell apart? | | |
+| 5 | Why refuse to open after mid-file corruption? | | |
+| 6 | Define `Send` and `Sync`. Why does `Mutex<T>` contain its data? | | |
+| 6 | Explain the deadlock from Step 6's break-it | | |
+
+## Evidence checklist
 
 | Claim | Evidence | Result |
 |---|---|---|
-| A record encodes and decodes correctly | test name and result | |
-| Truncation and corruption are rejected | test names and result | |
-| Oversized records fail before allocation | test name or code path | |
-| Rust prevents the unsafe borrow | compiler error and explanation | |
-| Shared counter uses safe synchronization | source and repeated test | |
+| The five compiler errors produced and understood | | |
+| The CRC-32C known answer matches | | |
+| A hex dump decoded by hand | | |
+| A torn write recovered | | |
+| Mid-file corruption refused | | |
+| 100 records from 4 threads, all intact | | |
 
-## Kestrel transfer
+## Rebuild from memory
 
-Close this guide and the sample code. In Kestrel, define a record format from a written byte-level contract and implement the encoder/decoder from scratch. You may use Rust documentation.
-
-- Which layout did I choose, and how will I evolve it?
-- How does the reader reject malformed bytes?
-- Which values are owned, and which are borrowed?
-- What did I change after seeing the compiler error?
-- What differs from this exercise and why?
-- What do I understand now that I could not explain before?
-- What remains unclear?
+- What I rebuilt without help:
+- What I had to look up:
+- What is still unclear:
