@@ -218,9 +218,9 @@ flowchart LR
 | Phase | Question | You build | Weeks | Status |
 |---|---|---|---|---|
 | [0. Make one request work](lessons/00-request-service/README.md) | What happens between a command and an answer? | A Go HTTP service with validation, tests and CI | 2 | **Ready** |
-| [1. Make one service reliable](lessons/01-reliable-service/README.md) | What happens when requests overlap, stall, or the process stops? | A layered jobs API: repository, DI, races, timeouts, graceful shutdown, metrics | 4 | Being rebuilt |
-| [Python Bridge](lessons/python-bridge/README.md) | How do I measure what I built? | A Python load generator and latency analysis against Phase 1 | 2 | Planned |
-| [2. Connect services](lessons/02-connected-services/README.md) | What changes across process and network boundaries? | API, RabbitMQ and a worker; event-driven design, idempotency, retries, gRPC | 4 | Being rebuilt |
+| [1. Make one service reliable](lessons/01-reliable-service/README.md) | What happens when requests overlap, stall, or the process stops? | A layered jobs API: repository, DI, races, timeouts, graceful shutdown, metrics | 4 | **Ready** |
+| [Python Bridge](lessons/python-bridge/README.md) | How do I measure what I built? | A Python load generator and latency analysis against Phase 1 | 2 | **Ready** |
+| [2. Connect services](lessons/02-connected-services/README.md) | What changes across process and network boundaries? | API, RabbitMQ and a worker; event-driven design, idempotency, retries, gRPC | 4 | **Ready** |
 | [Rust Bridge](lessons/rust-bridge/README.md) | What do bytes, memory and ownership really look like? | Binary records with checksums; thread safety the compiler enforces | 3 | Being rebuilt |
 | [3. Make data durable and auditable](lessons/03-durable-auditable-data/README.md) | What survives a crash? | A Postgres repository behind the same interface, transactional outbox, Rust audit log, restore drill | 6 | Being rebuilt |
 | [4. Replicate state through failure](lessons/04-replicated-state/README.md) | What can three nodes agree on when things fail? | Your own Raft, a deterministic simulation harness, linearizability checks, a TLA+ model | 10 | Being rebuilt |
@@ -229,7 +229,7 @@ flowchart LR
 | [7. Evaluate, then add applied ML](lessons/07-utility-evaluation/README.md) | Does it help enough to justify its cost? Does a model beat the baseline? | A reproducible experiment; a forecasting pipeline with MLflow, served by FastAPI behind the Go gateway | 8 | Being rebuilt |
 | [8. Defend the design](lessons/08-research-capstone/README.md) | Can someone else reproduce and challenge it? | Hardening, mTLS, SBOM and signing, fuzzing, a threat model, a report | 6 | Being rebuilt |
 
-"Being rebuilt" means the phase's README and TEACHING.md exist as outlines, and the full step-by-step code is being written to the Phase 0 standard, one phase at a time.
+"Being rebuilt" means the phase's README and TEACHING.md are still outlines. Each one is being rewritten as a full type-along guide, to the Phase 0 standard.
 
 ### Phase 0: Make one request work
 
