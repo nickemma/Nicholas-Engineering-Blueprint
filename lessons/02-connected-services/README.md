@@ -1,42 +1,69 @@
-# Phase 2: connect sites and workers
+# Phase 2: connect services
 
-> **Status: being rebuilt.** This phase is being rewritten to the [Phase 0](../00-request-service/TEACHING.md) standard: a type-along guide with the code inline, real expected output, and CI checks. Until then, this page and TEACHING.md are an outline, and the authoritative plan for this phase is in [JOURNEY.md](../../JOURNEY.md#4-the-route).
+**Question:** what changes when work crosses a process boundary, and how do you keep it correct when messages are lost, duplicated, delayed or poisoned?
 
-This page previews the concepts, tools, readings, and exit evidence. Follow the full [self-study teaching guide](TEACHING.md) and record your work in [learned.md](learned.md).
+**Time:** about 4 weeks. **Prerequisites:** [Phase 1](../01-reliable-service/README.md) and the [Python Bridge](../python-bridge/README.md); Docker installed.
 
-The complete read-at-the-right-time list is embedded at the end of [TEACHING.md](TEACHING.md). You can study the guide without looking up chapters in another document.
+## Syllabus
 
-## Question and build
+| Step | Topic | You'll learn |
+|---|---|---|
+| 1 | Accept now, run later | Sync vs async, producer/consumer, worker pools, bounded queues, backpressure (503 + `Retry-After`), Little's law, Go's random `select`, two-context shutdown, gauges |
+| 2 | Messages and a bus | Commands vs events, event-driven architecture, bounded contexts, envelopes, at-least/at-most/exactly-once, the tolerant reader, dead letters, competing consumers, idempotent receivers |
+| 3 | RabbitMQ and two processes | AMQP connections and channels, durable quorum queues, persistent messages, publisher confirms, ack/nack, prefetch, delivery limits, dead-letter exchanges, integration tests, crash-only design, killing a worker mid-job |
+| 4 | Idempotency end to end | Idempotency keys (replay, 409, 422), fingerprints with SHA-256, background jobs, the three sources of duplicates and their defences |
+| 5 | Retries, versioning, breakers | Transient vs permanent failures, backoff with full jitter, retry budgets, message versioning and upcasting, reader-first deploys, chaos injection, circuit breakers, heartbeats |
+| 6 | gRPC | Protocol Buffers, field numbers and compatibility, code generation, status codes, deadlines on calls, bufconn tests, reflection |
+| 7 | Look at the wire (run locally) | Sockets, ephemeral ports, the TCP handshake, keep-alive, multiplexing, `ss` and `tcpdump`, testing a hypothesis with packets |
 
-What changes when the API sends work to a different process across a network boundary?
+## What you'll be able to do
 
-Add a background worker and bounded queue to the jobs API. Begin with a Go channel to make queue behavior visible, then add RabbitMQ for one concrete work-queue exercise. Compare NATS JetStream and Kafka without building all three. Connect services first with HTTP and then with gRPC/Protocol Buffers where schema and service boundaries justify it.
+- Split accepting work from doing it, and push back under overload with numbers to justify the limits.
+- Design messages as versioned contracts, and connect services only through them.
+- Run a real broker and explain exactly what makes a message durable and when it's delivered again.
+- Make a system correct "in effect" despite at-least-once delivery, with three named defences.
+- Retry safely, fail fast with a circuit breaker, and quarantine poison messages.
+- Offer the same use cases over HTTP/JSON and gRPC/protobuf, and choose between them.
+- Read TCP traffic and connect it to everything above.
 
-## Teach in this order
+## How to work through it
 
-1. **Separate responsibilities.** Draw API, queue, and worker as separate roles. Explain which process owns each piece of state and how a job moves between them.
-2. **Send one request between processes.** Introduce client/server, address, port, request, response, and serialization. Observe one exchange with curl and then with packet tools.
-3. **Learn the network path.** Explain sockets and TCP handshake/teardown before asking the learner to inspect packets. Contrast TCP and UDP; add DNS when services stop using fixed local addresses.
-4. **Make worker behavior explicit.** Compare at-most-once and at-least-once delivery. Kill a worker while it handles work; observe a lost or duplicated job.
-5. **Make retries safe.** Add exponential backoff with jitter and an idempotency key. Explain how a repeated request maps to one effective result.
-6. **Control overload and trust.** Bound the queue, return a clear overload response such as 429, and authenticate service-to-service requests. Explain backpressure and the new trust boundary.
-7. **Evolve the message.** Add a versioned message schema and then gRPC/Protocol Buffers. Demonstrate how a change remains readable by the other service.
+1. Follow [TEACHING.md](TEACHING.md), typing every piece of code yourself, starting from your Phase 1 code.
+2. Do the experiments for real: kill a worker mid-job, poison a queue, freeze the broker.
+3. Answer [learned.md](learned.md).
+4. Build the exercise project, **[hookshot](exercises.md)**, a webhook delivery service, on your own. The exercise page shows exactly what finished looks like.
+5. Take the [self-test](../../notes/learned/02-connected-services.md).
 
-## Foundations closed
+## Gaps this phase closes
 
-- Networking: sockets, TCP behavior, UDP, ports, DNS, and packet inspection.
-- Distributed-systems basics: RPC, message queues, delivery guarantees, retries, idempotency, backpressure.
-- Service boundaries, schema evolution, and initial service authentication.
-- Research practice begins: state one failure question and preserve a reproducible trace.
+These rows link to the [foundation-gap ledger](../../JOURNEY.md#5-foundation-gap-ledger).
 
-This phase does not teach consensus, durable job state, or exactly-once delivery as a transport guarantee. “Exactly once in effect” means the application makes retries idempotent.
+| Gap | Where | Evidence |
+|---|---|---|
+| Messaging and event-driven design (row 12) | Steps 2–5 | The kill-a-worker experiment; dead-letter and breaker runs |
+| Serialization and schema evolution (row 13) | Steps 2, 5, 6 | `RunJob` v1→v2 upcasting tests; the protobuf field-number break |
+| Sockets, TCP, ports (row 11) | Step 7 | Your `ss` and `tcpdump` captures |
+| Testing (row 5) | Step 3 | Integration tests against a real broker that found two wrong assumptions |
+| Authentication, first boundary (row 26) | Step 3 | Broker credentials in configuration (properly secured in Phase 6) |
 
-## Reading placement
+## Patterns introduced
 
-Read Kurose & Ross socket/transport sections and CSAPP Chapter 11 before the worker uses network sockets. Read reliable data transfer/TCP after observing a lost connection. Use *Understanding Distributed Systems* on links, discovery, APIs, and resiliency beside the queue/retry work. Read DDIA encoding/evolution and message-broker sections when adding gRPC/queues; MapReduce when re-execution after worker failure is concrete. Add backpressure and protocol readings at those build steps.
+These link to the [patterns ledger](../../JOURNEY.md#6-patterns-ledger):
+- worker pool;
+- work queue;
+- bulkhead and backpressure;
+- event-driven architecture (commands vs events);
+- event envelope and schema versioning;
+- tolerant reader;
+- bounded context (strategic DDD);
+- idempotency key;
+- idempotent receiver;
+- retry with backoff and jitter;
+- dead-letter queue;
+- circuit breaker;
+- factory;
+- crash-only design.
 
-## Exit evidence and career signal
+## Next
 
-Kill and restart the worker mid-job. Show a retry, a duplicate delivery, and one effective completion; explain which component made the retry safe. Capture a packet or request trace.
-
-This establishes distributed-systems fundamentals around communication and delivery, not consensus or durable storage.
+The broker's queues now survive restarts, but the API's job records still live in memory, and the dual-write gap between "store the job" and "publish the command" is still open. The [Rust Bridge](../rust-bridge/README.md) teaches bytes, memory and files. [Phase 3](../03-durable-auditable-data/README.md) then makes the records durable and closes the gap with a transactional outbox.
