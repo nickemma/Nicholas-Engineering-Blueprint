@@ -73,7 +73,7 @@ uv add --dev pytest ruff
 [project]
 name = "kload"
 version = "0.1.0"
-description = "Load generation and latency analysis for the KESTREL jobs API"
+description = "Load generation and latency analysis for the Runway jobs API"
 requires-python = ">=3.12"
 dependencies = []
 
@@ -96,7 +96,7 @@ Create `hello.py`:
 ~~~python
 """The first Python program: print, variables, a list and a loop."""
 
-name = "Kestrel"
+name = "Runway"
 latencies_ms = [12, 15, 11, 250, 14]
 
 print(f"Hello, {name}!")
@@ -117,7 +117,7 @@ uv run python hello.py
 ~~~
 
 ~~~text
-Hello, Kestrel!
+Hello, Runway!
 5 requests
 slow: 250 ms
 ~~~
@@ -715,7 +715,7 @@ def fake_api(request: httpx.Request) -> httpx.Response:
 
 @pytest.fixture
 def client():
-    http = httpx.Client(base_url="http://kestrel.test", transport=httpx.MockTransport(fake_api))
+    http = httpx.Client(base_url="http://runway.test", transport=httpx.MockTransport(fake_api))
     with http:
         yield JobsClient(http)
 
@@ -1015,7 +1015,7 @@ def get_health(client: httpx.AsyncClient):
 
 
 def async_client(handler) -> httpx.AsyncClient:
-    return httpx.AsyncClient(base_url="http://kestrel.test", transport=httpx.MockTransport(handler))
+    return httpx.AsyncClient(base_url="http://runway.test", transport=httpx.MockTransport(handler))
 
 
 async def ok(request: httpx.Request) -> httpx.Response:

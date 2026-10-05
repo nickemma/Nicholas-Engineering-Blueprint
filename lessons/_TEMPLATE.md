@@ -44,7 +44,7 @@ Each phase also has a question-only self-test in `notes/learned/`.
 | **Explain it** | 1–3 questions that also appear in learned.md |
 | **Read** | One specific chapter or section, placed after the experience it explains, with a question to carry into it |
 
-5. **Rebuild:** close the guide and rebuild the phase in your own `kestrel` repository.
+5. **Rebuild:** close the guide and rebuild the phase in your own `runway` repository.
 6. **Checkpoint:** what you must be able to do without the guide.
 7. **If it goes wrong:** a table of symptoms, causes and fixes.
 8. **Reading list:** every reading in the phase, in order.

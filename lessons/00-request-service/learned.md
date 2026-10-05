@@ -1,6 +1,6 @@
 # Phase 0: what I learned
 
-Fill this in as you finish each step of [TEACHING.md](TEACHING.md), then again from memory after the rebuild in step 7. Write in your own words. Every claim needs evidence: a command and what it printed, a test name, or a link to a CI run. Keep your copy in your own `kestrel` repository; this file in the Blueprint is the blank template.
+Fill this in as you finish each step of [TEACHING.md](TEACHING.md), then again from memory after the rebuild in step 7. Write in your own words. Every claim needs evidence: a command and what it printed, a test name, or a link to a CI run. Keep your copy in your own `runway` repository; this file in the Blueprint is the blank template.
 
 ## Explain it
 

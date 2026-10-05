@@ -307,7 +307,7 @@ import (
 	"errors"
 	"sync"
 
-	"kestrel/internal/jobs"
+	"runway/internal/jobs"
 )
 
 // ErrFull means the queue is at capacity and the job was not accepted.
@@ -392,7 +392,7 @@ import (
 	"testing"
 	"time"
 
-	"kestrel/internal/jobs"
+	"runway/internal/jobs"
 )
 
 func TestFullQueueRefusesImmediately(t *testing.T) {
@@ -708,7 +708,7 @@ That needs **two** contexts: one that means "stop taking" and one that means "st
 
 <!-- file: cmd/api/main.go -->
 ~~~go
-// Command api runs the KESTREL jobs service: an HTTP API plus a pool of
+// Command api runs the Runway jobs service: an HTTP API plus a pool of
 // workers that run jobs from an in-process queue.
 //
 // main is the composition root: the one place that builds every concrete
@@ -731,10 +731,10 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 
-	"kestrel/internal/httpapi"
-	"kestrel/internal/jobs"
-	"kestrel/internal/memstore"
-	"kestrel/internal/queue"
+	"runway/internal/httpapi"
+	"runway/internal/jobs"
+	"runway/internal/memstore"
+	"runway/internal/queue"
 )
 
 func main() {
@@ -1176,7 +1176,7 @@ Create `internal/messages/messages.go`:
 
 <!-- file: internal/messages/messages.go -->
 ~~~go
-// Package messages defines what the parts of KESTREL say to each other.
+// Package messages defines what the parts of Runway say to each other.
 // A command asks for something to be done and has exactly one handler. An
 // event reports that something happened; any number of parts may react.
 // Every message travels inside an Envelope.
@@ -1363,7 +1363,7 @@ Create `internal/bus/bus.go`:
 
 <!-- file: internal/bus/bus.go -->
 ~~~go
-// Package bus moves messages between the parts of KESTREL with at-least-once
+// Package bus moves messages between the parts of Runway with at-least-once
 // delivery: a message is redelivered until a handler accepts it, so a
 // handler may see the same message more than once.
 package bus
@@ -1374,7 +1374,7 @@ import (
 	"slices"
 	"sync"
 
-	"kestrel/internal/messages"
+	"runway/internal/messages"
 )
 
 // ErrFull means a queue is at capacity and the message was not accepted.
@@ -1521,7 +1521,7 @@ import (
 	"testing"
 	"time"
 
-	"kestrel/internal/messages"
+	"runway/internal/messages"
 )
 
 func msg(t *testing.T, n int) messages.Envelope {
@@ -1846,8 +1846,8 @@ import (
 	"testing"
 	"time"
 
-	"kestrel/internal/jobs"
-	"kestrel/internal/memstore"
+	"runway/internal/jobs"
+	"runway/internal/memstore"
 )
 
 var fixedNow = time.Date(2026, 10, 4, 12, 0, 0, 0, time.UTC)
@@ -2016,9 +2016,9 @@ import (
 	"fmt"
 	"time"
 
-	"kestrel/internal/bus"
-	"kestrel/internal/jobs"
-	"kestrel/internal/messages"
+	"runway/internal/bus"
+	"runway/internal/jobs"
+	"runway/internal/messages"
 )
 
 // Dispatcher implements jobs.Dispatcher by publishing a RunJob command.
@@ -2105,9 +2105,9 @@ import (
 	"context"
 	"time"
 
-	"kestrel/internal/bus"
-	"kestrel/internal/jobs"
-	"kestrel/internal/messages"
+	"runway/internal/bus"
+	"runway/internal/jobs"
+	"runway/internal/messages"
 )
 
 type Worker struct {
@@ -2171,9 +2171,9 @@ import (
 	"testing"
 	"time"
 
-	"kestrel/internal/bus"
-	"kestrel/internal/jobs"
-	"kestrel/internal/messages"
+	"runway/internal/bus"
+	"runway/internal/jobs"
+	"runway/internal/messages"
 )
 
 // recorder is a bus.Publisher that keeps what was published, or fails.
@@ -2275,7 +2275,7 @@ Replace `cmd/api/main.go`. It now builds a bus, starts `WORKERS` worker subscrip
 
 <!-- file: cmd/api/main.go -->
 ~~~go
-// Command api runs the KESTREL jobs service. In this step, the API and its
+// Command api runs the Runway jobs service. In this step, the API and its
 // workers share one process, but they communicate only through messages on
 // an in-memory bus.
 //
@@ -2300,13 +2300,13 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 
-	"kestrel/internal/bus"
-	"kestrel/internal/eventing"
-	"kestrel/internal/httpapi"
-	"kestrel/internal/jobs"
-	"kestrel/internal/memstore"
-	"kestrel/internal/messages"
-	"kestrel/internal/worker"
+	"runway/internal/bus"
+	"runway/internal/eventing"
+	"runway/internal/httpapi"
+	"runway/internal/jobs"
+	"runway/internal/memstore"
+	"runway/internal/messages"
+	"runway/internal/worker"
 )
 
 func main() {
@@ -2804,7 +2804,7 @@ Create `internal/rabbit/rabbit.go`. It implements the same two interfaces as the
 
 <!-- file: internal/rabbit/rabbit.go -->
 ~~~go
-// Package rabbit connects KESTREL's bus interfaces to RabbitMQ. Queues are
+// Package rabbit connects Runway's bus interfaces to RabbitMQ. Queues are
 // durable quorum queues, messages are persistent, every publish waits for
 // the broker's confirm, and a delivery is acknowledged only after its
 // handler accepts it.
@@ -2819,8 +2819,8 @@ import (
 
 	amqp "github.com/rabbitmq/amqp091-go"
 
-	"kestrel/internal/bus"
-	"kestrel/internal/messages"
+	"runway/internal/bus"
+	"runway/internal/messages"
 )
 
 var (
@@ -2979,7 +2979,7 @@ func (c *Client) deliver(ctx context.Context, queue string, d amqp.Delivery, han
 	}
 }
 
-const attemptHeader = "x-kestrel-attempt"
+const attemptHeader = "x-runway-attempt"
 
 // retry handles a failed delivery. RabbitMQ 4 doesn't count a requeued
 // message towards the queue's delivery limit; that limit catches consumers
@@ -3035,12 +3035,12 @@ Read it against the new ideas:
 - `DeliveryMode: amqp.Persistent` writes the message to disk. `PublishWithDeferredConfirmWithContext` then `WaitContext` sends the message and waits for the broker's confirm. A `false` confirm means the broker *refused* it (the queue was full), and that becomes `ErrRejected`.
 - The mutex around `Publish` serialises publishes on one channel, as the AMQP rules require. It also means one publish waits for the previous confirm, which is simple but slow under heavy load. Faster designs keep a channel per goroutine or collect confirms asynchronously. Measure before you need them.
 - In `deliver`, the outcomes map onto `bus.Handler`'s contract: `Ack` on success, `Nack(requeue=false)` on a permanent failure (which sends it to the dead-letter queue), and `retry` on anything else.
-- `retry` exists because of a real RabbitMQ 4 behaviour that the integration tests below uncovered. A message nacked with `requeue=true` is redelivered at once, and **its delivery count doesn't go up**. A failing message would loop forever: one test measured 251 deliveries in 2 seconds. The queue's `x-delivery-limit` only counts deliveries to consumers that *disappear* (crashes, lost connections), which is still worth having, because it stops a message that keeps killing workers. Ordinary handler failures are counted by the adapter itself, in the `x-kestrel-attempt` header.
+- `retry` exists because of a real RabbitMQ 4 behaviour that the integration tests below uncovered. A message nacked with `requeue=true` is redelivered at once, and **its delivery count doesn't go up**. A failing message would loop forever: one test measured 251 deliveries in 2 seconds. The queue's `x-delivery-limit` only counts deliveries to consumers that *disappear* (crashes, lost connections), which is still worth having, because it stops a message that keeps killing workers. Ordinary handler failures are counted by the adapter itself, in the `x-runway-attempt` header.
 - `defer ch.Close()` in `Subscribe` matters: closing a consumer's channel hands every message it holds but hasn't acknowledged back to the queue.
 
 ### Integration tests against a real broker
 
-Unit tests with fakes can't prove RabbitMQ behaves the way the code assumes. **Integration tests** run against the real thing. They need a broker, so they **skip** unless `KESTREL_AMQP_URL` is set, and every test uses its own randomly named queue so tests can't interfere with each other. Create `internal/rabbit/rabbit_test.go`:
+Unit tests with fakes can't prove RabbitMQ behaves the way the code assumes. **Integration tests** run against the real thing. They need a broker, so they **skip** unless `RUNWAY_AMQP_URL` is set, and every test uses its own randomly named queue so tests can't interfere with each other. Create `internal/rabbit/rabbit_test.go`:
 
 <!-- file: internal/rabbit/rabbit_test.go -->
 ~~~go
@@ -3057,17 +3057,17 @@ import (
 
 	amqp "github.com/rabbitmq/amqp091-go"
 
-	"kestrel/internal/bus"
-	"kestrel/internal/messages"
+	"runway/internal/bus"
+	"runway/internal/messages"
 )
 
-// setup connects to the broker named by KESTREL_AMQP_URL and declares a
+// setup connects to the broker named by RUNWAY_AMQP_URL and declares a
 // fresh queue for this test, deleting it afterwards.
 func setup(t *testing.T, opts Options) (*Client, string) {
 	t.Helper()
-	url := os.Getenv("KESTREL_AMQP_URL")
+	url := os.Getenv("RUNWAY_AMQP_URL")
 	if url == "" {
-		t.Skip("set KESTREL_AMQP_URL to run RabbitMQ integration tests")
+		t.Skip("set RUNWAY_AMQP_URL to run RabbitMQ integration tests")
 	}
 	queue := "test." + rand.Text()
 	client, err := Dial(url, opts, queue)
@@ -3256,7 +3256,7 @@ func TestUnacknowledgedMessageReturnsWhenConsumerStops(t *testing.T) {
 Run them against your broker:
 
 ~~~bash
-KESTREL_AMQP_URL=amqp://guest:guest@localhost:5672/ go test -v -count=1 ./internal/rabbit/
+RUNWAY_AMQP_URL=amqp://guest:guest@localhost:5672/ go test -v -count=1 ./internal/rabbit/
 ~~~
 
 ~~~text
@@ -3266,10 +3266,10 @@ KESTREL_AMQP_URL=amqp://guest:guest@localhost:5672/ go test -v -count=1 ./intern
 --- PASS: TestDeliveryLimitStopsAPoisonMessage (0.33s)
 --- PASS: TestFullQueueRejectsPublish (0.27s)
 --- PASS: TestUnacknowledgedMessageReturnsWhenConsumerStops (0.31s)
-ok  	kestrel/internal/rabbit	1.773s
+ok  	runway/internal/rabbit	1.773s
 ~~~
 
-Without `KESTREL_AMQP_URL`, all six report `SKIP`. Two of these tests started out **failing** while this lesson was being written, and each failure taught something:
+Without `RUNWAY_AMQP_URL`, all six report `SKIP`. Two of these tests started out **failing** while this lesson was being written, and each failure taught something:
 
 - `TestFullQueueRejectsPublish` first expected the *third* publish into a 2-message queue to be refused. The broker accepted it and refused the fourth. A quorum queue notices it's over its limit only after storing the message that crossed it. The test now records the real behaviour, with a comment saying why.
 - `TestDeliveryLimitStopsAPoisonMessage` never finished: requeued messages don't raise the delivery count in RabbitMQ 4. That's why the adapter has `retry`.
@@ -3284,7 +3284,7 @@ Without `KESTREL_AMQP_URL`, all six report `SKIP`. Two of these tests started ou
 
 <!-- file: cmd/api/main.go -->
 ~~~go
-// Command api runs the KESTREL jobs API.
+// Command api runs the Runway jobs API.
 //
 // With AMQP_URL set, it publishes RunJob commands to RabbitMQ and consumes
 // the events that workers (cmd/worker) send back. Without it, it uses an
@@ -3310,15 +3310,15 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 
-	"kestrel/internal/bus"
-	"kestrel/internal/envconfig"
-	"kestrel/internal/eventing"
-	"kestrel/internal/httpapi"
-	"kestrel/internal/jobs"
-	"kestrel/internal/memstore"
-	"kestrel/internal/messages"
-	"kestrel/internal/rabbit"
-	"kestrel/internal/worker"
+	"runway/internal/bus"
+	"runway/internal/envconfig"
+	"runway/internal/eventing"
+	"runway/internal/httpapi"
+	"runway/internal/jobs"
+	"runway/internal/memstore"
+	"runway/internal/messages"
+	"runway/internal/rabbit"
+	"runway/internal/worker"
 )
 
 func main() {
@@ -3539,7 +3539,7 @@ Create `cmd/worker/main.go`:
 
 <!-- file: cmd/worker/main.go -->
 ~~~go
-// Command worker runs KESTREL jobs. It takes RunJob commands from RabbitMQ,
+// Command worker runs Runway jobs. It takes RunJob commands from RabbitMQ,
 // runs them, and publishes what happened as events. Run as many copies as
 // you need: they compete for commands, and each holds one at a time.
 package main
@@ -3556,12 +3556,12 @@ import (
 	"syscall"
 	"time"
 
-	"kestrel/internal/bus"
-	"kestrel/internal/envconfig"
-	"kestrel/internal/jobs"
-	"kestrel/internal/messages"
-	"kestrel/internal/rabbit"
-	"kestrel/internal/worker"
+	"runway/internal/bus"
+	"runway/internal/envconfig"
+	"runway/internal/jobs"
+	"runway/internal/messages"
+	"runway/internal/rabbit"
+	"runway/internal/worker"
 )
 
 func main() {
@@ -4229,15 +4229,15 @@ and add the import. Change:
 
 <!-- edit: internal/httpapi/handler.go -->
 ~~~go
-	"kestrel/internal/jobs"
+	"runway/internal/jobs"
 )
 ~~~
 
 to:
 
 ~~~go
-	"kestrel/internal/idempotency"
-	"kestrel/internal/jobs"
+	"runway/internal/idempotency"
+	"runway/internal/jobs"
 )
 ~~~
 
@@ -4275,7 +4275,7 @@ That test needs the `time` and `idempotency` imports back. Change:
 	"strings"
 	"testing"
 
-	"kestrel/internal/jobs"
+	"runway/internal/jobs"
 ~~~
 
 to:
@@ -4285,8 +4285,8 @@ to:
 	"testing"
 	"time"
 
-	"kestrel/internal/idempotency"
-	"kestrel/internal/jobs"
+	"runway/internal/idempotency"
+	"runway/internal/jobs"
 ~~~
 
 <!-- run: go vet ./internal/... && go test -race ./internal/httpapi/... -->
@@ -4394,22 +4394,22 @@ and add the import. Change:
 
 <!-- edit: cmd/api/main.go -->
 ~~~go
-	"kestrel/internal/httpapi"
-	"kestrel/internal/jobs"
-	"kestrel/internal/memstore"
-	"kestrel/internal/messages"
-	"kestrel/internal/rabbit"
+	"runway/internal/httpapi"
+	"runway/internal/jobs"
+	"runway/internal/memstore"
+	"runway/internal/messages"
+	"runway/internal/rabbit"
 ~~~
 
 to:
 
 ~~~go
-	"kestrel/internal/httpapi"
-	"kestrel/internal/idempotency"
-	"kestrel/internal/jobs"
-	"kestrel/internal/memstore"
-	"kestrel/internal/messages"
-	"kestrel/internal/rabbit"
+	"runway/internal/httpapi"
+	"runway/internal/idempotency"
+	"runway/internal/jobs"
+	"runway/internal/memstore"
+	"runway/internal/messages"
+	"runway/internal/rabbit"
 ~~~
 
 `time.NewTicker` sends the current time on its channel `C` at a fixed interval. The `select` waits for the next tick *or* shutdown, the same shape as `Simulate`. The ticker is stopped with `defer`, so it doesn't keep running after the goroutine exits.
@@ -4902,10 +4902,10 @@ import (
 	"errors"
 	"time"
 
-	"kestrel/internal/bus"
-	"kestrel/internal/jobs"
-	"kestrel/internal/messages"
-	"kestrel/internal/retry"
+	"runway/internal/bus"
+	"runway/internal/jobs"
+	"runway/internal/messages"
+	"runway/internal/retry"
 )
 
 // ErrTransient is the failure Flaky injects.
@@ -5083,15 +5083,15 @@ That file needs the `retry` package. Change its imports:
 
 <!-- edit: internal/worker/worker_test.go -->
 ~~~go
-	"kestrel/internal/messages"
+	"runway/internal/messages"
 )
 ~~~
 
 to:
 
 ~~~go
-	"kestrel/internal/messages"
-	"kestrel/internal/retry"
+	"runway/internal/messages"
+	"runway/internal/retry"
 )
 ~~~
 
@@ -5207,7 +5207,7 @@ import (
 	"sync"
 	"time"
 
-	"kestrel/internal/jobs"
+	"runway/internal/jobs"
 )
 
 // ErrOpen means the breaker refused the call without trying it.
@@ -5468,16 +5468,16 @@ with the import:
 
 <!-- edit: cmd/api/main.go -->
 ~~~go
-	"kestrel/internal/bus"
-	"kestrel/internal/envconfig"
+	"runway/internal/bus"
+	"runway/internal/envconfig"
 ~~~
 
 to:
 
 ~~~go
-	"kestrel/internal/breaker"
-	"kestrel/internal/bus"
-	"kestrel/internal/envconfig"
+	"runway/internal/breaker"
+	"runway/internal/bus"
+	"runway/internal/envconfig"
 ~~~
 
 <!-- run: go mod tidy && test -z "$(gofmt -l .)" && go vet ./... && go test -race -count=1 ./... -->
@@ -5592,15 +5592,15 @@ GOBIN=$PWD/bin go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.6.2
 
 ### The contract
 
-Create `proto/kestrel/jobs/v1/jobs.proto`:
+Create `proto/runway/jobs/v1/jobs.proto`:
 
-<!-- file: proto/kestrel/jobs/v1/jobs.proto -->
+<!-- file: proto/runway/jobs/v1/jobs.proto -->
 ~~~protobuf
 syntax = "proto3";
 
-package kestrel.jobs.v1;
+package runway.jobs.v1;
 
-option go_package = "kestrel/internal/grpcapi/jobsv1";
+option go_package = "runway/internal/grpcapi/jobsv1";
 
 // Jobs creates and reads jobs. It offers the same use cases as the HTTP API.
 service Jobs {
@@ -5643,10 +5643,10 @@ message Job {
 
 Generate the Go code:
 
-<!-- run: PATH=$PWD/bin:$PATH protoc --go_out=. --go_opt=module=kestrel --go-grpc_out=. --go-grpc_opt=module=kestrel proto/kestrel/jobs/v1/jobs.proto -->
+<!-- run: PATH=$PWD/bin:$PATH protoc --go_out=. --go_opt=module=runway --go-grpc_out=. --go-grpc_opt=module=runway proto/runway/jobs/v1/jobs.proto -->
 ~~~bash
-PATH=$PWD/bin:$PATH protoc --go_out=. --go_opt=module=kestrel \
-  --go-grpc_out=. --go-grpc_opt=module=kestrel proto/kestrel/jobs/v1/jobs.proto
+PATH=$PWD/bin:$PATH protoc --go_out=. --go_opt=module=runway \
+  --go-grpc_out=. --go-grpc_opt=module=runway proto/runway/jobs/v1/jobs.proto
 ls internal/grpcapi/jobsv1
 ~~~
 
@@ -5682,8 +5682,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"kestrel/internal/grpcapi/jobsv1"
-	"kestrel/internal/jobs"
+	"runway/internal/grpcapi/jobsv1"
+	"runway/internal/jobs"
 )
 
 // JobService is what the gRPC server needs from the jobs service.
@@ -5781,9 +5781,9 @@ import (
 	"google.golang.org/grpc/test/bufconn"
 	"google.golang.org/protobuf/proto"
 
-	"kestrel/internal/grpcapi/jobsv1"
-	"kestrel/internal/jobs"
-	"kestrel/internal/memstore"
+	"runway/internal/grpcapi/jobsv1"
+	"runway/internal/jobs"
+	"runway/internal/memstore"
 )
 
 // client starts a real gRPC server on an in-memory connection and returns
@@ -5967,7 +5967,7 @@ and add the imports. Change:
 ~~~go
 	"github.com/prometheus/client_golang/prometheus"
 
-	"kestrel/internal/breaker"
+	"runway/internal/breaker"
 ~~~
 
 to:
@@ -5977,24 +5977,24 @@ to:
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	"kestrel/internal/breaker"
+	"runway/internal/breaker"
 ~~~
 
 and:
 
 <!-- edit: cmd/api/main.go -->
 ~~~go
-	"kestrel/internal/eventing"
-	"kestrel/internal/httpapi"
+	"runway/internal/eventing"
+	"runway/internal/httpapi"
 ~~~
 
 to:
 
 ~~~go
-	"kestrel/internal/eventing"
-	"kestrel/internal/grpcapi"
-	"kestrel/internal/grpcapi/jobsv1"
-	"kestrel/internal/httpapi"
+	"runway/internal/eventing"
+	"runway/internal/grpcapi"
+	"runway/internal/grpcapi/jobsv1"
+	"runway/internal/httpapi"
 ~~~
 
 The `main` tests start the API on a random HTTP port; the gRPC port must be random too, or tests running together would collide on 9090. In `cmd/api/main_test.go`, change:
@@ -6034,7 +6034,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/status"
 
-	"kestrel/internal/grpcapi/jobsv1"
+	"runway/internal/grpcapi/jobsv1"
 )
 
 func main() {
@@ -6190,7 +6190,7 @@ sudo tcpdump -i lo -nn -A 'tcp port 8080'
 
 Everything in Phase 0's request diagram is there, byte for byte. HTTP is just text on a TCP connection.
 
-Now capture port 9090 and run `go run ./cmd/jobsctl get 1`. After the same handshake, the data is **not** readable text: HTTP/2 frames and protobuf bytes, with only fragments like the path `/kestrel.jobs.v1.Jobs/GetJob` recognisable. Then capture port 5672 while creating a job: AMQP is binary too, but you'll spot the JSON payload of the `RunJob` command inside it.
+Now capture port 9090 and run `go run ./cmd/jobsctl get 1`. After the same handshake, the data is **not** readable text: HTTP/2 frames and protobuf bytes, with only fragments like the path `/runway.jobs.v1.Jobs/GetJob` recognisable. Then capture port 5672 while creating a job: AMQP is binary too, but you'll spot the JSON payload of the `RunJob` command inside it.
 
 ### Back to the 7-second tail
 
@@ -6204,7 +6204,7 @@ The Python Bridge left an open question: after a 1-second server freeze, some re
 
 ## Rebuild it yourself
 
-Close the guide. In your own `kestrel` repository, rebuild Phase 2 from these contracts:
+Close the guide. In your own `runway` repository, rebuild Phase 2 from these contracts:
 - the message types and their versions;
 - the queue names and their dead-letter queues;
 - the HTTP and gRPC APIs;
@@ -6239,7 +6239,7 @@ You're ready for the Rust Bridge when you can, without the guide:
 | Every request returns 503 at once | The breaker is open | Wait `BREAKER_COOLDOWN`; check `dispatch_breaker_state` and the broker |
 | `protoc-gen-go: program not found` | The plugins aren't on `PATH` | Prefix the command with `PATH=$PWD/bin:$PATH` |
 | `all arguments must refer to packages in the same module` | Two modules in one `go install` | Install each plugin separately |
-| Integration tests say `SKIP` | `KESTREL_AMQP_URL` isn't set | `KESTREL_AMQP_URL=amqp://guest:guest@localhost:5672/ go test ./internal/rabbit/` |
+| Integration tests say `SKIP` | `RUNWAY_AMQP_URL` isn't set | `RUNWAY_AMQP_URL=amqp://guest:guest@localhost:5672/ go test ./internal/rabbit/` |
 | A test passes once and fails with `-count=20` | A race or an ordering assumption (remember `select`) | Run concurrent tests many times; never trust one pass |
 
 ## Reading list for this phase

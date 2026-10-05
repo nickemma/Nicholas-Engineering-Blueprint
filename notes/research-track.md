@@ -1,33 +1,35 @@
 # Research track (personal)
 
-My own MSc preparation. The learner-facing path is in [JOURNEY.md](../JOURNEY.md). This file keeps what is specific to me.
+My own MSc preparation. The learner-facing path is [JOURNEY.md](../JOURNEY.md); my capstone is [KESTREL](../capstones/01-kestrel.md).
 
 ## Destination
 
-I want to be a Distributed Systems Engineer who can design, build, secure, evaluate and explain infrastructure for a validated public-interest need, and who is ready for research in distributed systems, networking, privacy or systems software.
+A thesis MSc in computer science, specialising in **systems and networking**, at the University of Waterloo (MMath, thesis) or UBC (MSc, thesis), followed by distributed-systems and infrastructure work that is ready for research.
 
-| Outcome | What proves it |
-|---|---|
-| Industry-ready | A reliable, observable system with failure evidence, operational notes and a threat model |
-| Research-ready | A precise question, a baseline, a reproducible evaluation, paper notes, and a report on a systems, network or privacy trade-off |
+## Supervisors I'd like to work with
+
+Verify current interests, funding and intake before writing to anyone. Read two of their recent papers first, and connect them to something I built.
+
+| Supervisor | Where | Why KESTREL connects |
+|---|---|---|
+| Samer Al-Kiswany | Waterloo | His group's studies of **partial network partitions** in cloud systems (OSDI 2018, OSDI 2020) are the closest prior work to KESTREL's sharpened question |
+| Bernard Wong | Waterloo | Distributed systems and networking, including geo-distributed and network-aware systems. **Note:** his early, well-known *Meridian* (a network location service, SIGCOMM 2005) shares a name with my MERIDIAN project. Acknowledge that if I write to him |
+| Khuzaima Daudjee | Waterloo | Distributed data management and replication: the consistency side of KESTREL |
+| Ivan Beschastnikh | UBC | Distributed systems, analysis and testing tools, formal methods, and health/privacy collaborations: KESTREL's checking tools and its health motivation |
+
+## KESTREL, sharpened
+
+Earlier versions centred on privacy and local-first data sharing. The research question is now squarely systems and networking:
+
+> Under partial and intermittent network partitions typical of under-resourced sites, how do consensus-based, CRDT-based and hybrid replication strategies compare in summary freshness, write availability, bandwidth and correctness? Can a partition-aware hybrid outperform both?
+
+It builds on MERIDIAN (per-request consistency) rather than repeating it. The health setting remains the motivation and the workload. See the [full brief](../capstones/01-kestrel.md).
 
 ## How KESTREL differs from my other projects
 
-My portfolio already covers distributed storage (MERIDIAN), developer platforms (VEYRONIX), search (LATTICE), model serving (TESSERA) and AI governance (SYNAPSE-AI). KESTREL shouldn't rebuild those under another name. It adds something different: a user-validated, public-interest workload, and a careful evaluation of how data-sharing choices affect people when organisations have limited connectivity and strict control over sensitive information. Existing projects can serve as infrastructure or baselines where they fit.
+My portfolio already covers distributed storage (MERIDIAN), developer platforms (VEYRONIX), search (LATTICE), model serving (TESSERA) and AI governance (SYNAPSE-AI). KESTREL contributes something different: a measured study of replication under *realistic, imperfect* connectivity, with a public-interest workload. Existing projects can serve as components or baselines.
 
-Local-first replication is a hypothesis to test, not a promised improvement. It may improve access during outages while increasing stale-data, conflict, privacy or operational risk.
-
-The direction draws on distributed storage and networking, decentralised services, geo-distributed performance, formal methods, systems tools, privacy, and secure distributed analysis. Those connections are visible in the research of [Bernard Wong](https://cs.uwaterloo.ca/~bernard/) and [Ivan Beschastnikh](https://www.cs.ubc.ca/~bestchai/). The research fit should guide the experiments; it doesn't imply endorsement or supervision.
-
-## Targets
-
-- University of Waterloo: MMath in Computer Science, thesis.
-- UBC: MSc in Computer Science, thesis (Vancouver).
-- Interest: systems and networking, secure distributed systems, and distributed systems broadly.
-
-If the MSc starts in fall 2027, finishing Phase 4 and one technical report before then is realistic and valuable.
-
-## What admissions committees and supervisors look for
+## What committees and supervisors look for
 
 - Evidence of research ability: reading papers critically, forming a question, running an honest experiment, writing it up.
 - Fit with a supervisor's work.
@@ -35,42 +37,20 @@ If the MSc starts in fall 2027, finishing Phase 4 and one technical report befor
 
 ## Research habits
 
-1. **Read papers with Keshav's three-pass method.** Keep a one-page note per paper covering the problem, key idea, assumptions and failure model, evaluation, one weakness, and one open question.
-2. **Reproduce one result**, for example a Raft or VR behaviour under partition, or a Jepsen-style anomaly in a real database. Document where my numbers differ.
-3. **Write one technical report** (4–6 pages, LaTeX) from Phase 4 or Phase 8. Possible questions:
-   - How do freshness and availability trade off under intermittent site connectivity?
-   - What can a site infer from repeated cross-site aggregate queries?
-   - How does local-first replication affect recovery and operator effort?
-4. **Specify one protocol in TLA+** and model-check a safety property.
-5. Learn LaTeX and Zotero.
+1. **Read papers with Keshav's three-pass method.** One-page note per paper: the problem, key idea, assumptions and failure model, evaluation, one weakness, one open question.
+2. **Reproduce one result**, such as a partial-partition failure from the OSDI 2018 study, on my own Raft from Phase 4.
+3. **Write the KESTREL capstone report** (6–10 pages, LaTeX), as my writing sample.
+4. **Model the hybrid's safety property in TLA+.**
+5. Use LaTeX and Zotero.
 
-## Areas to explore
+## Timeline
 
-| Area | Starter papers |
-|---|---|
-| Byzantine fault-tolerant replication | PBFT (OSDI 1999); HotStuff (PODC 2019) |
-| Accountability and auditing | PeerReview (SOSP 2007) |
-| Verified distributed systems | IronFleet (SOSP 2015); Verdi (PLDI 2015) |
-| Testing distributed systems | Jepsen analyses; *Simple Testing Can Prevent Most Critical Failures* (OSDI 2014) |
-| Authorisation at scale | Zanzibar (2019) |
-| Supply-chain integrity | in-toto (2019) |
-| Privacy-preserving distributed analysis | Current primary papers, chosen after defining the data, query and adversary model |
-| Systems analysis tools | Dinv, ShiViz, NetCheck, and specification-mining work from Systopia |
-
-## Groups to study
-
-Verify current faculty and intake before contacting anyone.
-
-- **Waterloo, Cheriton School of Computer Science:** the Systems and Networking group; the Data Systems Group (Khuzaima Daudjee); the CrySP group (Ian Goldberg; N. Asokan).
-- **UBC Computer Science:** the Systopia lab; the Security & Privacy group; Ivan Beschastnikh.
-- **Faculty moves happen:** Thomas Pasquier announced a move to Oxford in September 2026.
-
-For each potential supervisor, read two recent papers and write a short note connecting them to something I built. That note is the core of a good contact email.
+If the MSc starts in fall 2027, I want Phase 4, a technical report on partial partitions in my Raft, and the KESTREL proposal done before applications close.
 
 ## Maths readiness
 
-The MMath sits in the Faculty of Mathematics. Keep discrete maths, probability and proof-writing sharp alongside the BSc. Lynch's distributed-algorithms material and the FLP paper are good practice in reading proofs, and TLA+ builds formal reasoning.
+Keep discrete maths, probability and proof-writing sharp alongside the BSc. Lynch's distributed-algorithms material and the FLP paper are good proof-reading practice. TLA+ builds formal reasoning.
 
 ## Optional certifications (after Phase 5)
 
-CKA, AWS Solutions Architect Associate, Terraform Associate.
+AWS Solutions Architect Associate, CKA, Terraform Associate.

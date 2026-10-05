@@ -31,7 +31,7 @@
 
 1. Follow [TEACHING.md](TEACHING.md) in order, typing every piece of code yourself in `practice/`.
 2. Answer [learned.md](learned.md) from your own observations as you go.
-3. Rebuild the service from memory in your own `kestrel` repository (step 7).
+3. Rebuild the service from memory in your own `runway` repository (step 7).
 4. Build the exercise project, **[tempconv](exercises.md)**, a temperature-conversion service, on your own. The exercise page describes exactly what the finished service does.
 5. Take the [self-test](../../notes/learned/00-request-service.md) without notes.
 
