@@ -11,7 +11,7 @@ lessons/NN-name/
   README.md      the syllabus: question, topics, outcomes, prerequisites, time, the exercise project, what it feeds into
   TEACHING.md    the lesson: explanations plus a type-along build, with the code inline
   exercises.md   a different project to build alone: a finished-state spec, acceptance checks, no solutions
-  learned.md     the answer sheet: one row per "Explain it" question, plus an evidence checklist
+  learned.md     your record to fill in: one row per "Explain it" question, plus an evidence checklist
 ~~~
 
 Each phase also has a question-only self-test in `notes/learned/`.

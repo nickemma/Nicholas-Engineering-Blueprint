@@ -18,8 +18,42 @@ jobs:
           --health-interval 5s
           --health-timeout 10s
           --health-retries 20
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: runway
+          POSTGRES_PASSWORD: runway
+          POSTGRES_DB: runway
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U runway"
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 20
+      redis:
+        image: redis:8
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 20
+      kafka:
+        image: apache/kafka:4.1.0
+        ports:
+          - 9092:9092
+        options: >-
+          --health-cmd "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092"
+          --health-interval 5s
+          --health-timeout 10s
+          --health-retries 20
     env:
       RUNWAY_AMQP_URL: amqp://guest:guest@localhost:5672/
+      RUNWAY_DATABASE_URL: postgres://runway:runway@localhost:5432/runway
+      RUNWAY_REDIS_URL: redis://localhost:6379/0
+      RUNWAY_KAFKA_BROKERS: localhost:9092
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-go@v7

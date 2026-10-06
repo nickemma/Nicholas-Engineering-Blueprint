@@ -26,11 +26,12 @@ types and runs, so it can follow along in a scratch directory:
     <!-- run: go test ./... -->
 
     <!-- continue: ../01-reliable-service/TEACHING.md -->
+    <!-- continue: ../rust-bridge/TEACHING.md into audit -->
 
 file blocks create or replace a file. edit blocks change part of one.
 append blocks add to the end of one, after a blank line. continue replays
 another guide first (path relative to this guide), for a phase that starts
-from the previous phase's code. run
+from an earlier guide's code; "into DIR" replays it into a subdirectory. run
 commands execute in the scratch directory and must succeed. Code blocks
 without a marker are illustrations and are not checked.
 
@@ -109,7 +110,12 @@ def replay(guide: Path, workdir: Path) -> int:
         steps += 1
         where = f"{guide}:{line}"
         if kind == "continue":
-            steps += replay((guide.parent / arg).resolve(), workdir)
+            # "continue: OTHER.md" replays it here; "continue: OTHER.md into DIR"
+            # replays it into a subdirectory.
+            other, _, into = arg.partition(" into ")
+            target = workdir / into.strip() if into else workdir
+            target.mkdir(parents=True, exist_ok=True)
+            steps += replay((guide.parent / other.strip()).resolve(), target)
         elif kind == "file":
             path = workdir / arg
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -146,6 +152,8 @@ def check(guide: Path, keep: bool) -> bool:
     try:
         steps = replay(guide.resolve(), workdir)
         print(f"ok   {guide} ({steps} steps)")
+        if keep:
+            print(f"     scratch directory kept at {workdir}")
         return True
     except GuideError as err:
         print(f"FAIL {err}")
