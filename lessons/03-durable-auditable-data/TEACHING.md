@@ -3011,20 +3011,23 @@ func Run(t *testing.T, newKeys func(t *testing.T, clock *Clock) idempotency.Keys
 	a := sha256.Sum256([]byte("request a"))
 	b := sha256.Sum256([]byte("request b"))
 	done := idempotency.Response{Status: http.StatusCreated, Header: http.Header{"Location": {"/jobs/1"}}, Body: []byte(`{"id":1}`)}
-	start := func() (*Clock, idempotency.Keys) {
+	// start makes a fresh store for one subtest. It takes the subtest's t,
+	// so a store that skips or fails (no database, say) does so in the
+	// subtest that asked for it.
+	start := func(t *testing.T) (*Clock, idempotency.Keys) {
 		clock := &Clock{now: time.Date(2026, 10, 5, 12, 0, 0, 0, time.UTC)}
 		return clock, newKeys(t, clock)
 	}
 
 	t.Run("a new key is claimed", func(t *testing.T) {
-		_, keys := start()
+		_, keys := start(t)
 		if got, err := keys.Begin(ctx, "k", a); got != nil || err != nil {
 			t.Fatalf("Begin = %v, %v; want nil, nil", got, err)
 		}
 	})
 
 	t.Run("a key in use is in progress", func(t *testing.T) {
-		_, keys := start()
+		_, keys := start(t)
 		_, _ = keys.Begin(ctx, "k", a)
 		if _, err := keys.Begin(ctx, "k", a); !errors.Is(err, idempotency.ErrInProgress) {
 			t.Fatalf("error = %v, want ErrInProgress", err)
@@ -3032,7 +3035,7 @@ func Run(t *testing.T, newKeys func(t *testing.T, clock *Clock) idempotency.Keys
 	})
 
 	t.Run("a key for another request is a mismatch", func(t *testing.T) {
-		_, keys := start()
+		_, keys := start(t)
 		_, _ = keys.Begin(ctx, "k", a)
 		if _, err := keys.Begin(ctx, "k", b); !errors.Is(err, idempotency.ErrMismatch) {
 			t.Fatalf("error = %v, want ErrMismatch", err)
@@ -3040,7 +3043,7 @@ func Run(t *testing.T, newKeys func(t *testing.T, clock *Clock) idempotency.Keys
 	})
 
 	t.Run("a completed key returns the response exactly", func(t *testing.T) {
-		_, keys := start()
+		_, keys := start(t)
 		_, _ = keys.Begin(ctx, "k", a)
 		if err := keys.Complete(ctx, "k", done); err != nil {
 			t.Fatal(err)
@@ -3055,7 +3058,7 @@ func Run(t *testing.T, newKeys func(t *testing.T, clock *Clock) idempotency.Keys
 	})
 
 	t.Run("a released key can be claimed again", func(t *testing.T) {
-		_, keys := start()
+		_, keys := start(t)
 		_, _ = keys.Begin(ctx, "k", a)
 		if err := keys.Release(ctx, "k"); err != nil {
 			t.Fatal(err)
@@ -3066,7 +3069,7 @@ func Run(t *testing.T, newKeys func(t *testing.T, clock *Clock) idempotency.Keys
 	})
 
 	t.Run("an expired key can be claimed again", func(t *testing.T) {
-		clock, keys := start()
+		clock, keys := start(t)
 		_, _ = keys.Begin(ctx, "k", a)
 		_ = keys.Complete(ctx, "k", done)
 		clock.Advance(TTL + time.Second)
@@ -3076,7 +3079,7 @@ func Run(t *testing.T, newKeys func(t *testing.T, clock *Clock) idempotency.Keys
 	})
 
 	t.Run("concurrent claims have exactly one winner", func(t *testing.T) {
-		_, keys := start()
+		_, keys := start(t)
 		var wg sync.WaitGroup
 		var mu sync.Mutex
 		winners := 0
@@ -7250,6 +7253,13 @@ docker compose exec postgres psql -U runway -Atc "SELECT id, description FROM jo
 Recovery took 2.3 seconds here, because step 8's million-row insert and delete were still in the WAL since the last checkpoint. That's a real trade-off: **checkpoints** (writing dirty pages to the table files so that the WAL before them is no longer needed) cost I/O while running, and save time during recovery.
 
 <!-- run: test -z "$(gofmt -l .)" && go vet ./... && go test -race -count=1 ./... -->
+
+Finally, run the tests once with the server variables unset. Every integration test should say `SKIP`, and none should fail. A test that only works when its server is there is a test that breaks on someone else's laptop.
+
+<!-- run: env -u RUNWAY_AMQP_URL -u RUNWAY_DATABASE_URL -u RUNWAY_REDIS_URL -u RUNWAY_KAFKA_BROKERS go test -count=1 ./... -->
+~~~bash
+env -u RUNWAY_AMQP_URL -u RUNWAY_DATABASE_URL -u RUNWAY_REDIS_URL -u RUNWAY_KAFKA_BROKERS go test ./...
+~~~
 
 **Explain it:** define RPO and RTO, and give each for nightly `pg_dump`s and for WAL archiving. Why is a `pg_dump` consistent even while the API writes? After the restore, what did the audit log tell you, and why must the identity be moved forward before the database takes traffic? Read the recovery log aloud: what does `invalid record length ... got 0` mean?
 
