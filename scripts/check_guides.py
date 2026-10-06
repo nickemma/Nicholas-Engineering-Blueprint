@@ -36,7 +36,9 @@ commands execute in the scratch directory and must succeed. Code blocks
 without a marker are illustrations and are not checked.
 
 Usage: python3 scripts/check_guides.py [--keep] [GUIDE.md ...]
-With no guides, every lessons/*/TEACHING.md that contains markers is checked.
+With no guides, every lessons/*/TEACHING.md that contains markers is checked,
+except those another guide continues from: replaying the later guide replays
+them too, run markers included.
 """
 
 import re
@@ -170,6 +172,13 @@ def main(args: list[str]) -> int:
     guides = [Path(a) for a in args if a != "--keep"]
     if not guides:
         guides = [p for p in sorted(Path("lessons").glob("*/TEACHING.md")) if any(actions(p))]
+        continued = {
+            (p.parent / arg.partition(" into ")[0].strip()).resolve()
+            for p in guides
+            for _, kind, arg, _ in actions(p)
+            if kind == "continue"
+        }
+        guides = [p for p in guides if p.resolve() not in continued]
     results = [check(guide, keep) for guide in guides]
     return 0 if all(results) else 1
 
