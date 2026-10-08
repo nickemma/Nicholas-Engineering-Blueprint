@@ -6495,6 +6495,28 @@ func (c *cluster) leader() raft.ID {
 	return raft.None
 }
 
+// put writes through the member it believes leads, as a real client
+// would: it follows a 421 to the new leader, and retries a 503 (the write
+// didn't commit in time). On a loaded machine an election can happen
+// mid-test. It returns the member that accepted the write. (Putting the
+// same value twice is harmless here.)
+func (c *cluster) put(leader raft.ID, key, value string) raft.ID {
+	c.t.Helper()
+	for range 10 {
+		code, _ := do(c.t, http.MethodPut, c.urls[leader]+"/kv/"+key, value)
+		switch code {
+		case http.StatusOK:
+			return leader
+		case http.StatusMisdirectedRequest, http.StatusServiceUnavailable:
+			leader = c.leader()
+		default:
+			c.t.Fatalf("PUT = %d", code)
+		}
+	}
+	c.t.Fatal("no member accepted the write")
+	return raft.None
+}
+
 func do(t *testing.T, method, url, body string) (int, map[string]any) {
 	t.Helper()
 	req, _ := http.NewRequest(method, url, strings.NewReader(body))
@@ -6512,23 +6534,26 @@ func TestWritesSurviveTheLeaderStopping(t *testing.T) {
 	c := newCluster(t, 3)
 	leader := c.leader()
 	for i := range 60 { // enough to take a snapshot (every 50 entries)
-		if code, _ := do(t, http.MethodPut, c.urls[leader]+"/kv/k", fmt.Sprint("v", i)); code != http.StatusOK {
-			t.Fatalf("PUT = %d", code)
-		}
+		leader = c.put(leader, "k", fmt.Sprint("v", i))
 	}
 
 	c.stop(leader)
 	next := c.leader()
 	code, got := do(t, http.MethodGet, c.urls[next]+"/kv/k", "")
+	for range 10 { // a read goes through the leader too: follow a 421
+		if code != http.StatusMisdirectedRequest {
+			break
+		}
+		next = c.leader()
+		code, got = do(t, http.MethodGet, c.urls[next]+"/kv/k", "")
+	}
 	if code != http.StatusOK || got["value"] != "v59" {
 		t.Fatalf("after the leader stopped: %d %v", code, got)
 	}
 
 	// The old leader comes back, catches up from its disk and the new leader.
 	c.restart(leader)
-	if code, _ := do(t, http.MethodPut, c.urls[next]+"/kv/k", "after"); code != http.StatusOK {
-		t.Fatalf("PUT = %d", code)
-	}
+	next = c.put(next, "k", "after")
 	deadline := time.Now().Add(5 * time.Second)
 	for c.members[leader].node.Status().Commit < c.members[next].node.Status().Commit {
 		if time.Now().After(deadline) {
