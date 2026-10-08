@@ -161,7 +161,7 @@ You follow each lesson in a scratch `practice/` folder. At the end of each phase
 | Rust Bridge | [`rustup`](https://rustup.rs/) |
 | Phase 3 | The `psql` client. PostgreSQL, Redis and Kafka run in Docker |
 | Phase 4 | Java 17+ and the [TLA+ tools](https://github.com/tlaplus/tlaplus/releases) (or the VS Code TLA+ extension) |
-| Phase 5 | [`kind`](https://kind.sigs.k8s.io/), `kubectl`, [`helm`](https://helm.sh/), [`terraform`](https://developer.hashicorp.com/terraform/install), the AWS CLI and an AWS account (the free tier is enough; the guide covers costs and clean-up) |
+| Phase 5 | [`kind`](https://kind.sigs.k8s.io/), `kubectl`, [`helm`](https://helm.sh/), [`terraform`](https://developer.hashicorp.com/terraform/install); optionally the AWS CLI and an AWS account (the Terraform is planned offline for free; applying it costs about $2.50 a day while it runs, and the guide covers clean-up) |
 | Phase 7 | Python ML libraries, installed through `uv`. No GPU is needed |
 | Phase 8 | `govulncheck`, [`trivy`](https://trivy.dev/), [`syft`](https://github.com/anchore/syft), [`cosign`](https://docs.sigstore.dev/), plus whatever your capstone needs |
 
@@ -187,7 +187,7 @@ flowchart LR
 | [Rust Bridge](lessons/rust-bridge/README.md) | What do bytes, memory and ownership really look like? | A checksummed append-only log that survives torn writes | 3 | **Ready** |
 | [3. Make data durable](lessons/03-durable-auditable-data/README.md) | What survives a crash, and what happens between two writes? | PostgreSQL with pooling and transactions, an outbox, Kafka, Redis caching, background jobs, the Rust audit log | 7 | **Ready** |
 | [4. Replicate and scale out](lessons/04-replicated-state/README.md) | What can several machines agree on, and how do you split work across them? | Your own Raft, simulation testing, linearizability checks, TLA+, sharding with consistent hashing, leases and fencing | 10 | **Ready** |
-| [5. Operate it](lessons/05-constrained-operations/README.md) | Can you deploy, observe, diagnose and recover it? | Containers, Kubernetes, load balancing, Helm, observability, SLOs, a game day, and Runway on AWS with Terraform | 9 | Being rebuilt |
+| [5. Operate it](lessons/05-constrained-operations/README.md) | Can you deploy, observe, diagnose and recover it? | Containers, Kubernetes, load balancing, Helm, CI/CD, tracing, SLOs, a controller, a game day, and Runway on AWS with Terraform | 9 | **Ready** |
 | [6. Secure it](lessons/06-safe-shared-queries/README.md) | Who may do what, and how do you contain abuse? | Identity, authorization, tenant isolation, rate limiting, mTLS, secrets, a tamper-evident audit log | 6 | Being rebuilt |
 | [7. Measure and learn](lessons/07-utility-evaluation/README.md) | Is it actually better, and can its own data improve it? | Rigorous experiments, a data pipeline, ML and deep learning, MLOps, AIOps, all on Runway's data | 8 | Being rebuilt |
 | [8. Capstone](capstones/README.md) | Can you answer a research question nobody has answered for you? | One of ten research projects, end to end, plus a hardening review and a defended report | 10+ | Being rebuilt |
@@ -266,13 +266,14 @@ The user-requested topics are all here: pooling, transactions, queues, idempoten
 ### Phase 5: Operate it
 
 - **Build:**
-  - container images; Kubernetes on kind, with **load balancing and service discovery** (Services, readiness, DNS) and a StatefulSet for Raft; a Helm chart;
-  - a CI/CD pipeline;
-  - OpenTelemetry traces, Prometheus and Grafana, an SLO with burn-rate alerts;
-  - network impairment between nodes; a game day and a postmortem; a tiny reconciliation controller;
-  - **Runway on AWS**, with Terraform: VPC, IAM, ECS or EKS, RDS, S3, SQS and CloudWatch. This is run locally on the free tier, with costs and clean-up spelled out.
+  - container images; Kubernetes on kind, with **load balancing and service discovery** (Services, kube-proxy, DNS, a layer-7 balancer of your own) and a StatefulSet for Raft; a Helm chart with hooks, safe rollouts and a canary;
+  - a CI/CD pipeline that builds once, smoke-tests on kind and publishes by digest;
+  - OpenTelemetry traces through the outbox and the broker; Prometheus and Grafana; SLOs with tested burn-rate alerts;
+  - a queue-driven autoscaler (a reconciliation controller with least-privilege RBAC);
+  - network impairment and partial partitions; a game day, a runbook and a postmortem;
+  - **Runway on AWS**, with Terraform: VPC, IAM, ECS on Fargate, RDS, S3, SQS (with an SQS adapter), an ALB, CloudWatch and a budget. It is planned offline and checked in CI; applying it is optional, with costs and clean-up spelled out.
 - **Learn:** containers as processes (namespaces, cgroups); Kubernetes control loops; L4 vs L7 load balancing; DNS; cloud networking and IAM; SLOs and error budgets; the USE method; incident response.
-- **Patterns:** reconciliation loop; sidecar; liveness vs readiness; canary rollout; twelve-factor config; infrastructure as code.
+- **Patterns:** reconciliation loop; liveness vs readiness; canary rollout; twelve-factor config; build once, deploy by digest; backpressure; infrastructure as code.
 - **Why next:** the platform runs, but anyone who can reach it can use it.
 
 ### Phase 6: Secure it
@@ -353,7 +354,7 @@ This table shows each foundation gap, where it's introduced, where it's practise
 | 30 | API security and rate limiting | Backend, security | 0 validation | 1 limits; 3 injection; 6 OWASP and rate limits; 8 fuzzing | OWASP test cases; fuzzing findings | Penetration testing |
 | 31 | Data engineering and big data | Data, ML infrastructure | 7 | 8 | A pipeline from events to Parquet; a MapReduce/Spark job | Streaming at scale |
 | 32 | ML, deep learning, MLOps, AIOps | ML infrastructure, applied ML | 7 | 8 | Models with baselines; MLflow registry; a scored anomaly detector | Research-level ML |
-| 33 | Supply-chain security | DevSecOps | 5 CI scan | 8 | SBOM, signing, clean scans | Formal SLSA certification |
+| 33 | Supply-chain security | DevSecOps | 5 (pinned versions, digests, immutable tags, ECR scanning) | 8 | SBOM, signing, clean scans | Formal SLSA certification |
 | 34 | Research method and technical writing | MSc, senior roles | Python Bridge | 7, 8 | The capstone report and defence | Peer-reviewed publication |
 | 35 | Algorithms and data structures | Every coding interview | [dsa/](dsa/README.md) from Phase 0 | Continuous | Problem log; mock interviews | Competitive programming |
 | 36 | System design | Interviews from mid-level up | [system-design/](system-design/README.md) from Phase 2 | Continuous | Scored designs, including "10M requests a second" | — |
@@ -404,7 +405,11 @@ Every pattern is built in working code at the point where the system needs it. K
 | Deterministic simulation testing | Rare distributed bugs | 4 | — |
 | Two-phase commit vs saga | Atomicity across services | 4 (compared) | — |
 | Reconciliation loop | Drift between desired and actual state | 5 | One-shot tasks |
-| Sidecar | Adding a capability without changing the app | 5 | It doubles resource use for little gain |
+| Twelve-factor config | Images that only run in one environment | 5 | — |
+| Canary rollout | A bad release reaching every user at once | 5 | Too little traffic to judge a small share |
+| Build once, deploy by digest | Shipping something other than what was tested | 5 | — |
+| Backpressure | A slow consumer turning into failures upstream | 2, 5 | Work that is better dropped than delayed |
+| Sidecar | Adding a capability without changing the app | 5 (discussed), 6 | It doubles resource use for little gain |
 | Liveness vs readiness | Bad restarts; traffic sent before ready | 5 | — |
 | Load balancing and service discovery | Spreading load; finding instances | 5 | One instance |
 | Infrastructure as code | Snowflake environments | 5 | — |
@@ -440,10 +445,10 @@ Every pattern is built in working code at the point where the system needs it. K
 | Work queues | RabbitMQ | SQS (seen on AWS in Phase 5) |
 | Event streams | Kafka | NATS JetStream, Redpanda |
 | RPC | gRPC and protobuf | HTTP/JSON |
-| Database | PostgreSQL (pgx, goose) | DynamoDB (Phase 5) |
+| Database | PostgreSQL (pgx, goose) | DynamoDB |
 | Cache | Redis | Memcached |
 | Consensus | Your own Raft | hashicorp/raft, etcd |
-| Orchestration | Kubernetes (kind, then EKS or ECS), Helm | Nomad |
+| Orchestration | Kubernetes (kind), Helm; ECS on AWS | EKS, Nomad |
 | Cloud | AWS with Terraform | GCP, Azure |
 | Observability | OpenTelemetry, Prometheus, Grafana | Loki, Tempo |
 | ML | scikit-learn, PyTorch, MLflow, FastAPI | KServe |

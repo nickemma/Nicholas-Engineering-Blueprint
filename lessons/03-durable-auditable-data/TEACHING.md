@@ -5606,7 +5606,6 @@ import (
 	"sync"
 	"sync/atomic"
 	"testing"
-	"time"
 
 	"runway/internal/pgstore/pgtest"
 )
@@ -5614,23 +5613,34 @@ import (
 func TestExclusiveRunsATaskOnceAtATime(t *testing.T) {
 	pool := pgtest.Pool(t, Migrate)
 	var running, ran atomic.Int32
+	// The first run holds the lock until every other caller has tried and
+	// skipped. (Sleeping instead would assume they all try within the
+	// sleep, which a loaded machine doesn't promise.)
+	release := make(chan struct{})
 	task := Exclusive(pool, "test-task", func(context.Context) (int, error) {
 		if running.Add(1) > 1 {
 			t.Error("two runs overlapped")
 		}
-		time.Sleep(100 * time.Millisecond)
+		<-release
 		running.Add(-1)
 		ran.Add(1)
 		return 1, nil
 	})
 
 	var wg sync.WaitGroup
+	var skipped atomic.Int32
 	for range 5 {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			if _, err := task(context.Background()); err != nil {
+			n, err := task(context.Background())
+			if err != nil {
 				t.Error(err)
+			}
+			if n == 0 {
+				if skipped.Add(1) == 4 {
+					close(release) // the other four have skipped
+				}
 			}
 		}()
 	}

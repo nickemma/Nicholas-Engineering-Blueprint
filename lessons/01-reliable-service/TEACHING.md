@@ -2249,7 +2249,9 @@ func (m *Metrics) instrument(next http.Handler) http.Handler {
 }
 ~~~
 
-This is the first third-party dependency. Run `go get github.com/prometheus/client_golang@latest`. Go records the exact version in `go.mod` and the checksums in `go.sum`. Commit both: they make the build reproducible.
+This is the first third-party dependency. Run `go get github.com/prometheus/client_golang@v1.24.1`. Go records the exact version in `go.mod` and the checksums in `go.sum`. Commit both: they make the build reproducible. (`@latest` would also work, but it gives a different version as time passes; naming the version makes this guide give everyone the same result.)
+
+<!-- run: go get github.com/prometheus/client_golang@v1.24.1 -->
 
 `NewHandler` gains `WithLogger` and `WithMetrics` options, and wraps the router in a fixed order.
 
