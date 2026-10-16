@@ -71,6 +71,20 @@ jobs:
           --health-interval 5s
           --health-timeout 10s
           --health-retries 20
+      # Phase 6's secrets (step 9): OpenBao in development mode, in memory,
+      # with a fixed root token. Its database engine reaches PostgreSQL by
+      # the service's name, on the network the services share.
+      openbao:
+        image: openbao/openbao:2.7.1
+        env:
+          BAO_DEV_ROOT_TOKEN_ID: runway-dev
+        ports:
+          - 8200:8200
+        options: >-
+          --health-cmd "bao status -address=http://127.0.0.1:8200"
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 20
     env:
       RUNWAY_AMQP_URL: amqp://guest:guest@localhost:5672/
       RUNWAY_DATABASE_URL: postgres://runway:runway@localhost:5432/runway
@@ -78,6 +92,9 @@ jobs:
       RUNWAY_REDIS_URLS: redis://localhost:6379/0,redis://localhost:6380/0,redis://localhost:6381/0
       RUNWAY_KAFKA_BROKERS: localhost:9092
       RUNWAY_SQS_ENDPOINT: http://localhost:9324
+      RUNWAY_BAO_ADDR: http://localhost:8200
+      RUNWAY_BAO_TOKEN: runway-dev
+      RUNWAY_BAO_DATABASE_URL: postgres://runway:runway@postgres:5432/runway?sslmode=disable
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-go@v7

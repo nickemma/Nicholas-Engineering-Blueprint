@@ -188,7 +188,7 @@ flowchart LR
 | [3. Make data durable](lessons/03-durable-auditable-data/README.md) | What survives a crash, and what happens between two writes? | PostgreSQL with pooling and transactions, an outbox, Kafka, Redis caching, background jobs, the Rust audit log | 7 | **Ready** |
 | [4. Replicate and scale out](lessons/04-replicated-state/README.md) | What can several machines agree on, and how do you split work across them? | Your own Raft, simulation testing, linearizability checks, TLA+, sharding with consistent hashing, leases and fencing | 10 | **Ready** |
 | [5. Operate it](lessons/05-constrained-operations/README.md) | Can you deploy, observe, diagnose and recover it? | Containers, Kubernetes, load balancing, Helm, CI/CD, tracing, SLOs, a controller, a game day, and Runway on AWS with Terraform | 9 | **Ready** |
-| [6. Secure it](lessons/06-safe-shared-queries/README.md) | Who may do what, and how do you contain abuse? | Identity, authorization, tenant isolation, rate limiting, mTLS, secrets, a tamper-evident audit log | 6 | Being rebuilt |
+| [6. Secure it](lessons/06-safe-shared-queries/README.md) | Who may do what, and how do you contain abuse? | A threat model; tokens, authorization, tenant isolation, rate limiting, signed webhooks, your own CA and mTLS, a sidecar, secrets from OpenBao, a tamper-evident audit log, privacy, cluster hardening, fuzzing, and a security game day | 10 | **Ready** |
 | [7. Measure and learn](lessons/07-utility-evaluation/README.md) | Is it actually better, and can its own data improve it? | Rigorous experiments, a data pipeline, ML and deep learning, MLOps, AIOps, all on Runway's data | 8 | Being rebuilt |
 | [8. Capstone](capstones/README.md) | Can you answer a research question nobody has answered for you? | One of ten research projects, end to end, plus a hardening review and a defended report | 10+ | Being rebuilt |
 
@@ -279,16 +279,20 @@ The user-requested topics are all here: pooling, transactions, queues, idempoten
 ### Phase 6: Secure it
 
 - **Build:**
-  - authentication with OIDC-style tokens;
+  - a threat model, written first, with evidence for every threat;
+  - authentication with OIDC-style tokens from an issuer of your own (JWT, JWKS, key rotation);
   - authorization with roles and policies (a policy decision point checked by every handler);
-  - **multi-tenancy with tenant isolation**;
+  - **multi-tenancy with tenant isolation**, down to PostgreSQL row-level security;
   - **rate limiting** per tenant: a token bucket, then distributed through Redis;
-  - mTLS between services; secrets management;
-  - a hash-chained, tamper-evident audit log;
-  - privacy basics (data minimisation, aggregation thresholds);
-  - tests drawn from the OWASP API Security Top 10.
-- **Learn:** authentication vs authorization; least privilege; TLS and PKI; replay attacks; noisy neighbours; threat modelling with STRIDE.
-- **Patterns:** policy enforcement and decision points; token bucket; tenant context propagation; defence in depth; zero trust.
+  - signed, replay-protected webhooks, safe from SSRF;
+  - your own certificate authority and mTLS between services, with rotation; a sidecar for software that can't speak it;
+  - secrets management: OpenBao, per-Pod database logins, least-privilege roles, encryption as a service;
+  - a tamper-evident audit log: a Merkle tree, signed checkpoints and a witness;
+  - privacy: an inventory with canaries, redaction, retention, statistics with thresholds and noise;
+  - cluster hardening (network policy, Pod Security) and fuzzing;
+  - a security game day against the threat model, with tests drawn from the OWASP API Security Top 10.
+- **Learn:** authentication vs authorization; least privilege; TLS and PKI; replay attacks; SSRF; noisy neighbours; threat modelling with STRIDE; transparency logs; differential privacy.
+- **Patterns:** policy enforcement and decision points; token bucket; tenant context propagation; defence in depth; zero trust; sidecar; dynamic secrets; transparency log.
 - **Why next:** a secure platform still has to prove it's good, and its own data can make it better.
 
 ### Phase 7: Measure and learn
@@ -351,7 +355,7 @@ This table shows each foundation gap, where it's introduced, where it's practise
 | 27 | Incident response | SRE | 5 | 8 | A game day and a postmortem | Real on-call |
 | 28 | Authentication, authorization, multi-tenancy | Security, platform | 2 (credentials); 6 | 8 | Allowed, denied, cross-tenant and replay tests | Enterprise IAM administration |
 | 29 | TLS, PKI, mTLS, secrets | Security, infrastructure | 6 | 8 | A local CA, mTLS, rotation | Public PKI operations |
-| 30 | API security and rate limiting | Backend, security | 0 validation | 1 limits; 3 injection; 6 OWASP and rate limits; 8 fuzzing | OWASP test cases; fuzzing findings | Penetration testing |
+| 30 | API security and rate limiting | Backend, security | 0 validation | 1 limits; 3 injection; 6 OWASP, rate limits and fuzzing; 8 fuzzing | OWASP test cases; fuzzing findings | Penetration testing |
 | 31 | Data engineering and big data | Data, ML infrastructure | 7 | 8 | A pipeline from events to Parquet; a MapReduce/Spark job | Streaming at scale |
 | 32 | ML, deep learning, MLOps, AIOps | ML infrastructure, applied ML | 7 | 8 | Models with baselines; MLflow registry; a scored anomaly detector | Research-level ML |
 | 33 | Supply-chain security | DevSecOps | 5 (pinned versions, digests, immutable tags, ECR scanning) | 8 | SBOM, signing, clean scans | Formal SLSA certification |
@@ -416,6 +420,9 @@ Every pattern is built in working code at the point where the system needs it. K
 | Policy decision and enforcement points | Authorization logic everywhere | 6 | — |
 | Token-bucket rate limiting | Abuse; noisy neighbours | 6 | — |
 | Tenant isolation | One tenant seeing or starving another | 6 | Single-tenant systems |
+| Signed, replay-protected messages | Forged or replayed requests between parties | 6 | Callers you can already authenticate with mTLS |
+| Dynamic secrets | Long-lived credentials leaking | 6 | Secrets no system can mint (a partner's API key) |
+| Transparency log (Merkle tree with a witness) | History rewritten by whoever runs the log | 6 | Logs nobody outside the operator needs to trust |
 | Feature pipeline with train/serve parity | Training/serving skew | 7 | — |
 | Model registry and shadow deployment | Unsafe model releases | 7 | — |
 | Defence in depth / zero trust | A single control failing | 6, 8 | — |
@@ -509,10 +516,10 @@ These estimates assume 12–15 focused hours a week. A phase ends when its evide
 | 3. Durable data | 7 | ☐ | | ☐ | ☐ |
 | 4. Replicate and scale | 10 | ☐ | technical report | ☐ | ☐ |
 | 5. Operate | 9 | ☐ | postmortem | ☐ | ☐ |
-| 6. Secure | 6 | ☐ | threat model | ☐ | ☐ |
+| 6. Secure | 10 | ☐ | threat model, game-day report | flagpole ☐ | ☐ |
 | 7. Measure and learn | 8 | ☐ | experiment report | ☐ | ☐ |
 | 8. Capstone | 10+ | ☐ | final report and talk | — | ☐ |
-| **Total** | **~65** | | | | |
+| **Total** | **~69** | | | | |
 
 Copy this table into your own repository's README and fill it in as you go.
 

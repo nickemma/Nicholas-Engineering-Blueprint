@@ -4958,10 +4958,14 @@ type counting struct {
 	jobs.Repository
 	gets  atomic.Int32
 	delay time.Duration
+	hold  chan struct{} // if set, every Get waits until it is closed
 }
 
 func (c *counting) Get(ctx context.Context, id jobs.ID) (jobs.Job, error) {
 	c.gets.Add(1)
+	if c.hold != nil {
+		<-c.hold
+	}
 	time.Sleep(c.delay)
 	return c.Repository.Get(ctx, id)
 }
@@ -5042,20 +5046,31 @@ func TestUpdateDeletesTheCachedCopy(t *testing.T) {
 
 // 100 requests miss the same job at once. Only one may load it.
 func TestAStampedeLoadsOnce(t *testing.T) {
-	db := &counting{Repository: memstore.New(), delay: 50 * time.Millisecond}
+	// The database load is held until every reader has started, so all of
+	// them arrive while it is in progress, however busy the machine. (A
+	// fixed delay assumes they all start within it, and on a loaded
+	// machine some don't.) The cache write gets a generous timeout for the
+	// same reason.
+	db := &counting{Repository: memstore.New(), hold: make(chan struct{})}
 	repo := newCache(t, client(t), db)
+	repo.opts.Timeout = time.Second
 	job := create(t, repo)
 
-	var wg sync.WaitGroup
+	var wg, started sync.WaitGroup
 	for range 100 {
 		wg.Add(1)
+		started.Add(1)
 		go func() {
 			defer wg.Done()
+			started.Done()
 			if _, err := repo.Get(context.Background(), job.ID); err != nil {
 				t.Error(err)
 			}
 		}()
 	}
+	started.Wait()
+	time.Sleep(100 * time.Millisecond) // from "started" to inside Get
+	close(db.hold)
 	wg.Wait()
 	if n := db.gets.Load(); n != 1 {
 		t.Fatalf("the database was read %d times, want 1", n)
