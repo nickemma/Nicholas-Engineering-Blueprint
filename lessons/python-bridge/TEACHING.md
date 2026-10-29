@@ -590,9 +590,9 @@ The exit status is 2: argparse's convention for "usage error". `test_unknown_com
 - `match` / `case` is **structural pattern matching**: Python's `switch`, which can match on shapes like `("GET", "/health")`.
 - `*expected` collects any number of positional arguments into a tuple: `_check(response, 200, 504)`.
 
-Add httpx with `uv add httpx`.
+Add httpx with `uv add 'httpx>=0.28.1'`. Without a version, `uv add` writes the newest release on the day you run it, so the bound pins the oldest version this guide was tested with, and your `pyproject.toml` matches the one later phases edit.
 
-<!-- run: uv add httpx -->
+<!-- run: uv add 'httpx>=0.28.1' -->
  Then create `src/kload/client.py`:
 
 <!-- file: src/kload/client.py -->
@@ -1390,9 +1390,9 @@ def plot(df: pd.DataFrame, path: Path) -> None:
 - `x if condition else y` is Python's inline conditional.
 - It reuses your own `percentile`, so every number matches the definition you tested in step 2. (pandas' own `quantile` interpolates between values by default, and gives slightly different answers.)
 
-<!-- run: uv add pandas matplotlib -->
+<!-- run: uv add 'pandas>=3.0.6' 'matplotlib>=3.11.2' -->
 
-Add `pandas` and `matplotlib` with `uv add pandas matplotlib`, add the `analyze` subcommand, and the `--mode closed` option used in experiment 2; the `cli.py` changes follow.
+Add `pandas` and `matplotlib` with `uv add 'pandas>=3.0.6' 'matplotlib>=3.11.2'` (the versions this guide was tested with, as for httpx), add the `analyze` subcommand, and the `--mode closed` option used in experiment 2; the `cli.py` changes follow.
 
 ### Experiment 1: the baseline
 
