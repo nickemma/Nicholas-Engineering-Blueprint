@@ -189,7 +189,7 @@ flowchart LR
 | [4. Replicate and scale out](lessons/04-replicated-state/README.md) | What can several machines agree on, and how do you split work across them? | Your own Raft, simulation testing, linearizability checks, TLA+, sharding with consistent hashing, leases and fencing | 10 | **Ready** |
 | [5. Operate it](lessons/05-constrained-operations/README.md) | Can you deploy, observe, diagnose and recover it? | Containers, Kubernetes, load balancing, Helm, CI/CD, tracing, SLOs, a controller, a game day, and Runway on AWS with Terraform | 9 | **Ready** |
 | [6. Secure it](lessons/06-safe-shared-queries/README.md) | Who may do what, and how do you contain abuse? | A threat model; tokens, authorization, tenant isolation, rate limiting, signed webhooks, your own CA and mTLS, a sidecar, secrets from OpenBao, a tamper-evident audit log, privacy, cluster hardening, fuzzing, and a security game day | 10 | **Ready** |
-| [7. Measure and learn](lessons/07-utility-evaluation/README.md) | Is it actually better, and can its own data improve it? | Rigorous experiments, a data pipeline, ML and deep learning, MLOps, AIOps, all on Runway's data | 8 | Being rebuilt |
+| [7. Measure and learn](lessons/07-utility-evaluation/README.md) | Is it actually better, and can its own data improve it? | Experiments with plans and intervals; jobs that do real work; a data contract and a Kafka-to-Parquet pipeline; MapReduce, Spark and COST; baselines, gradient-boosted trees and neural networks compared honestly; serving behind the Go API with a fallback; priority lanes; MLflow, a gate and model cards; drift and a shadow; anomaly detection scored against injected incidents; a report that re-tests itself | 10 | **Ready** |
 | [8. Capstone](capstones/README.md) | Can you answer a research question nobody has answered for you? | One of ten research projects, end to end, plus a hardening review and a defended report | 10+ | Being rebuilt |
 
 "Being rebuilt" means the phase is being written as a full type-along guide to the Phase 0 standard. Until then, its README is an outline.
@@ -298,15 +298,19 @@ The user-requested topics are all here: pooling, transactions, queues, idempoten
 ### Phase 7: Measure and learn
 
 - **Build, in Python on Runway's own data:**
-  - **experiments** with hypotheses, baselines, repeated runs and confidence intervals;
-  - a **data pipeline** from Runway's event stream to Parquet and DuckDB;
-  - **big-data** concepts, via MapReduce and a Spark example;
-  - **ML** that predicts job durations to improve scheduling: a baseline, then scikit-learn;
-  - **deep learning** with PyTorch;
-  - **MLOps**: MLflow tracking and a registry, model serving with FastAPI behind the Go API, drift checks, a shadow deployment;
-  - **AIOps**: anomaly detection on Runway's metrics and logs, scored against injected incidents.
-- **Learn:** experimental design and statistics; data contracts and pipelines; leakage and splits; error metrics; train/serve skew; evaluating detectors (precision and recall).
-- **Patterns:** feature pipeline with train/serve parity; model registry; shadow deployment; gateway in front of model serving.
+  - **experiments** with plans written first, A/A runs, interleaving, bootstrap confidence intervals and margins;
+  - **jobs that do real work** (checksum, compress, sort), so their duration is worth predicting, and a workload generator;
+  - a **data contract** and a **pipeline** from Runway's event stream (Kafka on kind) to partitioned Parquet, queried with DuckDB;
+  - **big-data** concepts, via MapReduce from scratch and Spark, measured against one machine (COST);
+  - **ML** that predicts job durations: a leak-free dataset, baselines, then gradient-boosted trees with scikit-learn;
+  - **deep learning**: backpropagation by hand with a gradient check, then PyTorch;
+  - **serving** with FastAPI behind the Go API, with a parity test, a timeout, a breaker and a fallback, over Phase 6's mTLS;
+  - **scheduling** with the predictions: priority and reserved lanes, measured against FIFO;
+  - **MLOps**: MLflow tracking and a registry, a gate beyond noise, model cards, promotion and rollback, drift checks, a shadow deployment;
+  - **AIOps**: anomaly detection on Runway's metrics and logs, scored against injected incidents and against the SLO alerts;
+  - **a report** whose claims are code, re-tested on the final data.
+- **Learn:** experimental design and statistics; data contracts and pipelines; MapReduce and COST; leakage and splits; error metrics; train/serve skew; shortest job first; drift; evaluating detectors (precision, recall, time to detect, time alarmed); replication and negative results.
+- **Patterns:** feature pipeline with train/serve parity; model registry, champion and challenger; shadow deployment; a fallback for an optional dependency; priority lanes from predictions; claims as code.
 - **Why next:** you have every tool. Now apply them to a question of your own.
 
 ### Phase 8: Capstone
@@ -425,6 +429,9 @@ Every pattern is built in working code at the point where the system needs it. K
 | Transparency log (Merkle tree with a witness) | History rewritten by whoever runs the log | 6 | Logs nobody outside the operator needs to trust |
 | Feature pipeline with train/serve parity | Training/serving skew | 7 | — |
 | Model registry and shadow deployment | Unsafe model releases | 7 | — |
+| Fallback for an optional dependency | A helper service taking the request path down with it | 7 | The dependency's answer is required (fail closed instead) |
+| Priority lanes from predictions | Short work stuck behind long work | 7 | Predictions that depend on the load they schedule (a feedback loop) |
+| Claims as code | Reports whose conclusions go stale unnoticed | 7, 8 | One-off numbers nobody will rely on |
 | Defence in depth / zero trust | A single control failing | 6, 8 | — |
 
 ---
@@ -517,9 +524,9 @@ These estimates assume 12–15 focused hours a week. A phase ends when its evide
 | 4. Replicate and scale | 10 | ☐ | technical report | ☐ | ☐ |
 | 5. Operate | 9 | ☐ | postmortem | ☐ | ☐ |
 | 6. Secure | 10 | ☐ | threat model, game-day report | flagpole ☐ | ☐ |
-| 7. Measure and learn | 8 | ☐ | experiment report | ☐ | ☐ |
+| 7. Measure and learn | 10 | ☐ | the report, model card | buildcast ☐ | ☐ |
 | 8. Capstone | 10+ | ☐ | final report and talk | — | ☐ |
-| **Total** | **~69** | | | | |
+| **Total** | **~71** | | | | |
 
 Copy this table into your own repository's README and fill it in as you go.
 
