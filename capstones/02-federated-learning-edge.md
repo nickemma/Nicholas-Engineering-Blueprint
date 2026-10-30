@@ -1,6 +1,6 @@
-# 3. Federated learning on unreliable networks, with untrusted clients
+# 2. Federated learning on unreliable networks, with untrusted clients
 
-**Field:** ML and AI · distributed systems · security · **Difficulty:** high
+**Field:** ML and AI · distributed systems · security · **Difficulty:** high · **Languages:** Go (coordinator), Python (clients)
 
 ## Problem
 
@@ -50,6 +50,34 @@ Hospitals training a shared diagnostic model, phone keyboards learning word pred
 - Rounds and time to reach a target accuracy.
 - Bytes sent per client.
 - Coordinator CPU.
+
+## Suggested stack
+
+| Part | Choice | Why |
+|---|---|---|
+| Coordinator | Go, gRPC (Phase 2) | Rounds, deadlines, liveness and retries are control-plane work |
+| Clients | Python, PyTorch (Phase 7) | The training itself |
+| Update transport | gRPC streaming, with compression as an experimental option | Updates are the bandwidth cost being measured |
+| Network emulation | `tc netem` per client container (Phase 5) | Asymmetric, slow links |
+| Analysis | Phase 7's `lab` | Intervals over seeds |
+
+Rust has no part here unless profiling shows the coordinator's aggregation is the bottleneck. Measure first.
+
+## Features to implement
+
+1. A round protocol with deadlines: the coordinator closes a round when enough clients report or the deadline passes.
+2. Pluggable aggregators: FedAvg, coordinate-wise median, trimmed mean, a FoolsGold-style defence, asynchronous staleness-weighted.
+3. Client behaviours: honest, dropping out on a schedule, label flipping, scaled updates, sybils.
+4. Per-client link profiles and dropout schedules, replayed exactly per seed.
+5. Checkpointing of the global model, so a coordinator crash costs one round, not the run.
+6. Metrics per round: participants, bytes, time, accuracy and attack success.
+
+## Benchmark your work
+
+- **Time to accuracy:** wall-clock time and bytes to reach a target accuracy, per aggregator and condition.
+- **Coordinator scaling:** rounds per minute and coordinator CPU as clients grow from 10 to 1,000 (simulated clients).
+- **Failure:** kill the coordinator mid-round, and measure recovery time and lost work.
+- **Rigour:** at least 5 seeds per condition, intervals on every difference, and the dataset split and attack parameters saved with the results.
 
 ## What you might find
 

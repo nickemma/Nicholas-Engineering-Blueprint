@@ -1,6 +1,6 @@
 # 1. KESTREL: replication under partial and intermittent partitions at health sites
 
-**Field:** networking and distributed systems · health · **Difficulty:** high · **The author's own capstone, and the worked example**
+**Field:** networking and distributed systems · health · **Difficulty:** high · **Language:** Go · **The author's own capstone, and the worked example**
 
 ## Problem
 
@@ -53,6 +53,33 @@ Small clinics, community health workers and regional coordinators, and the engin
 - **Bandwidth** per site.
 - **Correctness**: linearizability violations for consensus data; convergence time for CRDTs.
 - Time to recover after reconnection.
+
+## Suggested stack
+
+| Part | Choice | Why |
+|---|---|---|
+| Site nodes, replication layer, hybrid router | Go | Runway's code, Phase 4's Raft and the CRDTs share one language and one test harness |
+| Storage | PostgreSQL per site, with the outbox (Phase 3) | Each site keeps authority over its own records |
+| Partition emulator | Linux network namespaces, `tc netem`, `iptables` (Phase 5), driven by a Go or Python trace player | Asymmetric and partial partitions need per-direction, per-pair rules |
+| Checkers | Porcupine (Phase 4), your own convergence checker, TLA+ | Correctness has to be checked, not eyeballed |
+| Load and analysis | `kload` (Python Bridge) and Phase 7's `lab` | Open-loop load, and intervals on every comparison |
+
+## Features to implement
+
+1. Site nodes with a summary API: write visits and supply updates, read cross-site summaries with their staleness.
+2. Pluggable replication: hub, Raft, CRDT (counters, last-writer-wins and observed-remove maps), hybrid.
+3. The hybrid's router: forwards through reachable peers when the direct link is down or one-way.
+4. A trace player that applies connectivity traces per site pair and per direction, on a schedule.
+5. Staleness reported with every answer: "this summary includes updates up to t from sites A and B; C is unreachable".
+6. Recovery: anti-entropy after reconnection, with bandwidth caps.
+7. Site identity and minimal disclosure: mTLS between sites (Phase 6), and only summaries leave a site.
+
+## Benchmark your work
+
+- **Throughput versus staleness:** raise the write rate at each link quality until summaries fall behind, and report the knee for every strategy.
+- **Tail latency during failures:** write and summary-read p99 in 10-second windows before, during and after each partition starts and heals. Record Raft leader changes on the same timeline.
+- **Bandwidth:** bytes per site per hour, split into payload, metadata and anti-entropy.
+- **Rigour:** at least 5 runs per condition, interleaved; bootstrap intervals; the traces, seeds and kernel version saved with the results.
 
 ## What you might find
 

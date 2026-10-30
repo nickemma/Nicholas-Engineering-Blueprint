@@ -27,7 +27,19 @@ One sentence that an experiment can answer. Not "Can I build X?", but "Under con
 
 The architecture as a diagram. Which parts you'll reuse from Runway, and which are new. What's deliberately left out.
 
-## 7. Experiment
+## 7. Stack
+
+| Part | Language or tool | Why this, and not the alternative |
+|---|---|---|
+| | | |
+
+Use Go for APIs and control planes, Python for models and analysis, and Rust only where a measurement will justify it. If you plan Rust, say which measurement would show it was needed.
+
+## 8. Features
+
+The numbered features the system needs to answer the question. Mark which ones the experiment depends on, and which you'll cut first if time runs short.
+
+## 9. Experiment
 
 | Variable | Values | Why |
 |---|---|---|
@@ -37,7 +49,7 @@ The architecture as a diagram. Which parts you'll reuse from Runway, and which a
 | Failure and adversarial conditions | | |
 | Repetitions | at least 5 per condition | |
 
-## 8. Measures
+## 10. Measures
 
 | Measure | Definition | Better is |
 |---|---|---|
@@ -45,7 +57,16 @@ The architecture as a diagram. Which parts you'll reuse from Runway, and which a
 
 State which measure decides the research question, before you see any results.
 
-## 9. Risks and mitigations
+## 11. Benchmark plan
+
+- **Load generator:** which one (wrk2, ghz, your own), open- or closed-loop, and how you'll check it isn't the bottleneck.
+- **Load levels:** the offered loads for the throughput-versus-latency curve.
+- **Failures:** what you'll inject, when, and the windows you'll report p99 in.
+- **Resources:** what you'll record to name the bottleneck (CPU, memory, disk, network, GPU).
+- **Cost:** the prices you'll use, and the unit (per million tokens, per thousand jobs, ...), if cost is part of the question.
+- **Rigour:** warm-up, repeats, interleaving, the A/A run, and the intervals you'll report.
+
+## 12. Risks and mitigations
 
 | Risk | Likelihood | Mitigation or fallback |
 |---|---|---|
@@ -53,11 +74,11 @@ State which measure decides the research question, before you see any results.
 | The baseline is already good enough | | A negative result, reported honestly, is a valid result |
 | The scope is too big | | What you'll cut first |
 
-## 10. Ethics and data
+## 13. Ethics and data
 
 Which data you'll use (public, or synthetic and how it's generated), any personal information, and why it's safe. Any real-world deployment needs the right partners and approval. Capstones use public or synthetic data.
 
-## 11. Plan
+## 14. Plan
 
 | Week | Milestone | Evidence |
 |---|---|---|

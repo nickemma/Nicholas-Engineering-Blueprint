@@ -1,8 +1,8 @@
 # The Blueprint
 
-**From first request to distributed systems and infrastructure.** This is a complete, beginner-to-advanced path through backend, distributed systems and infrastructure engineering, with the ML systems that run on it, finishing in a research capstone of your choice.
+**From first request to distributed systems and infrastructure.** This is a complete, beginner-to-advanced path through backend, distributed systems and infrastructure engineering, with the ML and AI infrastructure that runs on it, finishing in a research capstone of your choice.
 
-You learn by building **Runway**, a jobs platform, one phase at a time. It starts as a single Go web service and grows workers, a message broker, durable storage, replication, Kubernetes and AWS, security, and ML on its own data. Every phase is a type-along guide: the code is inline and explained, every step is checked in CI, and each step has a deliberate way to break it. Each phase ends with an **exercise project** you build alone, with a clear spec and no solution. Phase 8 is a **capstone**: one of ten research projects, taken from problem to evidence.
+You learn by building **Runway**, a jobs platform, one phase at a time. It starts as a single Go web service and grows workers, a message broker, durable storage, replication, Kubernetes and AWS, security, ML on its own data, and the infrastructure that serves and trains AI models. Every phase is a type-along guide: the code is inline and explained, every step is checked in CI, and each step has a deliberate way to break it. Each phase ends with an **exercise project** you build alone, with a clear spec and no solution. After Phase 8 comes the **capstone**: one of ten research projects, taken from problem to evidence.
 
 ## Start here
 
@@ -16,7 +16,7 @@ You learn by building **Runway**, a jobs platform, one phase at a time. It start
 | Folder | What it holds |
 |---|---|
 | [lessons/](lessons) | One folder per phase: a syllabus, a type-along guide, an exercise project, and an answer sheet |
-| [capstones/](capstones/README.md) | Ten research projects for Phase 8, with a proposal template and the judging criteria |
+| [capstones/](capstones/README.md) | Ten research projects for the capstone, after Phase 8: distributed systems, networking, security, big data and AI infrastructure, each with a stack, features and a benchmark plan; a proposal template and the judging criteria |
 | [dsa/](dsa/README.md) | Algorithm patterns in Go and Python, linked to the real systems that use them |
 | [system-design/](system-design/README.md) | A rubric, an interview script and designs by track, linked back to the code |
 | [scripts/](scripts) | `test_all.sh` runs every check CI runs. `check_guides.py` rebuilds each guide's code from the guide itself and tests it |
