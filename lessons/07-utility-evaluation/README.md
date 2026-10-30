@@ -19,7 +19,7 @@
 | 9 | Using the predictions | Shortest job first; work-conserving vs reserved lanes; planning by work, not count; starvation; simulate, then measure; a feedback loop between predictions and load |
 | 10 | Models with a history | Experiment tracking with MLflow; a registry with aliases; reproducible training; champion and challenger; a gate beyond noise, with guardrails; model cards; promotion and rollback |
 | 11 | Watching a model in production | Data, concept, prediction and label drift; PSI and KS; out-of-range and unseen inputs as an alert; drift isn't damage; a shadow deployment; retraining for a new tenant |
-| 12 | Finding incidents nobody wrote a rule for | Injected incidents as ground truth; precision, recall, time to detect, time alarmed; threshold, MAD, EWMA and an isolation forest; minimum changes; Drain log templates; symptoms vs causes; why the burn-rate alerts stayed quiet; a held-out test predicted in advance |
+| 12 | Finding incidents nobody wrote a rule for | Injected incidents as ground truth; precision, recall, time to detect, time alarmed; threshold, MAD, EWMA and an isolation forest; minimum changes; Drain log templates; symptoms vs causes; why the burn-rate alerts stayed quiet; a held-out false-alarm test planned in advance (not run in this guide: its result is reported as not measured, and you can run it) |
 | 13 | The report | Claims as code; replication on new data; three verdicts, not two; negative results; threats to validity; provenance |
 
 ## What you'll be able to do

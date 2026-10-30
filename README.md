@@ -18,6 +18,7 @@ You learn by building **Runway**, a jobs platform, one phase at a time. It start
 | [lessons/](lessons) | One folder per phase: a syllabus, a type-along guide, an exercise project, and an answer sheet |
 | [capstones/](capstones/README.md) | Ten research projects for the capstone, after Phase 8: distributed systems, networking, security, big data and AI infrastructure, each with a stack, features and a benchmark plan; a proposal template and the judging criteria |
 | [dsa/](dsa/README.md) | Algorithm patterns in Go and Python, linked to the real systems that use them |
+| [open-source/](open-source/README.md) | How to read a real codebase and get a first change merged, with projects next to each phase |
 | [system-design/](system-design/README.md) | A rubric, an interview script and designs by track, linked back to the code |
 | [scripts/](scripts) | `test_all.sh` runs every check CI runs. `check_guides.py` rebuilds each guide's code from the guide itself and tests it |
 | [notes/](notes) | Self-tests for each phase (`notes/learned/`), plus the author's decisions, failures and research track |
