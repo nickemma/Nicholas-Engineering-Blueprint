@@ -582,7 +582,7 @@ The phases prove **skills**, not **years**. A beginner who finishes Phase 5 is a
 | Data Infrastructure Engineer | 7 | 7 + Kafka depth | Kafka, the pipeline, Parquet and DuckDB, Spark basics | Data system design, SQL, coding | Streaming at scale |
 | Systems Software Engineer | Stretch after Rust + 3 | Competitive after 4 | Rust log; concurrency; Raft | C or Rust, OS questions | C and kernel internals |
 | Infrastructure Security Engineer | 6 | Capstone | Threat model, mTLS, policy, tenant isolation, SBOM, fuzzing | Security design review, threat modelling | Offensive practice; cloud-security depth |
-| ML Infrastructure / MLOps Engineer | 7 | 8 + applied-ML design track | Registry, serving behind a gateway, monitoring, Kubernetes | ML system design, infrastructure design | GPU scheduling; distributed training |
+| ML Infrastructure / MLOps Engineer | 7 | 8 + the AI infrastructure design track | Registry, serving behind a gateway, monitoring, Kubernetes | ML system design, infrastructure design | GPU scheduling; distributed training |
 | AI Infrastructure / Inference Engineer | 8 | 8 + an AI-infrastructure capstone (briefs 4–7) | A served model with time to first token, throughput and cost measured; distributed training; GPU-aware scheduling | ML and infrastructure design, coding, serving and GPU deep dives | Operating GPUs at scale; CUDA depth |
 | Applied ML Engineer | Stretch after 7 | Competitive after 7 + more modelling | Phase 7 models with rigorous evaluation | ML system design, ML fundamentals | Modelling depth; statistics |
 | Research MSc (systems and networking) | 4 + a technical report | Capstone | The capstone report, TLA+ model, paper notes | Statement of purpose; supervisor fit | Maths readiness; publication optional |
