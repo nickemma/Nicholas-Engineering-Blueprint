@@ -26,45 +26,53 @@ Do it in **Go first, then Python**. Go makes you think about types and memory; P
 
 ## Patterns, in order
 
-| # | Pattern | Recognise when | Where real systems use it | Problems | Status |
+Each pattern is a guide, built like the lessons. It covers when to recognise the pattern, then one or two **worked problems** built step by step in Go and then Python, with tests. It names a real system that uses the pattern, often one you build in the lessons, and ends with **practice problems** (with hints, and no solutions) that you solve alone.
+
+| # | Pattern | Recognise when | Where real systems use it | Worked | Practice |
 |---|---|---|---|---|---|
-| 00 | Complexity and Big-O | Always | Capacity planning (Phase 5) | — | Planned |
-| 01 | Arrays and hashing | "Seen before?", counting, grouping | Dedup by idempotency key (Phase 2) | 8 | Planned |
-| 02 | Two pointers | Sorted input; pairs; in-place changes | Merging sorted runs during compaction (Phase 3) | 6 | Planned |
-| 03 | Sliding window | Longest or shortest contiguous range under a rule | Rate limiters (Phase 6); moving-window SLOs (Phase 5) | 6 | Planned |
-| 04 | Stack and monotonic stack | Matching pairs; "next greater" | Parsers; undo; expression evaluation | 6 | Planned |
-| 05 | Binary search | Sorted data, or a yes/no question that flips once | Consistent-hash ring lookup; finding the first bad commit | 7 | Planned |
-| 06 | Linked lists | Pointer rewiring; cycles | LRU cache (list + map); free lists | 6 | Planned |
-| 07 | Trees: DFS and BFS | Hierarchies; levels; paths | Filesystems; B-tree indexes (Phase 3) | 8 | Planned |
-| 08 | Heaps and priority queues | "Top k", "next smallest", merge k lists | Job schedulers; timers; LSM merges | 6 | Planned |
-| 09 | Graphs: BFS, DFS, topological sort | Dependencies; reachability; ordering | Migration order; build systems; Kubernetes controllers | 8 | Planned |
-| 10 | Union-find | Groups that merge | Network partitions (Phase 4); clustering | 4 | Planned |
-| 11 | Shortest paths (Dijkstra) | Weighted routes | Routing (Phase 5) | 4 | Planned |
-| 12 | Intervals | Overlaps; meeting rooms | Lease and lock windows (Phase 4); calendars | 5 | Planned |
-| 13 | Backtracking | "All combinations or permutations" | Constraint search; test-case generation | 6 | Planned |
-| 14 | Dynamic programming, 1D | Best answer built from smaller answers | Retry budgets; resource planning | 7 | Planned |
-| 15 | Dynamic programming, 2D | Two sequences; grids | Diff tools (`diff`, `git`); edit distance | 7 | Planned |
-| 16 | Tries | Prefix lookups | Router path matching (Phase 0); autocomplete | 4 | Planned |
-| 17 | Greedy | A locally best choice that's provably safe | Schedulers; bin packing for pods (Phase 5) | 5 | Planned |
-| 18 | Bit manipulation | Flags; parity; sets of small integers | Bloom filters; permission bitmasks (Phase 6) | 4 | Planned |
-| 19 | Design problems | "Implement X with these operations" | LRU cache, rate limiter, consistent hashing | 5 | Planned |
+| 00 | [Complexity and Big-O](00-complexity/README.md) | Always | Capacity planning (Phase 5); a measured surprise about caches | 1 | 5 questions |
+| 01 | [Arrays and hashing](01-arrays-hashing/README.md) | "Seen before?", counting, grouping | Idempotency keys (Phases 2–3) | 2 | 6 |
+| 02 | [Two pointers](02-two-pointers/README.md) | Sorted input; pairs; in-place changes | Merging sorted runs in LSM compaction (Phase 3) | 2 | 4 |
+| 03 | [Sliding window](03-sliding-window/README.md) | Longest or shortest contiguous range under a rule | Rate limits (Phase 6); burn-rate windows (Phase 5) | 2 | 5 |
+| 04 | [Stack and monotonic stack](04-stack/README.md) | Matching pairs; "next greater" | The JSON parser Runway uses since Phase 0 | 2 | 4 |
+| 05 | [Binary search](05-binary-search/README.md) | Sorted data, or a yes/no question that flips once | The consistent-hash ring (Phase 4); B-tree pages (Phase 3) | 2 | 5 |
+| 06 | [Linked lists](06-linked-lists/README.md) | Pointer rewiring; O(1) reordering | LRU caches; Redis eviction (Phase 3) | 2 | 4 |
+| 07 | [Trees: DFS and BFS](07-trees/README.md) | Hierarchies; levels; paths | B-tree indexes (Phase 3); the Merkle tree (Phase 6); boosted trees (Phase 7) | 2 | 6 |
+| 08 | [Heaps and priority queues](08-heaps/README.md) | "Top *k*", "next smallest", merge *k* lists | Go's timers (Phase 1); priority lanes (Phase 7) | 2 | 5 |
+| 09 | [Graphs: BFS, DFS, topological sort](09-graphs/README.md) | Dependencies; reachability; ordering | `go build`'s package order; Kubernetes garbage collection (Phase 5) | 2 | 6 |
+| 10 | [Union-find](10-union-find/README.md) | Groups that merge | Who can reach whom in a partition (Phase 4) | 1 | 3 |
+| 11 | [Shortest paths (Dijkstra)](11-shortest-paths/README.md) | Weighted routes | Link-state routing under Phases 2 and 5 | 1 | 3 |
+| 12 | [Intervals](12-intervals/README.md) | Overlaps; merging ranges | Lock leases (Phase 4); scoring alerts against incidents (Phase 7) | 1 | 4 |
+| 13 | [Backtracking](13-backtracking/README.md) | "All combinations or permutations" | TLC exploring a TLA+ model (Phase 4) | 2 | 4 |
+| 14 | [Dynamic programming, 1D](14-dp-1d/README.md) | Best answer built from smaller answers | PostgreSQL's join-order search (Phase 3) | 2 | 5 |
+| 15 | [Dynamic programming, 2D](15-dp-2d/README.md) | Two sequences; grids | `diff` and `git diff`; edit distance | 2 | 5 |
+| 16 | [Tries](16-tries/README.md) | Prefix lookups | Go's router (Phase 0); longest-prefix IP routing | 1 | 3 |
+| 17 | [Greedy](17-greedy/README.md) | A locally best choice that's provably safe | The Kubernetes scheduler (Phase 5) | 2 | 3 |
+| 18 | [Bit manipulation](18-bit-manipulation/README.md) | Flags; parity; sets of small integers | The CRC-32C (Rust Bridge); subnet masks | 2 | 2 |
+| 19 | [Design problems](19-design/README.md) | "Implement X with these operations" | Runway's token bucket (Phase 6) and hash ring (Phase 4), rebuilt | 2 | 3 |
 
-That's about 120 problems in the folders. Add problems from the same patterns until you reach **150+** over the whole program.
+That's **114 problems**: 34 worked and 80 to practise, all free on LeetCode. Add problems from the same patterns until you reach **150+** over the whole program; the NeetCode 150 and Blind 75 lists are good sources.
 
-## Folder layout
+## Your own repository
+
+Do the guides in a repository of your own, called `dsa`. Guide 00 sets it up as one Go module and one Python project. Each pattern gets a folder that's both a Go package and a Python package:
 
 ~~~text
 dsa/
-  go.mod                         one Go module for every pattern
-  01-arrays-hashing/
-    README.md                    recognise when, template, complexity, pitfalls, real-system link
-    contains_duplicate.go        Go solution
-    contains_duplicate_test.go   table-driven tests
-    contains_duplicate.py        Python solution
-    test_contains_duplicate.py   pytest tests
+  go.mod                  module dsa
+  pyproject.toml          pytest and ruff
+  arrays/
+    two_sum.go            Go solution
+    two_sum_test.go       table-driven tests
+    two_sum.py            Python solution
+    test_two_sum.py       pytest tests
+  twopointers/
+  ...
 ~~~
 
-Each problem file starts with a short problem statement in our own words and a link to the original problem. We don't copy problem text from paid sites.
+Put your practice solutions in the same folders, with tests, and the CI from Phase 0 can run them all. Each problem file starts with a short statement in your own words and a link to the original. Don't copy problem text from the site.
+
+The worked problems are checked like the lessons: `scripts/check_guides.py` rebuilds every guide's code from the guide itself and runs its Go and Python tests, in CI.
 
 ## Spaced review
 

@@ -104,7 +104,7 @@ The loop has four parts, each prepared in a different place.
 
 | Part | Prepare with |
 |---|---|
-| Coding | [dsa/](dsa/README.md): the 20 patterns, about 150 problems, in Go and Python |
+| Coding | [dsa/](dsa/README.md): 20 pattern guides, 114 problems (34 worked, 80 to practise), in Go and Python |
 | System design | [system-design/](system-design/README.md): the Fundamentals track first, then the track for the role |
 | Domain deep dive | The Blueprint, MERIDIAN, LATTICE and TESSERA. Be able to rebuild any part on a whiteboard |
 | Behavioural | Postmortems and failure notes ([notes/failures.md](notes/failures.md), [notes/decisions.md](notes/decisions.md)), told as stories |
