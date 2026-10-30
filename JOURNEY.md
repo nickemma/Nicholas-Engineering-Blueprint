@@ -191,10 +191,20 @@ flowchart LR
 | [5. Operate it](lessons/05-constrained-operations/README.md) | Can you deploy, observe, diagnose and recover it? | Containers, Kubernetes, load balancing, Helm, CI/CD, tracing, SLOs, a controller, a game day, and Runway on AWS with Terraform | 9 | **Ready** |
 | [6. Secure it](lessons/06-safe-shared-queries/README.md) | Who may do what, and how do you contain abuse? | A threat model; tokens, authorization, tenant isolation, rate limiting, signed webhooks, your own CA and mTLS, a sidecar, secrets from OpenBao, a tamper-evident audit log, privacy, cluster hardening, fuzzing, and a security game day | 10 | **Ready** |
 | [7. Measure and learn](lessons/07-utility-evaluation/README.md) | Is it actually better, and can its own data improve it? | Experiments with plans and intervals; jobs that do real work; a data contract and a Kafka-to-Parquet pipeline; MapReduce, Spark and COST; baselines, gradient-boosted trees and neural networks compared honestly; serving behind the Go API with a fallback; priority lanes; MLflow, a gate and model cards; drift and a shadow; anomaly detection scored against injected incidents; a report that re-tests itself | 10 | **Ready** |
-| [8. AI infrastructure](#phase-8-ai-infrastructure) | What does it take to run the infrastructure under AI products? | A production-ready model-serving platform on Runway; distributed training on several workers; how data moves between CPU and GPU memory; Ray; a performance and cost benchmark | ~8 | Next |
+| [8. AI infrastructure](lessons/08-ai-infrastructure/README.md) | What does it take to run the infrastructure under AI products? | A production-ready model-serving platform on Runway; distributed training on several workers; how data moves between CPU and GPU memory; Ray; a performance and cost benchmark | ~8 | Next |
 | [Capstone](capstones/README.md) | Can you answer a research question nobody has answered for you? | One of ten research projects, end to end, plus a hardening review and a defended report | 10+ | **Briefs ready** |
 
 "Next" means the phase is planned and will be written as a full type-along guide to the Phase 0 standard, like Phases 0–7. The capstone isn't a guide: it's your own project, from one of the [ten briefs](capstones/README.md).
+
+### Known limits
+
+The guides hold themselves to "every output is real". These are the places where that has limits, stated so you can judge the evidence yourself:
+
+- **One machine.** Every measurement was taken on one laptop: an 8-core Ryzen 7 5850U under WSL2, with Docker and kind. Your numbers will differ; the guides say which conclusions should survive that and which shouldn't.
+- **What CI checks.** CI rebuilds every guide's code and runs its tests. It doesn't run the steps that need a Kubernetes cluster, root, or a cloud account. Those were run by hand while writing, and their outputs captured then.
+- **Phase 5's AWS deployment is planned, not applied.** The Terraform is written, reviewed as a plan of about 60 resources, and checked in CI offline. Applying it costs money (about $2.50 a day), so the guide leaves that to you, with the clean-up spelled out.
+- **Phase 7's held-out false-alarm test wasn't run.** Step 12 plans a quiet hour to measure the detectors' false alarms on data they've never seen, but its runs failed twice (the machine slept, then Docker stopped). The report marks the claim "not measured" rather than guessing, and step 12 gives you the plan and the commands to run it yourself.
+- **Two of Phase 7's claims didn't replicate** on the final data, and the report says so. That's the report working, not a defect.
 
 ### Phase 0: Make one request work
 
@@ -369,13 +379,13 @@ This table shows each foundation gap, where it's introduced, where it's practise
 | 16 | Transactions, isolation, connection pools | Backend, DB | 3 | 4 consensus vs transactions | A reproduced anomaly; a pool-exhaustion experiment | Distributed transactions in production |
 | 17 | Files, `fsync`, crash consistency | Storage, systems | Rust Bridge / 3 | 4 Raft persistence | Torn-write recovery; kill tests | Power-loss faults |
 | 18 | Caching | Backend, performance | 3 | 6 rate limiting | Hit-rate and stampede measurements | CDN operations |
-| 19 | Backup and restore | SRE, DB | 3 | 5 runbook | A restore drill | Point-in-time recovery at scale |
+| 19 | Backup, restore and disaster recovery | SRE, DB | 3 | 5 runbook; 5 two-region exercise | A restore drill; a measured failover drill (RPO and RTO) | Point-in-time recovery at scale |
 | 20 | Failure models, clocks, consensus | DS | 4 | 5 game day | Raft under randomised partitions; a bug write-up | Byzantine faults (named, not built) |
 | 21 | Sharding, consistent hashing, leases | DS, storage | 4 | 5, 7 | Rebalancing measurements; fencing-token tests | Global geo-partitioning |
 | 22 | Formal methods (TLA+) | DS research | 4 | Capstone | TLC checks an invariant | Proofs |
 | 23 | Containers and Kubernetes | Platform, DevOps, SRE | 5 | 8; capstone | Manifests, Helm, a controller | Multi-cluster operations |
 | 24 | Load balancing and service discovery | Infrastructure | 5 | 6 | L4/L7 experiments; readiness behaviour | Global traffic management |
-| 25 | Cloud (AWS) and infrastructure as code | Cloud, platform | 5 | Capstone | Runway deployed with Terraform, then destroyed | A second cloud |
+| 25 | Cloud (AWS) and infrastructure as code | Cloud, platform | 5 | Capstone | A reviewed Terraform plan of Runway on AWS, checked in CI; applied and destroyed by you, if you choose to pay for it | A second cloud |
 | 26 | Observability and SLOs | SRE, platform | 1 | 5, 7 | A dashboard, an SLO, burn-rate alerts | Telemetry at huge scale |
 | 27 | Incident response | SRE | 5 | 8; capstone | A game day and a postmortem | Real on-call |
 | 28 | Authentication, authorization, multi-tenancy | Security, platform | 2 (credentials); 6 | 8; capstone | Allowed, denied, cross-tenant and replay tests | Enterprise IAM administration |
@@ -503,7 +513,7 @@ These run alongside the phases. The phases don't teach them, but they reuse what
 | System design | Phase 2 | 1 session a week, scored against a rubric | [system-design/](system-design/README.md) |
 | Writing | Phase 1 | One essay per phase, drawn from your failures and decisions | Your own blog |
 | Paper reading | Phase 2; weekly from Phase 4 | Three-pass method; one-page notes | Your own repository |
-| Open source | Phase 3 | Read a real codebase (hashicorp/raft, etcd, a Rust storage crate); first merged PR by Phase 4–5 | — |
+| Open source | Phase 3 | Read a real codebase (hashicorp/raft, etcd, a Rust storage crate); first merged PR by Phase 4–5 | [open-source/](open-source/README.md) |
 | Job applications | Phase 5 (earlier for backend roles) | Tailored, with evidence links | See [§11](#11-career-map) |
 
 ---
@@ -545,7 +555,7 @@ These estimates assume 12–15 focused hours a week. A phase ends when its evide
 | Rust Bridge | 3 | ☐ | | ☐ | — |
 | 3. Durable data | 7 | ☐ | | ☐ | ☐ |
 | 4. Replicate and scale | 10 | ☐ | technical report | ☐ | ☐ |
-| 5. Operate | 9 | ☐ | postmortem | ☐ | ☐ |
+| 5. Operate | 9 | ☐ | postmortem | beacon ☐, two regions ☐ | ☐ |
 | 6. Secure | 10 | ☐ | threat model, game-day report | flagpole ☐ | ☐ |
 | 7. Measure and learn | 10 | ☐ | the report, model card | buildcast ☐ | ☐ |
 | 8. AI infrastructure | ~8 | ☐ | serving benchmark and cost report | ☐ | ☐ |

@@ -40,7 +40,7 @@
 1. Follow [TEACHING.md](TEACHING.md), typing every piece of code yourself, starting from your Phase 4 code.
 2. Do every "Run it" and "Break it" on your own cluster. Your names and timings will differ; the shapes shouldn't. Write each game-day hypothesis down *before* running the experiment.
 3. Answer [learned.md](learned.md).
-4. Build the exercise project, **[beacon](exercises.md)**, a synthetic-monitoring service, on your own, and operate it the same way. The exercise page shows exactly what finished looks like.
+4. Build the exercise project, **[beacon](exercises.md)**, a synthetic-monitoring service, on your own, and operate it the same way. Then the second exercise, **[Runway in two regions](exercises.md#phase-5-exercise-2-runway-in-two-regions)**: streaming replication, a fenced failover and a measured disaster-recovery drill. Each exercise page shows exactly what finished looks like.
 5. Take the [self-test](../../notes/learned/05-constrained-operations.md).
 
 ## Gaps this phase closes

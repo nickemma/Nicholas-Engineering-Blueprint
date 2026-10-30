@@ -9,23 +9,23 @@ This is the **build plan** for the Blueprint itself, the work list we tick off. 
 ## Before Phase 8
 
 ### 1. Push the branch and get CI green on GitHub
-- [ ] Branch `restructure/batch-1` pushed (not merged into `main`)
+- [x] Branch `restructure/batch-1` pushed (not merged into `main`)
 - [ ] The **Lessons** workflow green on GitHub, or every failure fixed and pushed again
 
 **Why first:** 18+ commits of curriculum have never run on GitHub's CI. Phase 7's replay installs PyTorch and Spark, which may hit the runner's disk or time limits.
 
 ### 2. Disclose the evidence debts
-- [ ] Phase 7: the quiet-hour false-alarm test is marked "not measured" wherever its result is mentioned (README, learned.md, JOURNEY), with the command that would settle it
-- [ ] Phase 5: the AWS Terraform is described as "planned and checked offline, applied by the learner" in the README and JOURNEY, never as "deployed"
-- [ ] JOURNEY gains a short **Known limits** section listing both, and anything else found while checking
+- [x] Phase 7: the quiet-hour false-alarm test is marked "not measured" wherever its result is mentioned (README, learned.md, JOURNEY), with the command that would settle it
+- [x] Phase 5: the AWS Terraform is described as "planned and checked offline, applied by the learner" in the README and JOURNEY, never as "deployed"
+- [x] JOURNEY gains a short **Known limits** section listing both, and anything else found while checking
 
 ### 3. Open-source contribution track
-- [ ] `open-source/README.md`: how to read a real codebase (hashicorp/raft, etcd's raft, a Rust storage crate), find a first issue, write the change with tests, and get it merged, with checkpoints by phase
-- [ ] JOURNEY's parallel-tracks table links to it
+- [x] `open-source/README.md`: how to read a real codebase (hashicorp/raft, etcd's raft, a Rust storage crate), find a first issue, write the change with tests, and get it merged, with checkpoints by phase
+- [x] JOURNEY's parallel-tracks table links to it
 
 ### 4. Multi-region and disaster recovery, as a Phase 5 exercise
-- [ ] Phase 5's `exercises.md` gains **Runway in two regions**: a finished-state spec (RPO and RTO targets, a failover runbook, a rehearsed failover with measured data loss and recovery time), done-when checks, and no solution
-- [ ] JOURNEY's gap ledger points at it
+- [x] Phase 5's `exercises.md` gains **Runway in two regions**: a finished-state spec (RPO and RTO targets, a failover runbook, a rehearsed failover with measured data loss and recovery time), done-when checks, and no solution
+- [x] JOURNEY's gap ledger points at it
 
 ### 5. Performance Bridge: Linux performance and debugging (after Phase 5)
 - [ ] `lessons/perf-bridge/`: README (syllabus), TEACHING.md (type-along), exercises.md, learned.md, and `notes/learned/perf-bridge.md`

@@ -100,3 +100,82 @@ Your repository's CI runs the tests, the promtool tests and the smoke test. Then
 - Probes from two "regions": runners labelled with a region, each probe run from both, and an alert only when both regions fail (the target is down) rather than one (the network between).
 - Scan the image for known vulnerabilities and produce an SBOM in CI, and fail the build on a critical finding.
 - Apply the Terraform for an afternoon, run the game day on AWS, and `terraform destroy`; report what it cost.
+
+---
+
+# Phase 5 exercise 2: Runway in two regions
+
+Build this **on your own**, after beacon. Everything Runway does so far happens in one place: one cluster, one database, one region. If that place goes, so does Runway. This exercise runs Runway in two simulated regions, and rehearses losing one. It's the multi-region and disaster-recovery work that design interviews ask about ([the multi-region prompt](../../system-design/cloud-infra/README.md#1-a-multi-region-web-service)), done for real at small scale.
+
+There's no solution in this repository. This page shows exactly what the finished system does.
+
+## What you're building
+
+Two "regions", each a kind cluster (or a Compose project) on your machine, with the network between them slowed down to look like a real distance. Region A is the **primary**: it takes writes. Region B holds a **standby**: a PostgreSQL replica receiving A's changes by streaming replication, and Runway's services running but not taking writes. A failover promotes B, fences A, and points traffic at B.
+
+You decide two numbers before building anything, and measure them at the end:
+
+- **RPO** (recovery point objective): how much acknowledged data you may lose when A is lost. Target: **under 5 seconds** of writes.
+- **RTO** (recovery time objective): how long until Runway accepts jobs again. Target: **under 5 minutes**, with a person following the runbook.
+
+## Requirements
+
+**Two regions.**
+1. Two clusters (or Compose projects), each running Runway from your Phase 5 chart, with region-specific values.
+2. 40 ms of delay each way between them (`tc netem` on the link, or on the containers that cross it), so replication lag is real.
+
+**Data.**
+3. PostgreSQL streaming replication from A to B ([the PostgreSQL manual, *High Availability, Load Balancing, and Replication*](https://www.postgresql.org/docs/current/high-availability.html)). Asynchronous to start.
+4. A metric and a dashboard panel for **replication lag**, in bytes and in seconds, with an alert when it exceeds your RPO.
+5. Decide what happens to the queue (RabbitMQ) and to Kafka in a failover, and write it down: what's lost, what's replayed, what's duplicated. Your idempotency keys and inbox from Phases 2–3 should make duplicates harmless; show that they do.
+
+**Failover.**
+6. A **runbook** a teammate could follow at 3 a.m.:
+   - how to decide to fail over;
+   - how to **fence** region A, so it can't keep accepting writes if it comes back (it must not become a second primary);
+   - how to promote B;
+   - how to move traffic;
+   - how to check the result.
+7. A **failback** procedure: rebuild A as a replica of B, then switch back when you choose.
+8. One command that runs the whole drill and prints the measured RPO and RTO.
+
+**Evidence.**
+9. A **drill report**:
+   - the hypothesis written before the drill;
+   - the timeline;
+   - the measured data loss (count the jobs acknowledged by A that B never had) and recovery time;
+   - what surprised you.
+
+## What finished looks like
+
+With a load generator submitting jobs to region A, kill region A outright (`docker stop` every node of its cluster). Then follow the runbook. The drill command prints something like this. Your numbers are your result; these are only the shape:
+
+~~~text
+drill: region A stopped at 14:02:11.320
+  last job acknowledged by A:   14:02:11.290  (id 18342)
+  last job present in B:        14:02:10.870  (id 18331)
+  acknowledged but lost:        11 jobs, 0.42 s of writes   RPO target 5 s: met
+  B promoted:                   14:03:02
+  first job accepted by B:      14:03:40.115                RTO target 300 s: met (88.8 s)
+  duplicates after replay:      0
+~~~
+
+Then start region A again. It must **not** accept writes: its database refuses them, or its API is fenced off, and your runbook's check shows which. Run the failback, and show jobs flowing through A again with B replicating from it.
+
+Repeat the drill with **synchronous** replication to B, and report the trade:
+- the RPO should drop to zero;
+- write latency at A should rise by about one round trip (80 ms here);
+- if B is unreachable, A blocks writes. Show that too.
+
+## How it will be checked
+
+A reviewer (or you, honestly) runs the drill from your README on a fresh machine, reads the runbook and the drill report, and checks:
+- the measured RPO and RTO came from the drill, not from the targets;
+- fencing was tested by bringing A back, not assumed;
+- the synchronous run shows its cost.
+
+## Stretch goals
+
+- Run the drill on AWS: two regions with Terraform, a cross-region read replica, and DNS failover with health checks. Apply it for an afternoon, then `terraform destroy`; report what it cost.
+- Make failover automatic, with a human approval step, and show the case automation must refuse: a partition where both regions are alive but can't see each other.
+- Serve reads from B while A is primary, and handle "read your own writes" for a user who just submitted a job.
