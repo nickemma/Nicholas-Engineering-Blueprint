@@ -1,6 +1,6 @@
 # System design
 
-System-design interviews decide the level you're hired at. This track prepares you for them in the five areas this program leads to: **cloud and infrastructure, distributed systems, platform, ML system design, and applied ML systems**. Every design links back to code you built in the lessons, so you can say "I've built this part" rather than "I've read about it".
+System-design interviews decide the level you're hired at. This track prepares you for them in the areas this program leads to: **cloud and infrastructure, distributed systems, platform, ML system design, AI infrastructure, security and data infrastructure**, plus the classic warm-ups. Every design links back to code you built in the lessons, so you can say "I've built this part" rather than "I've read about it".
 
 Start in Phase 2, with one session a week.
 
@@ -58,15 +58,23 @@ The deep dives then cover features, the model (baseline first), evaluation, serv
 
 ## Tracks
 
-| Track | Prepares you for | Designs | Built in |
-|---|---|---|---|
-| **Fundamentals** | Every track | Estimation; latency numbers; load balancing; caching; queues; replication; partitioning; consistency models; consensus; rate limiting; idempotency; storage types; observability | Phases 0–5 |
-| **Cloud and infrastructure** | Cloud/Infra, DevOps, SRE | Multi-region web service; object storage (like S3); DNS service; metrics and alerting system; CI/CD system; secrets distribution | Phase 5 |
-| **Distributed systems** | Distributed Systems, Storage, SRE | Distributed key-value store; distributed lock service; Kafka-style log; job scheduler; unique ID generator; distributed cache; rate limiter | Phases 2–4 |
-| **Platform** | Platform, DevOps | Internal developer platform; deployment orchestrator; feature-flag service; configuration management; multi-tenant Kubernetes; service mesh control plane | Phase 5 |
-| **ML system design** | Applied ML / ML Engineer | Recommendation system; search ranking; ads click-through prediction; fraud detection; content moderation; feed ranking | Phase 7 |
-| **Applied ML systems** | ML Infrastructure, MLOps, AI Infrastructure | LLM inference gateway; model-serving platform; feature store; training pipeline; RAG system; vector search; model monitoring | Phase 7 |
-| **Classic warm-ups** | Generalist loops | URL shortener; chat; news feed; ride matching; ticket booking | Phases 1–3 |
+Start with the [fundamentals](fundamentals/README.md): 13 short pages on the building blocks, each linked to where you built it. Then work through your role's track.
+
+Each track has **one worked reference design**: a full write-up, crux first, to show what a strong answer looks like. The rest are **practice prompts**, each with requirements, a hidden crux, and a hidden checklist of what a strong answer covers. There are no full answers for them, on purpose: write your own, then score it.
+
+| Track | Prepares you for | Worked design | Practice prompts | Built in |
+|---|---|---|---|---|
+| [Fundamentals](fundamentals/README.md) | Every track | — | Estimation; latency numbers; load balancing; caching; queues; replication; partitioning; consistency; consensus; rate limiting; idempotency; storage; observability | Phases 0–7 |
+| [Cloud and infrastructure](cloud-infra/README.md) | Cloud, infrastructure, DevOps, SRE | [Metrics and alerting](cloud-infra/metrics-alerting.md) | Multi-region web service; object storage (like S3); DNS; CI/CD | Phase 5 |
+| [Distributed systems](distributed-systems/README.md) | Distributed systems, storage, SRE | [Key-value store](distributed-systems/key-value-store.md) | Lock service; Kafka-style log; job scheduler; unique IDs; distributed cache; rate limiter | Phases 2–4 |
+| [Platform](platform/README.md) | Platform, developer infrastructure, DevOps | [Deployment orchestrator](platform/deployment-orchestrator.md) | Internal developer platform; feature flags; configuration management; multi-tenant Kubernetes; service mesh control plane | Phase 5 |
+| [ML system design](ml-system-design/README.md) | Applied ML, ML engineer | [Fraud detection](ml-system-design/fraud-detection.md) | Recommendations; search ranking; ads click-through; content moderation; feed ranking | Phase 7 |
+| [AI infrastructure](ai-infrastructure/README.md) | AI infrastructure, inference, ML platform, MLOps | [LLM inference gateway](ai-infrastructure/llm-inference-gateway.md) | GPU cluster scheduler; distributed training platform; model-serving platform; feature store; RAG and vector search; model monitoring | Phases 7–8 |
+| [Security](security/README.md) | Infrastructure security, platform, SRE | [Authorization service](security/authorization-service.md) | Secrets distribution; tamper-evident audit log; certificates for a fleet; tenant isolation; API abuse protection | Phase 6 |
+| [Data infrastructure](data-infrastructure/README.md) | Data infrastructure, data platform | [Event pipeline](data-infrastructure/event-pipeline.md) | Stream processor; change data capture; data lake with compaction; time-series database; batch orchestration | Phases 3, 7 |
+| [Classic warm-ups](classic/README.md) | Generalist loops | [URL shortener](classic/url-shortener.md) | Chat; news feed; ride matching; ticket booking | Phases 1–3 |
+
+That's 13 fundamentals pages, 8 worked designs and 40 practice prompts.
 
 ## Folder layout
 
@@ -77,18 +85,22 @@ system-design/
   _template-ml.md         the ML design template
   scorecard.md            self-scoring after each practice session
   fundamentals/           one short page per building block
-  cloud-infra/
+  cloud-infra/            README.md (the prompts) + one worked design
   distributed-systems/
   platform/
   ml-system-design/
-  applied-ml-systems/
+  ai-infrastructure/
+  security/
+  data-infrastructure/
   classic/
 ~~~
 
+Keep your own write-ups in your own repository, one file per design, from the templates.
+
 ## How to practise
 
-1. **Pick a design for your track.** Set a 45-minute timer. Talk out loud. Draw in [Excalidraw](https://excalidraw.com/) or on paper.
-2. **Write it up** with the template **after** the timer. Do this before reading any reference design.
+1. **Pick a design for your track.** Do the worked one first, without reading it. Set a 45-minute timer. Talk out loud. Draw in [Excalidraw](https://excalidraw.com/) or on paper.
+2. **Write it up** with the template **after** the timer.
 3. **Score yourself** with [scorecard.md](scorecard.md). Note the single biggest thing to improve.
-4. **Then read** the reference design in this folder and write down what you missed.
+4. **Then compare.** For the worked design, read the reference and write down what you missed. For a practice prompt, open its checklist and mark what you covered.
 5. **Every fourth session, do a mock with a person.** Ask them to push on your crux.

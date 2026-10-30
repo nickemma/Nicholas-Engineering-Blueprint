@@ -1,6 +1,6 @@
 # ML design: <name>
 
-**Track:** <ml-system-design | applied-ml-systems> · **Built in:** <lesson phase or repository link> · **Time spent:** <minutes>
+**Track:** <ml-system-design | ai-infrastructure> · **Built in:** <lesson phase or repository link> · **Time spent:** <minutes>
 
 ## 0. The crux
 

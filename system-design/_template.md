@@ -1,6 +1,6 @@
 # Design: <name>
 
-**Track:** <cloud-infra | distributed-systems | platform | classic> · **Built in:** <lesson phase or repository link> · **Time spent:** <minutes>
+**Track:** <cloud-infra | distributed-systems | platform | ai-infrastructure | security | data-infrastructure | classic> · **Built in:** <lesson phase or repository link> · **Time spent:** <minutes>
 
 ## 0. The crux
 

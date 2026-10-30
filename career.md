@@ -143,7 +143,7 @@ Then move to the design problems (an LRU cache, a rate limiter, consistent hashi
 
 ### AI infrastructure: where each topic is built
 
-AI-infrastructure loops add an ML system design round (the [Applied ML systems track](system-design/README.md#tracks): LLM inference gateway, model serving, training pipeline) and a deep dive on serving or GPUs.
+AI-infrastructure loops add an ML system design round (the [AI infrastructure track](system-design/ai-infrastructure/README.md): LLM inference gateway, GPU scheduler, training platform, model serving) and a deep dive on serving or GPUs.
 
 | Topic | Built in |
 |---|---|
