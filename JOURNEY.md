@@ -1,6 +1,6 @@
 # The Blueprint: from first request to distributed systems and infrastructure
 
-This is a complete path from your first web request to building, operating, securing and measuring distributed systems, and then running a research project of your own. You learn it by building one teaching system, **Runway**, phase by phase. You finish by choosing a **capstone research project** and taking it from problem to evidence.
+This is a complete path from your first web request to building, operating, securing and measuring distributed systems, then running the infrastructure AI workloads need, and finally a research project of your own. You learn it by building one teaching system, **Runway**, phase by phase. You finish by choosing a **capstone research project** and taking it from problem to evidence.
 
 This is the **only roadmap** in the repository. Everything else is a lesson (`lessons/`), a capstone brief (`capstones/`), interview practice (`dsa/`, `system-design/`), or a personal note (`notes/`).
 
@@ -26,11 +26,11 @@ This is the **only roadmap** in the repository. Everything else is a lesson (`le
 - **Working engineers** who want to relearn the foundations properly, in order, with evidence for each skill.
 - **Anyone reading the author's code.** The phases teach the techniques the author's projects are built on.
 
-The scope is **backend, distributed systems and infrastructure engineering**, plus the ML systems that increasingly run on that infrastructure. By the end you can design, build, test, operate, secure and measure a distributed system, and you have a public portfolio with evidence for each claim. You'll also have a research project you can defend, and practice for the coding and system-design interviews these roles use.
+The scope is **backend, distributed systems and infrastructure engineering**, plus the ML and AI infrastructure that increasingly runs on it. By the end you can design, build, test, operate, secure and measure a distributed system, and you have a public portfolio with evidence for each claim. You'll also have a research project you can defend, and practice for the coding and system-design interviews these roles use.
 
 It is **not** a technology checklist. Every tool appears because the system needs it at that point, and phases end when their evidence is in place, not when a calendar says so.
 
-**Time:** about 60 weeks at 12–15 focused hours a week, plus the capstone (see [§10](#10-timeline-and-progress-tracker)). Experienced engineers often move faster through Phases 0–2.
+**Time:** about 70 weeks at 12–15 focused hours a week, plus the capstone (see [§10](#10-timeline-and-progress-tracker)). Experienced engineers often move faster through Phases 0–2.
 
 ---
 
@@ -76,7 +76,7 @@ That's where Runway ends up by Phase 7. You build every box yourself, and you ca
 
 ### Your capstone
 
-Phase 8 is yours. You pick one of ten **research projects** in [`capstones/`](capstones/README.md), across fields such as networking, ML, cloud, health, supply chain and quantum systems. You take it through the full research loop:
+After Phase 8, the capstone is yours. You pick one of ten **research projects** in [`capstones/`](capstones/README.md): systems that sit underneath real products, across distributed systems, networking, security, big data and AI infrastructure. Each brief comes with a suggested stack, the features to implement, and how to benchmark them. You take it through the full research loop:
 
 > real-world problem → who has it → why existing solutions fall short → research question → system → experiment → evidence → limitations
 
@@ -163,7 +163,8 @@ You follow each lesson in a scratch `practice/` folder. At the end of each phase
 | Phase 4 | Java 17+ and the [TLA+ tools](https://github.com/tlaplus/tlaplus/releases) (or the VS Code TLA+ extension) |
 | Phase 5 | [`kind`](https://kind.sigs.k8s.io/), `kubectl`, [`helm`](https://helm.sh/), [`terraform`](https://developer.hashicorp.com/terraform/install); optionally the AWS CLI and an AWS account (the Terraform is planned offline for free; applying it costs about $2.50 a day while it runs, and the guide covers clean-up) |
 | Phase 7 | Python ML libraries, installed through `uv`. No GPU is needed |
-| Phase 8 | `govulncheck`, [`trivy`](https://trivy.dev/), [`syft`](https://github.com/anchore/syft), [`cosign`](https://docs.sigstore.dev/), plus whatever your capstone needs |
+| Phase 8 | Ray and PyTorch's distributed tools through `uv`, and a small model server (llama.cpp, or vLLM's CPU backend). A GPU is optional: the steps that need CUDA run on a rented GPU or come with their expected output |
+| Capstone | `govulncheck`, [`trivy`](https://trivy.dev/), [`syft`](https://github.com/anchore/syft), [`cosign`](https://docs.sigstore.dev/), [`wrk2`](https://github.com/giltene/wrk2), plus whatever your capstone needs |
 
 ---
 
@@ -173,9 +174,9 @@ You follow each lesson in a scratch `practice/` folder. At the end of each phase
 flowchart LR
     P0[0 Request] --> P1[1 Reliable service] --> PY[Python Bridge] --> P2[2 Connected services]
     P2 --> RB[Rust Bridge] --> P3[3 Durable data] --> P4[4 Replication + scale]
-    P4 --> P5[5 Operate] --> P6[6 Secure] --> P7[7 Measure + ML] --> P8[8 Capstone]
-    DSA[dsa/ from Phase 0] -.-> P8
-    SD[system-design/ from Phase 2] -.-> P8
+    P4 --> P5[5 Operate] --> P6[6 Secure] --> P7[7 Measure + ML] --> P8[8 AI infrastructure] --> C[Capstone]
+    DSA[dsa/ from Phase 0] -.-> C
+    SD[system-design/ from Phase 2] -.-> C
 ~~~
 
 | Phase | Question | You build | Weeks | Status |
@@ -190,9 +191,10 @@ flowchart LR
 | [5. Operate it](lessons/05-constrained-operations/README.md) | Can you deploy, observe, diagnose and recover it? | Containers, Kubernetes, load balancing, Helm, CI/CD, tracing, SLOs, a controller, a game day, and Runway on AWS with Terraform | 9 | **Ready** |
 | [6. Secure it](lessons/06-safe-shared-queries/README.md) | Who may do what, and how do you contain abuse? | A threat model; tokens, authorization, tenant isolation, rate limiting, signed webhooks, your own CA and mTLS, a sidecar, secrets from OpenBao, a tamper-evident audit log, privacy, cluster hardening, fuzzing, and a security game day | 10 | **Ready** |
 | [7. Measure and learn](lessons/07-utility-evaluation/README.md) | Is it actually better, and can its own data improve it? | Experiments with plans and intervals; jobs that do real work; a data contract and a Kafka-to-Parquet pipeline; MapReduce, Spark and COST; baselines, gradient-boosted trees and neural networks compared honestly; serving behind the Go API with a fallback; priority lanes; MLflow, a gate and model cards; drift and a shadow; anomaly detection scored against injected incidents; a report that re-tests itself | 10 | **Ready** |
-| [8. Capstone](capstones/README.md) | Can you answer a research question nobody has answered for you? | One of ten research projects, end to end, plus a hardening review and a defended report | 10+ | Being rebuilt |
+| [8. AI infrastructure](#phase-8-ai-infrastructure) | What does it take to run the infrastructure under AI products? | A production-ready model-serving platform on Runway; distributed training on several workers; how data moves between CPU and GPU memory; Ray; a performance and cost benchmark | ~8 | Next |
+| [Capstone](capstones/README.md) | Can you answer a research question nobody has answered for you? | One of ten research projects, end to end, plus a hardening review and a defended report | 10+ | **Briefs ready** |
 
-"Being rebuilt" means the phase is being written as a full type-along guide to the Phase 0 standard. Until then, its README is an outline.
+"Next" means the phase is planned and will be written as a full type-along guide to the Phase 0 standard, like Phases 0–7. The capstone isn't a guide: it's your own project, from one of the [ten briefs](capstones/README.md).
 
 ### Phase 0: Make one request work
 
@@ -311,14 +313,33 @@ The user-requested topics are all here: pooling, transactions, queues, idempoten
   - **a report** whose claims are code, re-tested on the final data.
 - **Learn:** experimental design and statistics; data contracts and pipelines; MapReduce and COST; leakage and splits; error metrics; train/serve skew; shortest job first; drift; evaluating detectors (precision, recall, time to detect, time alarmed); replication and negative results.
 - **Patterns:** feature pipeline with train/serve parity; model registry, champion and challenger; shadow deployment; a fallback for an optional dependency; priority lanes from predictions; claims as code.
-- **Why next:** you have every tool. Now apply them to a question of your own.
+- **Why next:** Runway can now measure itself and learn from its own data. The models it serves are small, though, and the infrastructure under large models (GPU memory, distributed training, model serving at scale) is a field of its own.
 
-### Phase 8: Capstone
+### Phase 8: AI infrastructure
+
+The step list is designed when the phase starts, like every phase before it. These are its inputs:
+
+- **Build, on Runway:** a production-ready inference platform for an open-weight language model:
+  - an authenticated API with rate limits and request queues (Phase 6's tokens and limits, Phase 2's backpressure);
+  - automated deployment and health checks;
+  - scaling on workload and available resources;
+  - metrics for time to first token, inter-token latency, throughput, failures and resource use;
+  - a benchmark comparing performance and cost across serving configurations (batching, concurrency, quantisation), with quality checks so a faster configuration isn't accepted blindly;
+  - a documented recovery strategy for failed deployments and overloaded services.
+- **Learn:**
+  - **distributed training** with PyTorch Distributed: data parallelism, then how Megatron-LM splits a model's weights across devices (tensor and pipeline parallelism);
+  - **CUDA basics:** how data moves between the CPU's memory and the GPU's memory, and why pinned memory and transfer sizes matter;
+  - **Ray**, to scale Python work across a cluster: tasks, actors, and its serving and training libraries;
+  - KV caches, batching, prefill and decode, and what they do to latency and cost.
+- **Hardware:** most of it runs on CPU, including distributed training with several processes, Ray, and a small model. The CUDA steps need an NVIDIA GPU; a few hours of a rented one is enough, or read those steps with their expected output.
+- **Why next:** you can build and run the infrastructure. The capstone asks you to answer a question about it that nobody has answered for you.
+
+### The capstone
 
 - **Choose** one of the ten [capstone projects](capstones/README.md), or propose your own in the same format.
 - **Write a proposal:** problem, who has it, the gap, the research question, the hypothesis, the baseline, the measures.
 - **Build** the system, reusing Runway's components where they fit.
-- **Run** the experiments, including failure and adversarial cases.
+- **Run** the experiments and benchmarks: throughput-versus-latency curves, p99 during failures, the bottleneck named, failure and adversarial cases.
 - **Harden and defend:** threat model, supply chain (SBOM, signed images, vulnerability scans), fuzzing, a failure demo, a reproducible report with limits and negative results, and a presentation.
 - **Career signal:** the strongest single piece of evidence in your portfolio, and a writing sample for research applications.
 
@@ -334,12 +355,12 @@ This table shows each foundation gap, where it's introduced, where it's practise
 | 2 | Git, GitHub and CI | Team workflow, reproducibility | 0 | Every phase; 5 CD | Red-then-green CI history; Phase 5 pipeline | Large-team release engineering |
 | 3 | Go | The language of cloud-native infrastructure | 0 | 1–8 | Your Runway repository | Runtime internals |
 | 4 | HTTP and API design | Backend, platform | 0 | 1 contracts; 2 gRPC; 6 auth | Contract tables and tests | GraphQL |
-| 5 | Testing and TDD | Every role; a seniority signal | 0 | 1 TDD; 2 integration; 3 contract tests; 4 simulation; 8 fuzzing | Red-green history; real-broker tests; Raft simulation | Mutation testing |
+| 5 | Testing and TDD | Every role; a seniority signal | 0 | 1 TDD; 2 integration; 3 contract tests; 4 simulation; capstone fuzzing | Red-green history; real-broker tests; Raft simulation | Mutation testing |
 | 6 | Code organisation and design patterns | Reading and writing real codebases | 1 | 2, 3, 6 | Layered Runway; Phase 3's storage swap with no handler changes | Architecture governance across teams |
 | 7 | Processes, signals, file descriptors | SRE, systems | 0; 1 | 5 cgroups and limits | Shutdown under load; `/proc` evidence | Kernel scheduling |
 | 8 | Concurrency and races | Backend, DS, systems | 1 | 2 workers; Rust Send/Sync; 4 interleavings | A race caught and fixed; compare-and-swap tests | Lock-free algorithms |
 | 9 | Python and its tooling | ML, data, SRE scripting | Python Bridge | 2–8 experiments; 7 ML | `kload`; Phase 7 pipeline | Library packaging |
-| 10 | Measurement and experimental method | Performance, SRE, research | 1; Python Bridge | 3 query plans; 5 capacity; 7 statistics; 8 capstone | Reproducible experiments with confidence intervals | Advanced statistics |
+| 10 | Measurement and experimental method | Performance, SRE, research | 1; Python Bridge | 3 query plans; 5 capacity; 7 statistics; 8 benchmarks; capstone | Reproducible experiments with confidence intervals | Advanced statistics |
 | 11 | Sockets, TCP/UDP, DNS | Infrastructure, DS | 2 | 5 DNS and load balancing; 6 TLS | Packet captures, explained | Kernel network stack |
 | 12 | Messaging and event-driven design | Backend, DS, platform | 2 | 3 outbox and Kafka | Kill-a-worker experiment; outbox crash test | Kafka operations at scale |
 | 13 | Serialization and schema evolution | DS, platform | 2 | 3 migrations | Upcasting tests; protobuf compatibility | Schema registries |
@@ -351,22 +372,24 @@ This table shows each foundation gap, where it's introduced, where it's practise
 | 19 | Backup and restore | SRE, DB | 3 | 5 runbook | A restore drill | Point-in-time recovery at scale |
 | 20 | Failure models, clocks, consensus | DS | 4 | 5 game day | Raft under randomised partitions; a bug write-up | Byzantine faults (named, not built) |
 | 21 | Sharding, consistent hashing, leases | DS, storage | 4 | 5, 7 | Rebalancing measurements; fencing-token tests | Global geo-partitioning |
-| 22 | Formal methods (TLA+) | DS research | 4 | 8 | TLC checks an invariant | Proofs |
-| 23 | Containers and Kubernetes | Platform, DevOps, SRE | 5 | 8 | Manifests, Helm, a controller | Multi-cluster operations |
+| 22 | Formal methods (TLA+) | DS research | 4 | Capstone | TLC checks an invariant | Proofs |
+| 23 | Containers and Kubernetes | Platform, DevOps, SRE | 5 | 8; capstone | Manifests, Helm, a controller | Multi-cluster operations |
 | 24 | Load balancing and service discovery | Infrastructure | 5 | 6 | L4/L7 experiments; readiness behaviour | Global traffic management |
-| 25 | Cloud (AWS) and infrastructure as code | Cloud, platform | 5 | 8 | Runway deployed with Terraform, then destroyed | A second cloud |
+| 25 | Cloud (AWS) and infrastructure as code | Cloud, platform | 5 | Capstone | Runway deployed with Terraform, then destroyed | A second cloud |
 | 26 | Observability and SLOs | SRE, platform | 1 | 5, 7 | A dashboard, an SLO, burn-rate alerts | Telemetry at huge scale |
-| 27 | Incident response | SRE | 5 | 8 | A game day and a postmortem | Real on-call |
-| 28 | Authentication, authorization, multi-tenancy | Security, platform | 2 (credentials); 6 | 8 | Allowed, denied, cross-tenant and replay tests | Enterprise IAM administration |
-| 29 | TLS, PKI, mTLS, secrets | Security, infrastructure | 6 | 8 | A local CA, mTLS, rotation | Public PKI operations |
-| 30 | API security and rate limiting | Backend, security | 0 validation | 1 limits; 3 injection; 6 OWASP, rate limits and fuzzing; 8 fuzzing | OWASP test cases; fuzzing findings | Penetration testing |
-| 31 | Data engineering and big data | Data, ML infrastructure | 7 | 8 | A pipeline from events to Parquet; a MapReduce/Spark job | Streaming at scale |
-| 32 | ML, deep learning, MLOps, AIOps | ML infrastructure, applied ML | 7 | 8 | Models with baselines; MLflow registry; a scored anomaly detector | Research-level ML |
-| 33 | Supply-chain security | DevSecOps | 5 (pinned versions, digests, immutable tags, ECR scanning) | 8 | SBOM, signing, clean scans | Formal SLSA certification |
-| 34 | Research method and technical writing | MSc, senior roles | Python Bridge | 7, 8 | The capstone report and defence | Peer-reviewed publication |
+| 27 | Incident response | SRE | 5 | 8; capstone | A game day and a postmortem | Real on-call |
+| 28 | Authentication, authorization, multi-tenancy | Security, platform | 2 (credentials); 6 | 8; capstone | Allowed, denied, cross-tenant and replay tests | Enterprise IAM administration |
+| 29 | TLS, PKI, mTLS, secrets | Security, infrastructure | 6 | Capstone | A local CA, mTLS, rotation | Public PKI operations |
+| 30 | API security and rate limiting | Backend, security | 0 validation | 1 limits; 3 injection; 6 OWASP, rate limits and fuzzing; 8 rate limits; capstone fuzzing | OWASP test cases; fuzzing findings | Penetration testing |
+| 31 | Data engineering and big data | Data, ML infrastructure | 7 | Capstone | A pipeline from events to Parquet; a MapReduce/Spark job | Streaming at scale |
+| 32 | ML, deep learning, MLOps, AIOps | ML infrastructure, applied ML | 7 | 8; capstone | Models with baselines; MLflow registry; a scored anomaly detector | Research-level ML |
+| 33 | Supply-chain security | DevSecOps | 5 (pinned versions, digests, immutable tags, ECR scanning) | Capstone | SBOM, signing, clean scans | Formal SLSA certification |
+| 34 | Research method and technical writing | MSc, senior roles | Python Bridge | 7; capstone | The capstone report and defence | Peer-reviewed publication |
 | 35 | Algorithms and data structures | Every coding interview | [dsa/](dsa/README.md) from Phase 0 | Continuous | Problem log; mock interviews | Competitive programming |
 | 36 | System design | Interviews from mid-level up | [system-design/](system-design/README.md) from Phase 2 | Continuous | Scored designs, including "10M requests a second" | — |
-| 37 | Communication | Every role | 0 learned.md | Every phase; 8 defence | Explanations, postmortems, the capstone talk | — |
+| 37 | Communication | Every role | 0 learned.md | Every phase; capstone defence | Explanations, postmortems, the capstone talk | — |
+| 38 | GPUs and accelerators | AI and ML infrastructure | 8 | Capstone | Host-to-device transfers measured; GPU utilisation read and explained | Writing CUDA kernels |
+| 39 | Distributed training and model serving | AI and ML infrastructure | 8 | Capstone | Data and tensor parallelism run on several workers; a served model with time to first token, throughput and cost measured | Training across thousands of GPUs |
 
 **How to use it:** copy this table into your own repository and add a column for **your** evidence link. When the column is full, the gap is closed.
 
@@ -431,8 +454,8 @@ Every pattern is built in working code at the point where the system needs it. K
 | Model registry and shadow deployment | Unsafe model releases | 7 | — |
 | Fallback for an optional dependency | A helper service taking the request path down with it | 7 | The dependency's answer is required (fail closed instead) |
 | Priority lanes from predictions | Short work stuck behind long work | 7 | Predictions that depend on the load they schedule (a feedback loop) |
-| Claims as code | Reports whose conclusions go stale unnoticed | 7, 8 | One-off numbers nobody will rely on |
-| Defence in depth / zero trust | A single control failing | 6, 8 | — |
+| Claims as code | Reports whose conclusions go stale unnoticed | 7, capstone | One-off numbers nobody will rely on |
+| Defence in depth / zero trust | A single control failing | 6, capstone | — |
 
 ---
 
@@ -503,7 +526,7 @@ Each guide tells you exactly which chapter or paper to read, at the step where i
 | *Database Internals* (Petrov) | No | 3, 4 |
 | *Kubernetes in Action* (Lukša) | No | 5 |
 | *Systems Performance* (Gregg, 2nd ed.) | No | 5, 7 |
-| *Security Engineering* (Anderson, 3rd ed.) | Partly | 1, 6, 8 |
+| *Security Engineering* (Anderson, 3rd ed.) | Partly | 1, 6, capstone |
 | *Designing Machine Learning Systems* (Huyen) | No | 7 |
 | *The Linux Command Line* (Shotts) | [Yes](https://linuxcommand.org/tlcl.php) | Reference |
 
@@ -525,8 +548,9 @@ These estimates assume 12–15 focused hours a week. A phase ends when its evide
 | 5. Operate | 9 | ☐ | postmortem | ☐ | ☐ |
 | 6. Secure | 10 | ☐ | threat model, game-day report | flagpole ☐ | ☐ |
 | 7. Measure and learn | 10 | ☐ | the report, model card | buildcast ☐ | ☐ |
-| 8. Capstone | 10+ | ☐ | final report and talk | — | ☐ |
-| **Total** | **~71** | | | | |
+| 8. AI infrastructure | ~8 | ☐ | serving benchmark and cost report | ☐ | ☐ |
+| Capstone | 10+ | ☐ | final report and talk | — | ☐ |
+| **Total** | **~79** | | | | |
 
 Copy this table into your own repository's README and fill it in as you go.
 
@@ -550,17 +574,18 @@ The phases prove **skills**, not **years**. A beginner who finishes Phase 5 is a
 |---|---|---|---|---|---|
 | Backend Engineer | 1 | 3 | Layered service with TDD; PostgreSQL, outbox, caching; messaging with idempotency | Coding, API and system design, behavioural | Product and frontend breadth |
 | Platform / Developer Infrastructure Engineer | 5 | 5 + platform design track | A reconciler, pipelines, Helm, golden paths | Platform design, Kubernetes, coding | Running a platform for real users |
-| Site Reliability / Production Engineer | 5 | 8 | SLOs, burn alerts, a game-day postmortem, runbooks, capacity data | Coding, troubleshooting, large-scale design, incident scenarios | Real on-call |
-| Cloud / Infrastructure Engineer | 5 | 5 + the AWS work | Terraform on AWS, networking, Kubernetes, IAM | Cloud architecture, networking, troubleshooting | Production cloud ownership; optional AWS SAA certificate |
-| DevOps Engineer | 5 | 5 + 8 | CI/CD, images, infrastructure as code, supply-chain scans | Linux, CI/CD design, scripting | Shared infrastructure for a team |
+| Site Reliability / Production Engineer | 5 | Capstone | SLOs, burn alerts, a game-day postmortem, runbooks, capacity data | Coding, troubleshooting, large-scale design, incident scenarios | Real on-call |
+| Cloud / Infrastructure Engineer | 5 | 5 + the AWS work | Terraform on AWS, networking, Kubernetes, IAM | Cloud architecture, networking, troubleshooting | Production cloud ownership; a cloud certificate (see [Certifications](#certifications)) |
+| DevOps Engineer | 5 | 5 + capstone | CI/CD, images, infrastructure as code, supply-chain scans | Linux, CI/CD design, scripting | Shared infrastructure for a team |
 | Distributed Systems Engineer | 4 | 4 + 5 + distributed design track | Your own Raft with simulation, Porcupine and TLA+; sharding; leases | Harder DSA, distributed design, consensus deep dives | Production scale; often mid-level roles |
 | Storage / Database Engineer | 3 (application side) | Stretch for engine teams | Rust log with crash tests; query plans; restore drills | DSA, storage internals, C++ or Rust | A larger storage engine; C++ |
 | Data Infrastructure Engineer | 7 | 7 + Kafka depth | Kafka, the pipeline, Parquet and DuckDB, Spark basics | Data system design, SQL, coding | Streaming at scale |
 | Systems Software Engineer | Stretch after Rust + 3 | Competitive after 4 | Rust log; concurrency; Raft | C or Rust, OS questions | C and kernel internals |
-| Infrastructure Security Engineer | 6 | 8 | Threat model, mTLS, policy, tenant isolation, SBOM, fuzzing | Security design review, threat modelling | Offensive practice; cloud-security depth |
-| ML Infrastructure / MLOps Engineer | 7 | 7 + applied-ML design track | Registry, serving behind a gateway, monitoring, Kubernetes | ML system design, infrastructure design | GPU scheduling; distributed training |
+| Infrastructure Security Engineer | 6 | Capstone | Threat model, mTLS, policy, tenant isolation, SBOM, fuzzing | Security design review, threat modelling | Offensive practice; cloud-security depth |
+| ML Infrastructure / MLOps Engineer | 7 | 8 + applied-ML design track | Registry, serving behind a gateway, monitoring, Kubernetes | ML system design, infrastructure design | GPU scheduling; distributed training |
+| AI Infrastructure / Inference Engineer | 8 | 8 + an AI-infrastructure capstone (briefs 4–7) | A served model with time to first token, throughput and cost measured; distributed training; GPU-aware scheduling | ML and infrastructure design, coding, serving and GPU deep dives | Operating GPUs at scale; CUDA depth |
 | Applied ML Engineer | Stretch after 7 | Competitive after 7 + more modelling | Phase 7 models with rigorous evaluation | ML system design, ML fundamentals | Modelling depth; statistics |
-| Research MSc (systems and networking) | 4 + a technical report | 8 | The capstone report, TLA+ model, paper notes | Statement of purpose; supervisor fit | Maths readiness; publication optional |
+| Research MSc (systems and networking) | 4 + a technical report | Capstone | The capstone report, TLA+ model, paper notes | Statement of purpose; supervisor fit | Maths readiness; publication optional |
 
 ### When to start applying
 
@@ -571,7 +596,8 @@ The phases prove **skills**, not **years**. A beginner who finishes Phase 5 is a
 | Phase 4 | Distributed-systems roles (expect a high coding bar) |
 | Phase 5 | **The main wave:** SRE, platform, DevOps, cloud and infrastructure |
 | Phase 7 | Data infrastructure, ML infrastructure and MLOps |
-| Phase 8 | Security-leaning infrastructure roles; MSc applications, with the capstone as a writing sample |
+| Phase 8 | AI infrastructure, inference and GPU platform roles |
+| Capstone | Security-leaning infrastructure roles; MSc applications, with the capstone as a writing sample |
 
 ### Preparing for the interview loop
 
@@ -581,6 +607,21 @@ The phases prove **skills**, not **years**. A beginner who finishes Phase 5 is a
 | System design | Problem navigation, solution design, technical excellence, communication | [system-design/](system-design/README.md), in your role's track |
 | Domain deep dive | Whether you really built what you claim | Your Runway repository and capstone; be able to rebuild any part on a whiteboard |
 | Behavioural | Ownership, conflict, failure, learning | Postmortems and failure notes, written as stories |
+
+### Certifications
+
+Certificates don't replace evidence, but they get an application past filters, and two of them (CKA, CKS) are hands-on exams. Take each one when the phases have covered most of it, so the studying fills gaps instead of starting from zero.
+
+| Certificate | From | Take after | Exam | Cost and validity | Why |
+|---|---|---|---|---|---|
+| [Certified Kubernetes Administrator (CKA)](https://training.linuxfoundation.org/certification/certified-kubernetes-administrator-cka/) | CNCF / Linux Foundation | Phase 5 | 2 hours, hands-on at a command line | $445; 2 years | The standard platform and SRE certificate; required before CKS |
+| [Certified Kubernetes Security Specialist (CKS)](https://training.linuxfoundation.org/certification/certified-kubernetes-security-specialist/) | CNCF / Linux Foundation | Phase 6 (needs CKA) | 2 hours, hands-on | $445; 2 years | Platform security: Phase 6's network policy, Pod Security, supply chain and secrets, examined |
+| [HashiCorp Terraform Associate (004)](https://developer.hashicorp.com/certifications/terraform-associate) | HashiCorp | Phase 5 | 1 hour, multiple choice | $70.50; 2 years | Cheap, and infrastructure as code is in most platform and cloud job descriptions |
+| [AWS Solutions Architect – Professional (SAP-C03)](https://aws.amazon.com/certification/certified-solutions-architect-professional/) | AWS | Phase 5, after running the Terraform and closing the AWS gaps | 180 minutes, 75 questions | $300; 3 years | The senior AWS architecture certificate. For SRE and DevOps roles, [DevOps Engineer – Professional (DOP-C02)](https://aws.amazon.com/certification/certified-devops-engineer-professional/) instead; for a specialty, [Security – Specialty (SCS-C03)](https://aws.amazon.com/certification/certified-security-specialty/) after Phase 6 |
+| [Google Cloud Professional Cloud Architect](https://cloud.google.com/learn/certification/cloud-architect) | Google Cloud | Phase 5, after porting one deployment to GCP | 2 hours, 50–60 questions with case studies | $200; 2 years | The second cloud. For SRE roles, Professional Cloud DevOps Engineer instead |
+| [NVIDIA-Certified Associate: AI Infrastructure and Operations (NCA-AIIO)](https://www.nvidia.com/en-us/learn/certification/ai-infrastructure-operations-associate/), then [Professional: AI Infrastructure (NCP-AII)](https://www.nvidia.com/en-us/learn/certification/ai-infrastructure-professional/) | NVIDIA | Phase 8 | Associate: 1 hour, 50 questions. Professional: about 2 hours | $125, then $400; 2 years each | AI infrastructure. NVIDIA expects 2–3 years of data-centre work with its hardware before the Professional, so take the Associate first |
+
+Prices and formats were checked on the vendors' pages on 2026-10-29. None of these is scheduled for retirement. Check again before you book: exams change versions and retire, and a retiring exam isn't worth studying for.
 
 ### Telling your progression story
 

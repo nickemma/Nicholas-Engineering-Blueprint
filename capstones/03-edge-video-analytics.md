@@ -1,6 +1,6 @@
-# 10. Edge video analytics on fluctuating links
+# 3. Edge video analytics on fluctuating links
 
-**Field:** networking · ML · edge computing · **Difficulty:** high
+**Field:** networking · ML · edge computing · **Difficulty:** high · **Languages:** Python, Go
 
 ## Problem
 
@@ -48,6 +48,34 @@ Cities, conservation projects, farms and infrastructure inspectors running camer
 - End-to-end latency.
 - Frames dropped.
 - Server CPU per frame.
+
+## Suggested stack
+
+| Part | Choice | Why |
+|---|---|---|
+| Edge agent | Go, or Python with FFmpeg bindings | Streaming with backpressure and a bounded queue (Phase 2) |
+| Encoding | FFmpeg (H.264), configurable frame rate, resolution and quality | The knobs the controller turns |
+| Detection server | Python, PyTorch, a small pretrained detector on CPU | No GPU needed |
+| Controller | Python first; Go if it moves into the agent | Rules first, then optionally learned |
+| Network emulation | `tc netem` replaying bandwidth traces (Phase 5) | Fluctuating links, reproducibly |
+| Observability | Prometheus and Grafana (Phase 5) | Per-frame latency and bytes |
+
+## Features to implement
+
+1. An agent that applies a configuration per segment and reports the bytes it sends.
+2. A server that returns detections, inference time and queue depth.
+3. A controller that picks the next configuration from bandwidth estimates and scene statistics, with hysteresis so it doesn't flap.
+4. A ground-truth pipeline that scores every configuration offline against full-quality detections.
+5. A trace player for bandwidth, and an oracle controller for the ceiling.
+6. Graceful degradation: when the link collapses, keep sending a minimum stream instead of stalling.
+
+## Benchmark your work
+
+- **Accuracy versus bandwidth:** each controller's F1 plotted against average bandwidth, with the fixed configurations as a frontier.
+- **Latency:** frame capture to detection, p50 and p99, per trace.
+- **Failure:** restart the server mid-stream and measure the gap and the recovery.
+- **Server throughput:** frames per second per core at each resolution, to find where the CPU becomes the bottleneck.
+- **Rigour:** at least 5 runs per trace and controller, with intervals. Record the clips, traces, model weights and FFmpeg version.
 
 ## What you might find
 

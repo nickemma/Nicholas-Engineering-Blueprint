@@ -26136,7 +26136,7 @@ A check that finds nothing proves something only if it could have found somethin
 
 **Scope:** the kind cluster as deployed after step 12 (chart defaults, `networkPolicy.webhookNamespaces=[partner]`), and Compose for the audit pipeline, which runs only there. A Pod in a namespace of its own (`np-test`) stands for a foothold in the cluster: a compromised dependency, or a teammate's test Pod.
 
-**Not in scope:** anyone with administrative access to the cluster or the cloud account (a non-goal from step 1); the supply chain, which Phase 8 takes on.
+**Not in scope:** anyone with administrative access to the cluster or the cloud account (a non-goal from step 1); the supply chain, which the capstone's hardening stage takes on.
 
 ## Result: 29 held, 3 open (32 checks, and 2 controls that saw)
 
