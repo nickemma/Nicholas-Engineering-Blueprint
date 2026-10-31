@@ -10,7 +10,7 @@ This is the **build plan** for the Blueprint itself, the work list we tick off. 
 
 ### 1. Push the branch and get CI green on GitHub
 - [x] Branch `restructure/batch-1` pushed (not merged into `main`)
-- [ ] The **Lessons** workflow green on GitHub, or every failure fixed and pushed again
+- [x] The **Lessons** workflow green on GitHub, or every failure fixed and pushed again (first run: green in 39 minutes)
 
 **Why first:** 18+ commits of curriculum have never run on GitHub's CI. Phase 7's replay installs PyTorch and Spark, which may hit the runner's disk or time limits.
 
@@ -29,15 +29,17 @@ This is the **build plan** for the Blueprint itself, the work list we tick off. 
 
 ### 5. Performance Bridge: Linux performance and debugging (after Phase 5)
 - [ ] `lessons/perf-bridge/`: README (syllabus), TEACHING.md (type-along), exercises.md, learned.md, and `notes/learned/perf-bridge.md`
-- [ ] Covers:
-  - the USE method on a real slowdown;
-  - CPU profiling with `pprof` and `perf`, read as flame graphs;
-  - `strace` for system calls;
-  - eBPF with `bpftrace` (in a privileged container) for latency histograms and off-CPU time;
-  - memory and Go's garbage collector under load.
-
-  Every one is used on Runway's own processes, with a planted problem to find.
-- [ ] Every output captured on this machine; the guide replays in CI (the parts that need root are documented as such)
+- [ ] Steps. The guide builds `hotspot`, a small Go jobs service shaped like Runway's API, with five planted problems. Each step finds one with the right tool, fixes it, and measures the difference:
+  - [ ] 1. A slow service and the USE method: the service, an open-loop load generator, a baseline (fine at 500 requests/s, collapsing at 800), and `vmstat`, `top` and `/proc`, which show it's waiting, not computing
+  - [ ] 2. Waiting: mutex and block profiles find a lock held across a slow call
+  - [ ] 3. Computing: CPU profiles with `pprof`, read as flame graphs, find a hidden O(*n*²)
+  - [ ] 4. `perf`: whole-process profiles and hardware counters (IPC, cache misses), connected to DSA guide 00's cache finding
+  - [ ] 5. `strace`: a storm of tiny system calls
+  - [ ] 6. The kernel's view with eBPF: `bpftrace` (in a privileged container) for system-call latency histograms and scheduler delay
+  - [ ] 7. Memory and the garbage collector: allocation profiles, `gctrace`, `GOGC` and `GOMEMLIMIT`
+  - [ ] 8. The method end to end: before and after for every fix, and a checklist for "this box is slow"
+- [ ] The exercise applies the same tools to Runway itself
+- [ ] Every output captured on this machine; the guide replays in CI (the steps that need `perf`, root or Docker are marked as such and not run there)
 
 **Why before Phase 8:** SRE and infrastructure loops have a live troubleshooting round, and Phase 8 profiles GPU workloads.
 
