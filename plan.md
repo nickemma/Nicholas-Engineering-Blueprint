@@ -69,20 +69,29 @@ This is the **build plan** for the Blueprint itself, the work list we tick off. 
 ### 8. Wire it all into the map
 - [x] JOURNEY: the route, the route table, the gap ledger, tools to install, the timeline, and the career map include the two bridges and the maths track
 - [x] README and `career.md` updated
-- [ ] Full replay of every guide (`scripts/check_guides.py`) green locally, then pushed and green on GitHub
+- [x] Full replay of every guide (`scripts/check_guides.py`) green locally (2,348 steps), then pushed and green on GitHub
 
 ## Phase 8: AI infrastructure
 
 - [x] `lessons/08-ai-infrastructure/` created, with a placeholder README (the outline; the guide is written when the phase starts)
-- [ ] Step list designed with the user. Inputs:
-  - PyTorch Distributed and Megatron-LM;
-  - CUDA basics;
-  - Ray;
-  - the production-ready inference platform as the spine;
-  - a performance and cost benchmark.
+- [x] Step list designed with the user (approved 2026-11-01). Serving first, then training, then the GPU:
+  - [ ] 1. What a model server does: tokens, prefill and decode, and the KV cache, on a tiny transformer
+  - [ ] 2. A real model: `llama.cpp`, streaming, time to first token, inter-token latency, and the knee
+  - [ ] 3. Batching and concurrency, checked against the queueing guide
+  - [ ] 4. The gateway on Runway: auth, limits in tokens, an admission queue, cancellation
+  - [ ] 5. Observability: metrics, traces and SLOs on time to first token
+  - [ ] 6. Kubernetes: slow readiness, scaling on queue depth, cold starts
+  - [ ] 7. Supply chain: SBOMs, signed images and weights, admission control
+  - [ ] 8. A performance and cost benchmark, with quality checks
+  - [ ] 9. Failure and recovery: a game day and a runbook
+  - [ ] 10. Data parallelism: DDP on CPU processes, across `netlab`'s link
+  - [ ] 11. Tensor and pipeline parallelism from scratch, then reading Megatron-LM
+  - [ ] 12. Ray
+  - [ ] 13. CUDA and vLLM on a GPU
+  - [ ] 14. The report
 - [ ] **Plugged in here: supply-chain security.** A step that produces SBOMs, signs container images **and model weights**, and refuses unsigned ones at deploy (admission control), with provenance. Tampered weights are an AI-infrastructure threat, so this is the natural home. It also closes the gap Phase 6 handed to the capstone, and JOURNEY's ledger is updated to point here.
 - [ ] **Plugged in here:** the maths track's linear-algebra guide is the prerequisite for the CUDA and matrix-multiply steps.
-- [ ] Decide how the CUDA steps are verified: a rented GPU for the captures, or "you run it" steps with the expected output.
+- [x] CUDA steps are verified on a rented GPU: the user runs the script and supplies the output
 
 ## After Phase 8
 
