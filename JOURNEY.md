@@ -2,7 +2,7 @@
 
 This is a complete path from your first web request to building, operating, securing and measuring distributed systems, then running the infrastructure AI workloads need, and finally a research project of your own. You learn it by building one teaching system, **Runway**, phase by phase. You finish by choosing a **capstone research project** and taking it from problem to evidence.
 
-This is the **only roadmap** in the repository. Everything else is a lesson (`lessons/`), a capstone brief (`capstones/`), interview practice (`dsa/`, `system-design/`), or a personal note (`notes/`).
+This is the **only roadmap** in the repository. Everything else is a lesson (`lessons/`), a capstone brief (`capstones/`), interview practice (`dsa/`, `system-design/`), a parallel track (`math/`, `open-source/`), or a personal note (`notes/`).
 
 **Contents**
 
@@ -162,6 +162,9 @@ You follow each lesson in a scratch `practice/` folder. At the end of each phase
 | Phase 3 | The `psql` client. PostgreSQL, Redis and Kafka run in Docker |
 | Phase 4 | Java 17+ and the [TLA+ tools](https://github.com/tlaplus/tlaplus/releases) (or the VS Code TLA+ extension) |
 | Phase 5 | [`kind`](https://kind.sigs.k8s.io/), `kubectl`, [`helm`](https://helm.sh/), [`terraform`](https://developer.hashicorp.com/terraform/install); optionally the AWS CLI and an AWS account (the Terraform is planned offline for free; applying it costs about $2.50 a day while it runs, and the guide covers clean-up) |
+| Performance Bridge | `perf`, `strace` and `bpftrace`, in a tools container the guide builds |
+| Networking Bridge | Nothing new: `tc`, `iperf3`, `ss` and `tcpdump` run in a lab image the guide builds |
+| Maths track | NumPy, through `uv` |
 | Phase 7 | Python ML libraries, installed through `uv`. No GPU is needed |
 | Phase 8 | Ray and PyTorch's distributed tools through `uv`, and a small model server (llama.cpp, or vLLM's CPU backend). A GPU is optional: the steps that need CUDA run on a rented GPU or come with their expected output |
 | Capstone | `govulncheck`, [`trivy`](https://trivy.dev/), [`syft`](https://github.com/anchore/syft), [`cosign`](https://docs.sigstore.dev/), [`wrk2`](https://github.com/giltene/wrk2), plus whatever your capstone needs |
@@ -174,9 +177,11 @@ You follow each lesson in a scratch `practice/` folder. At the end of each phase
 flowchart LR
     P0[0 Request] --> P1[1 Reliable service] --> PY[Python Bridge] --> P2[2 Connected services]
     P2 --> RB[Rust Bridge] --> P3[3 Durable data] --> P4[4 Replication + scale]
-    P4 --> P5[5 Operate] --> P6[6 Secure] --> P7[7 Measure + ML] --> P8[8 AI infrastructure] --> C[Capstone]
+    P4 --> P5[5 Operate] --> PB[Performance Bridge] --> NB[Networking Bridge] --> P6[6 Secure]
+    P6 --> P7[7 Measure + ML] --> P8[8 AI infrastructure] --> C[Capstone]
     DSA[dsa/ from Phase 0] -.-> C
     SD[system-design/ from Phase 2] -.-> C
+    M[math/ alongside] -.-> C
 ~~~
 
 | Phase | Question | You build | Weeks | Status |
@@ -189,6 +194,8 @@ flowchart LR
 | [3. Make data durable](lessons/03-durable-auditable-data/README.md) | What survives a crash, and what happens between two writes? | PostgreSQL with pooling and transactions, an outbox, Kafka, Redis caching, background jobs, the Rust audit log | 7 | **Ready** |
 | [4. Replicate and scale out](lessons/04-replicated-state/README.md) | What can several machines agree on, and how do you split work across them? | Your own Raft, simulation testing, linearizability checks, TLA+, sharding with consistent hashing, leases and fencing | 10 | **Ready** |
 | [5. Operate it](lessons/05-constrained-operations/README.md) | Can you deploy, observe, diagnose and recover it? | Containers, Kubernetes, load balancing, Helm, CI/CD, tracing, SLOs, a controller, a game day, and Runway on AWS with Terraform | 9 | **Ready** |
+| [Performance Bridge](lessons/perf-bridge/README.md) | Something is slow: why, and how do you prove it? | `hotspot`, with five planted problems found with USE, profilers, `perf`, `strace` and eBPF | 2 | **Ready** |
+| [Networking Bridge](lessons/network-bridge/README.md) | What does the network itself do when it's busy, lossy or far away? | `netlab`: loss, congestion control, HTTP/3 and a CDN, each measured | 2 | **Ready** |
 | [6. Secure it](lessons/06-safe-shared-queries/README.md) | Who may do what, and how do you contain abuse? | A threat model; tokens, authorization, tenant isolation, rate limiting, signed webhooks, your own CA and mTLS, a sidecar, secrets from OpenBao, a tamper-evident audit log, privacy, cluster hardening, fuzzing, and a security game day | 10 | **Ready** |
 | [7. Measure and learn](lessons/07-utility-evaluation/README.md) | Is it actually better, and can its own data improve it? | Experiments with plans and intervals; jobs that do real work; a data contract and a Kafka-to-Parquet pipeline; MapReduce, Spark and COST; baselines, gradient-boosted trees and neural networks compared honestly; serving behind the Go API with a fallback; priority lanes; MLflow, a gate and model cards; drift and a shadow; anomaly detection scored against injected incidents; a report that re-tests itself | 10 | **Ready** |
 | [8. AI infrastructure](lessons/08-ai-infrastructure/README.md) | What does it take to run the infrastructure under AI products? | A production-ready model-serving platform on Runway; distributed training on several workers; how data moves between CPU and GPU memory; Ray; a performance and cost benchmark | ~8 | Next |
@@ -205,6 +212,8 @@ The guides hold themselves to "every output is real". These are the places where
 - **Phase 5's AWS deployment is planned, not applied.** The Terraform is written, reviewed as a plan of about 60 resources, and checked in CI offline. Applying it costs money (about $2.50 a day), so the guide leaves that to you, with the clean-up spelled out.
 - **Phase 7's held-out false-alarm test wasn't run.** Step 12 plans a quiet hour to measure the detectors' false alarms on data they've never seen, but its runs failed twice (the machine slept, then Docker stopped). The report marks the claim "not measured" rather than guessing, and step 12 gives you the plan and the commands to run it yourself.
 - **Two of Phase 7's claims didn't replicate** on the final data, and the report says so. That's the report working, not a defect.
+- **The bridges' and the maths track's live measurements are captured by hand.** They need a running service, `perf`, Docker, `tc` or hours of run time, so CI rebuilds their code and runs their tests without rerunning them.
+- **A faulty clock.** The laptop slept during the Networking Bridge, and afterwards its virtual machine's clock ran about 4–5% fast, with the wall clock stepped back every half-minute. Runs hit by the sleep were thrown away. Steps 3 to 6 of that bridge and the maths track's Runway experiment ran with this clock. Their tools share one clock, so ratios hold, though absolute milliseconds may be that far off. The Runway timestamps were repaired, and the guide shows how.
 
 ### Phase 0: Make one request work
 
@@ -287,6 +296,20 @@ The user-requested topics are all here: pooling, transactions, queues, idempoten
 - **Learn:** containers as processes (namespaces, cgroups); Kubernetes control loops; L4 vs L7 load balancing; DNS; cloud networking and IAM; SLOs and error budgets; the USE method; incident response.
 - **Patterns:** reconciliation loop; liveness vs readiness; canary rollout; twelve-factor config; build once, deploy by digest; backpressure; infrastructure as code.
 - **Why next:** the platform runs, but anyone who can reach it can use it.
+
+### Performance Bridge
+
+- **Build:** `hotspot`, a small Go jobs service with five planted problems, found one at a time.
+- **Learn:** the USE method; Go's CPU, heap, mutex and block profiles; flame graphs; `perf` and hardware counters; `strace` and its observer effect; `bpftrace`; `GOGC` and `GOMEMLIMIT`.
+- **Exercise:** profile Runway, the same tools on a system nobody has planted problems in.
+- **Why here:** Phase 5 teaches you that something's wrong. This teaches you why, which is the live troubleshooting round in SRE and infrastructure interviews.
+
+### Networking Bridge
+
+- **Build:** `netlab`, containers joined by a link you control with `tc netem`, then a three-host CDN lab in network namespaces.
+- **Learn:** the bandwidth-delay product; the Mathis formula; SACK and fast retransmit; Reno, CUBIC and BBR; bufferbloat and fairness; HTTP/1.1, HTTP/2 and HTTP/3; what a CDN saves; anycast and BGP; four kinds of slow, told apart with `ss -ti`.
+- **Exercise:** fix bufferbloat with active queue management, measure a real path, then Runway under loss.
+- **Why here:** the MSc target is systems and networking, KESTREL is a networking question, and Phase 8's distributed training is limited by the network.
 
 ### Phase 6: Secure it
 
@@ -400,6 +423,9 @@ This table shows each foundation gap, where it's introduced, where it's practise
 | 37 | Communication | Every role | 0 learned.md | Every phase; capstone defence | Explanations, postmortems, the capstone talk | — |
 | 38 | GPUs and accelerators | AI and ML infrastructure | 8 | Capstone | Host-to-device transfers measured; GPU utilisation read and explained | Writing CUDA kernels |
 | 39 | Distributed training and model serving | AI and ML infrastructure | 8 | Capstone | Data and tensor parallelism run on several workers; a served model with time to first token, throughput and cost measured | Training across thousands of GPUs |
+| 40 | Linux performance and debugging | SRE, infrastructure troubleshooting rounds | [Performance Bridge](lessons/perf-bridge/README.md) | 8 GPU workloads; capstone | A before-and-after table for five fixes, each found with a named tool | Kernel development |
+| 41 | The network under load | MSc, infrastructure, AI clusters | [Networking Bridge](lessons/network-bridge/README.md) | 8 distributed training; capstone | The Mathis formula tested; BBR's cost measured; HTTP/3's claim tested with a control | Running a production backbone |
+| 42 | Mathematics for systems | MSc, performance, AI infrastructure | [math/](math/README.md) | 4 proofs; 5 capacity; 8 GPUs | Queueing theory checked on Runway; a model checker of your own; a measured roofline | Graduate-level proof; calculus for ML |
 
 **How to use it:** copy this table into your own repository and add a column for **your** evidence link. When the column is full, the gap is closed.
 
@@ -511,6 +537,7 @@ These run alongside the phases. The phases don't teach them, but they reuse what
 |---|---|---|---|
 | Algorithms and data structures | Phase 0 | 3 sessions a week, pattern by pattern, in Go and Python | [dsa/](dsa/README.md) |
 | System design | Phase 2 | 1 session a week, scored against a rubric | [system-design/](system-design/README.md) |
+| Maths | Queueing with Phases 2–5; proofs with Phase 4; linear algebra before Phase 8 | One guide at a time, when its phase needs it | [math/](math/README.md) |
 | Writing | Phase 1 | One essay per phase, drawn from your failures and decisions | Your own blog |
 | Paper reading | Phase 2; weekly from Phase 4 | Three-pass method; one-page notes | Your own repository |
 | Open source | Phase 3 | Read a real codebase (hashicorp/raft, etcd, a Rust storage crate); first merged PR by Phase 4–5 | [open-source/](open-source/README.md) |
@@ -556,11 +583,13 @@ These estimates assume 12–15 focused hours a week. A phase ends when its evide
 | 3. Durable data | 7 | ☐ | | ☐ | ☐ |
 | 4. Replicate and scale | 10 | ☐ | technical report | ☐ | ☐ |
 | 5. Operate | 9 | ☐ | postmortem | beacon ☐, two regions ☐ | ☐ |
+| Performance Bridge | 2 | ☐ | before-and-after table | profile Runway ☐ | — |
+| Networking Bridge | 2 | ☐ | experiment report | fix the queue ☐ | — |
 | 6. Secure | 10 | ☐ | threat model, game-day report | flagpole ☐ | ☐ |
 | 7. Measure and learn | 10 | ☐ | the report, model card | buildcast ☐ | ☐ |
 | 8. AI infrastructure | ~8 | ☐ | serving benchmark and cost report | ☐ | ☐ |
 | Capstone | 10+ | ☐ | final report and talk | — | ☐ |
-| **Total** | **~79** | | | | |
+| **Total** | **~83** | | | | |
 
 Copy this table into your own repository's README and fill it in as you go.
 
@@ -584,8 +613,8 @@ The phases prove **skills**, not **years**. A beginner who finishes Phase 5 is a
 |---|---|---|---|---|---|
 | Backend Engineer | 1 | 3 | Layered service with TDD; PostgreSQL, outbox, caching; messaging with idempotency | Coding, API and system design, behavioural | Product and frontend breadth |
 | Platform / Developer Infrastructure Engineer | 5 | 5 + platform design track | A reconciler, pipelines, Helm, golden paths | Platform design, Kubernetes, coding | Running a platform for real users |
-| Site Reliability / Production Engineer | 5 | Capstone | SLOs, burn alerts, a game-day postmortem, runbooks, capacity data | Coding, troubleshooting, large-scale design, incident scenarios | Real on-call |
-| Cloud / Infrastructure Engineer | 5 | 5 + the AWS work | Terraform on AWS, networking, Kubernetes, IAM | Cloud architecture, networking, troubleshooting | Production cloud ownership; a cloud certificate (see [Certifications](#certifications)) |
+| Site Reliability / Production Engineer | 5 | Capstone | SLOs, burn alerts, a game-day postmortem, runbooks, capacity data; the [Performance](lessons/perf-bridge/README.md) and [Networking](lessons/network-bridge/README.md) Bridges' checklists | Coding, troubleshooting, large-scale design, incident scenarios | Real on-call |
+| Cloud / Infrastructure Engineer | 5 | 5 + the AWS work | Terraform on AWS, networking (with the [Networking Bridge](lessons/network-bridge/README.md)), Kubernetes, IAM | Cloud architecture, networking, troubleshooting | Production cloud ownership; a cloud certificate (see [Certifications](#certifications)) |
 | DevOps Engineer | 5 | 5 + capstone | CI/CD, images, infrastructure as code, supply-chain scans | Linux, CI/CD design, scripting | Shared infrastructure for a team |
 | Distributed Systems Engineer | 4 | 4 + 5 + distributed design track | Your own Raft with simulation, Porcupine and TLA+; sharding; leases | Harder DSA, distributed design, consensus deep dives | Production scale; often mid-level roles |
 | Storage / Database Engineer | 3 (application side) | Stretch for engine teams | Rust log with crash tests; query plans; restore drills | DSA, storage internals, C++ or Rust | A larger storage engine; C++ |
@@ -595,7 +624,7 @@ The phases prove **skills**, not **years**. A beginner who finishes Phase 5 is a
 | ML Infrastructure / MLOps Engineer | 7 | 8 + the AI infrastructure design track | Registry, serving behind a gateway, monitoring, Kubernetes | ML system design, infrastructure design | GPU scheduling; distributed training |
 | AI Infrastructure / Inference Engineer | 8 | 8 + an AI-infrastructure capstone (briefs 4–7) | A served model with time to first token, throughput and cost measured; distributed training; GPU-aware scheduling | ML and infrastructure design, coding, serving and GPU deep dives | Operating GPUs at scale; CUDA depth |
 | Applied ML Engineer | Stretch after 7 | Competitive after 7 + more modelling | Phase 7 models with rigorous evaluation | ML system design, ML fundamentals | Modelling depth; statistics |
-| Research MSc (systems and networking) | 4 + a technical report | Capstone | The capstone report, TLA+ model, paper notes | Statement of purpose; supervisor fit | Maths readiness; publication optional |
+| Research MSc (systems and networking) | 4 + a technical report | Capstone | The capstone report, TLA+ model, paper notes, the [Networking Bridge](lessons/network-bridge/README.md)'s experiments | Statement of purpose; supervisor fit | Maths readiness through the [maths track](math/README.md); publication optional |
 
 ### When to start applying
 

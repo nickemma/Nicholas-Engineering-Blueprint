@@ -136,6 +136,9 @@ Then move to the design problems (an LRU cache, a rate limiter, consistent hashi
 | SQL, PostgreSQL, transactions, pooling, outbox, Redis caching, Kafka | [Phase 3](lessons/03-durable-auditable-data/README.md) |
 | Replication, consensus, leader election, consistency, CAP, sharding, distributed locks | [Phase 4](lessons/04-replicated-state/README.md) |
 | Docker, load balancing, service discovery, observability, SLOs, failure handling | [Phase 5](lessons/05-constrained-operations/README.md) |
+| Linux performance and live troubleshooting: USE, profilers, `perf`, `strace`, eBPF | [Performance Bridge](lessons/perf-bridge/README.md) |
+| TCP under load, congestion control, HTTP/3, CDNs, anycast and BGP | [Networking Bridge](lessons/network-bridge/README.md) |
+| Queueing theory, proofs and invariants, linear algebra for GPUs | [Maths track](math/README.md) |
 | Authentication, authorization, rate limiting, mTLS, secrets | [Phase 6](lessons/06-safe-shared-queries/README.md) |
 | Event pipelines, experiments, ML serving, drift, anomaly detection | [Phase 7](lessons/07-utility-evaluation/README.md) |
 
