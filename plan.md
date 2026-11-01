@@ -45,15 +45,16 @@ This is the **build plan** for the Blueprint itself, the work list we tick off. 
 **Why before Phase 8:** SRE and infrastructure loops have a live troubleshooting round, and Phase 8 profiles GPU workloads.
 
 ### 6. Networking Bridge: the network under load (after Phase 5)
-- [ ] `lessons/network-bridge/`: README, TEACHING.md, exercises.md, learned.md, and `notes/learned/network-bridge.md`
-- [ ] Covers:
-  - TCP congestion control measured under loss and delay (CUBIC against BBR, if the kernel module loads; otherwise against Reno, and said so);
-  - head-of-line blocking: HTTP/1.1 against HTTP/2 against HTTP/3 (QUIC) on a lossy link;
-  - anycast and BGP concepts;
-  - what a CDN does to latency.
-
-  Everything in containers with `tc netem`, with experiments planned and analysed the way Phase 7 does it.
-- [ ] Every output captured on this machine; the guide replays in CI
+- [x] `lessons/network-bridge/`: README, TEACHING.md, exercises.md, learned.md, and `notes/learned/network-bridge.md`
+- [x] Steps. The guide builds `netlab`: containers joined by a link you control with `tc netem`, and Go programs to measure across it. Experiments are planned and analysed the way Phase 7 does it:
+  - [x] 1. A network you can break: the lab, RTT, bandwidth, the bandwidth-delay product, and what `ss -ti` shows
+  - [x] 2. What loss does to TCP: throughput against loss, checked against the Mathis formula; retransmissions in `tcpdump`
+  - [x] 3. Congestion control: Reno, CUBIC and BBR under loss, bufferbloat, and sharing a link
+  - [x] 4. Head-of-line blocking: HTTP/1.1, HTTP/2 and HTTP/3 (QUIC) on a lossy link
+  - [x] 5. CDNs, anycast and BGP: what an edge saves, measured, and a small path-vector simulator of anycast failover
+  - [x] 6. The method: a checklist for "the network is slow"
+- [x] Results: the Mathis formula within its interval at all five loss rates; BBR at 91 Mbit/s against 3 at 1% loss, and starving CUBIC on a small queue; HTTP/3's win on tiny requests is head-of-line blocking, its win on bulk transfer isn't; a cache hit nine times faster
+- [x] Every output captured on this machine; CI rebuilds the code and runs its tests (the live measurements need Docker and `tc`, and are marked as such)
 
 **Why before Phase 8:** the MSc target is systems and networking, KESTREL is a networking question, and Phase 8's distributed training is limited by the network.
 
