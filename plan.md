@@ -59,15 +59,16 @@ This is the **build plan** for the Blueprint itself, the work list we tick off. 
 **Why before Phase 8:** the MSc target is systems and networking, KESTREL is a networking question, and Phase 8's distributed training is limited by the network.
 
 ### 7. Maths track (parallel, like `dsa/`)
-- [ ] `math/` with guides, Python code checked by CI:
+- [x] `math/` with guides, Python code checked by CI:
   - probability and queueing theory: Little's law, M/M/1, why latency explodes near saturation, checked against a simulation and against Runway;
   - proofs and invariants: induction, and how Raft's safety argument and TLA+ fit;
   - linear algebra for ML and GPUs: vectors, matrices, the cost of a matrix multiply, and arithmetic intensity, which feeds Phase 8.
-- [ ] JOURNEY's parallel-tracks table and career map (Research MSc row) link to it
+- [x] Results: Little's law within about 2% on 27 stable runs of the real Runway; Pollaczek–Khinchine predicting it with a median ratio of 0.88 to 0.97 below 93% utilisation; every state of a small Raft election checked; a roofline predicting a case it wasn't fitted to, to within about 15%
+- [x] JOURNEY's parallel-tracks table and career map (Research MSc row) link to it
 
 ### 8. Wire it all into the map
-- [ ] JOURNEY: the route, the route table, the gap ledger, tools to install, the timeline, and the career map include the two bridges and the maths track
-- [ ] README and `career.md` updated
+- [x] JOURNEY: the route, the route table, the gap ledger, tools to install, the timeline, and the career map include the two bridges and the maths track
+- [x] README and `career.md` updated
 - [ ] Full replay of every guide (`scripts/check_guides.py`) green locally, then pushed and green on GitHub
 
 ## Phase 8: AI infrastructure

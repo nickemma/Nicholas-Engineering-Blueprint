@@ -42,6 +42,7 @@ These rows link to the [foundation-gap ledger](../../JOURNEY.md#5-foundation-gap
 |---|---|---|
 | Sockets, TCP/UDP, DNS (row 11) | Steps 1, 2, 4, 6 | The Mathis formula tested over two orders of magnitude; a retransmission read from a capture |
 | Caching (row 18) | Step 5 | What a cache hit and a warm proxy each save, measured |
+| The network under load (row 41) | Every step | Loss, queues, congestion control, HTTP/3 and CDNs, each measured with a control |
 
 ## Patterns introduced
 
@@ -52,4 +53,4 @@ These rows link to the [foundation-gap ledger](../../JOURNEY.md#5-foundation-gap
 
 ## Known limits
 
-An emulated link has random, independent loss and one bottleneck, and the real internet has neither. BBR here is the kernel's built-in version, and the HTTP/3 stack is quic-go; other implementations will differ. The live measurements were captured by hand on one laptop. CI rebuilds the code and runs its tests, but it doesn't rerun the experiments.
+An emulated link has random, independent loss and one bottleneck, and the real internet has neither. BBR here is the kernel's built-in version, and the HTTP/3 stack is quic-go; other implementations will differ. The live measurements were captured by hand on one laptop, and steps 3 to 6 ran with its clock about 4–5% fast after a sleep: ratios hold, but absolute milliseconds may be that far off. CI rebuilds the code and runs its tests, but it doesn't rerun the experiments.
