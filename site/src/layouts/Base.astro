@@ -1,0 +1,62 @@
+---
+import "../styles/global.css";
+import { REPO } from "../lib/links.ts";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = "From first request to distributed systems and infrastructure." } = Astro.props;
+const path = Astro.url.pathname;
+const nav = [
+  ["Journey", "/journey/"],
+  ["DSA", "/dsa/"],
+  ["System design", "/system-design/"],
+  ["Maths", "/math/"],
+  ["Capstones", "/capstones/"],
+  ["Labs", "/labs/"],
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title === "The Blueprint" ? title : `${title} · The Blueprint`}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>
+      const theme = localStorage.getItem("blueprint.theme");
+      if (theme) document.documentElement.dataset.theme = theme;
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="top">
+      <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>The Blueprint</a>
+      <nav aria-label="Main">
+        {nav.map(([label, url]) => (
+          <a href={url} aria-current={path.startsWith(url) ? "page" : undefined}>{label}</a>
+        ))}
+      </nav>
+      <div class="top-actions">
+        <a href={REPO} rel="noreferrer">GitHub</a>
+        <button id="theme" type="button" aria-label="Switch between light and dark">Theme</button>
+      </div>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="foot">
+      <p>Every guide's code is rebuilt from the guide and tested in CI. <a href={REPO} rel="noreferrer">Read the source</a>.</p>
+    </footer>
+    <script>
+      document.getElementById("theme")?.addEventListener("click", () => {
+        const root = document.documentElement;
+        const dark = root.dataset.theme
+          ? root.dataset.theme === "dark"
+          : matchMedia("(prefers-color-scheme: dark)").matches;
+        root.dataset.theme = dark ? "light" : "dark";
+        localStorage.setItem("blueprint.theme", root.dataset.theme);
+      });
+    </script>
+  </body>
+</html>

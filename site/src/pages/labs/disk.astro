@@ -1,0 +1,20 @@
+---
+import DiskLab from "../../islands/DiskLab.tsx";
+import Lab from "../../layouts/Lab.astro";
+---
+<Lab title="Crash the disk" area="Systems" lede="When write() returns, your data may only be in memory. Write some records, cut the power at the worst moment, and reopen the log. These are real bytes with a real CRC-32C.">
+  <DiskLab client:only="react" />
+  <h2>Things to try</h2>
+  <ul>
+    <li><strong>Write three records without fsync, and cut the power.</strong> The program said all three were written. They're gone.</li>
+    <li><strong>Move the slider to tear a record in half.</strong> Recovery sees too few bytes in the last record, cuts them off and carries on.</li>
+    <li><strong>fsync, then damage a byte in the last record.</strong> It looks like a torn write, so it's cut off.</li>
+    <li><strong>Damage a byte in an earlier record.</strong> Valid data follows the damage, so it can't be an unfinished write. The log refuses to open, which is the right answer: it can't prove the rest is safe to drop.</li>
+  </ul>
+  <h2>Go deeper</h2>
+  <ul>
+    <li><a href="/lessons/rust-bridge/guide/step-5-a-log-file-that-survives-crashes/">The Rust Bridge, step 5</a>: build this log, with the same format and the same recovery rules.</li>
+    <li><a href="/lessons/03-durable-auditable-data/">Phase 3</a>: what PostgreSQL does about the same problem.</li>
+  </ul>
+  <p class="note">The format, checksum and recovery here follow the guide's Rust code. The crash is simulated, and simple: unsynced bytes reach the disk in order. A real disk can reorder writes and lose more than this, and a checksum can't tell you about a whole record that vanished from the end.</p>
+</Lab>

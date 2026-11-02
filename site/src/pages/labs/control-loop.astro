@@ -1,0 +1,21 @@
+---
+import ControlLoopLab from "../../islands/ControlLoopLab.tsx";
+import Lab from "../../layouts/Lab.astro";
+---
+<Lab title="The control loop" area="Platform" lede="Kubernetes doesn't run your commands. You declare what you want, and a loop keeps comparing that with what exists, then closes the gap. Select a Pod to kill it.">
+  <ControlLoopLab client:only="react" />
+  <h2>Things to try</h2>
+  <ul>
+    <li><strong>Kill a Pod.</strong> Nothing "restarts" it. The controller just notices five isn't six, and makes one.</li>
+    <li><strong>Stop the controller, kill three Pods, then start it.</strong> It never saw those events and doesn't need to: it reads the whole state and fixes the gap in one pass. That's what level-triggered means, and it's why a controller can crash safely.</li>
+    <li><strong>Take a node down.</strong> For a few seconds its Pods look fine, because the cluster can't tell a dead node from a slow one. Only after a grace period are they evicted and replaced.</li>
+    <li><strong>Ask for 15 Pods.</strong> Three nodes hold 12, so three stay Pending. The controller did its job, and the scheduler has nowhere to put them.</li>
+    <li><strong>Drain a node</strong> before maintenance, then uncordon it. Existing Pods stay where they are: nothing rebalances them for you.</li>
+  </ul>
+  <h2>Go deeper</h2>
+  <ul>
+    <li><a href="/lessons/05-constrained-operations/guide/step-3-kubernetes-on-kind/">Phase 5, step 3: Kubernetes on kind</a>.</li>
+    <li><a href="/lessons/05-constrained-operations/guide/step-11-a-controller-of-your-own/">Phase 5, step 11: a controller of your own</a>, written in Go.</li>
+  </ul>
+  <p class="note">This is a small model, with one controller, a least-loaded scheduler and one size of Pod. Real Kubernetes has many controllers, a watch-based API, resource requests, affinity and much more. No real cluster runs here.</p>
+</Lab>

@@ -1,0 +1,15 @@
+---
+import Base from "../../layouts/Base.astro";
+import { LABS } from "../../lib/labs.ts";
+---
+<Base title="Labs" description="Interactive simulations for DevOps, platform, SRE, backend, systems, security, MLOps and AIOps.">
+  <section class="band first">
+    <h1>Labs</h1>
+    <p class="lede">Each lab is a small simulation that runs in your browser. It shows one idea from the route, tells you what it leaves out, and links to the guide where you build the real thing.</p>
+    <ul class="cards two">
+      {LABS.map((lab) => (
+        <li><a href={lab.url}><small>{lab.area}</small><h3>{lab.title}</h3><p>{lab.blurb}</p></a></li>
+      ))}
+    </ul>
+  </section>
+</Base>

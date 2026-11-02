@@ -1,0 +1,21 @@
+---
+import AnomalyLab from "../../islands/AnomalyLab.tsx";
+import Lab from "../../layouts/Lab.astro";
+---
+<Lab title="Catch the incident" area="AIOps" lede="An alert asks a question someone thought of in advance. A detector looks for anything unusual, and it has to be scored honestly. Here the incidents are injected, so the right answers are known.">
+  <AnomalyLab client:load />
+  <h2>Things to try</h2>
+  <ul>
+    <li><strong>Start with mean and SD,</strong> at a score of 5. It misses incidents, because spikes in the warm-up stretched the standard deviation. Select "Another day" a few times, and watch the result swing with whatever the warm-up happened to contain.</li>
+    <li><strong>Switch to median and MAD.</strong> At the same score it finds all three, day after day. A few spikes barely move a median.</li>
+    <li><strong>Drop that threshold to 2.</strong> Count the false alarms you paid for: often more than a dozen in a day. An on-call team soon stops trusting a noisy detector.</li>
+    <li><strong>Try EWMA.</strong> It catches the sharp jump, then learns the creep and the plateau as normal, because it never stops learning. That's what lets it follow a busy afternoon. Lower its threshold and it finds most of them, but look at how little of each incident stays under alarm.</li>
+    <li><strong>Raise "minutes in a row".</strong> Lone spikes stop firing, and every real detection arrives later.</li>
+  </ul>
+  <h2>Go deeper</h2>
+  <ul>
+    <li><a href="/lessons/07-utility-evaluation/guide/step-12-finding-incidents-nobody-wrote-a-rule-for/">Phase 7, step 12: finding incidents nobody wrote a rule for</a>, with real chaos injected into Runway, and an isolation forest.</li>
+    <li><a href="/labs/burn-rate/">Burn the error budget</a>: the rule-based alerts that detectors are compared with.</li>
+  </ul>
+  <p class="note">The scores and the metrics match the guide's detectors, on one simulated latency signal with three scripted incidents. The guide works across many real signals, including the isolation forest, which isn't shown here.</p>
+</Lab>
