@@ -18,3 +18,10 @@ target/
 
 # Personal notes, kept local
 career.md
+plan.md
+
+# Site
+node_modules/
+dist/
+.astro/
+.vercel/
