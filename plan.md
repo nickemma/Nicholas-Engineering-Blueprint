@@ -75,7 +75,7 @@ This is the **build plan** for the Blueprint itself, the work list we tick off. 
 
 - [x] `lessons/08-ai-infrastructure/` created, with a placeholder README (the outline; the guide is written when the phase starts)
 - [x] Step list designed with the user (approved 2026-11-01). Serving first, then training, then the GPU:
-  - [ ] 1. What a model server does: tokens, prefill and decode, and the KV cache, on a tiny transformer
+  - [x] 1. What a model server does: tokens, prefill and decode, and the KV cache, on a tiny transformer
   - [ ] 2. A real model: `llama.cpp`, streaming, time to first token, inter-token latency, and the knee
   - [ ] 3. Batching and concurrency, checked against the queueing guide
   - [ ] 4. The gateway on Runway: auth, limits in tokens, an admission queue, cancellation

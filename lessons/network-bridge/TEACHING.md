@@ -11,7 +11,7 @@ Every system in this Blueprint talks over a network, and so far you've mostly tr
 - Type the code; don't paste it.
 - **CI rebuilds the code and runs its tests.** It can't run the live measurements, which need Docker, `tc` and hours of run time. Those outputs were captured by hand on one laptop (an 8-core Ryzen 7 5850U under WSL2, kernel 6.18). Your numbers will differ. Compare the **ratios and the shape**, not the digits.
 - An emulated link isn't the internet. Where that matters, the guide says so.
-- **A faulty clock, disclosed.** Steps 3 to 6 ran after the laptop woke from sleep, and its virtual machine's clock then ran about 4–5% fast. Every lab tool times against that same clock, so the ratios and comparisons hold, but absolute milliseconds in those steps may read 4–5% off. The [maths track](../../math/01-queueing/README.md#the-clock-lied) shows how this was found.
+- **A faulty clock, disclosed.** Steps 3 to 6 ran after the laptop woke from sleep, and its virtual machine's clock then ran about 4–5% fast. Every lab tool times against that same clock, so the ratios and comparisons hold, but absolute milliseconds in those steps may read 4–5% off. The cause turned out to be WSL's two time services fighting, as [JOURNEY's known limits](../../JOURNEY.md) explain. The [maths track](../../math/01-queueing/README.md#the-clock-lied) shows how this was found.
 - Each step ends with **Explain it** questions and a **Read** list.
 
 ## Setup
@@ -2551,7 +2551,7 @@ Then do the [exercise](exercises.md): your own path, your own numbers.
 | `Read-only file system` from `sysctl` | A container's `/proc/sys` is read-only | The privileged container in `lowat.sh` |
 | The direct path fails with three containers | Docker drops traffic between its networks | Use the namespaces in `cdn.sh` |
 | `bin/pagefetch: not found` in a container | Built with cgo, or not built | `CGO_ENABLED=0 go build -o bin/ ./cmd/...` |
-| `ping: time of day goes back` | The VM's clock is being corrected, often after sleep. Durations from wall-clock timestamps can't be trusted | Ignore that sample. Restarting WSL (`wsl --shutdown`) usually clears it |
+| `ping: time of day goes back` | The VM's clock is being corrected, often after sleep. Durations from wall-clock timestamps can't be trusted | Ignore that sample. Restarting WSL doesn't clear it reliably. If `timedatectl timesync-status` shows an offset over 0.4 s on a 32 s poll, WSL's `chrony` and `timesyncd` are fighting: run `sudo timedatectl set-ntp false` |
 | A setting seems to make no difference | It may never have applied | Read it back |
 
 ## Reading list for this phase

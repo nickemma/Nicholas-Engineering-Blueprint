@@ -531,7 +531,7 @@ step at 42.0 s: realtime jumped -1.614s vs monotonic
 60 s: monotonic 60.171 realtime 57.003 raw 57.268
 ~~~
 
-The laptop had slept earlier, and after waking, the virtual machine's clock ran about 5% fast, while something stepped the wall clock back every half-minute to keep it right. Real machines do milder versions of this all the time, through NTP corrections. **Never work out a duration by subtracting two wall-clock timestamps** without knowing that. Inside one process, Go's `time.Since` uses a monotonic clock for exactly this reason. Across machines, you need to think about it far harder (Phase 4).
+The laptop had slept earlier, and after waking, the virtual machine's clock ran about 5% fast, while something stepped the wall clock back every half-minute to keep it right. The culprit, found later, was two time services working against each other: `chrony` speeding the clock towards the Windows host's time, and `systemd-timesyncd` stepping it back to NTP's. Real machines do milder versions of this all the time, through NTP corrections. **Never work out a duration by subtracting two wall-clock timestamps** without knowing that. Inside one process, Go's `time.Since` uses a monotonic clock for exactly this reason. Across machines, you need to think about it far harder (Phase 4).
 
 The data was still usable. PostgreSQL's `id` gives the true order of events, so a timestamp that falls well below the latest one means the clock moved, and the step can be undone. After the repair, there isn't one negative time among 25,440 jobs, and the arrival rate lands on what was asked: 12.60 a second against 12.61. If your own machine's clock is healthy, it finds no steps and does nothing.
 
