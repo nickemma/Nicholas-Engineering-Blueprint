@@ -1,0 +1,18 @@
+---
+import Base from "./Base.astro";
+
+interface Props {
+  title: string;
+  area: string;
+  lede: string;
+}
+const { title, area, lede } = Astro.props;
+---
+<Base title={title} description={lede}>
+  <section class="band first wide lab-page">
+    <p class="eyebrow"><a href="/labs/">Labs</a> · {area}</p>
+    <h1>{title}</h1>
+    <p class="lede">{lede}</p>
+    <slot />
+  </section>
+</Base>

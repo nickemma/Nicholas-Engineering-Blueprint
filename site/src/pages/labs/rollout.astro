@@ -1,0 +1,20 @@
+---
+import RolloutLab from "../../islands/RolloutLab.tsx";
+import Lab from "../../layouts/Lab.astro";
+---
+<Lab title="Roll out a bad release" area="DevOps" lede="Every release is a bet. A rolling update limits how much you lose, but only if your health checks can tell a good version from a bad one.">
+  <RolloutLab client:only="react" />
+  <h2>Things to try</h2>
+  <ul>
+    <li><strong>The default.</strong> Version 2 starts fine but fails every request, and the readiness check only asks whether the port answers. The rollout finishes cleanly, and every user is hit. Kubernetes did exactly what it was told.</li>
+    <li><strong>Now tick the readiness box</strong> and deploy again. The new Pod never becomes ready, so the rollout stalls and version 1 keeps serving. Users see nothing.</li>
+    <li><strong>Crashes at start.</strong> The easy case: even a shallow check catches it.</li>
+    <li><strong>Set maxUnavailable to 2.</strong> It's faster on a good release. On a bad one, you pay for that speed in lost capacity while it stalls.</li>
+    <li><strong>Roll back</strong> at any point, and watch it use the same machinery in reverse.</li>
+  </ul>
+  <h2>Go deeper</h2>
+  <ul>
+    <li><a href="/lessons/05-constrained-operations/guide/step-7-helm-and-safe-rollouts/">Phase 5, step 7: Helm and safe rollouts</a>, on a real cluster.</li>
+  </ul>
+  <p class="note">This models the Deployment controller's surge and availability rules, one second at a time. Real rollouts also have rounding of percentages, minReadySeconds, shutdown races and traffic that drains slowly, which the guide covers.</p>
+</Lab>

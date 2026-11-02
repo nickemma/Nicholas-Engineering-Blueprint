@@ -1,0 +1,37 @@
+{
+  "name": "blueprint-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "node --test tests/*.test.ts",
+    "check:links": "node scripts/check-links.mjs"
+  },
+  "dependencies": {
+    "@astrojs/react": "^7.1.2",
+    "astro": "^7.4.4",
+    "github-slugger": "^2.0.0",
+    "mdast-util-to-string": "^4.0.0",
+    "mermaid": "^12.2.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "rehype-highlight": "^7.0.2",
+    "rehype-raw": "^7.0.0",
+    "rehype-stringify": "^10.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.2.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^6.0.3"
+  }
+}

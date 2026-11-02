@@ -1,0 +1,108 @@
+---
+import Base from "../layouts/Base.astro";
+import { allPages, pagesUnder, tabsOf, type Page } from "../lib/content.ts";
+import { REPO } from "../lib/links.ts";
+
+export function getStaticPaths() {
+  return [...allPages().values()].map((page) => ({
+    params: { slug: page.url.slice(1, -1) },
+    props: { url: page.url },
+  }));
+}
+
+const page = allPages().get(Astro.props.url) as Page;
+const tabs = tabsOf(page.file);
+const previous = page.siblings[page.index - 1];
+const next = page.siblings[page.index + 1];
+const children = page.file.endsWith("README.md") && !page.file.startsWith("lessons/") ? pagesUnder(page.url) : [];
+const title = page.index > 0 ? `${page.title}: ${page.docTitle}` : page.title;
+---
+<Base title={title}>
+  <div class:list={["doc", { guide: page.siblings.length > 0 }]}>
+    {page.siblings.length > 0 && (
+      <aside class="side" aria-label="Sections of this guide">
+        <details open>
+          <summary>{page.siblings.length} sections</summary>
+          <ol>
+            {page.siblings.map((sibling) => (
+              <li><a href={sibling.url} aria-current={sibling.url === page.url ? "page" : undefined}>{sibling.title}</a></li>
+            ))}
+          </ol>
+        </details>
+      </aside>
+    )}
+    <article class="prose">
+      {tabs.length > 0 && (
+        <nav class="tabs" aria-label="This lesson">
+          {tabs.map((tab) => (
+            <a href={tab.url} aria-current={page.url.startsWith(tab.url) && (tab.label !== "Syllabus" || page.url === tab.url) ? "page" : undefined}>{tab.label}</a>
+          ))}
+        </nav>
+      )}
+      {page.index > 0 && <p class="eyebrow"><a href={page.siblings[0].url}>{page.docTitle}</a></p>}
+      <h1>{page.title}</h1>
+      <Fragment set:html={page.html} />
+      {children.length > 0 && !page.html.includes("<table") && (
+        <ul class="children">
+          {children.map((child) => <li><a href={child.url}>{child.title}</a></li>)}
+        </ul>
+      )}
+      {(previous || next) && (
+        <nav class="pager" aria-label="Previous and next section">
+          {previous ? <a href={previous.url}><small>Previous</small>{previous.title}</a> : <span></span>}
+          {next ? <a class="next" href={next.url}><small>Next</small>{next.title}</a> : <span></span>}
+        </nav>
+      )}
+      <p class="source"><a href={`${REPO}/blob/main/${page.file}`} rel="noreferrer">View this page's source on GitHub</a></p>
+    </article>
+    {page.headings.length > 2 && (
+      <aside class="toc" aria-label="On this page">
+        <p>On this page</p>
+        <ul>
+          {page.headings.map((heading) => (
+            <li class={`depth-${heading.depth}`}><a href={`#${heading.id}`}>{heading.text}</a></li>
+          ))}
+        </ul>
+      </aside>
+    )}
+  </div>
+
+  <script>
+    // Copy buttons, and diagrams on the pages that have them.
+    for (const pre of document.querySelectorAll<HTMLElement>(".prose pre")) {
+      const code = pre.querySelector("code");
+      if (!code || code.classList.contains("language-mermaid")) continue;
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "copy";
+      button.textContent = "Copy";
+      button.addEventListener("click", async () => {
+        await navigator.clipboard.writeText(code.textContent ?? "");
+        button.textContent = "Copied";
+        setTimeout(() => (button.textContent = "Copy"), 1500);
+      });
+      pre.append(button);
+    }
+
+    const diagrams = document.querySelectorAll<HTMLElement>("code.language-mermaid");
+    if (diagrams.length > 0) {
+      const { default: mermaid } = await import("mermaid");
+      const root = document.documentElement;
+      const dark = root.dataset.theme
+        ? root.dataset.theme === "dark"
+        : matchMedia("(prefers-color-scheme: dark)").matches;
+      mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "neutral", securityLevel: "strict" });
+      for (const [i, code] of diagrams.entries()) {
+        const holder = document.createElement("div");
+        holder.className = "diagram";
+        try {
+          const { svg } = await mermaid.render(`diagram-${i}`, code.textContent ?? "");
+          holder.innerHTML = svg;
+          code.parentElement?.replaceWith(holder);
+        } catch {
+          // The diagram's source stays on the page.
+        }
+      }
+    }
+  </script>
+</Base>

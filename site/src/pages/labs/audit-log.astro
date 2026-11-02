@@ -1,0 +1,20 @@
+---
+import AuditLab from "../../islands/AuditLab.tsx";
+import Lab from "../../layouts/Lab.astro";
+---
+<Lab title="Tamper with the audit log" area="Security" lede="Bob deleted a job, and you've broken in to hide it. Your browser computes every hash here with real SHA-256. Can you change history without being caught?">
+  <AuditLab client:only="react" />
+  <h2>Things to try</h2>
+  <ul>
+    <li><strong>Edit bob's deletion.</strong> The hash chain breaks at that record. Caught, it seems.</li>
+    <li><strong>Now select "Recompute the whole chain".</strong> You own the file, so you own its hashes. The chain verifies perfectly, which is why a hash chain alone isn't enough.</li>
+    <li><strong>Look at the witness.</strong> It's a second party holding the root it co-signed earlier, out of your reach. It still says the history was rewritten.</li>
+    <li><strong>Reset and append a record.</strong> Adding to the end is the one change the witness accepts.</li>
+    <li><strong>Compare the proof to the log.</strong> A few hashes prove one record is included, without revealing the others. That stays small as a log grows to billions of entries.</li>
+  </ul>
+  <h2>Go deeper</h2>
+  <ul>
+    <li><a href="/lessons/06-safe-shared-queries/guide/step-10-a-tamper-evident-audit-log/">Phase 6, step 10: a tamper-evident audit log</a>, with signed checkpoints and consistency proofs.</li>
+  </ul>
+  <p class="note">The tree and its proofs follow RFC 9162, and are tested against Certificate Transparency's published vectors. The witness here simply recomputes the old root from the records. A real witness never sees them: it checks a consistency proof, and signatures carry its promise. None of this stops an attacker changing what's logged from now on.</p>
+</Lab>
