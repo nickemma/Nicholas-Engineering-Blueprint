@@ -1,0 +1,24 @@
+---
+import RetryLab from "../../islands/RetryLab.tsx";
+import Lab from "../../layouts/Lab.astro";
+---
+<Lab title="The retry storm" area="Backend infrastructure" lede="A dependency gets slow for twenty seconds. Clients time out and retry, which is the sensible thing for one client to do. Together they can keep the system down long after the original cause has gone.">
+  <RetryLab client:load />
+  <h2>Things to try</h2>
+  <ul>
+    <li><strong>Give up.</strong> Clients see failures, but the backlog drains and the system recovers once the incident ends. Recovery still isn't instant: the queue has to empty first.</li>
+    <li><strong>Retry at once.</strong> Every request becomes up to four, and traffic passes three times what the dependency can serve. The fault is gone at 35 seconds and the outage isn't. This is a metastable failure: the retries are now the cause.</li>
+    <li><strong>Backoff and jitter.</strong> You might expect this to fix it, and it doesn't. Backoff spreads retries out in time, which stops a thundering herd, but each request still makes up to four attempts, so a sustained overload stays overloaded.</li>
+    <li><strong>Add a circuit breaker.</strong> After enough failures it refuses calls at once, so the queue can drain, then lets one trial call through. Recovery takes seconds. The price is that it refuses work the dependency might have managed.</li>
+    <li><strong>Lower the normal load.</strong> Even at 50%, retries sustain the failure here. Spare capacity doesn't protect you once traffic is multiplied.</li>
+  </ul>
+  <h2>Why it stays broken</h2>
+  <p>A client gives up after a second, but the dependency doesn't know that. It still does the work for a request nobody's waiting for, so its capacity goes on answers that go nowhere. Meanwhile the client has sent the same request again. The queue never shrinks, and almost everything it serves arrives too late.</p>
+  <h2>Go deeper</h2>
+  <ul>
+    <li><a href="/lessons/02-connected-services/guide/step-5-retries-versioning-dead-letters-and-a-circuit-breaker/">Phase 2, step 5: retries, dead letters and a circuit breaker</a>.</li>
+    <li><a href="/lessons/05-constrained-operations/">Phase 5's game day</a>: triggers, amplifiers and backpressure on a real system.</li>
+    <li><a href="/labs/queue/">Why queues fall off a cliff</a>: the same maths, without the retries.</li>
+  </ul>
+  <p class="note">This is a worst case by design. New requests keep arriving at the same rate however badly things are going, retries are capped at three, and the dependency never cancels work or sheds load. Real clients often send less while they wait in backoff, so backoff tends to help more than it does here. Cancelling abandoned work, retry budgets and load shedding at the dependency all help too.</p>
+</Lab>

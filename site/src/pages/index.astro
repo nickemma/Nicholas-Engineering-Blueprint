@@ -1,0 +1,59 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import JourneyMap from "../islands/JourneyMap.tsx";
+import Base from "../layouts/Base.astro";
+import { ROOT } from "../lib/content.ts";
+import { parseJourney, totalWeeks } from "../lib/journey.ts";
+import { LABS } from "../lib/labs.ts";
+
+const stops = parseJourney(fs.readFileSync(path.join(ROOT, "JOURNEY.md"), "utf8"));
+const weeks = totalWeeks(stops);
+const tracks = [
+  ["DSA", "/dsa/", "Twenty algorithm patterns in Go and Python, each tied to a real system. Start it alongside Phase 0."],
+  ["System design", "/system-design/", "A rubric, an interview script and worked designs by track. Add it at Phase 2."],
+  ["Maths", "/math/", "Queueing, proofs and linear algebra, each checked against something you can run."],
+  ["Capstones", "/capstones/", "Ten research projects for the end of the road. Browse them early."],
+];
+---
+<Base title="The Blueprint">
+  <section class="hero">
+    <p class="eyebrow">A public path through backend and infrastructure</p>
+    <h1>From first request to distributed systems.</h1>
+    <p class="lede">You build <strong>Runway</strong>, a jobs platform, one phase at a time. It starts as a single Go web service and grows until it's replicated, secured, measured and serving models.</p>
+    <p class="cta">
+      <a class="button" href="/lessons/00-request-service/guide/">Start Phase 0</a>
+      <a class="button quiet" href="/journey/">Read the full map</a>
+    </p>
+    <dl class="facts">
+      <div><dt>Stops on the route</dt><dd>{stops.length}</dd></div>
+      <div><dt>Weeks, at 12–15 hours each</dt><dd>about {weeks}</dd></div>
+      <div><dt>Assumed experience</dt><dd>none</dd></div>
+    </dl>
+  </section>
+
+  <section class="band">
+    <h2>The route</h2>
+    <p>Tick off each stop as you finish it. Your progress stays in this browser.</p>
+    <JourneyMap client:load stops={stops} />
+  </section>
+
+  <section class="band">
+    <h2>Alongside the route</h2>
+    <ul class="cards">
+      {tracks.map(([title, url, text]) => (
+        <li><a href={url}><h3>{title}</h3><p>{text}</p></a></li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="band">
+    <h2>Labs</h2>
+    <p>Ideas from the route that are easier to feel than to read about, one for each discipline.</p>
+    <ul class="cards two">
+      {LABS.map((lab) => (
+        <li><a href={lab.url}><small>{lab.area}</small><h3>{lab.title}</h3><p>{lab.blurb}</p></a></li>
+      ))}
+    </ul>
+  </section>
+</Base>
