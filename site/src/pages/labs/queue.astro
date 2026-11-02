@@ -1,0 +1,22 @@
+---
+import QueueLab from "../../islands/QueueLab.tsx";
+import Base from "../../layouts/Base.astro";
+---
+<Base title="Why queues fall off a cliff" description="An interactive M/G/1 queue: watch the wait explode near full load.">
+  <section class="band first narrow">
+    <p class="eyebrow"><a href="/labs/">Labs</a></p>
+    <h1>Why queues fall off a cliff</h1>
+    <p class="lede">A server that's 70% busy feels fine. At 95% it can feel broken, even though it's only about a third busier. Drag the load and see why.</p>
+    <QueueLab client:load />
+    <h2>What you're seeing</h2>
+    <p>Jobs arrive at random, and one server handles them in turn. When arrivals bunch up, a queue forms, and a busy server has little spare time to drain it. The wait is proportional to <code>ρ / (1 − ρ)</code>, where ρ is how busy the server is, so it grows slowly and then, close to 100%, very fast.</p>
+    <p>Variety makes it worse. The formula multiplies the wait by <code>(1 + cv²) / 2</code>, where cv² measures how much job lengths vary. Switch to <em>Spiky</em>: the same load waits five times as long as <em>Identical</em> does at the same point, because one long job holds up everything behind it.</p>
+    <p>Near 100% the simulated dots wander off the line. The queue takes a very long time to settle there, which is a warning about real measurements too: a short load test near the knee will flatter the system.</p>
+    <h2>Go deeper</h2>
+    <ul>
+      <li><a href="/math/01-queueing/">Queueing, in the maths track</a>: derive this and test it against Runway.</li>
+      <li><a href="/lessons/python-bridge/">The Python Bridge</a>: build a load generator that measures it honestly.</li>
+    </ul>
+    <p class="note">This is a simulation with one server and Poisson arrivals, measured over tens of thousands of jobs. Real systems add their own overheads, so use it for the shape of the curve, not as a forecast.</p>
+  </section>
+</Base>

@@ -1,0 +1,25 @@
+---
+import RaftLab from "../../islands/RaftLab.tsx";
+import Base from "../../layouts/Base.astro";
+---
+<Base title="Electing a leader" description="An interactive Raft leader election: crash nodes, split the network, and watch the cluster recover.">
+  <section class="band first wide">
+    <p class="eyebrow"><a href="/labs/">Labs</a></p>
+    <h1>Electing a leader</h1>
+    <p class="lede">Five machines have to agree on who's in charge, with no clock they can trust and no way to tell a dead machine from a slow one. Select a node to crash it, and select it again to bring it back.</p>
+    <RaftLab client:only="react" />
+    <h2>Things to try</h2>
+    <ul>
+      <li><strong>Crash the leader.</strong> Followers stop hearing heartbeats, the first timer to run out starts an election in a new term, and a majority picks a new leader.</li>
+      <li><strong>Crash three nodes.</strong> Two can't make a majority of five, so terms climb and nobody wins. The cluster chooses to stop rather than risk two leaders.</li>
+      <li><strong>Split the network while A or B leads.</strong> The old leader carries on, unaware, but C, D and E elect a new one in a higher term. Heal it and the old leader steps down as soon as it sees that term.</li>
+      <li><strong>Try identical timeouts.</strong> Every node stands at the same moment and votes for itself, so nobody ever wins. Random timeouts are what break the tie. A real network adds some jitter of its own, so this is the extreme case.</li>
+    </ul>
+    <h2>Go deeper</h2>
+    <ul>
+      <li><a href="/lessons/04-replicated-state/">Phase 4</a>: build Raft yourself, with simulation tests and a TLA+ model.</li>
+      <li><a href="/math/02-proofs-invariants/">Proofs and invariants</a>: why one vote per term gives one leader per term.</li>
+    </ul>
+    <p class="note">This lab shows elections only. It has no log, so a voter doesn't compare logs as real Raft does, and it runs in slow motion. The same rules are tested over hundreds of random crashes and splits, and never produce two leaders in a term.</p>
+  </section>
+</Base>

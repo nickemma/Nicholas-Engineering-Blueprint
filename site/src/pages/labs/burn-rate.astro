@@ -1,0 +1,19 @@
+---
+import BurnRateLab from "../../islands/BurnRateLab.tsx";
+import Lab from "../../layouts/Lab.astro";
+---
+<Lab title="Burn the error budget" area="SRE" lede="A 99.9% SLO allows about 43 minutes of total outage a month. The question for an alert isn't whether errors happened, but whether you're spending that budget too fast.">
+  <BurnRateLab client:load />
+  <h2>Things to try</h2>
+  <ul>
+    <li><strong>Full outage.</strong> It pages within minutes, and the page clears about half an hour after the outage ends, because the short windows empty quickly. On the long windows alone, it would keep paging for hours after the fix.</li>
+    <li><strong>A small blip.</strong> A plain threshold fires. The burn-rate alerts stay quiet, because this cost almost nothing. That's a night's sleep kept.</li>
+    <li><strong>Slow leak.</strong> No page, but a ticket. It's quietly the most expensive scenario here, and it's a problem for working hours, not 3 a.m.</li>
+    <li><strong>Find the edge.</strong> Move the sliders until the page just fires. A burn rate of 14.4 sustained for an hour is 2% of the month's budget.</li>
+  </ul>
+  <h2>Go deeper</h2>
+  <ul>
+    <li><a href="/lessons/05-constrained-operations/guide/step-10-prometheus-slos-and-burn-rate-alerts/">Phase 5, step 10: Prometheus, SLOs and burn-rate alerts</a>, with these rules tested by promtool.</li>
+  </ul>
+  <p class="note">These are the guide's alert rules, computed on a simulated week with constant traffic, so every minute counts the same. Real traffic varies, and a quiet hour's few errors can burn fast on paper. The budget here is measured over a 30-day month.</p>
+</Lab>

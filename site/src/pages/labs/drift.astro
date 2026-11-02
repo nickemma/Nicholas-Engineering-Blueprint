@@ -1,0 +1,20 @@
+---
+import DriftLab from "../../islands/DriftLab.tsx";
+import Lab from "../../layouts/Lab.astro";
+---
+<Lab title="When a model drifts" area="MLOps" lede="A model is a bet that tomorrow looks like its training data. Here it predicts y from x, trained when y was 2x. Move the world away from it, and see what your monitoring notices.">
+  <DriftLab client:load />
+  <h2>Things to try</h2>
+  <ul>
+    <li><strong>Shift the inputs.</strong> PSI compares live data with the training deciles. It turns moderate at a shift of about 0.4, and major a little past 0.5. By convention, under 0.1 is stable and above 0.25 is major.</li>
+    <li><strong>Notice the error stays at zero.</strong> This model's rule still holds outside its training range, so the alarm is real and the damage isn't. Drift is a reason to look, not proof of damage.</li>
+    <li><strong>Now put the inputs back, and move "what's true now" instead.</strong> PSI stays calm while the error climbs. This is concept drift: the inputs look the same, and the world's answer changed. Only labels can show it, and they often arrive late.</li>
+    <li><strong>Retrain.</strong> The new model's training data becomes the new reference, so the score resets. Retraining on broken data resets the alarm too, so it's a decision, not a reflex.</li>
+  </ul>
+  <h2>Go deeper</h2>
+  <ul>
+    <li><a href="/lessons/07-utility-evaluation/guide/step-11-watching-a-model-in-production/">Phase 7, step 11: watching a model in production</a>, on Runway's real predictions.</li>
+    <li><a href="/lessons/07-utility-evaluation/guide/step-10-models-with-a-history/">Phase 7, step 10: models with a history</a>, for promoting and rolling back safely.</li>
+  </ul>
+  <p class="note">PSI, KS and the thresholds match the guide. The data is one simulated feature with a bell curve and a linear model, chosen so each kind of drift shows clearly. Real models have many features, and they can fail in ways this one can't.</p>
+</Lab>
