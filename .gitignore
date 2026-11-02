@@ -1,5 +1,17 @@
 request-service
+kestrel-phase0
 *.exe
 *.test
 *.out
 .DS_Store
+
+# Learner scratch space inside lessons
+lessons/**/practice/
+
+# Python
+__pycache__/
+.venv/
+.pytest_cache/
+
+# Rust
+target/

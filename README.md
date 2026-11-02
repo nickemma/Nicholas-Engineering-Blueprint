@@ -1,28 +1,33 @@
-# KESTREL — Community Health Data, Shared Safely
+# The Blueprint
 
-KESTREL is a research-led distributed systems project with a public-interest goal: help community health organizations make better use of shared information while keeping custody of sensitive records and continuing to work through unreliable connectivity.
+**From first request to distributed systems and infrastructure.** This is a complete, beginner-to-advanced path through backend, distributed systems and infrastructure engineering, with the ML and AI infrastructure that runs on it, finishing in a research capstone of your choice.
 
-The working research question is:
-
-> How can small, resource-constrained health organizations produce timely, trustworthy cross-site summaries when their data must remain under local control and their network connections are intermittent?
-
-The project will investigate local-first storage, authorized data sharing, auditable queries, and safe recovery after disconnection. It will measure freshness, availability, latency, bandwidth, and the privacy risks of each design. It will begin with synthetic or public data; use of sensitive real-world data would require appropriate partners, consent, and ethics review.
-
-This is not an AI product looking for a use case. The core system is useful without AI. Privacy-preserving distributed analysis or machine learning can be explored later only if a real user need justifies it and the project can evaluate the added privacy and operational costs.
-
-## Build toward the question
-
-```text
-small request service
-  → reliable service
-  → local data and audit trail
-  → sites that share data safely
-  → useful operation through network outages
-  → measured privacy, reliability, and usability
-```
-
-Each step teaches a systems concept needed by the research question. We build a small capability, make its guarantee explicit, test what happens when it fails, and keep evidence that another person can reproduce.
+You learn by building **Runway**, a jobs platform, one phase at a time. It starts as a single Go web service and grows workers, a message broker, durable storage, replication, Kubernetes and AWS, security, ML on its own data, and the infrastructure that serves and trains AI models. Every phase is a type-along guide: the code is inline and explained, every step is checked in CI, and each step has a deliberate way to break it. Each phase ends with an **exercise project** you build alone, with a clear spec and no solution. After Phase 8 comes the **capstone**: one of ten research projects, taken from problem to evidence.
 
 ## Start here
 
-Read [the roadmap](plan/structure.md) for the learning order and [the project brief](project.md) for the current research direction. Begin with **Phase 0** only. The later phases are a plan; the current hands-on work is the small Go request service.
+1. Read **[JOURNEY.md](JOURNEY.md)**, the single map: what you'll build, the route, the gaps each phase closes, the patterns you'll use, and the roles each phase prepares you for.
+2. Begin **[Phase 0](lessons/00-request-service/README.md)**. It assumes no prior Go, Linux or HTTP.
+3. Start the **[DSA track](dsa/README.md)** at the same time. Add the **[system-design track](system-design/README.md)** at Phase 2, and the **[maths track](math/README.md)** when each guide's phase needs it.
+4. Browse the **[capstones](capstones/README.md)** early, so you know where you're heading.
+
+## Repository map
+
+| Folder | What it holds |
+|---|---|
+| [lessons/](lessons) | One folder per phase: a syllabus, a type-along guide, an exercise project, and an answer sheet |
+| [capstones/](capstones/README.md) | Ten research projects for the capstone, after Phase 8: distributed systems, networking, security, big data and AI infrastructure, each with a stack, features and a benchmark plan; a proposal template and the judging criteria |
+| [dsa/](dsa/README.md) | Algorithm patterns in Go and Python, linked to the real systems that use them |
+| [math/](math/README.md) | Queueing, proofs and linear algebra, each checked against something real: Runway, a model checker, your own CPU |
+| [open-source/](open-source/README.md) | How to read a real codebase and get a first change merged, with projects next to each phase |
+| [system-design/](system-design/README.md) | A rubric, an interview script and designs by track, linked back to the code |
+| [scripts/](scripts) | `test_all.sh` runs every check CI runs. `check_guides.py` rebuilds each guide's code from the guide itself and tests it |
+| [notes/](notes) | Self-tests for each phase (`notes/learned/`), plus the author's decisions, failures and research track |
+
+## Check everything locally
+
+~~~bash
+bash scripts/test_all.sh
+~~~
+
+This needs Go 1.26+, Python 3 with `uv`, `protoc`, and Rust for the later phases. RabbitMQ integration tests run when `RUNWAY_AMQP_URL` points at a broker; otherwise they're skipped.
