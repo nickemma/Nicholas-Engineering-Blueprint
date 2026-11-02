@@ -15,3 +15,6 @@ __pycache__/
 
 # Rust
 target/
+
+# Personal notes, kept local
+career.md
