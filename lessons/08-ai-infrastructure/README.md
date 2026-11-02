@@ -1,6 +1,6 @@
 # Phase 8: AI infrastructure
 
-> **Status: next.** This phase is planned and will be written as a full type-along guide, like Phases 0–7. Until then, this page is its outline. The authoritative description is in [JOURNEY.md](../../JOURNEY.md#phase-8-ai-infrastructure), and the build plan is in [plan.md](../../plan.md#phase-8-ai-infrastructure).
+> **Status: in progress.** This phase is being written as a full type-along guide, like Phases 0–7. Until it's published, this page is its outline. The authoritative description is in [JOURNEY.md](../../JOURNEY.md#phase-8-ai-infrastructure).
 
 ## Question
 
