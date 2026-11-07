@@ -1,0 +1,18 @@
+{
+  "python": "3.14.7",
+  "system": "Linux",
+  "machine": "x86_64",
+  "logical_cpus": 16,
+  "image": "ghcr.io/ggml-org/llama.cpp@sha256:e67d88af487390098c76d7982b1761484339fa147b7e41d3c64ae1318759f78b",
+  "price_assumption_usd_per_hour": 0.1,
+  "threads": 4,
+  "context_per_slot": 4096,
+  "output_limit": 8,
+  "model_sha256": {
+    "qwen2.5-0.5b-instruct-q4_k_m.gguf": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+    "qwen2.5-0.5b-instruct-q8_0.gguf": "ca59ca7f13d0e15a8cfa77bd17e65d24f6844b554a7b6c12e07a5f89ff76844e"
+  },
+  "capture_runner_sha256": "7782d4efe1ab26132e54c481b30480dc9ea40b525a5e242f6816eba2c0df730a",
+  "stream_client_sha256": "61368cd65a977f30d2791f9c0e21bf8bb6d09896ebd167ffc53fafa94e3757ef",
+  "source_note": "The guide includes the same capture algorithm, formatted and with model/results paths supplied through environment variables. The actual execution runner hash identifies the local path-substituted capture."
+}

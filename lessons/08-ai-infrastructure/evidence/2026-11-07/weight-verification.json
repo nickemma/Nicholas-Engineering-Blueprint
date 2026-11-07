@@ -1,0 +1,50 @@
+[
+  {
+    "case": "authorised manifest and original weights",
+    "exit_code": 0,
+    "expected_success": true,
+    "passed": true,
+    "stdout": "verified model, SBOM and provenance\n",
+    "stderr": "Verified OK\n"
+  },
+  {
+    "case": "one model byte modified",
+    "exit_code": 1,
+    "expected_success": false,
+    "passed": true,
+    "stdout": "",
+    "stderr": "Verified OK\ndigest mismatch: model.gguf\n"
+  },
+  {
+    "case": "missing signature bundle",
+    "exit_code": 1,
+    "expected_success": false,
+    "passed": true,
+    "stdout": "",
+    "stderr": "Error: reading manifest.sigstore.json: open manifest.sigstore.json: no such file or directory\nerror during command execution: reading manifest.sigstore.json: open manifest.sigstore.json: no such file or directory\n"
+  },
+  {
+    "case": "wrong trusted public key",
+    "exit_code": 1,
+    "expected_success": false,
+    "passed": true,
+    "stdout": "",
+    "stderr": "Error: failed to verify log inclusion: transparency log certificate does not match\nerror during command execution: failed to verify log inclusion: transparency log certificate does not match\n"
+  },
+  {
+    "case": "valid signature but unauthorised release digest",
+    "exit_code": 1,
+    "expected_success": false,
+    "passed": true,
+    "stdout": "",
+    "stderr": "Verified OK\nunauthorised manifest digest\n"
+  },
+  {
+    "case": "restored authorised release",
+    "exit_code": 0,
+    "expected_success": true,
+    "passed": true,
+    "stdout": "verified model, SBOM and provenance\n",
+    "stderr": "Verified OK\n"
+  }
+]

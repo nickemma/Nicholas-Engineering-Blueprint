@@ -1,0 +1,326 @@
+[
+  {
+    "precision": "q4_k_m",
+    "slots": 1,
+    "rate": 0.7934878106250393,
+    "offered": 60,
+    "completed": 60,
+    "good_run_fraction_mean_ci95": [
+      0.9166666666666666,
+      0.7374479057651637,
+      1.0958854275681695
+    ],
+    "mean_ttft_seconds_ci95": [
+      0.574628128844418,
+      0.42897526161905675,
+      0.7202809960697794
+    ],
+    "hypothetical_usd_per_million_output_tokens_ci95": [
+      5.702541003124922,
+      4.7751491966334045,
+      6.629932809616439
+    ],
+    "quality_correct": 19,
+    "quality_total": 20,
+    "quality_pass": true,
+    "clock_and_dispatch_checks_pass": true,
+    "production_acceptance": "not established"
+  },
+  {
+    "precision": "q4_k_m",
+    "slots": 1,
+    "rate": 1.5869756212500785,
+    "offered": 60,
+    "completed": 60,
+    "good_run_fraction_mean_ci95": [
+      0.55,
+      0.27043405125611153,
+      0.8295659487438886
+    ],
+    "mean_ttft_seconds_ci95": [
+      1.0728591163182015,
+      0.6914163206778293,
+      1.4543019119585736
+    ],
+    "hypothetical_usd_per_million_output_tokens_ci95": [
+      2.698690848148157,
+      2.2006951877288623,
+      3.196686508567452
+    ],
+    "quality_correct": 19,
+    "quality_total": 20,
+    "quality_pass": true,
+    "clock_and_dispatch_checks_pass": true,
+    "production_acceptance": "not established"
+  },
+  {
+    "precision": "q4_k_m",
+    "slots": 1,
+    "rate": 2.3804634318751177,
+    "offered": 60,
+    "completed": 60,
+    "good_run_fraction_mean_ci95": [
+      0.38333333333333336,
+      0.013140652640293515,
+      0.7535260140263732
+    ],
+    "mean_ttft_seconds_ci95": [
+      1.5358744901253707,
+      0.6419659098142768,
+      2.4297830704364647
+    ],
+    "hypothetical_usd_per_million_output_tokens_ci95": [
+      2.3330013058448436,
+      1.9000554695867211,
+      2.765947142102966
+    ],
+    "quality_correct": 19,
+    "quality_total": 20,
+    "quality_pass": true,
+    "clock_and_dispatch_checks_pass": true,
+    "production_acceptance": "not established"
+  },
+  {
+    "precision": "q4_k_m",
+    "slots": 2,
+    "rate": 0.7934878106250393,
+    "offered": 60,
+    "completed": 60,
+    "good_run_fraction_mean_ci95": [
+      0.9666666666666667,
+      0.9099927182784786,
+      1.0233406150548547
+    ],
+    "mean_ttft_seconds_ci95": [
+      0.5439297773111046,
+      0.4736451281740973,
+      0.6142144264481119
+    ],
+    "hypothetical_usd_per_million_output_tokens_ci95": [
+      5.710747581944459,
+      4.779598792350377,
+      6.641896371538541
+    ],
+    "quality_correct": 19,
+    "quality_total": 20,
+    "quality_pass": true,
+    "clock_and_dispatch_checks_pass": true,
+    "production_acceptance": "not established"
+  },
+  {
+    "precision": "q4_k_m",
+    "slots": 2,
+    "rate": 1.5869756212500785,
+    "offered": 60,
+    "completed": 60,
+    "good_run_fraction_mean_ci95": [
+      0.6666666666666666,
+      0.3082291448636609,
+      1.0251041884696723
+    ],
+    "mean_ttft_seconds_ci95": [
+      0.8973560942182272,
+      0.5656186397195302,
+      1.2290935487169241
+    ],
+    "hypothetical_usd_per_million_output_tokens_ci95": [
+      2.5776040871528387,
+      2.078721973826842,
+      3.0764862004788354
+    ],
+    "quality_correct": 19,
+    "quality_total": 20,
+    "quality_pass": true,
+    "clock_and_dispatch_checks_pass": true,
+    "production_acceptance": "not established"
+  },
+  {
+    "precision": "q4_k_m",
+    "slots": 2,
+    "rate": 2.3804634318751177,
+    "offered": 60,
+    "completed": 60,
+    "good_run_fraction_mean_ci95": [
+      0.5,
+      0.14910937650064143,
+      0.8508906234993585
+    ],
+    "mean_ttft_seconds_ci95": [
+      1.2863481766089053,
+      0.5177545435894731,
+      2.0549418096283376
+    ],
+    "hypothetical_usd_per_million_output_tokens_ci95": [
+      2.1808823357060474,
+      1.7038570080973252,
+      2.6579076633147696
+    ],
+    "quality_correct": 19,
+    "quality_total": 20,
+    "quality_pass": true,
+    "clock_and_dispatch_checks_pass": true,
+    "production_acceptance": "not established"
+  },
+  {
+    "precision": "q8_0",
+    "slots": 1,
+    "rate": 0.7934878106250393,
+    "offered": 60,
+    "completed": 60,
+    "good_run_fraction_mean_ci95": [
+      0.95,
+      0.8574518298267401,
+      1.04254817017326
+    ],
+    "mean_ttft_seconds_ci95": [
+      0.5016537649279476,
+      0.4315734927478946,
+      0.5717340371080005
+    ],
+    "hypothetical_usd_per_million_output_tokens_ci95": [
+      5.708717004629687,
+      4.767216340685219,
+      6.650217668574155
+    ],
+    "quality_correct": 19,
+    "quality_total": 20,
+    "quality_pass": true,
+    "clock_and_dispatch_checks_pass": true,
+    "production_acceptance": "not established"
+  },
+  {
+    "precision": "q8_0",
+    "slots": 1,
+    "rate": 1.5869756212500785,
+    "offered": 60,
+    "completed": 60,
+    "good_run_fraction_mean_ci95": [
+      0.6,
+      0.2861538852752597,
+      0.9138461147247403
+    ],
+    "mean_ttft_seconds_ci95": [
+      0.9833687755515983,
+      0.5428893302674452,
+      1.4238482208357515
+    ],
+    "hypothetical_usd_per_million_output_tokens_ci95": [
+      2.687274733333383,
+      2.2552987474932573,
+      3.1192507191735084
+    ],
+    "quality_correct": 19,
+    "quality_total": 20,
+    "quality_pass": true,
+    "clock_and_dispatch_checks_pass": true,
+    "production_acceptance": "not established"
+  },
+  {
+    "precision": "q8_0",
+    "slots": 1,
+    "rate": 2.3804634318751177,
+    "offered": 60,
+    "completed": 60,
+    "good_run_fraction_mean_ci95": [
+      0.3666666666666667,
+      -0.0035260140263731476,
+      0.7368593473597065
+    ],
+    "mean_ttft_seconds_ci95": [
+      1.4570991062088345,
+      0.6887064179434567,
+      2.2254917944742125
+    ],
+    "hypothetical_usd_per_million_output_tokens_ci95": [
+      2.2949017884837675,
+      1.8505005164696926,
+      2.7393030604978423
+    ],
+    "quality_correct": 19,
+    "quality_total": 20,
+    "quality_pass": true,
+    "clock_and_dispatch_checks_pass": true,
+    "production_acceptance": "not established"
+  },
+  {
+    "precision": "q8_0",
+    "slots": 2,
+    "rate": 0.7934878106250393,
+    "offered": 60,
+    "completed": 60,
+    "good_run_fraction_mean_ci95": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "mean_ttft_seconds_ci95": [
+      0.4392894776276866,
+      0.37768906284983567,
+      0.5008898924055376
+    ],
+    "hypothetical_usd_per_million_output_tokens_ci95": [
+      5.697267051504571,
+      4.747937299185461,
+      6.646596803823682
+    ],
+    "quality_correct": 19,
+    "quality_total": 20,
+    "quality_pass": true,
+    "clock_and_dispatch_checks_pass": true,
+    "production_acceptance": "not established"
+  },
+  {
+    "precision": "q8_0",
+    "slots": 2,
+    "rate": 1.5869756212500785,
+    "offered": 60,
+    "completed": 60,
+    "good_run_fraction_mean_ci95": [
+      0.7333333333333333,
+      0.3503471323855446,
+      1.1163195342811219
+    ],
+    "mean_ttft_seconds_ci95": [
+      0.7626939666846555,
+      0.35627498953211334,
+      1.1691129438371977
+    ],
+    "hypothetical_usd_per_million_output_tokens_ci95": [
+      2.5318286747106127,
+      2.1474341480116763,
+      2.916223201409549
+    ],
+    "quality_correct": 19,
+    "quality_total": 20,
+    "quality_pass": true,
+    "clock_and_dispatch_checks_pass": true,
+    "production_acceptance": "not established"
+  },
+  {
+    "precision": "q8_0",
+    "slots": 2,
+    "rate": 2.3804634318751177,
+    "offered": 60,
+    "completed": 60,
+    "good_run_fraction_mean_ci95": [
+      0.55,
+      0.15193526865000262,
+      0.9480647313499975
+    ],
+    "mean_ttft_seconds_ci95": [
+      1.1040233242919963,
+      0.5002667279003967,
+      1.707779920683596
+    ],
+    "hypothetical_usd_per_million_output_tokens_ci95": [
+      2.1054008173610717,
+      1.7045781249031167,
+      2.5062235098190264
+    ],
+    "quality_correct": 19,
+    "quality_total": 20,
+    "quality_pass": true,
+    "clock_and_dispatch_checks_pass": true,
+    "production_acceptance": "not established"
+  }
+]

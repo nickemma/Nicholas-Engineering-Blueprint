@@ -1,0 +1,5 @@
+=== RUN   TestLiveRunwayJWTTokenizerAndSharedBudget
+    live_test.go:132: verified JWT auth, real prompt tokenization (36 tokens), streamed completion, two gateways sharing one tenant budget, separate tenant budgets and 20 concurrent reservations
+--- PASS: TestLiveRunwayJWTTokenizerAndSharedBudget (0.81s)
+PASS
+ok  	runway/internal/inference	1.844s

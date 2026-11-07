@@ -1,5 +1,7 @@
 # Phase 0: make one request work
 
+**Assessment routes:** [junior, intermediate and senior assignments](assessment.md), with [review and ownership criteria](../ownership/README.md).
+
 **Question:** what actually happens between typing a command and getting an answer from a web service?
 
 **Time:** about 2 weeks at 12–15 hours a week. **Prerequisites:** none. This is the start.

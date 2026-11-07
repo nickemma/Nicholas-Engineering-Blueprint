@@ -1,5 +1,7 @@
 # Phase 5: operate it
 
+**Assessment routes:** [junior, intermediate and senior assignments](assessment.md), with [review and ownership criteria](../ownership/README.md).
+
 **Question:** can you deploy Runway, see inside it while it runs, know when users are hurting, change it without dropping requests, and recover it when it breaks?
 
 **Time:** about 9 weeks. **Prerequisites:** [Phase 4](../04-replicated-state/README.md); Docker, kind, kubectl, Helm and Terraform (the [guide](TEACHING.md#setup) lists versions). An AWS account is optional: only applying step 13's Terraform needs one, and it costs money while it runs.

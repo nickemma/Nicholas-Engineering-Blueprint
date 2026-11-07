@@ -1,0 +1,8 @@
+{
+  "model": "Qwen2.5-0.5B-Instruct-GGUF",
+  "source": "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF",
+  "artifact": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+  "origin_revision": "historical download revision not retained; content digest retained",
+  "license": "Apache-2.0; verify publisher metadata before redistribution",
+  "scope": "local signed-manifest verification; not a build or training attestation"
+}

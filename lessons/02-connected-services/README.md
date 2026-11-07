@@ -1,5 +1,7 @@
 # Phase 2: connect services
 
+**Assessment routes:** [junior, intermediate and senior assignments](assessment.md), with [review and ownership criteria](../ownership/README.md).
+
 **Question:** what changes when work crosses a process boundary, and how do you keep it correct when messages are lost, duplicated, delayed or poisoned?
 
 **Time:** about 4 weeks. **Prerequisites:** [Phase 1](../01-reliable-service/README.md) and the [Python Bridge](../python-bridge/README.md); Docker installed.

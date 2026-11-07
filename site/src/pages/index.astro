@@ -5,6 +5,7 @@ import JourneyMap from "../islands/JourneyMap.tsx";
 import Base from "../layouts/Base.astro";
 import { ROOT } from "../lib/content.ts";
 import { parseJourney, totalWeeks } from "../lib/journey.ts";
+import { LEVELS } from "../lib/assessment.ts";
 import { LABS } from "../lib/labs.ts";
 
 const stops = parseJourney(fs.readFileSync(path.join(ROOT, "JOURNEY.md"), "utf8"));
@@ -23,6 +24,7 @@ const tracks = [
     <p class="lede">You build <strong>Runway</strong>, a jobs platform, one phase at a time. It starts as a single Go web service and grows until it's replicated, secured, measured and serving models.</p>
     <p class="cta">
       <a class="button" href="/lessons/00-request-service/guide/">Start Phase 0</a>
+      <a class="button quiet" href="/ownership/">Choose your assessment route</a>
       <a class="button quiet" href="/journey/">Read the full map</a>
     </p>
     <dl class="facts">
@@ -30,6 +32,17 @@ const tracks = [
       <div><dt>Weeks, at 12–15 hours each</dt><dd>about {weeks}</dd></div>
       <div><dt>Assumed experience</dt><dd>none</dd></div>
     </dl>
+  </section>
+
+  <section class="band" aria-labelledby="assessment-heading">
+    <h2 id="assessment-heading">Start at the right level of independence</h2>
+    <p>You do not have to finish the whole roadmap before reaching a useful milestone. <a href="/lessons/ownership/beginner/">See the beginner minimum route</a>, or choose the responsibilities you want to practise.</p>
+    <ul class="cards">
+      {LEVELS.map((level) => (
+        <li><a href={`/ownership/#${level.id}`}><small>{level.title}</small><h3>{level.focus}</h3><p>{level.description}</p></a></li>
+      ))}
+    </ul>
+    <p><a href="/lessons/ownership/reviews/">Evidence-based review gates</a> · <a href="/lessons/ownership/sustained/">Sustained service ownership</a></p>
   </section>
 
   <section class="band">

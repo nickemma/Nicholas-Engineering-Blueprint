@@ -1,5 +1,7 @@
 # Phase 7: measure and learn
 
+**Assessment routes:** [junior, intermediate and senior assignments](assessment.md), with [review and ownership criteria](../ownership/README.md).
+
 **Question:** is Runway actually any good, how would you prove a change made it better, and can its own record of everything it has done make it better still?
 
 **Time:** about 10 weeks. **Prerequisites:** [Phase 6](../06-safe-shared-queries/README.md), with its kind cluster and Compose services; `uv` and `kload` from the [Python Bridge](../python-bridge/README.md); Java 17 or newer, for Spark in step 4. No GPU: every model trains on a laptop CPU in minutes. Kafka runs on kind, so the data comes from the cluster the models serve on.
@@ -70,4 +72,4 @@ These link to the [patterns ledger](../../JOURNEY.md#6-patterns-ledger):
 
 ## Next
 
-You have every tool now: building, connecting, storing, replicating, operating, securing and measuring. The [capstone](../../capstones/README.md) asks you to use them on a research question nobody has answered for you.
+Next, [Phase 8](../08-ai-infrastructure/README.md) applies those tools to model serving, distributed training and GPUs. Then the [capstone](../../capstones/README.md) asks you to use them on a research question nobody has answered for you.

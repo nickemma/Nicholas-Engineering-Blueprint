@@ -1,0 +1,265 @@
+{
+  "correct": 19,
+  "total": 20,
+  "rows": [
+    {
+      "prompt": "Reply with only the result: 1 + 2.",
+      "expected": "3",
+      "ttft": 0.2510278660001859,
+      "gaps": [],
+      "chunks": 1,
+      "output_tokens": 2,
+      "total": 0.2895641560007789,
+      "error": "",
+      "text": "3",
+      "exact_match": true
+    },
+    {
+      "prompt": "Reply with only the result: 2 + 3.",
+      "expected": "5",
+      "ttft": 0.2539434420004909,
+      "gaps": [],
+      "chunks": 1,
+      "output_tokens": 2,
+      "total": 0.2956922820003456,
+      "error": "",
+      "text": "5",
+      "exact_match": true
+    },
+    {
+      "prompt": "Reply with only the result: 3 + 4.",
+      "expected": "7",
+      "ttft": 0.26119676000053005,
+      "gaps": [],
+      "chunks": 1,
+      "output_tokens": 2,
+      "total": 0.3037951719998091,
+      "error": "",
+      "text": "7",
+      "exact_match": true
+    },
+    {
+      "prompt": "Reply with only the result: 4 + 5.",
+      "expected": "9",
+      "ttft": 0.26258938499995566,
+      "gaps": [],
+      "chunks": 1,
+      "output_tokens": 2,
+      "total": 0.3028374139994412,
+      "error": "",
+      "text": "9",
+      "exact_match": true
+    },
+    {
+      "prompt": "Reply with only the result: 5 + 6.",
+      "expected": "11",
+      "ttft": 0.26371500700042816,
+      "gaps": [
+        0.0422353199992358
+      ],
+      "chunks": 2,
+      "output_tokens": 3,
+      "total": 0.34474473299997044,
+      "error": "",
+      "text": "11",
+      "exact_match": true
+    },
+    {
+      "prompt": "Reply with only the result: 6 + 7.",
+      "expected": "13",
+      "ttft": 0.2638429369999358,
+      "gaps": [
+        0.044467378000263125
+      ],
+      "chunks": 2,
+      "output_tokens": 3,
+      "total": 0.3493261169996913,
+      "error": "",
+      "text": "13",
+      "exact_match": true
+    },
+    {
+      "prompt": "Reply with only the result: 7 + 8.",
+      "expected": "15",
+      "ttft": 0.259203188000356,
+      "gaps": [
+        0.04316892699989694
+      ],
+      "chunks": 2,
+      "output_tokens": 3,
+      "total": 0.3414341469997453,
+      "error": "",
+      "text": "15",
+      "exact_match": true
+    },
+    {
+      "prompt": "Reply with only the result: 8 + 9.",
+      "expected": "17",
+      "ttft": 0.2678974259997631,
+      "gaps": [
+        0.0461506930005271
+      ],
+      "chunks": 2,
+      "output_tokens": 3,
+      "total": 0.3513915479998104,
+      "error": "",
+      "text": "17",
+      "exact_match": true
+    },
+    {
+      "prompt": "Copy the word inside brackets. Reply with that word only: [river]",
+      "expected": "river",
+      "ttft": 0.2773232529998495,
+      "gaps": [],
+      "chunks": 1,
+      "output_tokens": 2,
+      "total": 0.32171958799972344,
+      "error": "",
+      "text": "river",
+      "exact_match": true
+    },
+    {
+      "prompt": "Copy the word inside brackets. Reply with that word only: [stone]",
+      "expected": "stone",
+      "ttft": 0.2828248389996588,
+      "gaps": [],
+      "chunks": 1,
+      "output_tokens": 2,
+      "total": 0.32628871599990816,
+      "error": "",
+      "text": "stone",
+      "exact_match": true
+    },
+    {
+      "prompt": "Copy the word inside brackets. Reply with that word only: [cloud]",
+      "expected": "cloud",
+      "ttft": 0.2570292749996952,
+      "gaps": [],
+      "chunks": 1,
+      "output_tokens": 2,
+      "total": 0.3008592599999247,
+      "error": "",
+      "text": "cloud",
+      "exact_match": true
+    },
+    {
+      "prompt": "Copy the word inside brackets. Reply with that word only: [garden]",
+      "expected": "garden",
+      "ttft": 0.28326061999996455,
+      "gaps": [
+        0.04376059300011548,
+        0.04409496999960538
+      ],
+      "chunks": 3,
+      "output_tokens": 4,
+      "total": 0.41042533600011666,
+      "error": "",
+      "text": "[garden]",
+      "exact_match": false
+    },
+    {
+      "prompt": "Copy the word inside brackets. Reply with that word only: [signal]",
+      "expected": "signal",
+      "ttft": 0.26492014700033906,
+      "gaps": [],
+      "chunks": 1,
+      "output_tokens": 2,
+      "total": 0.3061412079996444,
+      "error": "",
+      "text": "signal",
+      "exact_match": true
+    },
+    {
+      "prompt": "Copy the word inside brackets. Reply with that word only: [window]",
+      "expected": "window",
+      "ttft": 0.2712581499999942,
+      "gaps": [],
+      "chunks": 1,
+      "output_tokens": 2,
+      "total": 0.31428598900038196,
+      "error": "",
+      "text": "window",
+      "exact_match": true
+    },
+    {
+      "prompt": "Copy the word inside brackets. Reply with that word only: [paper]",
+      "expected": "paper",
+      "ttft": 0.2633443820004686,
+      "gaps": [],
+      "chunks": 1,
+      "output_tokens": 2,
+      "total": 0.3064709669997683,
+      "error": "",
+      "text": "paper",
+      "exact_match": true
+    },
+    {
+      "prompt": "Copy the word inside brackets. Reply with that word only: [engine]",
+      "expected": "engine",
+      "ttft": 0.2662998969999535,
+      "gaps": [],
+      "chunks": 1,
+      "output_tokens": 2,
+      "total": 0.3072496400000091,
+      "error": "",
+      "text": "engine",
+      "exact_match": true
+    },
+    {
+      "prompt": "Use only this fact: Ada lives in Lima. Which city does Ada live in? Reply with the city only.",
+      "expected": "Lima",
+      "ttft": 0.32406383699981234,
+      "gaps": [
+        0.04691984700002649
+      ],
+      "chunks": 2,
+      "output_tokens": 3,
+      "total": 0.4134056459997737,
+      "error": "",
+      "text": "Lima",
+      "exact_match": true
+    },
+    {
+      "prompt": "Use only this fact: Ben lives in Oslo. Which city does Ben live in? Reply with the city only.",
+      "expected": "Oslo",
+      "ttft": 0.3175184599995191,
+      "gaps": [
+        0.04204822500014416
+      ],
+      "chunks": 2,
+      "output_tokens": 3,
+      "total": 0.4016652639993481,
+      "error": "",
+      "text": "Oslo",
+      "exact_match": true
+    },
+    {
+      "prompt": "Use only this fact: Cara lives in Accra. Which city does Cara live in? Reply with the city only.",
+      "expected": "Accra",
+      "ttft": 0.32016194900006667,
+      "gaps": [
+        0.04887275900000532
+      ],
+      "chunks": 2,
+      "output_tokens": 3,
+      "total": 0.41209802299999865,
+      "error": "",
+      "text": "Accra",
+      "exact_match": true
+    },
+    {
+      "prompt": "Use only this fact: Dan lives in Kyoto. Which city does Dan live in? Reply with the city only.",
+      "expected": "Kyoto",
+      "ttft": 0.3197176039993792,
+      "gaps": [
+        0.04169020100016496
+      ],
+      "chunks": 2,
+      "output_tokens": 3,
+      "total": 0.4008626529994217,
+      "error": "",
+      "text": "Kyoto",
+      "exact_match": true
+    }
+  ]
+}

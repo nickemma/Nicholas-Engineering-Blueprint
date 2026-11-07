@@ -8,7 +8,7 @@ This is the **only roadmap** in the repository. Everything else is a lesson (`le
 
 1. [Who this is for](#1-who-this-is-for)
 2. [What you'll build](#2-what-youll-build)
-3. [How to study](#3-how-to-study)
+3. [How to study](#3-how-to-study), including [level-based assessment and ownership](#assessment-and-ownership-routes)
 4. [The route](#4-the-route)
 5. [Foundation-gap ledger](#5-foundation-gap-ledger)
 6. [Patterns ledger](#6-patterns-ledger)
@@ -29,6 +29,8 @@ This is the **only roadmap** in the repository. Everything else is a lesson (`le
 The scope is **backend, distributed systems and infrastructure engineering**, plus the ML and AI infrastructure that increasingly runs on it. By the end you can design, build, test, operate, secure and measure a distributed system, and you have a public portfolio with evidence for each claim. You'll also have a research project you can defend, and practice for the coding and system-design interviews these roles use.
 
 It is **not** a technology checklist. Every tool appears because the system needs it at that point, and phases end when their evidence is in place, not when a calendar says so.
+
+For a smaller first goal, use the [beginner minimum route](lessons/ownership/beginner.md): a reliable service first, then connected services, then durable data. Experienced learners can demonstrate prerequisites and choose the [intermediate or senior assessment route](lessons/ownership/README.md) without repeating unrelated beginner work. These routes assess capabilities, not job titles.
 
 **Time:** about 70 weeks at 12–15 focused hours a week, plus the capstone (see [§10](#10-timeline-and-progress-tracker)). Experienced engineers often move faster through Phases 0–2.
 
@@ -141,6 +143,21 @@ You follow each lesson in a scratch `practice/` folder. At the end of each phase
 5. You can name the trade-offs you made.
 6. The exercise project meets its acceptance checks.
 7. learned.md is complete and the self-test is answered.
+8. Record the selected route's [assessment verdict](lessons/ownership/reviews.md), evidence and outstanding review. Technical phase completion, route readiness and sustained ownership are distinct claims; do not mark unreviewed leadership or unrun operational work complete.
+
+### Assessment and ownership routes
+
+Every phase has an `assessment.md`, linked from its syllabus, with junior tickets, an intermediate unfamiliar-system assignment and a senior decision/coordination assignment. Choose one route for the phase; beginners are not expected to complete all three. The existing rebuild, exercise and self-test still establish the technical foundation.
+
+| Route | Evidence added to the phase |
+|---|---|
+| Junior | A bounded independent change, positive/negative and relevant isolation tests, clear documentation, review and correction |
+| Intermediate | Investigation in unfamiliar code, agreed requirements, compatible delivery, capacity/monitoring and demonstrated recovery |
+| Senior | A justified strategy with non-goals, negotiated trade-offs, cross-owner sequencing, review/mentoring and an operational plan |
+
+Use the [track guide](lessons/ownership/README.md), [review rubric](lessons/ownership/reviews.md) and [artifact templates](lessons/ownership/templates.md). Reviewers record `ready`, `needs revision` or `not assessed` with evidence; a high score in one dimension cannot erase a critical safety failure. Label solo/AI review honestly and leave external review pending when no reviewer is available.
+
+From Phase 5 onward, intermediate/senior learners run the [twelve-week ownership exercise](lessons/ownership/sustained.md) alongside later phase work: releases, maintenance, requirement changes, incidents, capacity/cost decisions, collaboration and handover. Actual elapsed time and review evidence matter. This is lab ownership, not real production on-call; a weekend simulation is rehearsal. This optional route has its own work budget and does not silently enlarge the beginner minimum route.
 
 ### A week, roughly
 
@@ -198,10 +215,10 @@ flowchart LR
 | [Networking Bridge](lessons/network-bridge/README.md) | What does the network itself do when it's busy, lossy or far away? | `netlab`: loss, congestion control, HTTP/3 and a CDN, each measured | 2 | **Ready** |
 | [6. Secure it](lessons/06-safe-shared-queries/README.md) | Who may do what, and how do you contain abuse? | A threat model; tokens, authorization, tenant isolation, rate limiting, signed webhooks, your own CA and mTLS, a sidecar, secrets from OpenBao, a tamper-evident audit log, privacy, cluster hardening, fuzzing, and a security game day | 10 | **Ready** |
 | [7. Measure and learn](lessons/07-utility-evaluation/README.md) | Is it actually better, and can its own data improve it? | Experiments with plans and intervals; jobs that do real work; a data contract and a Kafka-to-Parquet pipeline; MapReduce, Spark and COST; baselines, gradient-boosted trees and neural networks compared honestly; serving behind the Go API with a fallback; priority lanes; MLflow, a gate and model cards; drift and a shadow; anomaly detection scored against injected incidents; a report that re-tests itself | 10 | **Ready** |
-| [8. AI infrastructure](lessons/08-ai-infrastructure/README.md) | What does it take to run the infrastructure under AI products? | A production-ready model-serving platform on Runway; distributed training on several workers; how data moves between CPU and GPU memory; Ray; a performance and cost benchmark | ~8 | In progress |
+| [8. AI infrastructure](lessons/08-ai-infrastructure/README.md) | What does it take to run the infrastructure under AI products? | A production-ready model-serving platform on Runway; distributed training on several workers; how data moves between CPU and GPU memory; Ray; a performance and cost benchmark | ~8 | **Guide ready; live experiments learner-run** |
 | [Capstone](capstones/README.md) | Can you answer a research question nobody has answered for you? | One of ten research projects, end to end, plus a hardening review and a defended report | 10+ | **Briefs ready** |
 
-"Next" means the phase is planned and will be written as a full type-along guide to the Phase 0 standard, like Phases 0–7. The capstone isn't a guide: it's your own project, from one of the [ten briefs](capstones/README.md).
+Phase 8 has a full type-along guide with CPU replay checks; live cluster, signing, network, Ray and GPU experiments are explicitly learner-run. The capstone isn't a guide: it's your own project, from one of the [ten briefs](capstones/README.md).
 
 ### Known limits
 
@@ -210,6 +227,7 @@ The guides hold themselves to "every output is real". These are the places where
 - **One machine.** Every measurement was taken on one laptop: an 8-core Ryzen 7 5850U under WSL2, with Docker and kind. Your numbers will differ; the guides say which conclusions should survive that and which shouldn't.
 - **What CI checks.** CI rebuilds every guide's code and runs its tests. It doesn't run the steps that need a Kubernetes cluster, root, or a cloud account. Those were run by hand while writing, and their outputs captured then.
 - **Phase 5's AWS deployment is planned, not applied.** The Terraform is written, reviewed as a plan of about 60 resources, and checked in CI offline. Applying it costs money (about $2.50 a day), so the guide leaves that to you, with the clean-up spelled out.
+- **Phase 8 has partial live evidence.** The [CPU report](lessons/08-ai-infrastructure/evidence/2026-11-07/report.md) retains 60 serving runs/720 arrivals, a frozen toy quality suite, real JWT/tokenizer/shared-Redis gateway checks and signed-weight refusal tests. No production SLO is established. Kubernetes rollout/scaling and image admission, full API observability/game day, shaped-link training and GPU/vLLM results remain unmeasured. The CPU replay checks correctness separately; the evidence ledger keeps these claims distinct.
 - **Phase 7's held-out false-alarm test wasn't run.** Step 12 plans a quiet hour to measure the detectors' false alarms on data they've never seen, but its runs failed twice (the machine slept, then Docker stopped). The report marks the claim "not measured" rather than guessing, and step 12 gives you the plan and the commands to run it yourself.
 - **Two of Phase 7's claims didn't replicate** on the final data, and the report says so. That's the report working, not a defect.
 - **The bridges' and the maths track's live measurements are captured by hand.** They need a running service, `perf`, Docker, `tc` or hours of run time, so CI rebuilds their code and runs their tests without rerunning them.
@@ -350,15 +368,16 @@ The user-requested topics are all here: pooling, transactions, queues, idempoten
 
 ### Phase 8: AI infrastructure
 
-The step list is designed when the phase starts, like every phase before it. These are its inputs:
+Follow the fourteen-step [type-along guide](lessons/08-ai-infrastructure/TEACHING.md), then build [modelgate](lessons/08-ai-infrastructure/exercises.md). Serving comes first, then distributed training, then the GPU. The [phase README](lessons/08-ai-infrastructure/README.md) distinguishes replayed correctness checks from live experiments that remain learner-run.
 
-- **Build, on Runway:** a production-ready inference platform for an open-weight language model:
+- **Build, on Runway:** an inference platform for an open-weight language model, with explicit production-readiness checks:
   - an authenticated API with rate limits and request queues (Phase 6's tokens and limits, Phase 2's backpressure);
   - automated deployment and health checks;
   - scaling on workload and available resources;
   - metrics for time to first token, inter-token latency, throughput, failures and resource use;
   - a benchmark comparing performance and cost across serving configurations (batching, concurrency, quantisation), with quality checks so a faster configuration isn't accepted blindly;
-  - a documented recovery strategy for failed deployments and overloaded services.
+  - a documented recovery strategy for failed deployments and overloaded services;
+  - SBOMs, provenance, signed images and signed model manifests, with separate admission and weight-verification checks (step 7).
 - **Learn:**
   - **distributed training** with PyTorch Distributed: data parallelism, then how Megatron-LM splits a model's weights across devices (tensor and pipeline parallelism);
   - **CUDA basics:** how data moves between the CPU's memory and the GPU's memory, and why pinned memory and transfer sizes matter;
@@ -389,7 +408,7 @@ This table shows each foundation gap, where it's introduced, where it's practise
 | 3 | Go | The language of cloud-native infrastructure | 0 | 1–8 | Your Runway repository | Runtime internals |
 | 4 | HTTP and API design | Backend, platform | 0 | 1 contracts; 2 gRPC; 6 auth | Contract tables and tests | GraphQL |
 | 5 | Testing and TDD | Every role; a seniority signal | 0 | 1 TDD; 2 integration; 3 contract tests; 4 simulation; capstone fuzzing | Red-green history; real-broker tests; Raft simulation | Mutation testing |
-| 6 | Code organisation and design patterns | Reading and writing real codebases | 1 | 2, 3, 6 | Layered Runway; Phase 3's storage swap with no handler changes | Architecture governance across teams |
+| 6 | Code organisation and design patterns | Reading and writing real codebases | 1 | 2, 3, 6 | Layered Runway; Phase 3's storage swap with no handler changes | Real organisation-wide architecture governance |
 | 7 | Processes, signals, file descriptors | SRE, systems | 0; 1 | 5 cgroups and limits | Shutdown under load; `/proc` evidence | Kernel scheduling |
 | 8 | Concurrency and races | Backend, DS, systems | 1 | 2 workers; Rust Send/Sync; 4 interleavings | A race caught and fixed; compare-and-swap tests | Lock-free algorithms |
 | 9 | Python and its tooling | ML, data, SRE scripting | Python Bridge | 2–8 experiments; 7 ML | `kload`; Phase 7 pipeline | Library packaging |
@@ -410,18 +429,18 @@ This table shows each foundation gap, where it's introduced, where it's practise
 | 24 | Load balancing and service discovery | Infrastructure | 5 | 6 | L4/L7 experiments; readiness behaviour | Global traffic management |
 | 25 | Cloud (AWS) and infrastructure as code | Cloud, platform | 5 | Capstone | A reviewed Terraform plan of Runway on AWS, checked in CI; applied and destroyed by you, if you choose to pay for it | A second cloud |
 | 26 | Observability and SLOs | SRE, platform | 1 | 5, 7 | A dashboard, an SLO, burn-rate alerts | Telemetry at huge scale |
-| 27 | Incident response | SRE | 5 | 8; capstone | A game day and a postmortem | Real on-call |
+| 27 | Incident response | SRE | 5 | 8; capstone | A game day and a postmortem; lab ownership record from the assessment track | Real production on-call |
 | 28 | Authentication, authorization, multi-tenancy | Security, platform | 2 (credentials); 6 | 8; capstone | Allowed, denied, cross-tenant and replay tests | Enterprise IAM administration |
 | 29 | TLS, PKI, mTLS, secrets | Security, infrastructure | 6 | Capstone | A local CA, mTLS, rotation | Public PKI operations |
 | 30 | API security and rate limiting | Backend, security | 0 validation | 1 limits; 3 injection; 6 OWASP, rate limits and fuzzing; 8 rate limits; capstone fuzzing | OWASP test cases; fuzzing findings | Penetration testing |
 | 31 | Data engineering and big data | Data, ML infrastructure | 7 | Capstone | A pipeline from events to Parquet; a MapReduce/Spark job | Streaming at scale |
 | 32 | ML, deep learning, MLOps, AIOps | ML infrastructure, applied ML | 7 | 8; capstone | Models with baselines; MLflow registry; a scored anomaly detector | Research-level ML |
-| 33 | Supply-chain security | DevSecOps | 5 (pinned versions, digests, immutable tags, ECR scanning) | Capstone | SBOM, signing, clean scans | Formal SLSA certification |
+| 33 | Supply-chain security | DevSecOps | 5 (pinned versions, digests, immutable tags, ECR scanning) | [8 step 7](lessons/08-ai-infrastructure/TEACHING.md#step-7-a-supply-chain-for-code-and-weights); capstone | SBOMs, signed images and weights; live unsigned/tampered release refusals retained by the learner | Formal SLSA certification |
 | 34 | Research method and technical writing | MSc, senior roles | Python Bridge | 7; capstone | The capstone report and defence | Peer-reviewed publication |
 | 35 | Algorithms and data structures | Every coding interview | [dsa/](dsa/README.md) from Phase 0 | Continuous | Problem log; mock interviews | Competitive programming |
 | 36 | System design | Interviews from mid-level up | [system-design/](system-design/README.md) from Phase 2 | Continuous | Scored designs, including "10M requests a second" | — |
-| 37 | Communication | Every role | 0 learned.md | Every phase; capstone defence | Explanations, postmortems, the capstone talk | — |
-| 38 | GPUs and accelerators | AI and ML infrastructure | 8 | Capstone | Host-to-device transfers measured; GPU utilisation read and explained | Writing CUDA kernels |
+| 37 | Communication | Every role | 0 learned.md | Every phase; capstone defence | Explanations, postmortems, reviewed proposals, peer feedback and the capstone talk | Influence in a real organisation |
+| 38 | GPUs and accelerators | AI and ML infrastructure | 8 | Capstone | Host-to-device transfers measured; GPU utilisation read and explained | Advanced CUDA optimisation |
 | 39 | Distributed training and model serving | AI and ML infrastructure | 8 | Capstone | Data and tensor parallelism run on several workers; a served model with time to first token, throughput and cost measured | Training across thousands of GPUs |
 | 40 | Linux performance and debugging | SRE, infrastructure troubleshooting rounds | [Performance Bridge](lessons/perf-bridge/README.md) | 8 GPU workloads; capstone | A before-and-after table for five fixes, each found with a named tool | Kernel development |
 | 41 | The network under load | MSc, infrastructure, AI clusters | [Networking Bridge](lessons/network-bridge/README.md) | 8 distributed training; capstone | The Mathis formula tested; BBR's cost measured; HTTP/3's claim tested with a control | Running a production backbone |

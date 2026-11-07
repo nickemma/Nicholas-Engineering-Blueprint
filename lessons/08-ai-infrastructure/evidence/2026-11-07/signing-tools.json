@@ -1,0 +1,22 @@
+{
+  "cosign": {
+    "gitVersion": "v3.1.4",
+    "gitCommit": "0e48502cf5ef34e2e60bbd3617aa19945712f705",
+    "gitTreeState": "clean",
+    "buildDate": "2026-10-20T17:33:02Z",
+    "goVersion": "go1.27.3",
+    "compiler": "gc",
+    "platform": "linux/amd64"
+  },
+  "syft": {
+    "application": "syft",
+    "buildDate": "2026-11-05T20:44:22Z",
+    "compiler": "gc",
+    "gitCommit": "30f4bce762f31136e055f2965185f12eb95fbe47",
+    "gitDescription": "v1.57.0",
+    "goVersion": "go1.27.3",
+    "platform": "linux/amd64",
+    "schemaVersion": "16.1.13",
+    "version": "1.57.0"
+  }
+}

@@ -1,5 +1,7 @@
 # Phase 3: make data durable
 
+**Assessment routes:** [junior, intermediate and senior assignments](assessment.md), with [review and ownership criteria](../ownership/README.md).
+
 **Question:** how do you keep data correct when it must survive crashes, be shared by many requests, processes and instances, and be read far more often than it's written?
 
 **Time:** about 7 weeks. **Prerequisites:** [Phase 2](../02-connected-services/README.md) and the [Rust Bridge](../rust-bridge/README.md); Docker installed.

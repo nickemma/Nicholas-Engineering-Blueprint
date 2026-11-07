@@ -10,6 +10,7 @@ const { title, description = "From first request to distributed systems and infr
 const path = Astro.url.pathname;
 const nav = [
   ["Journey", "/journey/"],
+  ["Ownership", "/ownership/"],
   ["DSA", "/dsa/"],
   ["System design", "/system-design/"],
   ["Maths", "/math/"],
@@ -46,7 +47,7 @@ const nav = [
     </header>
     <main id="main"><slot /></main>
     <footer class="foot">
-      <p>Every guide's code is rebuilt from the guide and tested in CI. <a href={REPO} rel="noreferrer">Read the source</a>.</p>
+      <p>Guides include replayable code checks and clearly labelled live experiments. <a href={REPO} rel="noreferrer">Read the source</a>.</p>
     </footer>
     <script>
       document.getElementById("theme")?.addEventListener("click", () => {

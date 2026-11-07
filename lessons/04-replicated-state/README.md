@@ -1,5 +1,7 @@
 # Phase 4: replicate and scale out
 
+**Assessment routes:** [junior, intermediate and senior assignments](assessment.md), with [review and ownership criteria](../ownership/README.md).
+
 **Question:** what can several machines agree on when messages are lost and delayed, machines crash, and the network splits, sometimes only partly? And how do you spread data over machines when one is no longer enough?
 
 **Time:** about 10 weeks. **Prerequisites:** [Phase 3](../03-durable-auditable-data/README.md); Java 11 or newer for TLA+.

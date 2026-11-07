@@ -1,0 +1,29 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import Base from "../layouts/Base.astro";
+import AssessmentRoutes from "../islands/AssessmentRoutes.tsx";
+import { ROOT } from "../lib/content.ts";
+import { parseJourney } from "../lib/journey.ts";
+const stops = parseJourney(fs.readFileSync(path.join(ROOT, "JOURNEY.md"), "utf8"));
+---
+<Base title="Assessment and ownership" description="Choose junior, intermediate or senior assignments across the Blueprint, with review criteria and sustained service ownership.">
+  <section class="hero ownership-hero">
+    <p class="eyebrow">One curriculum, different responsibilities</p>
+    <h1>Build it. Defend it. Own it.</h1>
+    <p class="lede">Choose how independently you work through each phase. Keep the evidence for a correct change, a safe release and a justified decision distinct.</p>
+    <p><a href="/lessons/ownership/">Track guide and entry checks</a> · <a href="/lessons/ownership/reviews/">Review and readiness rubric</a></p>
+  </section>
+  <section class="band first" aria-label="Assessment routes">
+    <AssessmentRoutes client:load stops={stops} />
+  </section>
+  <section class="band">
+    <h2>Carry the work beyond the implementation</h2>
+    <ul class="cards">
+      <li><a href="/lessons/ownership/beginner/"><h3>A manageable first milestone</h3><p>Start with a reliable service. Take one small ticket, get feedback and advance when you can explain the evidence.</p></a></li>
+      <li><a href="/lessons/ownership/templates/"><h3>Make the change reviewable</h3><p>Tickets, investigations, proposals, migration plans, review records and handover templates.</p></a></li>
+      <li><a href="/lessons/ownership/sustained/"><h3>Twelve weeks of ownership</h3><p>Maintain dependencies, handle changing requirements, rehearse incidents and hand the service to another person.</p></a></li>
+    </ul>
+    <p class="note">A self-check is not independent sign-off. A lab is not production on-call. A compressed rehearsal does not establish months of ownership.</p>
+  </section>
+</Base>

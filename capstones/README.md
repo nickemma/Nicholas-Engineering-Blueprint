@@ -14,6 +14,12 @@ The second is a **research project**. Every capstone here is built that way.
 
 The ten projects are infrastructure, not demos. Four of them build the systems underneath AI products, not apps that call a model's API; the rest cover distributed systems, networking, security and big data. Each one is chosen to show what the strongest portfolio projects show: distributed systems, concurrency, resource management, performance, fault tolerance, and cost you can measure.
 
+## Assessment and ownership
+
+A research result and an ownership assessment answer different questions. Use the [shared rubric](../lessons/ownership/reviews.md) and [proposal/migration templates](../lessons/ownership/templates.md) to add reviewed delivery evidence to your capstone. An intermediate submission includes compatibility, capacity, deployment, monitoring and recovery evidence. A senior submission additionally defends scope/non-goals and cost/reliability choices, coordinates affected owners, reviews another contributor's work and revisits the decision after operating it.
+
+The [twelve-week lab ownership exercise](../lessons/ownership/sustained.md) can overlap the capstone. It is required for a sustained-ownership claim, not for every research question. Label reviewer independence, simulated stakeholder roles, actual operating dates and unmeasured work. A solo research project can be strong without pretending to demonstrate team leadership or production on-call.
+
 ## The research loop
 
 Every project follows the same structure. Your proposal, your report and your talk all use it:

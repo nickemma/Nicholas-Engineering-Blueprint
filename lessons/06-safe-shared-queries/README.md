@@ -1,5 +1,7 @@
 # Phase 6: secure it
 
+**Assessment routes:** [junior, intermediate and senior assignments](assessment.md), with [review and ownership criteria](../ownership/README.md).
+
 **Question:** who may do what in Runway, how does each service know who it's talking to, how do you keep one customer's data and capacity away from another's, and how would you know if any of it failed?
 
 **Time:** about 10 weeks. **Prerequisites:** [Phase 5](../05-constrained-operations/README.md), with its kind cluster; `openssl`, `jq`, `curl`; the Rust toolchain from the [Rust Bridge](../rust-bridge/README.md); `uv` for kload. Everything runs locally: OpenBao runs in Compose and on kind.

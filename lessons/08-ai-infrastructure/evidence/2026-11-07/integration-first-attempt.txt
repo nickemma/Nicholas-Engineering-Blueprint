@@ -1,0 +1,10 @@
+=== RUN   TestLiveRunwayJWTTokenizerAndSharedBudget
+redis: 2026/11/07 08:05:00 pool.go:762: redis: connection pool: failed to dial after 5 attempts: dial tcp 127.0.0.1:16379: connect: connection refused
+redis: 2026/11/07 08:05:00 pool.go:762: redis: connection pool: failed to dial after 5 attempts: dial tcp 127.0.0.1:16379: connect: connection refused
+redis: 2026/11/07 08:05:00 pool.go:762: redis: connection pool: failed to dial after 5 attempts: dial tcp 127.0.0.1:16379: connect: connection refused
+redis: 2026/11/07 08:05:01 pool.go:762: redis: connection pool: failed to dial after 5 attempts: dial tcp 127.0.0.1:16379: connect: connection refused
+    live_test.go:31: dial tcp 127.0.0.1:16379: connect: connection refused
+--- FAIL: TestLiveRunwayJWTTokenizerAndSharedBudget (1.73s)
+FAIL
+FAIL	runway/internal/inference	1.756s
+FAIL

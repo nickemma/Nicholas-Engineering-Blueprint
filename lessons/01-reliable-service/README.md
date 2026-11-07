@@ -1,5 +1,7 @@
 # Phase 1: make one service reliable
 
+**Assessment routes:** [junior, intermediate and senior assignments](assessment.md), with [review and ownership criteria](../ownership/README.md).
+
 **Question:** what happens when requests overlap, stall, contain bad input, or arrive while the process is stopping?
 
 **Time:** about 4 weeks. **Prerequisites:** [Phase 0](../00-request-service/README.md), including its exercise.

@@ -1,0 +1,82 @@
+[
+  {
+    "prompt": "Reply with only the result: 1 + 2.",
+    "expected": "3"
+  },
+  {
+    "prompt": "Reply with only the result: 2 + 3.",
+    "expected": "5"
+  },
+  {
+    "prompt": "Reply with only the result: 3 + 4.",
+    "expected": "7"
+  },
+  {
+    "prompt": "Reply with only the result: 4 + 5.",
+    "expected": "9"
+  },
+  {
+    "prompt": "Reply with only the result: 5 + 6.",
+    "expected": "11"
+  },
+  {
+    "prompt": "Reply with only the result: 6 + 7.",
+    "expected": "13"
+  },
+  {
+    "prompt": "Reply with only the result: 7 + 8.",
+    "expected": "15"
+  },
+  {
+    "prompt": "Reply with only the result: 8 + 9.",
+    "expected": "17"
+  },
+  {
+    "prompt": "Copy the word inside brackets. Reply with that word only: [river]",
+    "expected": "river"
+  },
+  {
+    "prompt": "Copy the word inside brackets. Reply with that word only: [stone]",
+    "expected": "stone"
+  },
+  {
+    "prompt": "Copy the word inside brackets. Reply with that word only: [cloud]",
+    "expected": "cloud"
+  },
+  {
+    "prompt": "Copy the word inside brackets. Reply with that word only: [garden]",
+    "expected": "garden"
+  },
+  {
+    "prompt": "Copy the word inside brackets. Reply with that word only: [signal]",
+    "expected": "signal"
+  },
+  {
+    "prompt": "Copy the word inside brackets. Reply with that word only: [window]",
+    "expected": "window"
+  },
+  {
+    "prompt": "Copy the word inside brackets. Reply with that word only: [paper]",
+    "expected": "paper"
+  },
+  {
+    "prompt": "Copy the word inside brackets. Reply with that word only: [engine]",
+    "expected": "engine"
+  },
+  {
+    "prompt": "Use only this fact: Ada lives in Lima. Which city does Ada live in? Reply with the city only.",
+    "expected": "Lima"
+  },
+  {
+    "prompt": "Use only this fact: Ben lives in Oslo. Which city does Ben live in? Reply with the city only.",
+    "expected": "Oslo"
+  },
+  {
+    "prompt": "Use only this fact: Cara lives in Accra. Which city does Cara live in? Reply with the city only.",
+    "expected": "Accra"
+  },
+  {
+    "prompt": "Use only this fact: Dan lives in Kyoto. Which city does Dan live in? Reply with the city only.",
+    "expected": "Kyoto"
+  }
+]

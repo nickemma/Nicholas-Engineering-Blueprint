@@ -10,6 +10,7 @@ Every phase follows this shape. [Phase 0](00-request-service/TEACHING.md) is the
 lessons/NN-name/
   README.md      the syllabus: question, topics, outcomes, prerequisites, time, the exercise project, what it feeds into
   TEACHING.md    the lesson: explanations plus a type-along build, with the code inline
+  assessment.md  junior tickets, intermediate investigation/delivery, senior decision/coordination; evidence and readiness gates
   exercises.md   a different project to build alone: a finished-state spec, acceptance checks, no solutions
   learned.md     your record to fill in: one row per "Explain it" question, plus an evidence checklist
 ~~~
@@ -24,7 +25,8 @@ Each phase also has a question-only self-test in `notes/learned/`.
 4. **Prerequisites and time.**
 5. **The exercise project:** one paragraph on what you'll build alone at the end.
 6. **Gaps closed and patterns introduced**, linked to the JOURNEY ledgers.
-7. **Next:** how this phase feeds the next one.
+7. **Assessment routes:** link the phase's `assessment.md` and the shared ownership track; preserve the distinction between technical completion, route readiness and unmeasured evidence.
+8. **Next:** how this phase feeds the next one.
 
 ## TEACHING.md: the lesson
 
@@ -90,3 +92,14 @@ It never includes solution code.
 - Show the code the learner needs to type. Never "implement X" without either showing X or making it an explicit **Your turn** with a clear target.
 - One idea per paragraph. Use tables for comparisons and Mermaid diagrams for flows.
 - Every claim of the form "this proves X" also says what it does **not** prove.
+
+## assessment.md: route-specific ownership
+
+Use [the shared track](ownership/README.md), [review rubric](ownership/reviews.md) and [templates](ownership/templates.md). Keep assessments as independent specifications without solutions or replay markers.
+
+- State a common prerequisite gate tied to this phase's actual guarantees.
+- Supply three small junior tickets with positive/negative or relevant isolation cases and documentation. Have the learner choose one at a time and revise after review.
+- Give an intermediate learner a symptom or ambiguous requirement in an unfamiliar baseline, with acceptance checks for investigation, compatible delivery, capacity, monitoring and recovery. Specify which checks are applicable at this phase; do not demand later tooling.
+- Ask a senior learner to resolve conflicting goals, compare the current system with alternatives, choose non-goals, defend cost/reliability decisions, sequence work across owners and review another contributor's work.
+- Define observable readiness for each route. Distinguish human review, self/AI review, simulated roles and actual collaboration. Missing external review is pending evidence, not permission to fabricate sign-off.
+- From Phase 5, link the sustained ownership exercise. Do not claim months of operation from a compressed rehearsal.
