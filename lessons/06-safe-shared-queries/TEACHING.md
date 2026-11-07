@@ -12132,6 +12132,7 @@ Change:
 <!-- edit: internal/metad/metad_test.go -->
 ~~~go
 import (
+	"context"
 	"encoding/json"
 ~~~
 
@@ -12139,6 +12140,7 @@ to:
 
 ~~~go
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/json"

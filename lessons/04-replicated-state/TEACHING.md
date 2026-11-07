@@ -6288,10 +6288,11 @@ type Server struct {
 	node    *raftnode.Node
 	peers   map[raft.ID]string // every member's base URL, by ID
 	timeout time.Duration
+	now     func() time.Time // sampled once per lease proposal; replace only before serving
 }
 
 func New(node *raftnode.Node, peers map[raft.ID]string, timeout time.Duration) *Server {
-	return &Server{node: node, peers: peers, timeout: timeout}
+	return &Server{node: node, peers: peers, timeout: timeout, now: time.Now}
 }
 
 // Handler returns the routes.
@@ -6363,7 +6364,7 @@ func (s *Server) op(name string) http.HandlerFunc {
 			writeJSON(w, http.StatusMisdirectedRequest, resp)
 		case errors.Is(err, raftnode.ErrLost), errors.Is(err, context.DeadlineExceeded):
 			w.Header().Set("Retry-After", "1")
-			writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "not committed; retry with the same Request-Seq"})
+			writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "commit unconfirmed; retry with the same Client-ID and Request-Seq"})
 		case err != nil:
 			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		default:
@@ -6390,6 +6391,7 @@ This test runs three members in one process, but with everything real: real disk
 package metad
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -6397,6 +6399,7 @@ import (
 	"net"
 	"net/http"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -6416,6 +6419,9 @@ type cluster struct {
 	urls    map[raft.ID]string
 	dirs    map[raft.ID]string
 	members map[raft.ID]*member
+	clockMS atomic.Int64 // zero uses wall time; lease tests advance this explicitly
+	seq     atomic.Uint64
+	client  *http.Client
 }
 
 func newCluster(t *testing.T, size int) *cluster {
@@ -6459,7 +6465,14 @@ func (c *cluster) start(id raft.ID, l net.Listener) {
 	if err != nil {
 		c.t.Fatal(err)
 	}
-	server := &http.Server{Handler: New(node, c.urls, 2*time.Second).Handler()}
+	api := New(node, c.urls, 2*time.Second)
+	api.now = func() time.Time {
+		if ms := c.clockMS.Load(); ms != 0 {
+			return time.UnixMilli(ms)
+		}
+		return time.Now()
+	}
+	server := &http.Server{Handler: api.Handler()}
 	go func() { _ = server.Serve(l) }()
 	c.members[id] = &member{node: node, server: server}
 }
@@ -6495,26 +6508,61 @@ func (c *cluster) leader() raft.ID {
 	return raft.None
 }
 
-// put writes through the member it believes leads, as a real client
-// would: it follows a 421 to the new leader, and retries a 503 (the write
-// didn't commit in time). On a loaded machine an election can happen
-// mid-test. It returns the member that accepted the write. (Putting the
-// same value twice is harmless here.)
-func (c *cluster) put(leader raft.ID, key, value string) raft.ID {
+// command is a bounded client of the HTTP contract, not a test retry. Only
+// leader redirects, uncertain commits and transport errors are retried. Every
+// attempt preserves the logical request identity, including for append/leases.
+func (c *cluster) command(method, path, body, clientID string, seq uint64) (raft.ID, map[string]any) {
 	c.t.Helper()
-	for range 10 {
-		code, _ := do(c.t, http.MethodPut, c.urls[leader]+"/kv/"+key, value)
-		switch code {
-		case http.StatusOK:
-			return leader
-		case http.StatusMisdirectedRequest, http.StatusServiceUnavailable:
-			leader = c.leader()
-		default:
-			c.t.Fatalf("PUT = %d", code)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	client := c.client
+	if client == nil {
+		client = http.DefaultClient
+	}
+	var code int
+	var last map[string]any
+	for ctx.Err() == nil {
+		leader := c.leader()
+		req, err := http.NewRequestWithContext(ctx, method, c.urls[leader]+path, strings.NewReader(body))
+		if err != nil {
+			c.t.Fatal(err)
+		}
+		req.Header.Set("Client-ID", clientID)
+		req.Header.Set("Request-Seq", fmt.Sprint(seq))
+		resp, err := client.Do(req)
+		if err != nil {
+			last = map[string]any{"transport_error": err.Error()}
+		} else {
+			code = resp.StatusCode
+			last = nil
+			err = json.NewDecoder(resp.Body).Decode(&last)
+			resp.Body.Close()
+			if err != nil {
+				c.t.Fatalf("%s %s: invalid JSON (status %d): %v", method, path, code, err)
+			}
+			switch code {
+			case http.StatusOK:
+				return leader, last
+			case http.StatusMisdirectedRequest, http.StatusServiceUnavailable:
+				// Retry this request, not a new operation. A 503 may have committed.
+			default:
+				c.t.Fatalf("%s %s: status %d: %v", method, path, code, last)
+			}
+		}
+		select {
+		case <-ctx.Done():
+		case <-time.After(10 * time.Millisecond):
 		}
 	}
-	c.t.Fatal("no member accepted the write")
-	return raft.None
+	c.t.Fatalf("%s %s did not complete before the deadline: status %d: %v", method, path, code, last)
+	return raft.None, nil
+}
+
+// put returns the member that committed the write, even if leadership changed.
+func (c *cluster) put(_ raft.ID, key, value string) raft.ID {
+	c.t.Helper()
+	leader, _ := c.command(http.MethodPut, "/kv/"+key, value, "test-put", c.seq.Add(1))
+	return leader
 }
 
 func do(t *testing.T, method, url, body string) (int, map[string]any) {
@@ -6538,17 +6586,9 @@ func TestWritesSurviveTheLeaderStopping(t *testing.T) {
 	}
 
 	c.stop(leader)
-	next := c.leader()
-	code, got := do(t, http.MethodGet, c.urls[next]+"/kv/k", "")
-	for range 10 { // a read goes through the leader too: follow a 421
-		if code != http.StatusMisdirectedRequest {
-			break
-		}
-		next = c.leader()
-		code, got = do(t, http.MethodGet, c.urls[next]+"/kv/k", "")
-	}
-	if code != http.StatusOK || got["value"] != "v59" {
-		t.Fatalf("after the leader stopped: %d %v", code, got)
+	next, got := c.command(http.MethodGet, "/kv/k", "", "read-after-stop", 1)
+	if got["value"] != "v59" {
+		t.Fatalf("after the leader stopped: %v", got)
 	}
 
 	// The old leader comes back, catches up from its disk and the new leader.
@@ -6580,18 +6620,10 @@ func TestAFollowerPointsToTheLeader(t *testing.T) {
 // A retry with the same Client-ID and Request-Seq is applied once.
 func TestARetriedAppendHappensOnce(t *testing.T) {
 	c := newCluster(t, 3)
-	url := c.urls[c.leader()] + "/kv/list/append"
 	for range 2 {
-		req, _ := http.NewRequest(http.MethodPost, url, strings.NewReader("x;"))
-		req.Header.Set("Client-ID", "jobsctl-1")
-		req.Header.Set("Request-Seq", "7")
-		resp, err := http.DefaultClient.Do(req)
-		if err != nil {
-			t.Fatal(err)
-		}
-		resp.Body.Close()
+		c.command(http.MethodPost, "/kv/list/append", "x;", "jobsctl-1", 7)
 	}
-	if _, got := do(t, http.MethodGet, url[:strings.LastIndex(url, "/")], ""); got["value"] != "x;" {
+	if _, got := c.command(http.MethodGet, "/kv/list", "", "read-append", 1); got["value"] != "x;" {
 		t.Fatalf("value %v after a retried append, want x;", got["value"])
 	}
 }
@@ -7386,10 +7418,14 @@ to:
 			cmd.Owner, cmd.TTL = req.Owner, req.TTL
 			// The leader's clock, read once, here. Every node then applies
 			// the same time.
-			cmd.At = time.Now().UnixMilli()
+			cmd.At = s.now().UnixMilli()
 		}
 ~~~
 
+
+The production server's `now` function defaults to `time.Now` and is sampled once before proposing a lease operation. The test cluster supplies an atomic clock override: zero keeps real wall time for other tests, while lease tests explicitly advance it. Raft ticks, disks and HTTP are still real. Lease assertions therefore do not depend on a 200 ms sleep or on how busy the CI runner is.
+
+The test client retries only the API's documented 421/503 responses and transport failures, within a deadline, preserving `Client-ID` and `Request-Seq`. A 503 means the result is uncertain, not that the command definitely failed to commit. Other responses fail immediately. The second test deliberately hides a committed success behind a 503 and advances the lease clock: replay must return the original token and expiry, not execute another acquire. That cached success describes the original operation; an expiry already in the past does not authorise new work, and the protected resource must still enforce fencing.
 
 And a test that tokens increase when the holder changes, at the end of `internal/metad/metad_test.go`:
 
@@ -7399,18 +7435,62 @@ Add this at the end of the file:
 ~~~go
 func TestLockTokensIncrease(t *testing.T) {
 	c := newCluster(t, 3)
-	url := c.urls[c.leader()] + "/locks/reaper"
-	code, a := do(t, http.MethodPost, url+"/acquire", `{"owner":"a","ttl_ms":200}`)
-	if code != http.StatusOK || a["ok"] != true {
-		t.Fatalf("a's acquire: %d %v", code, a)
+	c.clockMS.Store(1_000)
+	_, a := c.command(http.MethodPost, "/locks/reaper/acquire", `{"owner":"a","ttl_ms":200}`, "lease-a", 1)
+	if a["ok"] != true || a["token"] != float64(1) || a["expires_ms"] != float64(1_200) {
+		t.Fatalf("a's acquire: %v", a)
 	}
-	if _, b := do(t, http.MethodPost, url+"/acquire", `{"owner":"b","ttl_ms":200}`); b["ok"] == true || b["holder"] != "a" {
-		t.Fatalf("b got a held lock: %v", b)
+	_, held := c.command(http.MethodPost, "/locks/reaper/acquire", `{"owner":"b","ttl_ms":200}`, "lease-b", 1)
+	if held["ok"] != false || held["holder"] != "a" {
+		t.Fatalf("b got a held lock: %v", held)
 	}
-	time.Sleep(300 * time.Millisecond) // a's lease runs out
-	_, b := do(t, http.MethodPost, url+"/acquire", `{"owner":"b","ttl_ms":200}`)
+	c.clockMS.Store(1_100)
+	_, renewed := c.command(http.MethodPost, "/locks/reaper/acquire", `{"owner":"a","ttl_ms":200}`, "lease-a", 2)
+	if renewed["ok"] != true || renewed["token"] != a["token"] || renewed["expires_ms"] != float64(1_300) {
+		t.Fatalf("renewal must keep the token and extend expiry: %v", renewed)
+	}
+	c.clockMS.Store(1_299)
+	_, before := c.command(http.MethodPost, "/locks/reaper/acquire", `{"owner":"b","ttl_ms":200}`, "lease-b", 2)
+	if before["ok"] != false || before["holder"] != "a" {
+		t.Fatalf("b got the lock before expiry: %v", before)
+	}
+	c.clockMS.Store(1_300) // expiry boundary, independent of scheduling or disk speed
+	_, b := c.command(http.MethodPost, "/locks/reaper/acquire", `{"owner":"b","ttl_ms":200}`, "lease-b", 3)
 	if b["ok"] != true || b["token"].(float64) <= a["token"].(float64) {
 		t.Fatalf("after the lease expired: a had %v, b got %v", a, b)
+	}
+	if _, stale := c.command(http.MethodPost, "/locks/reaper/release", `{"owner":"a"}`, "lease-a", 3); stale["ok"] != false {
+		t.Fatalf("the former holder released b's lock: %v", stale)
+	}
+}
+
+type roundTripFunc func(*http.Request) (*http.Response, error)
+
+func (f roundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+
+// The operation committed, but the client saw a retryable failure. Advancing
+// the lease clock makes accidental re-execution observable as a higher token.
+func TestLeaseRetryAfterUncertainCommitKeepsItsResult(t *testing.T) {
+	c := newCluster(t, 3)
+	c.clockMS.Store(1_000)
+	lost := false
+	attempts := 0
+	c.client = &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		attempts++
+		if r.Header.Get("Client-ID") != "uncertain-lease" || r.Header.Get("Request-Seq") != "7" {
+			t.Errorf("retry changed request identity: %v", r.Header)
+		}
+		response, err := http.DefaultTransport.RoundTrip(r)
+		if err == nil && response.StatusCode == http.StatusOK && !lost {
+			lost = true
+			c.clockMS.Store(1_500) // beyond the original lease, before the retry
+			response.StatusCode = http.StatusServiceUnavailable
+		}
+		return response, err
+	})}
+	_, got := c.command(http.MethodPost, "/locks/reaper/acquire", `{"owner":"a","ttl_ms":200}`, "uncertain-lease", 7)
+	if !lost || attempts < 2 || got["ok"] != true || got["token"] != float64(1) || got["expires_ms"] != float64(1_200) {
+		t.Fatalf("uncertain commit was not replayed exactly once: attempts=%d lost=%t result=%v", attempts, lost, got)
 	}
 }
 ~~~
@@ -8764,7 +8844,7 @@ You're ready for Phase 5 when you can, without the guide:
 | `go vet: field and method with the same name term` | A method named like a field | The guide's method is `termAt` |
 | `metad` returns 404 for a key | The key contains `/` | Keys are a single path segment |
 | `metad` returns 421 | That member isn't the leader | Send the request to the URL in the `leader` field |
-| `metad` returns 503 `not committed` | No leader yet, or the leader changed mid-request | Retry, with the same `Client-ID` and `Request-Seq` |
+| `metad` returns 503 `commit unconfirmed` | No leader yet, or the leader changed mid-request | Retry, with the same `Client-ID` and `Request-Seq` |
 | Every `metad` request times out | Fewer than two of three members are running | Start another member; a majority is needed |
 | TLC: `Error: Missing input TLA+ module` | Run from the wrong directory | `cd tla` first |
 | TLC: `java: command not found` | No Java | Install Java 11 or newer |
