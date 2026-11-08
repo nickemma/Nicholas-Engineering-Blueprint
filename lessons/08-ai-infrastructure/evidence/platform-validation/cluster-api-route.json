@@ -1,0 +1,7 @@
+{
+  "path": "pod -> gateway Service/EndpointSlice -> lab proxy -> JWT API -> model NodePort/Service -> verified model pod",
+  "generation_completed": true,
+  "exit_code": 0,
+  "response_contains_done": true,
+  "tenant": "synthetic verified claim; no bearer token retained"
+}

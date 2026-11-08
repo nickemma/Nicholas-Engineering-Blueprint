@@ -1,0 +1,2 @@
+ok   lessons/08-ai-infrastructure/TEACHING.md (54 steps)
+     scratch directory kept at /tmp/guide-6taq6akw

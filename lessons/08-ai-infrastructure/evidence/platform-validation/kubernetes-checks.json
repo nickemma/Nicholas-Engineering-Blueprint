@@ -1,0 +1,891 @@
+{
+  "image": "172.18.254.250:5000/phase8-model@sha256:2c96ff00515985e072954679fbcb715cb1ba853387e136b0a2265a6bfa30e588",
+  "manifest_sha256": "7213c493e2a0fa50cc4fe971960a3130014627f746598125d617908a34acfe81",
+  "checks": [
+    {
+      "case": "cold-create",
+      "wait_seconds": 28.390798693999386,
+      "pod": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "metadata": {
+          "creationTimestamp": "2026-11-08T00:01:45Z",
+          "generateName": "llm-69974bff47-",
+          "generation": 1,
+          "labels": {
+            "app": "llm",
+            "pod-template-hash": "69974bff47"
+          },
+          "name": "llm-69974bff47-bmwn8",
+          "namespace": "phase8-model",
+          "ownerReferences": [
+            {
+              "apiVersion": "apps/v1",
+              "blockOwnerDeletion": true,
+              "controller": true,
+              "kind": "ReplicaSet",
+              "name": "llm-69974bff47",
+              "uid": "acfc0479-65e5-4a62-a572-8d66d5144d09"
+            }
+          ],
+          "resourceVersion": "4593",
+          "uid": "ef1f5522-5211-48e3-8bde-40588536c899"
+        },
+        "spec": {
+          "automountServiceAccountToken": false,
+          "containers": [
+            {
+              "image": "172.18.254.250:5000/phase8-model@sha256:2c96ff00515985e072954679fbcb715cb1ba853387e136b0a2265a6bfa30e588",
+              "imagePullPolicy": "IfNotPresent",
+              "name": "server",
+              "ports": [
+                {
+                  "containerPort": 8080,
+                  "name": "http",
+                  "protocol": "TCP"
+                }
+              ],
+              "readinessProbe": {
+                "failureThreshold": 3,
+                "httpGet": {
+                  "path": "/health",
+                  "port": "http",
+                  "scheme": "HTTP"
+                },
+                "periodSeconds": 1,
+                "successThreshold": 1,
+                "timeoutSeconds": 1
+              },
+              "resources": {
+                "limits": {
+                  "cpu": "2",
+                  "memory": "1536Mi"
+                },
+                "requests": {
+                  "cpu": "1",
+                  "memory": "768Mi"
+                }
+              },
+              "securityContext": {
+                "allowPrivilegeEscalation": false,
+                "capabilities": {
+                  "drop": [
+                    "ALL"
+                  ]
+                },
+                "readOnlyRootFilesystem": true
+              },
+              "startupProbe": {
+                "failureThreshold": 120,
+                "httpGet": {
+                  "path": "/health",
+                  "port": "http",
+                  "scheme": "HTTP"
+                },
+                "periodSeconds": 1,
+                "successThreshold": 1,
+                "timeoutSeconds": 1
+              },
+              "terminationMessagePath": "/dev/termination-log",
+              "terminationMessagePolicy": "File",
+              "volumeMounts": [
+                {
+                  "mountPath": "/models",
+                  "name": "weights",
+                  "readOnly": true
+                },
+                {
+                  "mountPath": "/verified",
+                  "name": "verified"
+                },
+                {
+                  "mountPath": "/tmp",
+                  "name": "temp"
+                }
+              ]
+            }
+          ],
+          "dnsPolicy": "ClusterFirst",
+          "enableServiceLinks": true,
+          "nodeName": "blueprint-phase8-control-plane",
+          "preemptionPolicy": "PreemptLowerPriority",
+          "priority": 0,
+          "restartPolicy": "Always",
+          "schedulerName": "default-scheduler",
+          "securityContext": {
+            "fsGroup": 1000,
+            "runAsGroup": 1000,
+            "runAsNonRoot": true,
+            "runAsUser": 1000,
+            "seccompProfile": {
+              "type": "RuntimeDefault"
+            }
+          },
+          "serviceAccount": "default",
+          "serviceAccountName": "default",
+          "terminationGracePeriodSeconds": 30,
+          "tolerations": [
+            {
+              "effect": "NoExecute",
+              "key": "node.kubernetes.io/not-ready",
+              "operator": "Exists",
+              "tolerationSeconds": 300
+            },
+            {
+              "effect": "NoExecute",
+              "key": "node.kubernetes.io/unreachable",
+              "operator": "Exists",
+              "tolerationSeconds": 300
+            }
+          ],
+          "volumes": [
+            {
+              "name": "weights",
+              "persistentVolumeClaim": {
+                "claimName": "phase8-weights",
+                "readOnly": true
+              }
+            },
+            {
+              "emptyDir": {
+                "sizeLimit": "1Gi"
+              },
+              "name": "verified"
+            },
+            {
+              "emptyDir": {},
+              "name": "temp"
+            }
+          ]
+        },
+        "status": {
+          "allocatedResources": {
+            "cpu": "1",
+            "memory": "768Mi"
+          },
+          "conditions": [
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T00:01:46Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "PodReadyToStartContainers"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T00:01:45Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "Initialized"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T00:02:13Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "Ready"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T00:02:13Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "ContainersReady"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T00:01:45Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "PodScheduled"
+            }
+          ],
+          "containerStatuses": [
+            {
+              "allocatedResources": {
+                "cpu": "1",
+                "memory": "768Mi"
+              },
+              "containerID": "containerd://d932505806b0bef73c93d48f5715371b2cec77645e855b34324e86b3b75a8eed",
+              "image": "sha256:ad5b07a83a25f1af4a9adff615d26ea1103f11b8d8dfa6f7c06f985bdbe2c9b4",
+              "imageID": "172.18.254.250:5000/phase8-model@sha256:2c96ff00515985e072954679fbcb715cb1ba853387e136b0a2265a6bfa30e588",
+              "lastState": {},
+              "name": "server",
+              "ready": true,
+              "resources": {
+                "limits": {
+                  "cpu": "2",
+                  "memory": "1536Mi"
+                },
+                "requests": {
+                  "cpu": "1",
+                  "memory": "768Mi"
+                }
+              },
+              "restartCount": 0,
+              "started": true,
+              "state": {
+                "running": {
+                  "startedAt": "2026-11-08T00:02:09Z"
+                }
+              },
+              "user": {
+                "linux": {
+                  "gid": 1000,
+                  "supplementalGroups": [
+                    4,
+                    20,
+                    24,
+                    25,
+                    27,
+                    29,
+                    30,
+                    44,
+                    46,
+                    1000
+                  ],
+                  "uid": 1000
+                }
+              },
+              "volumeMounts": [
+                {
+                  "mountPath": "/models",
+                  "name": "weights",
+                  "readOnly": true,
+                  "recursiveReadOnly": "Disabled"
+                },
+                {
+                  "mountPath": "/verified",
+                  "name": "verified"
+                },
+                {
+                  "mountPath": "/tmp",
+                  "name": "temp"
+                }
+              ]
+            }
+          ],
+          "hostIP": "172.18.0.2",
+          "hostIPs": [
+            {
+              "ip": "172.18.0.2"
+            }
+          ],
+          "observedGeneration": 1,
+          "phase": "Running",
+          "podIP": "10.244.0.7",
+          "podIPs": [
+            {
+              "ip": "10.244.0.7"
+            }
+          ],
+          "qosClass": "Burstable",
+          "resources": {
+            "limits": {
+              "cpu": "2",
+              "memory": "1536Mi"
+            },
+            "requests": {
+              "cpu": "975m",
+              "memory": "768Mi"
+            }
+          },
+          "startTime": "2026-11-08T00:01:45Z"
+        }
+      },
+      "samples": [
+        {
+          "elapsed_seconds": 0.34116523599914217,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 1.0223407409994252,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 2.2418775809983345,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 2.8856977629984613,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 3.720438487998763,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 4.286156120999294,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 4.8494372889999795,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 5.433478756998738,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 6.018322192998312,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 6.648904160998427,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 7.273808451998775,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 7.862505307999527,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 8.4232266479994,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 9.00136400899828,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 9.647284040998784,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 10.156339875999038,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 10.707732240998666,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 11.265718929998911,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 11.831225150999671,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 12.380589195998255,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 12.911490474998573,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 13.485927295998408,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 14.002077589999317,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 14.506388859999788,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 14.93977179399917,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 15.408245552998778,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 15.822785039999872,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 16.356585349998568,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 16.84234484999979,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 17.338667885998802,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 17.815353382999092,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 18.28933227199923,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 18.80165414699877,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 19.23650560399983,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 19.65151092999986,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 20.07573635099834,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 20.535190935999708,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 20.947500414999013,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 21.430453583998315,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 21.958482904999983,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 22.475856511999154,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 22.994782383999336,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 23.497287549998873,
+          "phase": "Pending",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 24.068110260999674,
+          "phase": "Running",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 25.14647296199837,
+          "phase": "Running",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 25.535359537998374,
+          "phase": "Running",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 25.948253046999525,
+          "phase": "Running",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 26.35090124599992,
+          "phase": "Running",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 26.774637673999678,
+          "phase": "Running",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 27.282978968998577,
+          "phase": "Running",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 27.654087615999742,
+          "phase": "Running",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 28.023602629999004,
+          "phase": "Running",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 28.390794905999428,
+          "phase": "Running",
+          "ready": true
+        }
+      ],
+      "creation_to_ready_seconds": 28.0,
+      "container_start_to_ready_seconds": 4.0,
+      "measurement_note": "wait_seconds starts at the observer call; use Kubernetes creation/Ready timestamps for cold/warm startup comparison (one-second timestamp precision)."
+    },
+    {
+      "case": "warm-replacement",
+      "wait_seconds": 0.5358784700001706,
+      "pod": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "metadata": {
+          "creationTimestamp": "2026-11-08T00:02:14Z",
+          "generateName": "llm-69974bff47-",
+          "generation": 1,
+          "labels": {
+            "app": "llm",
+            "pod-template-hash": "69974bff47"
+          },
+          "name": "llm-69974bff47-67n6c",
+          "namespace": "phase8-model",
+          "ownerReferences": [
+            {
+              "apiVersion": "apps/v1",
+              "blockOwnerDeletion": true,
+              "controller": true,
+              "kind": "ReplicaSet",
+              "name": "llm-69974bff47",
+              "uid": "acfc0479-65e5-4a62-a572-8d66d5144d09"
+            }
+          ],
+          "resourceVersion": "4643",
+          "uid": "59a2266c-18d7-4944-bc82-c48499c349fa"
+        },
+        "spec": {
+          "automountServiceAccountToken": false,
+          "containers": [
+            {
+              "image": "172.18.254.250:5000/phase8-model@sha256:2c96ff00515985e072954679fbcb715cb1ba853387e136b0a2265a6bfa30e588",
+              "imagePullPolicy": "IfNotPresent",
+              "name": "server",
+              "ports": [
+                {
+                  "containerPort": 8080,
+                  "name": "http",
+                  "protocol": "TCP"
+                }
+              ],
+              "readinessProbe": {
+                "failureThreshold": 3,
+                "httpGet": {
+                  "path": "/health",
+                  "port": "http",
+                  "scheme": "HTTP"
+                },
+                "periodSeconds": 1,
+                "successThreshold": 1,
+                "timeoutSeconds": 1
+              },
+              "resources": {
+                "limits": {
+                  "cpu": "2",
+                  "memory": "1536Mi"
+                },
+                "requests": {
+                  "cpu": "1",
+                  "memory": "768Mi"
+                }
+              },
+              "securityContext": {
+                "allowPrivilegeEscalation": false,
+                "capabilities": {
+                  "drop": [
+                    "ALL"
+                  ]
+                },
+                "readOnlyRootFilesystem": true
+              },
+              "startupProbe": {
+                "failureThreshold": 120,
+                "httpGet": {
+                  "path": "/health",
+                  "port": "http",
+                  "scheme": "HTTP"
+                },
+                "periodSeconds": 1,
+                "successThreshold": 1,
+                "timeoutSeconds": 1
+              },
+              "terminationMessagePath": "/dev/termination-log",
+              "terminationMessagePolicy": "File",
+              "volumeMounts": [
+                {
+                  "mountPath": "/models",
+                  "name": "weights",
+                  "readOnly": true
+                },
+                {
+                  "mountPath": "/verified",
+                  "name": "verified"
+                },
+                {
+                  "mountPath": "/tmp",
+                  "name": "temp"
+                }
+              ]
+            }
+          ],
+          "dnsPolicy": "ClusterFirst",
+          "enableServiceLinks": true,
+          "nodeName": "blueprint-phase8-control-plane",
+          "preemptionPolicy": "PreemptLowerPriority",
+          "priority": 0,
+          "restartPolicy": "Always",
+          "schedulerName": "default-scheduler",
+          "securityContext": {
+            "fsGroup": 1000,
+            "runAsGroup": 1000,
+            "runAsNonRoot": true,
+            "runAsUser": 1000,
+            "seccompProfile": {
+              "type": "RuntimeDefault"
+            }
+          },
+          "serviceAccount": "default",
+          "serviceAccountName": "default",
+          "terminationGracePeriodSeconds": 30,
+          "tolerations": [
+            {
+              "effect": "NoExecute",
+              "key": "node.kubernetes.io/not-ready",
+              "operator": "Exists",
+              "tolerationSeconds": 300
+            },
+            {
+              "effect": "NoExecute",
+              "key": "node.kubernetes.io/unreachable",
+              "operator": "Exists",
+              "tolerationSeconds": 300
+            }
+          ],
+          "volumes": [
+            {
+              "name": "weights",
+              "persistentVolumeClaim": {
+                "claimName": "phase8-weights",
+                "readOnly": true
+              }
+            },
+            {
+              "emptyDir": {
+                "sizeLimit": "1Gi"
+              },
+              "name": "verified"
+            },
+            {
+              "emptyDir": {},
+              "name": "temp"
+            }
+          ]
+        },
+        "status": {
+          "allocatedResources": {
+            "cpu": "1",
+            "memory": "768Mi"
+          },
+          "conditions": [
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T00:02:15Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "PodReadyToStartContainers"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T00:02:14Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "Initialized"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T00:02:18Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "Ready"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T00:02:18Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "ContainersReady"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T00:02:14Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "PodScheduled"
+            }
+          ],
+          "containerStatuses": [
+            {
+              "allocatedResources": {
+                "cpu": "1",
+                "memory": "768Mi"
+              },
+              "containerID": "containerd://f0d3d6592563260c4d266c7d5533e78969310046475aff8d2b59938c982558f0",
+              "image": "sha256:ad5b07a83a25f1af4a9adff615d26ea1103f11b8d8dfa6f7c06f985bdbe2c9b4",
+              "imageID": "172.18.254.250:5000/phase8-model@sha256:2c96ff00515985e072954679fbcb715cb1ba853387e136b0a2265a6bfa30e588",
+              "lastState": {},
+              "name": "server",
+              "ready": true,
+              "resources": {
+                "limits": {
+                  "cpu": "2",
+                  "memory": "1536Mi"
+                },
+                "requests": {
+                  "cpu": "1",
+                  "memory": "768Mi"
+                }
+              },
+              "restartCount": 0,
+              "started": true,
+              "state": {
+                "running": {
+                  "startedAt": "2026-11-08T00:02:15Z"
+                }
+              },
+              "user": {
+                "linux": {
+                  "gid": 1000,
+                  "supplementalGroups": [
+                    4,
+                    20,
+                    24,
+                    25,
+                    27,
+                    29,
+                    30,
+                    44,
+                    46,
+                    1000
+                  ],
+                  "uid": 1000
+                }
+              },
+              "volumeMounts": [
+                {
+                  "mountPath": "/models",
+                  "name": "weights",
+                  "readOnly": true,
+                  "recursiveReadOnly": "Disabled"
+                },
+                {
+                  "mountPath": "/verified",
+                  "name": "verified"
+                },
+                {
+                  "mountPath": "/tmp",
+                  "name": "temp"
+                }
+              ]
+            }
+          ],
+          "hostIP": "172.18.0.2",
+          "hostIPs": [
+            {
+              "ip": "172.18.0.2"
+            }
+          ],
+          "observedGeneration": 1,
+          "phase": "Running",
+          "podIP": "10.244.0.8",
+          "podIPs": [
+            {
+              "ip": "10.244.0.8"
+            }
+          ],
+          "qosClass": "Burstable",
+          "resources": {
+            "limits": {
+              "cpu": "2",
+              "memory": "1536Mi"
+            },
+            "requests": {
+              "cpu": "975m",
+              "memory": "768Mi"
+            }
+          },
+          "startTime": "2026-11-08T00:02:14Z"
+        }
+      },
+      "samples": [
+        {
+          "elapsed_seconds": 0.16816008100067847,
+          "phase": "Running",
+          "ready": false
+        },
+        {
+          "elapsed_seconds": 0.5358746130004874,
+          "phase": "Running",
+          "ready": true
+        }
+      ],
+      "creation_to_ready_seconds": 4.0,
+      "container_start_to_ready_seconds": 3.0,
+      "measurement_note": "wait_seconds starts at the observer call; use Kubernetes creation/Ready timestamps for cold/warm startup comparison (one-second timestamp precision)."
+    },
+    {
+      "case": "entrypoint-override",
+      "exit_code": 1,
+      "stderr": "The pods \"override-probe\" is invalid: : ValidatingAdmissionPolicy 'phase8-model-startup' with binding 'phase8-model-startup' denied request: Use the approved release and its fixed startup verifier; no command/env/mount overrides.\n"
+    },
+    {
+      "case": "environment-override",
+      "exit_code": 1,
+      "stderr": "The pods \"override-probe\" is invalid: : ValidatingAdmissionPolicy 'phase8-model-startup' with binding 'phase8-model-startup' denied request: Use the approved release and its fixed startup verifier; no command/env/mount overrides.\n"
+    },
+    {
+      "case": "old-release-digest",
+      "exit_code": 1,
+      "stderr": "The pods \"override-probe\" is invalid: : ValidatingAdmissionPolicy 'phase8-model-startup' with binding 'phase8-model-startup' denied request: Use the approved release and its fixed startup verifier; no command/env/mount overrides.\n"
+    }
+  ],
+  "logs": "Verified OK\nverified private copy: model, SBOM, provenance and authorised manifest\n0.00.001.504 I srv  llama_server: initializing ...\n0.00.015.761 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)\n0.00.016.254 W srv  server_setup: security: no API key is set and CORS allows all origins (see https://github.com/ggml-org/llama.cpp/pull/25655)\n0.00.019.725 I srv    load_model: loading model '/verified/model.gguf'\n0.00.306.128 W load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden\n0.00.467.684 I cmn          init: llama threadpool init, n_threads = 2\n0.00.568.469 I srv    load_model: initializing, n_slots = 1, n_ctx_slot = 4096, kv_unified = 'false'\n0.00.574.324 I srv  server_run_i: model loaded\n0.00.574.368 I srv  server_on_li: listening on http://0.0.0.0:8080\n"
+}

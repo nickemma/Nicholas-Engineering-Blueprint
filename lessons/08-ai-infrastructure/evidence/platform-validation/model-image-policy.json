@@ -1,0 +1,24 @@
+{
+  "apiVersion": "policy.sigstore.dev/v1beta1",
+  "kind": "ClusterImagePolicy",
+  "metadata": {
+    "name": "phase8-model-release"
+  },
+  "spec": {
+    "authorities": [
+      {
+        "key": {
+          "data": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE3UuWTV4rqxJV9ghY2klSnaucIE76\nnWI6p4uYnjucbX9BSqTUU3YnV/ronvFZ/m1fo1/cobakmeNmKec6XBaCUg==\n-----END PUBLIC KEY-----\n"
+        },
+        "name": "authority-0",
+        "signatureFormat": "legacy"
+      }
+    ],
+    "images": [
+      {
+        "glob": "172.18.254.250:5000/phase8-model**"
+      }
+    ],
+    "mode": "enforce"
+  }
+}

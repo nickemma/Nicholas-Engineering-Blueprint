@@ -1,0 +1,73 @@
+2026-11-07 15:55:58,298	INFO worker.py:1951 -- Started a local Ray instance.
+(RayTrainWorker pid=133569) Setting up process group for: env:// [rank=0, world_size=2]
+(TorchTrainer pid=133501) Started distributed worker processes:
+(TorchTrainer pid=133501) - (node_id=c6ae68f6538c578c133029ccc76c0fec7968a3cfcc003b246a8951d9, ip=172.28.254.207, pid=133569) world_rank=0, local_rank=0, node_rank=0
+(TorchTrainer pid=133501) - (node_id=c6ae68f6538c578c133029ccc76c0fec7968a3cfcc003b246a8951d9, ip=172.28.254.207, pid=133571) world_rank=1, local_rank=1, node_rank=0
+(RayTrainWorker pid=133569) Moving model to device: cpu
+(RayTrainWorker pid=133569) Wrapping provided model in DistributedDataParallel.
+2026-11-07 15:56:09,949	INFO tune.py:1009 -- Wrote the latest version of all result files and experiment state to '/tmp/blueprint-phase8-ray-results/serial-parity' in 0.0039s.
+(ProxyActor pid=133826) INFO 2026-11-07 15:56:12,737 proxy 172.28.254.207 -- Proxy starting on node c6ae68f6538c578c133029ccc76c0fec7968a3cfcc003b246a8951d9 (HTTP port: 18084).
+INFO 2026-11-07 15:56:12,829 serve 132894 -- Started Serve in namespace "serve".
+INFO 2026-11-07 15:56:12,831 serve 132894 -- Connecting to existing Serve app in namespace "serve". New http options will not be applied.
+WARNING 2026-11-07 15:56:12,832 serve 132894 -- The new client HTTP config differs from the existing one in the following fields: ['port', 'location']. The new HTTP config is ignored.
+(ProxyActor pid=133826) INFO 2026-11-07 15:56:12,823 proxy 172.28.254.207 -- Got updated endpoints: {}.
+(ServeController pid=133749) INFO 2026-11-07 15:56:14,296 controller 133749 -- Deploying new version of Deployment(name='Decoder', app='default') (initial target replicas: 1).
+(ProxyActor pid=133826) INFO 2026-11-07 15:56:14,300 proxy 172.28.254.207 -- Got updated endpoints: {Deployment(name='Decoder', app='default'): EndpointInfo(route='/', app_is_cross_language=False)}.
+(ProxyActor pid=133826) INFO 2026-11-07 15:56:14,310 proxy 172.28.254.207 -- Started <ray.serve._private.router.SharedRouterLongPollClient object at 0x71a482a09f40>.
+(ServeController pid=133749) INFO 2026-11-07 15:56:14,401 controller 133749 -- Adding 1 replica to Deployment(name='Decoder', app='default').
+INFO 2026-11-07 15:56:17,311 serve 132894 -- Application 'default' is ready at http://127.0.0.1:18084/.
+(ServeReplica:default:Decoder pid=133887) INFO 2026-11-07 15:56:17,334 default_Decoder jr5v9ofg 004fdb55-bcaf-4793-8f5d-da13ebb703e1 -- GET / 200 2.2ms
+(ServeReplica:default:Decoder pid=133887) INFO 2026-11-07 15:56:17,340 default_Decoder jr5v9ofg b733d7af-421c-4be0-b8b4-554cdcd87043 -- GET / 200 1.6ms
+(ServeReplica:default:Decoder pid=133887) INFO 2026-11-07 15:56:17,347 default_Decoder jr5v9ofg ab07a170-ca90-4591-a994-d5e3f739cf47 -- GET / 200 2.0ms
+(ServeController pid=133749) INFO 2026-11-07 15:56:17,444 controller 133749 -- Removing 1 replica from Deployment(name='Decoder', app='default').
+(ServeReplica:default:Decoder pid=133887) INFO 2026-11-07 15:56:17,357 default_Decoder jr5v9ofg 2953ac59-ec35-46c7-9d3f-600051fde893 -- GET / 200 3.2ms
+(ServeReplica:default:Decoder pid=133887) INFO 2026-11-07 15:56:17,370 default_Decoder jr5v9ofg 7dcaaf1f-f429-4180-951b-99f6390d9368 -- GET / 200 2.3ms
+(ServeController pid=133749) INFO 2026-11-07 15:56:19,520 controller 133749 -- Replica(id='jr5v9ofg', deployment='Decoder', app='default') is stopped.
+(raylet) A worker died or was killed while executing a task by an unexpected system error. To troubleshoot the problem, check the logs for the dead worker. RayTask ID: ca5c8fe438b1ae1b2d177e1907945a6b84acc2a601000000 Worker ID: a92315bc49535cdbd5eec4dbe42a47646aaec7ec07cec5d59cf14891 Node ID: c6ae68f6538c578c133029ccc76c0fec7968a3cfcc003b246a8951d9 Worker IP address: 172.28.254.207 Worker port: 44447 Worker PID: 133149 Worker exit type: SYSTEM_ERROR Worker exit detail: Worker unexpectedly exits with a connection error code 2. End of file. There are some potential root causes. (1) The process is killed by SIGKILL by OOM killer due to high memory usage. (2) ray stop --force is called. (3) The worker is crashed unexpectedly due to SIGSEGV or other unexpected errors.
+
+View detailed results here: /tmp/blueprint-phase8-ray-results/serial-parity
+To visualize your results with TensorBoard, run: `tensorboard --logdir /tmp/ray/session_2026-11-07_15-55-56_788170_132894/artifacts/2026-11-07_15-56-00/serial-parity/driver_artifacts`
+
+Training started with configuration:
+╭──────────────────────────────╮
+│ Training config              │
+├──────────────────────────────┤
+│ train_loop_config/steps    4 │
+╰──────────────────────────────╯
+
+Training finished iteration 1 at 2026-11-07 15:56:08. Total running time: 8s
+╭───────────────────────────────╮
+│ Training result               │
+├───────────────────────────────┤
+│ checkpoint_dir_name           │
+│ time_this_iter_s      5.76922 │
+│ time_total_s          5.76922 │
+│ training_iteration          1 │
+│ loss                  7.02933 │
+│ serial_parity               1 │
+╰───────────────────────────────╯
+
+Training completed after 1 iterations at 2026-11-07 15:56:09. Total running time: 9s
+
+{
+  "actor_loss": {
+    "dead_actor_error": true,
+    "replacement_loses_dedup_history": true,
+    "durable_exactly_once": false
+  },
+  "task_retry_after_worker_exit": true,
+  "train": {
+    "serial_parity": true,
+    "loss": 7.029325008392334
+  },
+  "serve": {
+    "requests": 5,
+    "response": {
+      "ready": true,
+      "parameters": 6305792
+    }
+  },
+  "versions": {
+    "ray": "2.49.2"
+  }
+}

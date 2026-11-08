@@ -1,0 +1,6 @@
+{
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": "not measured: CUDA device unavailable\n",
+  "result": "not measured"
+}

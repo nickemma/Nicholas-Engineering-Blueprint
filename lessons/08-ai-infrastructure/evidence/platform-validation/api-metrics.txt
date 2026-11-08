@@ -1,0 +1,122 @@
+# HELP dispatch_breaker_state The dispatch circuit breaker: 0 closed, 1 open, 2 half-open.
+# TYPE dispatch_breaker_state gauge
+dispatch_breaker_state 0
+# HELP http_request_duration_seconds HTTP request latency by route and method.
+# TYPE http_request_duration_seconds histogram
+http_request_duration_seconds_bucket{method="GET",route="GET /jobs/{id}",le="0.005"} 1
+http_request_duration_seconds_bucket{method="GET",route="GET /jobs/{id}",le="0.01"} 1
+http_request_duration_seconds_bucket{method="GET",route="GET /jobs/{id}",le="0.025"} 1
+http_request_duration_seconds_bucket{method="GET",route="GET /jobs/{id}",le="0.05"} 1
+http_request_duration_seconds_bucket{method="GET",route="GET /jobs/{id}",le="0.1"} 1
+http_request_duration_seconds_bucket{method="GET",route="GET /jobs/{id}",le="0.25"} 1
+http_request_duration_seconds_bucket{method="GET",route="GET /jobs/{id}",le="0.5"} 1
+http_request_duration_seconds_bucket{method="GET",route="GET /jobs/{id}",le="1"} 1
+http_request_duration_seconds_bucket{method="GET",route="GET /jobs/{id}",le="2.5"} 1
+http_request_duration_seconds_bucket{method="GET",route="GET /jobs/{id}",le="5"} 1
+http_request_duration_seconds_bucket{method="GET",route="GET /jobs/{id}",le="+Inf"} 1
+http_request_duration_seconds_sum{method="GET",route="GET /jobs/{id}"} 0.000371196
+http_request_duration_seconds_count{method="GET",route="GET /jobs/{id}"} 1
+http_request_duration_seconds_bucket{method="GET",route="GET /metrics",le="0.005"} 6
+http_request_duration_seconds_bucket{method="GET",route="GET /metrics",le="0.01"} 6
+http_request_duration_seconds_bucket{method="GET",route="GET /metrics",le="0.025"} 6
+http_request_duration_seconds_bucket{method="GET",route="GET /metrics",le="0.05"} 6
+http_request_duration_seconds_bucket{method="GET",route="GET /metrics",le="0.1"} 6
+http_request_duration_seconds_bucket{method="GET",route="GET /metrics",le="0.25"} 6
+http_request_duration_seconds_bucket{method="GET",route="GET /metrics",le="0.5"} 6
+http_request_duration_seconds_bucket{method="GET",route="GET /metrics",le="1"} 6
+http_request_duration_seconds_bucket{method="GET",route="GET /metrics",le="2.5"} 6
+http_request_duration_seconds_bucket{method="GET",route="GET /metrics",le="5"} 6
+http_request_duration_seconds_bucket{method="GET",route="GET /metrics",le="+Inf"} 6
+http_request_duration_seconds_sum{method="GET",route="GET /metrics"} 0.011218282000000001
+http_request_duration_seconds_count{method="GET",route="GET /metrics"} 6
+http_request_duration_seconds_bucket{method="GET",route="GET /ready",le="0.005"} 1
+http_request_duration_seconds_bucket{method="GET",route="GET /ready",le="0.01"} 1
+http_request_duration_seconds_bucket{method="GET",route="GET /ready",le="0.025"} 1
+http_request_duration_seconds_bucket{method="GET",route="GET /ready",le="0.05"} 1
+http_request_duration_seconds_bucket{method="GET",route="GET /ready",le="0.1"} 1
+http_request_duration_seconds_bucket{method="GET",route="GET /ready",le="0.25"} 1
+http_request_duration_seconds_bucket{method="GET",route="GET /ready",le="0.5"} 1
+http_request_duration_seconds_bucket{method="GET",route="GET /ready",le="1"} 1
+http_request_duration_seconds_bucket{method="GET",route="GET /ready",le="2.5"} 1
+http_request_duration_seconds_bucket{method="GET",route="GET /ready",le="5"} 1
+http_request_duration_seconds_bucket{method="GET",route="GET /ready",le="+Inf"} 1
+http_request_duration_seconds_sum{method="GET",route="GET /ready"} 0.000121591
+http_request_duration_seconds_count{method="GET",route="GET /ready"} 1
+http_request_duration_seconds_bucket{method="POST",route="POST /jobs",le="0.005"} 1
+http_request_duration_seconds_bucket{method="POST",route="POST /jobs",le="0.01"} 1
+http_request_duration_seconds_bucket{method="POST",route="POST /jobs",le="0.025"} 1
+http_request_duration_seconds_bucket{method="POST",route="POST /jobs",le="0.05"} 1
+http_request_duration_seconds_bucket{method="POST",route="POST /jobs",le="0.1"} 1
+http_request_duration_seconds_bucket{method="POST",route="POST /jobs",le="0.25"} 1
+http_request_duration_seconds_bucket{method="POST",route="POST /jobs",le="0.5"} 1
+http_request_duration_seconds_bucket{method="POST",route="POST /jobs",le="1"} 1
+http_request_duration_seconds_bucket{method="POST",route="POST /jobs",le="2.5"} 1
+http_request_duration_seconds_bucket{method="POST",route="POST /jobs",le="5"} 1
+http_request_duration_seconds_bucket{method="POST",route="POST /jobs",le="+Inf"} 1
+http_request_duration_seconds_sum{method="POST",route="POST /jobs"} 0.000747933
+http_request_duration_seconds_count{method="POST",route="POST /jobs"} 1
+# HELP http_requests_total HTTP requests by route, method and status code.
+# TYPE http_requests_total counter
+http_requests_total{code="200",method="GET",route="GET /metrics"} 6
+http_requests_total{code="200",method="GET",route="GET /ready"} 1
+http_requests_total{code="201",method="POST",route="POST /jobs"} 1
+http_requests_total{code="404",method="GET",route="GET /jobs/{id}"} 1
+# HELP idempotency_keys Idempotency keys currently remembered.
+# TYPE idempotency_keys gauge
+idempotency_keys 0
+# HELP inference_active Active inference requests.
+# TYPE inference_active gauge
+inference_active 0
+# HELP inference_first_content_seconds First content at the gateway, not transport first byte; missing content excluded.
+# TYPE inference_first_content_seconds histogram
+inference_first_content_seconds_bucket{le="0.05"} 0
+inference_first_content_seconds_bucket{le="0.1"} 0
+inference_first_content_seconds_bucket{le="0.25"} 0
+inference_first_content_seconds_bucket{le="0.5"} 9
+inference_first_content_seconds_bucket{le="1"} 12
+inference_first_content_seconds_bucket{le="2"} 12
+inference_first_content_seconds_bucket{le="5"} 12
+inference_first_content_seconds_bucket{le="10"} 12
+inference_first_content_seconds_bucket{le="30"} 12
+inference_first_content_seconds_bucket{le="+Inf"} 12
+inference_first_content_seconds_sum 5.681137777
+inference_first_content_seconds_count 12
+# HELP inference_good_total Completed requests with first content observed at the gateway within one second.
+# TYPE inference_good_total counter
+inference_good_total 12
+# HELP inference_http_total Generation HTTP responses including authentication and authorization failures.
+# TYPE inference_http_total counter
+inference_http_total{code="200"} 12
+inference_http_total{code="401"} 1
+inference_http_total{code="403"} 1
+# HELP inference_outcomes_total Authenticated generation outcomes, including rejections and incomplete streams.
+# TYPE inference_outcomes_total counter
+inference_outcomes_total{outcome="complete"} 12
+# HELP inference_output_tokens_total Authoritative completed output-token usage, when supplied.
+# TYPE inference_output_tokens_total counter
+inference_output_tokens_total 33
+# HELP inference_queue_seconds Time spent waiting for generation capacity.
+# TYPE inference_queue_seconds histogram
+inference_queue_seconds_bucket{le="0.001"} 12
+inference_queue_seconds_bucket{le="0.01"} 12
+inference_queue_seconds_bucket{le="0.05"} 12
+inference_queue_seconds_bucket{le="0.1"} 12
+inference_queue_seconds_bucket{le="0.25"} 12
+inference_queue_seconds_bucket{le="0.5"} 12
+inference_queue_seconds_bucket{le="1"} 12
+inference_queue_seconds_bucket{le="2"} 12
+inference_queue_seconds_bucket{le="5"} 12
+inference_queue_seconds_bucket{le="10"} 12
+inference_queue_seconds_bucket{le="30"} 12
+inference_queue_seconds_bucket{le="+Inf"} 12
+inference_queue_seconds_sum 9.6283e-05
+inference_queue_seconds_count 12
+# HELP inference_waiting Admitted requests waiting for active capacity.
+# TYPE inference_waiting gauge
+inference_waiting 0
+# HELP jobs_queue_depth Commands waiting for a worker.
+# TYPE jobs_queue_depth gauge
+jobs_queue_depth 0
+# HELP messages_dead_lettered Messages given up on after permanent or repeated failure.
+# TYPE messages_dead_lettered gauge
+messages_dead_lettered 0

@@ -1,0 +1,43 @@
+[
+  {
+    "case": "corrupt-model-startup",
+    "repetition": 1,
+    "refusal": {
+      "exit_code": 1,
+      "ready": false,
+      "logs": "Verified OK\nmodel startup refused: digest mismatch: model.gguf\n"
+    },
+    "rollback_ready": true,
+    "elapsed_seconds": 8.182610808999016
+  },
+  {
+    "case": "corrupt-model-startup",
+    "repetition": 2,
+    "refusal": {
+      "exit_code": 1,
+      "ready": false,
+      "logs": "Verified OK\nmodel startup refused: digest mismatch: model.gguf\n"
+    },
+    "rollback_ready": true,
+    "elapsed_seconds": 8.066607001999728
+  },
+  {
+    "case": "missing-bundle",
+    "refusal": {
+      "exit_code": 1,
+      "ready": false,
+      "logs": "model startup refused: open /models/manifest.sigstore.json: no such file or directory\n"
+    },
+    "rollback_ready": true
+  },
+  {
+    "case": "revoked-key-denied",
+    "exit_code": 1,
+    "stderr": "Error from server (BadRequest): error when creating \"STDIN\": admission webhook \"policy.sigstore.dev\" denied the request: validation failed: failed policy: phase8-model-release: spec.containers[0].image\n172.18.254.250:5000/phase8-model@sha256:2c96ff00515985e072954679fbcb715cb1ba853387e136b0a2265a6bfa30e588 signature key validation failed for authority authority-0 for 172.18.254.250:5000/phase8-model@sha256:2c96ff00515985e072954679fbcb715cb1ba853387e136b0a2265a6bfa30e588: no matching signatures: invalid signature when validating ASN.1 encoded signature\n"
+  },
+  {
+    "case": "webhook-outage-fail-closed",
+    "exit_code": 1,
+    "stderr": "Error from server (InternalError): error when creating \"STDIN\": Internal error occurred: failed calling webhook \"policy.sigstore.dev\": failed to call webhook: Post \"https://webhook.cosign-system.svc:443/mutations?timeout=10s\": dial tcp 10.96.44.34:443: connect: connection refused\n"
+  }
+]

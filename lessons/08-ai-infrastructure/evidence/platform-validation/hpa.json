@@ -1,0 +1,41 @@
+{
+  "apiVersion": "autoscaling/v2",
+  "kind": "HorizontalPodAutoscaler",
+  "metadata": {
+    "name": "llm",
+    "namespace": "phase8-model"
+  },
+  "spec": {
+    "scaleTargetRef": {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "name": "llm"
+    },
+    "minReplicas": 1,
+    "maxReplicas": 2,
+    "behavior": {
+      "scaleDown": {
+        "stabilizationWindowSeconds": 300
+      }
+    },
+    "metrics": [
+      {
+        "type": "Object",
+        "object": {
+          "describedObject": {
+            "apiVersion": "v1",
+            "kind": "Service",
+            "name": "api"
+          },
+          "metric": {
+            "name": "inference_waiting"
+          },
+          "target": {
+            "type": "AverageValue",
+            "averageValue": "2"
+          }
+        }
+      }
+    ]
+  }
+}

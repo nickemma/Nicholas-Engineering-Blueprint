@@ -1,0 +1,6 @@
+{
+  "case": "ephemeral-container bypass",
+  "dry_run": true,
+  "exit_code": 1,
+  "stderr": "The pods \"llm-69974bff47-z8whx\" is invalid: : ValidatingAdmissionPolicy 'phase8-model-startup' with binding 'phase8-model-startup' denied request: Use the approved release and its fixed startup verifier; no command/env/mount overrides.\n"
+}

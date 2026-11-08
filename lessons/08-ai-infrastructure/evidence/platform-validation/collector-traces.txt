@@ -1,0 +1,501 @@
+Selected final collector batches; the complete normalized capture is collector-traces.txt.gz.
+
+2026-11-08T00:18:52.574Z	info	ResourceSpans #0
+Resource SchemaURL: https://opentelemetry.io/schemas/1.43.0
+Resource attributes:
+     -> service.name: Str(api)
+     -> telemetry.sdk.language: Str(go)
+     -> telemetry.sdk.name: Str(opentelemetry)
+     -> telemetry.sdk.version: Str(1.47.0)
+ScopeSpans #0
+ScopeSpans SchemaURL:
+InstrumentationScope go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp 0.72.0
+Span #0
+    Trace ID       : eb5f1bbcdc5987f6936940e4368e2110
+    Parent ID      : c7c34f18e5c154a2
+    ID             : 98f287e0256dc160
+    Name           : HTTP POST
+    Kind           : Client
+    Start time     : 2026-11-08 00:18:47.345555189 +0000 UTC
+    End time       : 2026-11-08 00:18:47.850072898 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Attributes:
+     -> http.request.method: Str(POST)
+     -> url.full: Str(http://172.18.0.2:30080/v1/chat/completions)
+     -> server.address: Str(172.18.0.2)
+     -> server.port: Int(30080)
+     -> network.protocol.version: Str(1.1)
+     -> http.response.status_code: Int(200)
+Span #1
+    Trace ID       : eb5f1bbcdc5987f6936940e4368e2110
+    Parent ID      :
+    ID             : 454395087a87e989
+    Name           : POST /v1/chat/completions
+    Kind           : Server
+    Start time     : 2026-11-08 00:18:47.341668803 +0000 UTC
+    End time       : 2026-11-08 00:18:47.850293658 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Attributes:
+     -> server.address: Str(127.0.0.1)
+     -> http.request.method: Str(POST)
+     -> url.scheme: Str(http)
+     -> server.port: Int(18081)
+     -> network.peer.address: Str(127.0.0.1)
+     -> network.peer.port: Int(59688)
+     -> client.address: Str(127.0.0.1)
+     -> url.path: Str(/v1/chat/completions)
+     -> network.protocol.version: Str(1.1)
+     -> inference.outcome: Str(complete)
+     -> inference.queue_ms: Int(0)
+     -> inference.first_content_ms: Int(418)
+     -> http.request.body.size: Int(195)
+     -> http.response.body.size: Int(1592)
+     -> http.response.status_code: Int(200)
+Span #2
+    Trace ID       : 7e3ec53998d5f521e88bf95e16efced8
+    Parent ID      : 22ddfba26ee2ead7
+    ID             : b5954c6f1f638e8e
+    Name           : HTTP POST
+    Kind           : Client
+    Start time     : 2026-11-08 00:18:47.851224107 +0000 UTC
+    End time       : 2026-11-08 00:18:47.852920666 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Attributes:
+     -> http.request.method: Str(POST)
+     -> url.full: Str(http://172.18.0.2:30080/apply-template)
+     -> server.address: Str(172.18.0.2)
+     -> server.port: Int(30080)
+     -> network.protocol.version: Str(1.1)
+     -> http.response.status_code: Int(200)
+Span #3
+    Trace ID       : 7e3ec53998d5f521e88bf95e16efced8
+    Parent ID      : 22ddfba26ee2ead7
+    ID             : 3dc1f768a4169486
+    Name           : HTTP POST
+    Kind           : Client
+    Start time     : 2026-11-08 00:18:47.853035695 +0000 UTC
+    End time       : 2026-11-08 00:18:47.854321521 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Attributes:
+     -> http.request.method: Str(POST)
+     -> url.full: Str(http://172.18.0.2:30080/tokenize)
+     -> server.address: Str(172.18.0.2)
+     -> server.port: Int(30080)
+     -> network.protocol.version: Str(1.1)
+     -> http.response.status_code: Int(200)
+Span #4
+    Trace ID       : 7e3ec53998d5f521e88bf95e16efced8
+    Parent ID      : bda82da253cf8dba
+    ID             : 1caddc3af77b30d9
+    Name           : HTTP POST
+    Kind           : Client
+    Start time     : 2026-11-08 00:18:47.855387569 +0000 UTC
+    End time       : 2026-11-08 00:18:48.340568399 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Attributes:
+     -> http.request.method: Str(POST)
+     -> url.full: Str(http://172.18.0.2:30080/v1/chat/completions)
+     -> server.address: Str(172.18.0.2)
+     -> server.port: Int(30080)
+     -> network.protocol.version: Str(1.1)
+     -> http.response.status_code: Int(200)
+Span #5
+    Trace ID       : 7e3ec53998d5f521e88bf95e16efced8
+    Parent ID      :
+    ID             : 16fbf1e7dd3d53f7
+    Name           : POST /v1/chat/completions
+    Kind           : Server
+    Start time     : 2026-11-08 00:18:47.850924287 +0000 UTC
+    End time       : 2026-11-08 00:18:48.340713568 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Attributes:
+     -> server.address: Str(127.0.0.1)
+     -> http.request.method: Str(POST)
+     -> url.scheme: Str(http)
+     -> server.port: Int(18081)
+     -> network.peer.address: Str(127.0.0.1)
+     -> network.peer.port: Int(59702)
+     -> client.address: Str(127.0.0.1)
+     -> url.path: Str(/v1/chat/completions)
+     -> network.protocol.version: Str(1.1)
+     -> inference.outcome: Str(complete)
+     -> inference.queue_ms: Int(0)
+     -> inference.first_content_ms: Int(411)
+     -> http.request.body.size: Int(195)
+     -> http.response.body.size: Int(1591)
+     -> http.response.status_code: Int(200)
+Span #6
+    Trace ID       : bb7e8e784c701221ed35782f2e64451a
+    Parent ID      : 14bf2813493f752f
+    ID             : 1d32c886b4abee04
+    Name           : HTTP POST
+    Kind           : Client
+    Start time     : 2026-11-08 00:18:48.341511603 +0000 UTC
+    End time       : 2026-11-08 00:18:48.343227533 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Attributes:
+     -> http.request.method: Str(POST)
+     -> url.full: Str(http://172.18.0.2:30080/apply-template)
+     -> server.address: Str(172.18.0.2)
+     -> server.port: Int(30080)
+     -> network.protocol.version: Str(1.1)
+     -> http.response.status_code: Int(200)
+Span #7
+    Trace ID       : bb7e8e784c701221ed35782f2e64451a
+    Parent ID      : 14bf2813493f752f
+    ID             : 08cb618049ceac1e
+    Name           : HTTP POST
+    Kind           : Client
+    Start time     : 2026-11-08 00:18:48.343371747 +0000 UTC
+    End time       : 2026-11-08 00:18:48.344231067 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Attributes:
+     -> http.request.method: Str(POST)
+     -> url.full: Str(http://172.18.0.2:30080/tokenize)
+     -> server.address: Str(172.18.0.2)
+     -> server.port: Int(30080)
+     -> network.protocol.version: Str(1.1)
+     -> http.response.status_code: Int(200)
+Span #8
+    Trace ID       : bb7e8e784c701221ed35782f2e64451a
+    Parent ID      : 7bd4f54ffb052525
+    ID             : 10e40042b4d3deb4
+    Name           : HTTP POST
+    Kind           : Client
+    Start time     : 2026-11-08 00:18:48.345087021 +0000 UTC
+    End time       : 2026-11-08 00:18:48.873415434 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Attributes:
+     -> http.request.method: Str(POST)
+     -> url.full: Str(http://172.18.0.2:30080/v1/chat/completions)
+     -> server.address: Str(172.18.0.2)
+     -> server.port: Int(30080)
+     -> network.protocol.version: Str(1.1)
+     -> http.response.status_code: Int(200)
+Span #9
+    Trace ID       : bb7e8e784c701221ed35782f2e64451a
+    Parent ID      :
+    ID             : b0914b1d2f6b094b
+    Name           : POST /v1/chat/completions
+    Kind           : Server
+    Start time     : 2026-11-08 00:18:48.341261758 +0000 UTC
+    End time       : 2026-11-08 00:18:48.873598583 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Attributes:
+     -> server.address: Str(127.0.0.1)
+     -> http.request.method: Str(POST)
+     -> url.scheme: Str(http)
+     -> server.port: Int(18081)
+     -> network.peer.address: Str(127.0.0.1)
+     -> network.peer.port: Int(59706)
+     -> client.address: Str(127.0.0.1)
+     -> url.path: Str(/v1/chat/completions)
+     -> network.protocol.version: Str(1.1)
+     -> inference.outcome: Str(complete)
+     -> inference.queue_ms: Int(0)
+     -> inference.first_content_ms: Int(432)
+     -> http.request.body.size: Int(195)
+     -> http.response.body.size: Int(1592)
+     -> http.response.status_code: Int(200)
+Span #10
+    Trace ID       : a3b781c86cb5649514689807bed595a7
+    Parent ID      : 15acd69156728809
+    ID             : cc11c7452f97294b
+    Name           : HTTP POST
+    Kind           : Client
+    Start time     : 2026-11-08 00:18:48.8749986 +0000 UTC
+    End time       : 2026-11-08 00:18:48.877114177 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Attributes:
+     -> http.request.method: Str(POST)
+     -> url.full: Str(http://172.18.0.2:30080/apply-template)
+     -> server.address: Str(172.18.0.2)
+     -> server.port: Int(30080)
+     -> network.protocol.version: Str(1.1)
+     -> http.response.status_code: Int(200)
+Span #11
+    Trace ID       : a3b781c86cb5649514689807bed595a7
+    Parent ID      : 15acd69156728809
+    ID             : dae55a8d2a5440a7
+    Name           : HTTP POST
+    Kind           : Client
+    Start time     : 2026-11-08 00:18:48.877238594 +0000 UTC
+    End time       : 2026-11-08 00:18:48.878269501 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Attributes:
+     -> http.request.method: Str(POST)
+     -> url.full: Str(http://172.18.0.2:30080/tokenize)
+     -> server.address: Str(172.18.0.2)
+     -> server.port: Int(30080)
+     -> network.protocol.version: Str(1.1)
+     -> http.response.status_code: Int(200)
+Span #12
+    Trace ID       : a3b781c86cb5649514689807bed595a7
+    Parent ID      : 4c7e39f56bccc56a
+    ID             : 5706a26d290105ee
+    Name           : HTTP POST
+    Kind           : Client
+    Start time     : 2026-11-08 00:18:48.879179723 +0000 UTC
+    End time       : 2026-11-08 00:18:49.316751122 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Attributes:
+     -> http.request.method: Str(POST)
+     -> url.full: Str(http://172.18.0.2:30080/v1/chat/completions)
+     -> server.address: Str(172.18.0.2)
+     -> server.port: Int(30080)
+     -> network.protocol.version: Str(1.1)
+     -> http.response.status_code: Int(200)
+Span #13
+    Trace ID       : a3b781c86cb5649514689807bed595a7
+    Parent ID      :
+    ID             : 11a6ece323704ef4
+    Name           : POST /v1/chat/completions
+    Kind           : Server
+    Start time     : 2026-11-08 00:18:48.874592247 +0000 UTC
+    End time       : 2026-11-08 00:18:49.316922548 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Attributes:
+     -> server.address: Str(127.0.0.1)
+     -> http.request.method: Str(POST)
+     -> url.scheme: Str(http)
+     -> server.port: Int(18081)
+     -> network.peer.address: Str(127.0.0.1)
+     -> network.peer.port: Int(59722)
+     -> client.address: Str(127.0.0.1)
+     -> url.path: Str(/v1/chat/completions)
+     -> network.protocol.version: Str(1.1)
+     -> inference.outcome: Str(complete)
+     -> inference.queue_ms: Int(0)
+     -> inference.first_content_ms: Int(365)
+     -> http.request.body.size: Int(195)
+     -> http.response.body.size: Int(1592)
+     -> http.response.status_code: Int(200)
+ScopeSpans #1
+ScopeSpans SchemaURL:
+InstrumentationScope runway.inference
+Span #0
+    Trace ID       : eb5f1bbcdc5987f6936940e4368e2110
+    Parent ID      : 454395087a87e989
+    ID             : c7c34f18e5c154a2
+    Name           : inference.backend_stream
+    Kind           : Internal
+    Start time     : 2026-11-08 00:18:47.345536263 +0000 UTC
+    End time       : 2026-11-08 00:18:47.85018472 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Span #1
+    Trace ID       : 7e3ec53998d5f521e88bf95e16efced8
+    Parent ID      : 16fbf1e7dd3d53f7
+    ID             : c919de49f395808f
+    Name           : inference.queue
+    Kind           : Internal
+    Start time     : 2026-11-08 00:18:47.851163171 +0000 UTC
+    End time       : 2026-11-08 00:18:47.851166127 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Span #2
+    Trace ID       : 7e3ec53998d5f521e88bf95e16efced8
+    Parent ID      : 16fbf1e7dd3d53f7
+    ID             : 22ddfba26ee2ead7
+    Name           : inference.tokenize
+    Kind           : Internal
+    Start time     : 2026-11-08 00:18:47.851169133 +0000 UTC
+    End time       : 2026-11-08 00:18:47.854364112 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Span #3
+    Trace ID       : 7e3ec53998d5f521e88bf95e16efced8
+    Parent ID      : 16fbf1e7dd3d53f7
+    ID             : 88d9a9b2f4db6cea
+    Name           : inference.reserve
+    Kind           : Internal
+    Start time     : 2026-11-08 00:18:47.854372067 +0000 UTC
+    End time       : 2026-11-08 00:18:47.855300523 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Span #4
+    Trace ID       : 7e3ec53998d5f521e88bf95e16efced8
+    Parent ID      : 16fbf1e7dd3d53f7
+    ID             : bda82da253cf8dba
+    Name           : inference.backend_stream
+    Kind           : Internal
+    Start time     : 2026-11-08 00:18:47.855362371 +0000 UTC
+    End time       : 2026-11-08 00:18:48.340665517 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Span #5
+    Trace ID       : bb7e8e784c701221ed35782f2e64451a
+    Parent ID      : b0914b1d2f6b094b
+    ID             : 018a797b4d0700dc
+    Name           : inference.queue
+    Kind           : Internal
+    Start time     : 2026-11-08 00:18:48.341469714 +0000 UTC
+    End time       : 2026-11-08 00:18:48.341474152 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Span #6
+    Trace ID       : bb7e8e784c701221ed35782f2e64451a
+    Parent ID      : b0914b1d2f6b094b
+    ID             : 14bf2813493f752f
+    Name           : inference.tokenize
+    Kind           : Internal
+    Start time     : 2026-11-08 00:18:48.341476877 +0000 UTC
+    End time       : 2026-11-08 00:18:48.344324255 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Span #7
+    Trace ID       : bb7e8e784c701221ed35782f2e64451a
+    Parent ID      : b0914b1d2f6b094b
+    ID             : c96c5672a63e9123
+    Name           : inference.reserve
+    Kind           : Internal
+    Start time     : 2026-11-08 00:18:48.344329084 +0000 UTC
+    End time       : 2026-11-08 00:18:48.34501819 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Span #8
+    Trace ID       : bb7e8e784c701221ed35782f2e64451a
+    Parent ID      : b0914b1d2f6b094b
+    ID             : 7bd4f54ffb052525
+    Name           : inference.backend_stream
+    Kind           : Internal
+    Start time     : 2026-11-08 00:18:48.345077192 +0000 UTC
+    End time       : 2026-11-08 00:18:48.873509684 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Span #9
+    Trace ID       : a3b781c86cb5649514689807bed595a7
+    Parent ID      : 11a6ece323704ef4
+    ID             : 03bec5a9d961e2a1
+    Name           : inference.queue
+    Kind           : Internal
+    Start time     : 2026-11-08 00:18:48.874941852 +0000 UTC
+    End time       : 2026-11-08 00:18:48.874944768 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Span #10
+    Trace ID       : a3b781c86cb5649514689807bed595a7
+    Parent ID      : 11a6ece323704ef4
+    ID             : 15acd69156728809
+    Name           : inference.tokenize
+    Kind           : Internal
+    Start time     : 2026-11-08 00:18:48.874950979 +0000 UTC
+    End time       : 2026-11-08 00:18:48.878297363 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Span #11
+    Trace ID       : a3b781c86cb5649514689807bed595a7
+    Parent ID      : 11a6ece323704ef4
+    ID             : cc990fcca54b1513
+    Name           : inference.reserve
+    Kind           : Internal
+    Start time     : 2026-11-08 00:18:48.878303185 +0000 UTC
+    End time       : 2026-11-08 00:18:48.87910969 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+Span #12
+    Trace ID       : a3b781c86cb5649514689807bed595a7
+    Parent ID      : 11a6ece323704ef4
+    ID             : 4c7e39f56bccc56a
+    Name           : inference.backend_stream
+    Kind           : Internal
+    Start time     : 2026-11-08 00:18:48.879160717 +0000 UTC
+    End time       : 2026-11-08 00:18:49.316866171 +0000 UTC
+    Status code    : Unset
+    Status message :
+    DroppedAttributesCount: 0
+    DroppedEventsCount: 0
+    DroppedLinksCount: 0
+	{"resource": {"service.instance.id": "30d9d270-4f18-4f91-9838-4c68637dc3ac", "service.name": "otelcol-contrib", "service.version": "0.162.0"}, "otelcol.component.id": "debug", "otelcol.component.kind": "exporter", "otelcol.signal": "traces"}

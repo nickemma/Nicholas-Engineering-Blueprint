@@ -1,0 +1,47 @@
+{
+  "recorded_utc": "2026-11-08T00:23:25.307593+00:00",
+  "guide_sha256": "d3070c1e8a78020718d13da818eb04d336eb30f68c90298c0e096fc76c973c47",
+  "go": "go version go1.26.6 linux/amd64",
+  "kind": "kind v0.33.0 go1.26.7 linux/amd64",
+  "kubernetes": "v1.37.0",
+  "docker": "29.7.1",
+  "docker_resources": {
+    "cpus": 16,
+    "memory_bytes": 7962791936
+  },
+  "python": {
+    "python": "3.12.3",
+    "torch": "2.15.0+cpu",
+    "ray": "2.49.2",
+    "protobuf": "6.33.5",
+    "cuda_available": false
+  },
+  "images": {
+    "actual_final_api_id": "sha256:72a3a990818553bb201becd6e4496b688245182e927ae5e852230d02c8b74039",
+    "base_llama_id": "sha256:e67d88af487390098c76d7982b1761484339fa147b7e41d3c64ae1318759f78b",
+    "signed_model": "172.18.254.250:5000/phase8-model@sha256:2c96ff00515985e072954679fbcb715cb1ba853387e136b0a2265a6bfa30e588",
+    "policy_controller": "ghcr.io/sigstore/policy-controller/policy-controller@sha256:0bcd60beb93f4427c29cf3a669743caf58490e98ded4380c33c09f092734a6ab",
+    "adapter": "registry.k8s.io/prometheus-adapter/prometheus-adapter:v0.12.0"
+  },
+  "tool_pins": {
+    "cosign": "3.1.4",
+    "syft": "1.57.0",
+    "policy_controller_chart": "0.10.8",
+    "prometheus_adapter_chart": "5.4.0"
+  },
+  "source_sha256": {
+    "internal/inference/observe_test.go": "0e55e9a9ea6f5eaf82e16ec622f23f40510c15abb4254f36e52f5085ac24e07f",
+    "internal/inference/live_test.go": "f4328e1b8421a4a85c04cf78636f87f3eec41a509d176bcbd2ef2af5b66598b8",
+    "internal/inference/tokenizer.go": "a63621699491d885e11a75c0db21035055729c99f63cfda57ef4786e71dc0954",
+    "internal/inference/observe.go": "f0dcddafdd1a9ab49dd5e7c65c608fd7edf2b2cccd1b982f486fd7678a9a48bf",
+    "internal/inference/shared.go": "029093f542bb2efed3fe24f7ee81b6cdda817b20bceb1e75462d0f35658a9d6a",
+    "internal/inference/gateway.go": "8f758697aa407d00b15c3c32dba5bf7fefb7e2b341ecdb04ba695672f3a4d275",
+    "internal/inference/gateway_test.go": "3e0d9112ade84a521dfd42657b674e25838a9231ae37f49818b5402169515003",
+    "internal/inference/reservation_test.go": "b8327c9de2004349914fec9b273a810183141ecf600bdcd0f63c312a3e91ab30",
+    "cmd/api/inference.go": "33453b680d05860a26b3e73f709289056df6e7113736cdbd7517205b701100ea",
+    "cmd/api/main.go": "ba7c988dc5c0eb2453bf6541925bf71a387f200ea308af15655aed044e9dc5be"
+  },
+  "model_launcher_sha256": "6d7c2380cd93646b16f8dd2df8b40c1456e1b6ee6be3abd3bfbf952495875967",
+  "repository_base_commit": "cfd5134fe59f8057036212e73e791c89f5222943",
+  "runway_module_origin": "Existing Phase7 teaching scratch module; current API/gateway integration source hashes recorded; in-memory jobs mode exercised."
+}

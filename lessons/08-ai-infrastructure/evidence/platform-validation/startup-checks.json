@@ -1,0 +1,870 @@
+[
+  {
+    "case": "warm-replacement-through-actual-api",
+    "incident_monotonic": 14426.454910401,
+    "first_completed_after_delete_seconds": 4.64146699199955,
+    "arrivals": [
+      {
+        "ttft": null,
+        "gaps": [],
+        "chunks": 0,
+        "output_tokens": null,
+        "total": 30.00725491400044,
+        "error": "status 502",
+        "started_monotonic": 14426.814760588,
+        "finished_monotonic": 14456.822188622
+      },
+      {
+        "ttft": null,
+        "gaps": [],
+        "chunks": 0,
+        "output_tokens": null,
+        "total": 0.0020303640012571122,
+        "error": "status 502",
+        "started_monotonic": 14427.816104604,
+        "finished_monotonic": 14427.818296596
+      },
+      {
+        "ttft": null,
+        "gaps": [],
+        "chunks": 0,
+        "output_tokens": null,
+        "total": 0.002049329999863403,
+        "error": "status 502",
+        "started_monotonic": 14428.817039782,
+        "finished_monotonic": 14428.819339338
+      },
+      {
+        "ttft": null,
+        "gaps": [],
+        "chunks": 0,
+        "output_tokens": null,
+        "total": 0.001566298000398092,
+        "error": "status 502",
+        "started_monotonic": 14429.817202537,
+        "finished_monotonic": 14429.818846543
+      },
+      {
+        "ttft": 0.24956157199994777,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.27895021099902806,
+        "error": "",
+        "started_monotonic": 14430.817358691,
+        "finished_monotonic": 14431.096377393
+      },
+      {
+        "ttft": 0.26172576300086803,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.2920880239998951,
+        "error": "",
+        "started_monotonic": 14431.817579517,
+        "finished_monotonic": 14432.109744016
+      },
+      {
+        "ttft": 0.3278105820008932,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.3690825240009872,
+        "error": "",
+        "started_monotonic": 14432.817735566,
+        "finished_monotonic": 14433.186891741
+      },
+      {
+        "ttft": 0.30985499099915614,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.34700850099943636,
+        "error": "",
+        "started_monotonic": 14433.817945732,
+        "finished_monotonic": 14434.165075434
+      },
+      {
+        "ttft": 0.2964971540004626,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.3344729439995717,
+        "error": "",
+        "started_monotonic": 14434.818132775,
+        "finished_monotonic": 14435.152684138
+      },
+      {
+        "ttft": 0.2773415339997882,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.3267130999993242,
+        "error": "",
+        "started_monotonic": 14435.818352379,
+        "finished_monotonic": 14436.145204103
+      },
+      {
+        "ttft": 0.2916778409999097,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.3234108969991212,
+        "error": "",
+        "started_monotonic": 14436.818776473,
+        "finished_monotonic": 14437.14232386
+      },
+      {
+        "ttft": 0.27054306599893607,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.3037530789988523,
+        "error": "",
+        "started_monotonic": 14437.818899491,
+        "finished_monotonic": 14438.122743854
+      },
+      {
+        "ttft": 0.277097464999315,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.3091783679992659,
+        "error": "",
+        "started_monotonic": 14438.819063049,
+        "finished_monotonic": 14439.128313695
+      },
+      {
+        "ttft": 0.2740329879998171,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.3124194140000327,
+        "error": "",
+        "started_monotonic": 14439.819229968,
+        "finished_monotonic": 14440.131762908
+      },
+      {
+        "ttft": 0.26167295900086174,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.2949980610010243,
+        "error": "",
+        "started_monotonic": 14440.819416356,
+        "finished_monotonic": 14441.114493618
+      },
+      {
+        "ttft": 0.3206247029993392,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.3534448139998858,
+        "error": "",
+        "started_monotonic": 14441.819700031,
+        "finished_monotonic": 14442.173227233
+      }
+    ],
+    "pods": [
+      {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "metadata": {
+          "creationTimestamp": "2026-11-08T00:17:12Z",
+          "generateName": "llm-69974bff47-",
+          "generation": 1,
+          "labels": {
+            "app": "llm",
+            "pod-template-hash": "69974bff47"
+          },
+          "name": "llm-69974bff47-2rb65",
+          "namespace": "phase8-model",
+          "ownerReferences": [
+            {
+              "apiVersion": "apps/v1",
+              "blockOwnerDeletion": true,
+              "controller": true,
+              "kind": "ReplicaSet",
+              "name": "llm-69974bff47",
+              "uid": "acfc0479-65e5-4a62-a572-8d66d5144d09"
+            }
+          ],
+          "resourceVersion": "7543",
+          "uid": "65d378e2-27a0-4e70-a1b4-0b8266934ea3"
+        },
+        "spec": {
+          "automountServiceAccountToken": false,
+          "containers": [
+            {
+              "image": "172.18.254.250:5000/phase8-model@sha256:2c96ff00515985e072954679fbcb715cb1ba853387e136b0a2265a6bfa30e588",
+              "imagePullPolicy": "IfNotPresent",
+              "name": "server",
+              "ports": [
+                {
+                  "containerPort": 8080,
+                  "name": "http",
+                  "protocol": "TCP"
+                }
+              ],
+              "readinessProbe": {
+                "failureThreshold": 3,
+                "httpGet": {
+                  "path": "/health",
+                  "port": "http",
+                  "scheme": "HTTP"
+                },
+                "periodSeconds": 1,
+                "successThreshold": 1,
+                "timeoutSeconds": 1
+              },
+              "resources": {
+                "limits": {
+                  "cpu": "2",
+                  "memory": "1536Mi"
+                },
+                "requests": {
+                  "cpu": "1",
+                  "memory": "768Mi"
+                }
+              },
+              "securityContext": {
+                "allowPrivilegeEscalation": false,
+                "capabilities": {
+                  "drop": [
+                    "ALL"
+                  ]
+                },
+                "readOnlyRootFilesystem": true
+              },
+              "startupProbe": {
+                "failureThreshold": 120,
+                "httpGet": {
+                  "path": "/health",
+                  "port": "http",
+                  "scheme": "HTTP"
+                },
+                "periodSeconds": 1,
+                "successThreshold": 1,
+                "timeoutSeconds": 1
+              },
+              "terminationMessagePath": "/dev/termination-log",
+              "terminationMessagePolicy": "File",
+              "volumeMounts": [
+                {
+                  "mountPath": "/models",
+                  "name": "weights",
+                  "readOnly": true
+                },
+                {
+                  "mountPath": "/verified",
+                  "name": "verified"
+                },
+                {
+                  "mountPath": "/tmp",
+                  "name": "temp"
+                }
+              ]
+            }
+          ],
+          "dnsPolicy": "ClusterFirst",
+          "enableServiceLinks": true,
+          "nodeName": "blueprint-phase8-control-plane",
+          "preemptionPolicy": "PreemptLowerPriority",
+          "priority": 0,
+          "restartPolicy": "Always",
+          "schedulerName": "default-scheduler",
+          "securityContext": {
+            "fsGroup": 1000,
+            "runAsGroup": 1000,
+            "runAsNonRoot": true,
+            "runAsUser": 1000,
+            "seccompProfile": {
+              "type": "RuntimeDefault"
+            }
+          },
+          "serviceAccount": "default",
+          "serviceAccountName": "default",
+          "terminationGracePeriodSeconds": 30,
+          "tolerations": [
+            {
+              "effect": "NoExecute",
+              "key": "node.kubernetes.io/not-ready",
+              "operator": "Exists",
+              "tolerationSeconds": 300
+            },
+            {
+              "effect": "NoExecute",
+              "key": "node.kubernetes.io/unreachable",
+              "operator": "Exists",
+              "tolerationSeconds": 300
+            }
+          ],
+          "volumes": [
+            {
+              "name": "weights",
+              "persistentVolumeClaim": {
+                "claimName": "phase8-weights",
+                "readOnly": true
+              }
+            },
+            {
+              "emptyDir": {
+                "sizeLimit": "1Gi"
+              },
+              "name": "verified"
+            },
+            {
+              "emptyDir": {},
+              "name": "temp"
+            }
+          ]
+        },
+        "status": {
+          "allocatedResources": {
+            "cpu": "1",
+            "memory": "768Mi"
+          },
+          "conditions": [
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T00:17:12Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "PodReadyToStartContainers"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T00:17:12Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "Initialized"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T00:17:15Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "Ready"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T00:17:15Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "ContainersReady"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T00:17:12Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "PodScheduled"
+            }
+          ],
+          "containerStatuses": [
+            {
+              "allocatedResources": {
+                "cpu": "1",
+                "memory": "768Mi"
+              },
+              "containerID": "containerd://fc35c8db3c2329ad4d928904ac6e1d7e07e1430494f8cf4c63bfaacb0fdcbb25",
+              "image": "sha256:ad5b07a83a25f1af4a9adff615d26ea1103f11b8d8dfa6f7c06f985bdbe2c9b4",
+              "imageID": "172.18.254.250:5000/phase8-model@sha256:2c96ff00515985e072954679fbcb715cb1ba853387e136b0a2265a6bfa30e588",
+              "lastState": {},
+              "name": "server",
+              "ready": true,
+              "resources": {
+                "limits": {
+                  "cpu": "2",
+                  "memory": "1536Mi"
+                },
+                "requests": {
+                  "cpu": "1",
+                  "memory": "768Mi"
+                }
+              },
+              "restartCount": 0,
+              "started": true,
+              "state": {
+                "running": {
+                  "startedAt": "2026-11-08T00:17:12Z"
+                }
+              },
+              "user": {
+                "linux": {
+                  "gid": 1000,
+                  "supplementalGroups": [
+                    4,
+                    20,
+                    24,
+                    25,
+                    27,
+                    29,
+                    30,
+                    44,
+                    46,
+                    1000
+                  ],
+                  "uid": 1000
+                }
+              },
+              "volumeMounts": [
+                {
+                  "mountPath": "/models",
+                  "name": "weights",
+                  "readOnly": true,
+                  "recursiveReadOnly": "Disabled"
+                },
+                {
+                  "mountPath": "/verified",
+                  "name": "verified"
+                },
+                {
+                  "mountPath": "/tmp",
+                  "name": "temp"
+                }
+              ]
+            }
+          ],
+          "hostIP": "172.18.0.2",
+          "hostIPs": [
+            {
+              "ip": "172.18.0.2"
+            }
+          ],
+          "observedGeneration": 1,
+          "phase": "Running",
+          "podIP": "10.244.0.28",
+          "podIPs": [
+            {
+              "ip": "10.244.0.28"
+            }
+          ],
+          "qosClass": "Burstable",
+          "resources": {
+            "limits": {
+              "cpu": "2",
+              "memory": "1536Mi"
+            },
+            "requests": {
+              "cpu": "975m",
+              "memory": "768Mi"
+            }
+          },
+          "startTime": "2026-11-08T00:17:12Z"
+        }
+      }
+    ]
+  },
+  {
+    "case": "startup-budget-too-short",
+    "pods": [
+      {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "metadata": {
+          "creationTimestamp": "2026-11-08T00:17:43Z",
+          "generateName": "llm-7fd9cc959c-",
+          "generation": 1,
+          "labels": {
+            "app": "llm",
+            "pod-template-hash": "7fd9cc959c"
+          },
+          "name": "llm-7fd9cc959c-pmhsr",
+          "namespace": "phase8-model",
+          "ownerReferences": [
+            {
+              "apiVersion": "apps/v1",
+              "blockOwnerDeletion": true,
+              "controller": true,
+              "kind": "ReplicaSet",
+              "name": "llm-7fd9cc959c",
+              "uid": "134067d1-77e4-4e10-964f-f4ee37dc9bfb"
+            }
+          ],
+          "resourceVersion": "7681",
+          "uid": "2261a1f2-57dd-411d-b1bc-f41dfc941f1e"
+        },
+        "spec": {
+          "automountServiceAccountToken": false,
+          "containers": [
+            {
+              "image": "172.18.254.250:5000/phase8-model@sha256:2c96ff00515985e072954679fbcb715cb1ba853387e136b0a2265a6bfa30e588",
+              "imagePullPolicy": "IfNotPresent",
+              "name": "server",
+              "ports": [
+                {
+                  "containerPort": 8080,
+                  "name": "http",
+                  "protocol": "TCP"
+                }
+              ],
+              "readinessProbe": {
+                "failureThreshold": 3,
+                "httpGet": {
+                  "path": "/health",
+                  "port": "http",
+                  "scheme": "HTTP"
+                },
+                "periodSeconds": 1,
+                "successThreshold": 1,
+                "timeoutSeconds": 1
+              },
+              "resources": {
+                "limits": {
+                  "cpu": "2",
+                  "memory": "1536Mi"
+                },
+                "requests": {
+                  "cpu": "1",
+                  "memory": "768Mi"
+                }
+              },
+              "securityContext": {
+                "allowPrivilegeEscalation": false,
+                "capabilities": {
+                  "drop": [
+                    "ALL"
+                  ]
+                },
+                "readOnlyRootFilesystem": true
+              },
+              "startupProbe": {
+                "failureThreshold": 1,
+                "httpGet": {
+                  "path": "/health",
+                  "port": "http",
+                  "scheme": "HTTP"
+                },
+                "periodSeconds": 1,
+                "successThreshold": 1,
+                "timeoutSeconds": 1
+              },
+              "terminationMessagePath": "/dev/termination-log",
+              "terminationMessagePolicy": "File",
+              "volumeMounts": [
+                {
+                  "mountPath": "/models",
+                  "name": "weights",
+                  "readOnly": true
+                },
+                {
+                  "mountPath": "/verified",
+                  "name": "verified"
+                },
+                {
+                  "mountPath": "/tmp",
+                  "name": "temp"
+                }
+              ]
+            }
+          ],
+          "dnsPolicy": "ClusterFirst",
+          "enableServiceLinks": true,
+          "nodeName": "blueprint-phase8-control-plane",
+          "preemptionPolicy": "PreemptLowerPriority",
+          "priority": 0,
+          "restartPolicy": "Always",
+          "schedulerName": "default-scheduler",
+          "securityContext": {
+            "fsGroup": 1000,
+            "runAsGroup": 1000,
+            "runAsNonRoot": true,
+            "runAsUser": 1000,
+            "seccompProfile": {
+              "type": "RuntimeDefault"
+            }
+          },
+          "serviceAccount": "default",
+          "serviceAccountName": "default",
+          "terminationGracePeriodSeconds": 30,
+          "tolerations": [
+            {
+              "effect": "NoExecute",
+              "key": "node.kubernetes.io/not-ready",
+              "operator": "Exists",
+              "tolerationSeconds": 300
+            },
+            {
+              "effect": "NoExecute",
+              "key": "node.kubernetes.io/unreachable",
+              "operator": "Exists",
+              "tolerationSeconds": 300
+            }
+          ],
+          "volumes": [
+            {
+              "name": "weights",
+              "persistentVolumeClaim": {
+                "claimName": "phase8-weights",
+                "readOnly": true
+              }
+            },
+            {
+              "emptyDir": {
+                "sizeLimit": "1Gi"
+              },
+              "name": "verified"
+            },
+            {
+              "emptyDir": {},
+              "name": "temp"
+            }
+          ]
+        },
+        "status": {
+          "allocatedResources": {
+            "cpu": "1",
+            "memory": "768Mi"
+          },
+          "conditions": [
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T00:17:44Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "PodReadyToStartContainers"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T00:17:43Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "Initialized"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T00:17:43Z",
+              "message": "containers with unready status: [server]",
+              "observedGeneration": 1,
+              "reason": "ContainersNotReady",
+              "status": "False",
+              "type": "Ready"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T00:17:43Z",
+              "message": "containers with unready status: [server]",
+              "observedGeneration": 1,
+              "reason": "ContainersNotReady",
+              "status": "False",
+              "type": "ContainersReady"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T00:17:43Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "PodScheduled"
+            }
+          ],
+          "containerStatuses": [
+            {
+              "allocatedResources": {
+                "cpu": "1",
+                "memory": "768Mi"
+              },
+              "containerID": "containerd://b189c632a3e142c320ea2a05a793518347697187ee7cc8d03609a061e59eb1ae",
+              "image": "sha256:ad5b07a83a25f1af4a9adff615d26ea1103f11b8d8dfa6f7c06f985bdbe2c9b4",
+              "imageID": "172.18.254.250:5000/phase8-model@sha256:2c96ff00515985e072954679fbcb715cb1ba853387e136b0a2265a6bfa30e588",
+              "lastState": {
+                "terminated": {
+                  "containerID": "containerd://16e199c2309250b2721c21842d7f9c2b51bf23d4aa5b6b58cbd7ff7c23a1832e",
+                  "exitCode": 2,
+                  "finishedAt": "2026-11-08T00:17:44Z",
+                  "reason": "Error",
+                  "startedAt": "2026-11-08T00:17:44Z"
+                }
+              },
+              "name": "server",
+              "ready": false,
+              "resources": {
+                "limits": {
+                  "cpu": "2",
+                  "memory": "1536Mi"
+                },
+                "requests": {
+                  "cpu": "1",
+                  "memory": "768Mi"
+                }
+              },
+              "restartCount": 1,
+              "started": false,
+              "state": {
+                "running": {
+                  "startedAt": "2026-11-08T00:17:45Z"
+                }
+              },
+              "user": {
+                "linux": {
+                  "gid": 1000,
+                  "supplementalGroups": [
+                    4,
+                    20,
+                    24,
+                    25,
+                    27,
+                    29,
+                    30,
+                    44,
+                    46,
+                    1000
+                  ],
+                  "uid": 1000
+                }
+              },
+              "volumeMounts": [
+                {
+                  "mountPath": "/models",
+                  "name": "weights",
+                  "readOnly": true,
+                  "recursiveReadOnly": "Disabled"
+                },
+                {
+                  "mountPath": "/verified",
+                  "name": "verified"
+                },
+                {
+                  "mountPath": "/tmp",
+                  "name": "temp"
+                }
+              ]
+            }
+          ],
+          "hostIP": "172.18.0.2",
+          "hostIPs": [
+            {
+              "ip": "172.18.0.2"
+            }
+          ],
+          "observedGeneration": 1,
+          "phase": "Running",
+          "podIP": "10.244.0.29",
+          "podIPs": [
+            {
+              "ip": "10.244.0.29"
+            }
+          ],
+          "qosClass": "Burstable",
+          "resources": {
+            "limits": {
+              "cpu": "2",
+              "memory": "1536Mi"
+            },
+            "requests": {
+              "cpu": "975m",
+              "memory": "768Mi"
+            }
+          },
+          "startTime": "2026-11-08T00:17:43Z"
+        }
+      }
+    ],
+    "events": "{\n    \"apiVersion\": \"v1\",\n    \"items\": [\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 1,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:14:29Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-25lr5\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"7110\",\n                \"uid\": \"89fcd4c9-e9ff-4781-9f59-431cb6680ed9\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:14:29Z\",\n            \"message\": \"Startup probe failed: Get \\\"http://10.244.0.27:8080/health\\\": dial tcp 10.244.0.27:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:14:29Z\",\n                \"name\": \"llm-69974bff47-25lr5.18e5e998f7d6246d\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"7134\",\n                \"uid\": \"13fdce85-aab4-471f-b877-468415d3a235\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 1,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:14:30Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-25lr5\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"7110\",\n                \"uid\": \"89fcd4c9-e9ff-4781-9f59-431cb6680ed9\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:14:30Z\",\n            \"message\": \"Startup probe failed: HTTP probe failed with statuscode: 503\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:14:30Z\",\n                \"name\": \"llm-69974bff47-25lr5.18e5e999337ccf8d\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"7138\",\n                \"uid\": \"f373e60f-51a4-448c-b067-a0f03b7b4f8c\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 23,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:17:12Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-25lr5\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"7110\",\n                \"uid\": \"89fcd4c9-e9ff-4781-9f59-431cb6680ed9\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:17:34Z\",\n            \"message\": \"Readiness probe failed: Get \\\"http://10.244.0.27:8080/health\\\": dial tcp 10.244.0.27:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:17:12Z\",\n                \"name\": \"llm-69974bff47-25lr5.18e5e9beeb861821\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"7601\",\n                \"uid\": \"1013f269-2ec7-4c5a-9eec-5559dfeebfe5\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 1,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:17:13Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-2rb65\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"7505\",\n                \"uid\": \"65d378e2-27a0-4e70-a1b4-0b8266934ea3\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:17:13Z\",\n            \"message\": \"Startup probe failed: Get \\\"http://10.244.0.28:8080/health\\\": dial tcp 10.244.0.28:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:17:13Z\",\n                \"name\": \"llm-69974bff47-2rb65.18e5e9bf20da53c3\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"7523\",\n                \"uid\": \"29300f3a-61f1-4c4a-9675-d5765434b0e2\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 1,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:17:14Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-2rb65\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"7505\",\n                \"uid\": \"65d378e2-27a0-4e70-a1b4-0b8266934ea3\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:17:14Z\",\n            \"message\": \"Startup probe failed: HTTP probe failed with statuscode: 503\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:17:14Z\",\n                \"name\": \"llm-69974bff47-2rb65.18e5e9bf5c815385\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"7526\",\n                \"uid\": \"dcfe2890-3277-4b94-82ed-154ee3770831\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 3,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:02:15Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-67n6c\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"4603\",\n                \"uid\": \"59a2266c-18d7-4944-bc82-c48499c349fa\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:02:17Z\",\n            \"message\": \"Startup probe failed: Get \\\"http://10.244.0.8:8080/health\\\": dial tcp 10.244.0.8:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:02:15Z\",\n                \"name\": \"llm-69974bff47-67n6c.18e5e8ee152b8edc\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"4635\",\n                \"uid\": \"c14eab7a-912c-4681-8e11-af47ceae35e7\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 1,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:06:05Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-79djk\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5610\",\n                \"uid\": \"9766cfac-dfbd-4e8e-949a-feed129a56c8\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:06:05Z\",\n            \"message\": \"Startup probe failed: Get \\\"http://10.244.0.19:8080/health\\\": dial tcp 10.244.0.19:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:06:05Z\",\n                \"name\": \"llm-69974bff47-79djk.18e5e923751e5fef\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5633\",\n                \"uid\": \"fb4be358-b517-4b49-9628-b94f7c8b6a01\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 1,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:06:06Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-79djk\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5610\",\n                \"uid\": \"9766cfac-dfbd-4e8e-949a-feed129a56c8\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:06:06Z\",\n            \"message\": \"Startup probe failed: HTTP probe failed with statuscode: 503\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:06:06Z\",\n                \"name\": \"llm-69974bff47-79djk.18e5e923b0c1b365\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5640\",\n                \"uid\": \"ec14234b-74d3-498a-918c-683c8b4ad057\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 2,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:07:20Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-8bm5d\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"6050\",\n                \"uid\": \"9606801e-9e74-4c2f-b2eb-37354df87138\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:07:21Z\",\n            \"message\": \"Startup probe failed: Get \\\"http://10.244.0.25:8080/health\\\": dial tcp 10.244.0.25:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:07:20Z\",\n                \"name\": \"llm-69974bff47-8bm5d.18e5e93514a9662a\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"6068\",\n                \"uid\": \"6d0ab34a-7d9d-4d0b-85ee-5bd3f10455c4\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 2,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:07:22Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-8bm5d\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"6050\",\n                \"uid\": \"9606801e-9e74-4c2f-b2eb-37354df87138\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:07:23Z\",\n            \"message\": \"Startup probe failed: HTTP probe failed with statuscode: 503\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:07:22Z\",\n                \"name\": \"llm-69974bff47-8bm5d.18e5e9358beaf110\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"6072\",\n                \"uid\": \"4ee0fee8-d875-4eb2-a96b-4bcaeeb01a59\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 3,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:02:09Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-bmwn8\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"4502\",\n                \"uid\": \"ef1f5522-5211-48e3-8bde-40588536c899\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:02:11Z\",\n            \"message\": \"Startup probe failed: Get \\\"http://10.244.0.7:8080/health\\\": dial tcp 10.244.0.7:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:02:09Z\",\n                \"name\": \"llm-69974bff47-bmwn8.18e5e8ecb58bc317\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"4585\",\n                \"uid\": \"ae8770f2-89e4-4a14-89c5-72c836458bb3\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 1,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:02:12Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-bmwn8\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"4502\",\n                \"uid\": \"ef1f5522-5211-48e3-8bde-40588536c899\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:02:12Z\",\n            \"message\": \"Startup probe failed: HTTP probe failed with statuscode: 503\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:02:12Z\",\n                \"name\": \"llm-69974bff47-bmwn8.18e5e8ed68621dd6\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"4588\",\n                \"uid\": \"1238b1a9-9055-4f95-8910-36a4e9b7124c\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 2,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:02:15Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-bmwn8\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"4502\",\n                \"uid\": \"ef1f5522-5211-48e3-8bde-40588536c899\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:02:16Z\",\n            \"message\": \"Readiness probe failed: Get \\\"http://10.244.0.7:8080/health\\\": dial tcp 10.244.0.7:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:02:15Z\",\n                \"name\": \"llm-69974bff47-bmwn8.18e5e8ee1b50b37d\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"4628\",\n                \"uid\": \"87513039-7b23-4b9a-8094-12212970c72d\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 1,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:04:22Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-gxn4r\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5007\",\n                \"uid\": \"23b27caf-eae4-4a01-bb68-f543e9acf9fa\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:04:22Z\",\n            \"message\": \"Startup probe failed: Get \\\"http://10.244.0.11:8080/health\\\": dial tcp 10.244.0.11:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:04:22Z\",\n                \"name\": \"llm-69974bff47-gxn4r.18e5e90b900a96d9\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5031\",\n                \"uid\": \"04e16384-ac9a-4383-bef4-193f01dc577a\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 1,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:04:23Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-gxn4r\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5007\",\n                \"uid\": \"23b27caf-eae4-4a01-bb68-f543e9acf9fa\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:04:23Z\",\n            \"message\": \"Startup probe failed: HTTP probe failed with statuscode: 503\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:04:23Z\",\n                \"name\": \"llm-69974bff47-gxn4r.18e5e90bcbb39e04\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5040\",\n                \"uid\": \"89edffef-4aad-49b0-9342-5ff68bbb730e\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 1,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:04:27Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-gxn4r\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5007\",\n                \"uid\": \"23b27caf-eae4-4a01-bb68-f543e9acf9fa\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:04:27Z\",\n            \"message\": \"Readiness probe failed: Get \\\"http://10.244.0.11:8080/health\\\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:04:27Z\",\n                \"name\": \"llm-69974bff47-gxn4r.18e5e90cba3ea977\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5084\",\n                \"uid\": \"84aae5cd-d9c8-4e2d-a5c2-c8d43635690c\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 1,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:06:12Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-gzm5k\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5696\",\n                \"uid\": \"09348e89-7fe4-4ffe-98f1-a4297c7addcb\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:06:12Z\",\n            \"message\": \"Startup probe failed: Get \\\"http://10.244.0.21:8080/health\\\": dial tcp 10.244.0.21:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:06:12Z\",\n                \"name\": \"llm-69974bff47-gzm5k.18e5e925493fe725\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5725\",\n                \"uid\": \"775defa6-8896-496a-91c1-0f296b04e4bf\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 1,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:06:13Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-gzm5k\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5696\",\n                \"uid\": \"09348e89-7fe4-4ffe-98f1-a4297c7addcb\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:06:13Z\",\n            \"message\": \"Startup probe failed: HTTP probe failed with statuscode: 503\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:06:13Z\",\n                \"name\": \"llm-69974bff47-gzm5k.18e5e92584df1761\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5732\",\n                \"uid\": \"9d3c63bf-a7bb-494e-a6ca-25f79fea7cec\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 3,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:10:05Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-h7zfv\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"6477\",\n                \"uid\": \"7594404a-6839-49fe-bcb6-858343663262\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:10:07Z\",\n            \"message\": \"Startup probe failed: Get \\\"http://10.244.0.26:8080/health\\\": dial tcp 10.244.0.26:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:10:05Z\",\n                \"name\": \"llm-69974bff47-h7zfv.18e5e95b859b3aed\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"6500\",\n                \"uid\": \"a37eba5a-2d54-4a6a-af81-9efd9101043a\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 1,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:10:08Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-h7zfv\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"6477\",\n                \"uid\": \"7594404a-6839-49fe-bcb6-858343663262\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:10:08Z\",\n            \"message\": \"Startup probe failed: HTTP probe failed with statuscode: 503\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:10:08Z\",\n                \"name\": \"llm-69974bff47-h7zfv.18e5e95c38839db8\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"6504\",\n                \"uid\": \"1bdea512-9958-4d93-ba9c-aea378a547f3\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 1,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:14:27Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-h7zfv\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"6477\",\n                \"uid\": \"7594404a-6839-49fe-bcb6-858343663262\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:14:27Z\",\n            \"message\": \"Readiness probe failed: Get \\\"http://10.244.0.26:8080/health\\\": dial tcp 10.244.0.26:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:14:27Z\",\n                \"name\": \"llm-69974bff47-h7zfv.18e5e998863c6eff\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"7097\",\n                \"uid\": \"e630755b-87ee-48a0-b1b8-6092ef6f922f\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 2,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:06:17Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-l7vsv\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5748\",\n                \"uid\": \"6d5c5965-25f4-47de-858a-6b2d6e802b9c\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:06:18Z\",\n            \"message\": \"Startup probe failed: Get \\\"http://10.244.0.22:8080/health\\\": dial tcp 10.244.0.22:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:06:17Z\",\n                \"name\": \"llm-69974bff47-l7vsv.18e5e92647d2def1\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5777\",\n                \"uid\": \"b3ee5fd2-559b-4a2f-a366-4cbea4a14fe4\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 4,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:06:01Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-lvbv9\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5556\",\n                \"uid\": \"9b736777-13a5-47d5-a9de-f0c0666a4ade\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:06:04Z\",\n            \"message\": \"Startup probe failed: Get \\\"http://10.244.0.18:8080/health\\\": dial tcp 10.244.0.18:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:06:01Z\",\n                \"name\": \"llm-69974bff47-lvbv9.18e5e92287c2decf\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5619\",\n                \"uid\": \"3a0023d4-6f1e-4b71-8076-e42387511250\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 1,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:04:30Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-m5hd7\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5101\",\n                \"uid\": \"0402f34b-a656-4c8f-91cf-be2009aedc14\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:04:30Z\",\n            \"message\": \"Startup probe failed: Get \\\"http://10.244.0.13:8080/health\\\": dial tcp 10.244.0.13:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:04:30Z\",\n                \"name\": \"llm-69974bff47-m5hd7.18e5e90d7b29ebec\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5122\",\n                \"uid\": \"e7ee92d2-4bd8-418c-8fe9-4af709b66938\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 1,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:04:31Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-m5hd7\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5101\",\n                \"uid\": \"0402f34b-a656-4c8f-91cf-be2009aedc14\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:04:31Z\",\n            \"message\": \"Startup probe failed: HTTP probe failed with statuscode: 503\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:04:31Z\",\n                \"name\": \"llm-69974bff47-m5hd7.18e5e90db6da382d\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5130\",\n                \"uid\": \"ec89f136-f7c8-40f9-811c-9a9c2c4df70a\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 1,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:04:38Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-pxlxv\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5189\",\n                \"uid\": \"65cdadcf-ff3e-4818-8521-69c39a413fc5\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:04:38Z\",\n            \"message\": \"Startup probe failed: Get \\\"http://10.244.0.15:8080/health\\\": dial tcp 10.244.0.15:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:04:38Z\",\n                \"name\": \"llm-69974bff47-pxlxv.18e5e90f346c80ed\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5211\",\n                \"uid\": \"895f49ff-d6c6-485f-8fce-801fa1a64d31\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 1,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:04:39Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-pxlxv\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5189\",\n                \"uid\": \"65cdadcf-ff3e-4818-8521-69c39a413fc5\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:04:39Z\",\n            \"message\": \"Startup probe failed: HTTP probe failed with statuscode: 503\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:04:39Z\",\n                \"name\": \"llm-69974bff47-pxlxv.18e5e90f6fe62c0c\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5219\",\n                \"uid\": \"0a7efa43-c32d-4b29-ac6a-932f120b4289\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 4,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:04:26Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-q9q6d\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5055\",\n                \"uid\": \"263dc87b-58ab-4f26-9685-ba8e3e8c5cbf\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:04:29Z\",\n            \"message\": \"Startup probe failed: Get \\\"http://10.244.0.12:8080/health\\\": dial tcp 10.244.0.12:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:04:26Z\",\n                \"name\": \"llm-69974bff47-q9q6d.18e5e90c80ffb1d7\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5108\",\n                \"uid\": \"9c224442-322e-47b3-abd4-b76b2cb2eb05\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 5,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:03:32Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-rvxsh\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"4813\",\n                \"uid\": \"88bfdf49-f6c0-4d95-930b-f6cff17afb24\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:03:47Z\",\n            \"message\": \"Startup probe failed: Get \\\"http://10.244.0.9:8080/health\\\": dial tcp 10.244.0.9:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:03:32Z\",\n                \"name\": \"llm-69974bff47-rvxsh.18e5e8ffe6cefd4c\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"4887\",\n                \"uid\": \"172a52f7-180f-4cc0-ad40-79765bf3c9b3\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 4,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:04:18Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-wn2v4\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"4967\",\n                \"uid\": \"ef2a44c7-f1b1-44d8-90c9-dc513f6cfb64\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:04:21Z\",\n            \"message\": \"Startup probe failed: Get \\\"http://10.244.0.10:8080/health\\\": dial tcp 10.244.0.10:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:04:18Z\",\n                \"name\": \"llm-69974bff47-wn2v4.18e5e90ab7cf16a7\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5025\",\n                \"uid\": \"cb463177-3c4f-4778-a4b1-f1fbd19ed217\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 4,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:06:09Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-xf2lt\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5654\",\n                \"uid\": \"c8bfba5a-9dce-4b2f-87b7-9b1391ca1eb2\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:06:12Z\",\n            \"message\": \"Startup probe failed: Get \\\"http://10.244.0.20:8080/health\\\": dial tcp 10.244.0.20:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:06:09Z\",\n                \"name\": \"llm-69974bff47-xf2lt.18e5e92469c33517\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5707\",\n                \"uid\": \"e6e2a2b9-8841-4bdf-9bc2-d395f3e48d87\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 1,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:06:20Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-69974bff47-xgt4c\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5788\",\n                \"uid\": \"05fb42d4-ee13-4dda-8a25-fb90a4cca069\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:06:20Z\",\n            \"message\": \"Startup probe failed: Get \\\"http://10.244.0.23:8080/health\\\": dial tcp 10.244.0.23:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:06:20Z\",\n                \"name\": \"llm-69974bff47-xgt4c.18e5e92706da44fa\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"5809\",\n                \"uid\": \"a68b9a55-6de3-4049-9f9d-d9c30e3a1f6d\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        },\n        {\n            \"apiVersion\": \"v1\",\n            \"count\": 1,\n            \"eventTime\": null,\n            \"firstTimestamp\": \"2026-11-08T00:17:44Z\",\n            \"involvedObject\": {\n                \"apiVersion\": \"v1\",\n                \"fieldPath\": \"spec.containers{server}\",\n                \"kind\": \"Pod\",\n                \"name\": \"llm-7fd9cc959c-pmhsr\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"7650\",\n                \"uid\": \"2261a1f2-57dd-411d-b1bc-f41dfc941f1e\"\n            },\n            \"kind\": \"Event\",\n            \"lastTimestamp\": \"2026-11-08T00:17:44Z\",\n            \"message\": \"Startup probe failed: Get \\\"http://10.244.0.29:8080/health\\\": dial tcp 10.244.0.29:8080: connect: connection refused\",\n            \"metadata\": {\n                \"creationTimestamp\": \"2026-11-08T00:17:44Z\",\n                \"name\": \"llm-7fd9cc959c-pmhsr.18e5e9c664fbde20\",\n                \"namespace\": \"phase8-model\",\n                \"resourceVersion\": \"7675\",\n                \"uid\": \"fb69c693-4649-4c90-b198-bad2769ed47b\"\n            },\n            \"reason\": \"Unhealthy\",\n            \"reportingComponent\": \"kubelet\",\n            \"reportingInstance\": \"blueprint-phase8-control-plane\",\n            \"source\": {\n                \"component\": \"kubelet\",\n                \"host\": \"blueprint-phase8-control-plane\"\n            },\n            \"type\": \"Warning\"\n        }\n    ],\n    \"kind\": \"List\",\n    \"metadata\": {\n        \"resourceVersion\": \"\"\n    }\n}\n"
+  },
+  {
+    "case": "restored-startup-budget",
+    "recovery": [
+      {
+        "ttft": 0.25087978299961833,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.27724180899895146,
+        "error": "",
+        "started_monotonic": 14464.966442906,
+        "finished_monotonic": 14465.243748417
+      },
+      {
+        "ttft": 0.2553029159989819,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.281730766999317,
+        "error": "",
+        "started_monotonic": 14465.243751502,
+        "finished_monotonic": 14465.525533527
+      },
+      {
+        "ttft": 0.26164415099992766,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.2881261900001846,
+        "error": "",
+        "started_monotonic": 14465.525535721,
+        "finished_monotonic": 14465.813715242
+      },
+      {
+        "ttft": 0.2600613849990623,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.286867896998956,
+        "error": "",
+        "started_monotonic": 14465.813718077,
+        "finished_monotonic": 14466.100661598
+      },
+      {
+        "ttft": 0.2695862990003661,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.2983616550009174,
+        "error": "",
+        "started_monotonic": 14466.100664544,
+        "finished_monotonic": 14466.39907971
+      },
+      {
+        "ttft": 0.2731657849999465,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.29952370499995595,
+        "error": "",
+        "started_monotonic": 14466.399082736,
+        "finished_monotonic": 14466.698661254
+      },
+      {
+        "ttft": 0.26260424200154375,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.28954295800031105,
+        "error": "",
+        "started_monotonic": 14466.698663909,
+        "finished_monotonic": 14466.988287983
+      },
+      {
+        "ttft": 0.2604929560002347,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.2875539899996511,
+        "error": "",
+        "started_monotonic": 14466.988290728,
+        "finished_monotonic": 14467.275896517
+      },
+      {
+        "ttft": 0.2557903039996745,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.2817837389993656,
+        "error": "",
+        "started_monotonic": 14467.275898842,
+        "finished_monotonic": 14467.557741834
+      },
+      {
+        "ttft": 0.39017793699895265,
+        "gaps": [],
+        "chunks": 1,
+        "output_tokens": 2,
+        "total": 0.48650857299981,
+        "error": "",
+        "started_monotonic": 14467.55774519,
+        "finished_monotonic": 14468.044310521
+      }
+    ]
+  }
+]

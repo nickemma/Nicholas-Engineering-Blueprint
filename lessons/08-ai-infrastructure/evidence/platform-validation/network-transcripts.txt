@@ -1,0 +1,78 @@
+baseline/rank0-initial.log
+{"rank": 0, "mode": "baseline", "resumed": false, "start_step": 0, "end_step": 6, "serial_parity": true, "train_seconds": 0.01519319299950439}
+
+
+baseline/rank1-initial.log
+{"rank": 1, "mode": "baseline", "resumed": false, "start_step": 0, "end_step": 6, "serial_parity": true, "train_seconds": 0.015258383999025682}
+
+
+partition/rank0-initial.log
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/worker.py", line 22, in <module>
+[rank0]:     opt.zero_grad(); loss=(model(x.chunk(2)[rank])-y.chunk(2)[rank]).square().mean();loss.backward();opt.step()
+[rank0]:                                                                                      ^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/deps/torch/_tensor.py", line 623, in backward
+[rank0]:     torch.autograd.backward(
+[rank0]:   File "/opt/deps/torch/autograd/__init__.py", line 395, in backward
+[rank0]:     _engine_run_backward(
+[rank0]:   File "/opt/deps/torch/autograd/graph.py", line 1113, in _engine_run_backward
+[rank0]:     return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]: RuntimeError: [/__w/pytorch/pytorch/third_party/gloo/gloo/transport/tcp/unbound_buffer.cc:78] Timed out waiting 8000ms for recv operation to complete
+
+
+partition/rank0-resumed.log
+{"rank": 0, "mode": "partition", "resumed": true, "start_step": 3, "end_step": 6, "serial_parity": true, "train_seconds": 0.0053232699992804555}
+
+
+partition/rank1-initial.log
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/worker.py", line 22, in <module>
+[rank1]:     opt.zero_grad(); loss=(model(x.chunk(2)[rank])-y.chunk(2)[rank]).square().mean();loss.backward();opt.step()
+[rank1]:                                                                                      ^^^^^^^^^^^^^^^
+[rank1]:   File "/opt/deps/torch/_tensor.py", line 623, in backward
+[rank1]:     torch.autograd.backward(
+[rank1]:   File "/opt/deps/torch/autograd/__init__.py", line 395, in backward
+[rank1]:     _engine_run_backward(
+[rank1]:   File "/opt/deps/torch/autograd/graph.py", line 1113, in _engine_run_backward
+[rank1]:     return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]: RuntimeError: [/__w/pytorch/pytorch/third_party/gloo/gloo/transport/tcp/unbound_buffer.cc:78] Timed out waiting 8000ms for recv operation to complete
+
+
+partition/rank1-resumed.log
+{"rank": 1, "mode": "partition", "resumed": true, "start_step": 3, "end_step": 6, "serial_parity": true, "train_seconds": 0.005299132000800455}
+
+
+shaped/rank0-initial.log
+{"rank": 0, "mode": "shaped", "resumed": false, "start_step": 0, "end_step": 6, "serial_parity": true, "train_seconds": 0.6245148409998365}
+
+
+shaped/rank1-initial.log
+{"rank": 1, "mode": "shaped", "resumed": false, "start_step": 0, "end_step": 6, "serial_parity": true, "train_seconds": 0.6212402669989388}
+
+
+worker-exit/rank0-initial.log
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/worker.py", line 22, in <module>
+[rank0]:     opt.zero_grad(); loss=(model(x.chunk(2)[rank])-y.chunk(2)[rank]).square().mean();loss.backward();opt.step()
+[rank0]:                                                                                      ^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/deps/torch/_tensor.py", line 623, in backward
+[rank0]:     torch.autograd.backward(
+[rank0]:   File "/opt/deps/torch/autograd/__init__.py", line 395, in backward
+[rank0]:     _engine_run_backward(
+[rank0]:   File "/opt/deps/torch/autograd/graph.py", line 1113, in _engine_run_backward
+[rank0]:     return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]: RuntimeError: [/__w/pytorch/pytorch/third_party/gloo/gloo/transport/tcp/pair.cc:545] Read error [172.30.88.11]:29351: Connection reset by peer. This is typically caused by a remote worker hanging or bugs in the application. Check the logs of the remote worker before reporting an error. GLHF! 🏖️
+
+
+worker-exit/rank0-resumed.log
+{"rank": 0, "mode": "worker-exit", "resumed": true, "start_step": 3, "end_step": 6, "serial_parity": true, "train_seconds": 0.005947482999545173}
+
+
+worker-exit/rank1-initial.log
+
+
+worker-exit/rank1-resumed.log
+{"rank": 1, "mode": "worker-exit", "resumed": true, "start_step": 3, "end_step": 6, "serial_parity": true, "train_seconds": 0.005944422000538907}

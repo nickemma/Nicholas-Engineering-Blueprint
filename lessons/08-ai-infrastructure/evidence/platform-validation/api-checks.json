@@ -1,0 +1,31 @@
+[
+  {
+    "case": "none",
+    "status": 401,
+    "expected": 401,
+    "complete": false
+  },
+  {
+    "case": "reader",
+    "status": 403,
+    "expected": 403,
+    "complete": false
+  },
+  {
+    "case": "acme",
+    "status": 200,
+    "expected": 200,
+    "complete": true
+  },
+  {
+    "case": "hooli",
+    "status": 200,
+    "expected": 200,
+    "complete": true
+  },
+  {
+    "case": "existing jobs route and cross-tenant read",
+    "created_status": 201,
+    "other_tenant_status": 404
+  }
+]

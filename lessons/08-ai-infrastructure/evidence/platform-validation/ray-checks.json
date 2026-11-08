@@ -1,0 +1,22 @@
+{
+  "actor_loss": {
+    "dead_actor_error": true,
+    "replacement_loses_dedup_history": true,
+    "durable_exactly_once": false
+  },
+  "task_retry_after_worker_exit": true,
+  "train": {
+    "serial_parity": true,
+    "loss": 7.029325008392334
+  },
+  "serve": {
+    "requests": 5,
+    "response": {
+      "ready": true,
+      "parameters": 6305792
+    }
+  },
+  "versions": {
+    "ray": "2.49.2"
+  }
+}

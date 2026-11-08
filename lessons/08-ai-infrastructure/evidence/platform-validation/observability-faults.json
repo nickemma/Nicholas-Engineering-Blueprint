@@ -1,0 +1,16 @@
+{
+  "first_role_seconds": 0.030659223999464302,
+  "complete_seconds": 2.0307285340004455,
+  "truncated_stream": {
+    "ttft": 2.015005987999757,
+    "gaps": [],
+    "chunks": 1,
+    "output_tokens": null,
+    "total": 2.0153879640001833,
+    "error": "incomplete or empty stream",
+    "text": "river"
+  },
+  "good_total": 0,
+  "complete_count": 1,
+  "incomplete_count": 1
+}

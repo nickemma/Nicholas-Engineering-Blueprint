@@ -12,7 +12,7 @@ This phase asks what it takes to run that infrastructure: serving models reliabl
 
 The same as Phase 7: type everything, file by file, and run the checks at the end of each step. The Python work is in a new project called `serve`, next to `lab`. Your numbers will differ from mine; compare the ratios and the shape.
 
-**Hardware:** steps 1–12 use CPUs; live deployment needs Docker and kind. Step 13 needs an NVIDIA GPU. Historical measurements below came from the earlier scratch experiments; cluster and GPU commands are learner-run procedures, with no invented outputs. The CPU correctness checks replay in CI. Start in a fresh directory for this phase, beside your existing Runway checkout. The gateway package is integrated into Runway in step 4; the Python lab is independent.
+**Hardware:** steps 1–12 use CPUs; live deployment needs Docker and kind. Step 13 needs an NVIDIA GPU. Historical measurements below came from the earlier scratch experiments; the [platform report](evidence/platform-validation/report.md) now retains live CPU API, Kubernetes, image/weight enforcement, game-day, network-recovery and Ray results. GPU commands remain learner-run procedures without measured outputs. The CPU correctness checks replay in CI. Start in a fresh directory for this phase, beside your existing Runway checkout. The gateway package is integrated into Runway in step 4; the Python lab is independent.
 
 | Step | What you add |
 |---|---|
@@ -763,6 +763,7 @@ type Tokenizer func(context.Context, json.RawMessage) (int, error)
 type Reservation func(context.Context, string, int) (bool, error)
 
 type Gateway struct {
+	hooks    Hooks
 	reserve  Reservation
 	identity Identity
 	tokenize Tokenizer
@@ -829,6 +830,18 @@ func (g *Gateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	g.requests.Add(1)
 	start := time.Now()
+	outcome := "invalid"
+	var queued time.Duration
+	state := streamState{tokens: -1}
+	defer func() {
+		if g.hooks.Finish != nil {
+			ttft := time.Duration(-1)
+			if !state.first.IsZero() {
+				ttft = state.first.Sub(start)
+			}
+			g.hooks.Finish(r.Context(), outcome, ttft, queued, state.tokens)
+		}
+	}()
 	// The deadline includes waiting, tokenization and the full streamed answer.
 	ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
 	defer cancel()
@@ -852,29 +865,49 @@ func (g *Gateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case g.admitted <- struct{}{}:
 	default:
 		w.Header().Set("Retry-After", "1")
+		outcome = "overloaded"
 		http.Error(w, "overloaded", 503)
 		return
 	}
 	defer func() { <-g.admitted }()
+	waitStart := time.Now()
+	_, endQueue := g.stage(ctx, "inference.queue")
 	select {
 	case g.active <- struct{}{}:
+		queued = time.Since(waitStart)
+		endQueue()
 	case <-ctx.Done():
+		queued = time.Since(waitStart)
+		endQueue()
+		outcome = "deadline"
 		http.Error(w, "queue deadline", 504)
 		return
 	}
 	defer func() { <-g.active }()
-	n, err := g.tokenize(ctx, input.Messages)
-	if err != nil || n < 1 || n+input.MaxTokens > 4096 {
+	tokenCtx, endToken := g.stage(ctx, "inference.tokenize")
+	n, err := g.tokenize(tokenCtx, input.Messages)
+	endToken()
+	if err != nil {
+		outcome = "backend_error"
+		g.failures.Add(1)
+		http.Error(w, "tokenizer unavailable", 502)
+		return
+	}
+	if n < 1 || n+input.MaxTokens > 4096 {
 		http.Error(w, "invalid context", 400)
 		return
 	}
-	allowed, reserveErr := g.reserve(ctx, tenant, n+input.MaxTokens)
+	reserveCtx, endReserve := g.stage(ctx, "inference.reserve")
+	allowed, reserveErr := g.reserve(reserveCtx, tenant, n+input.MaxTokens)
+	endReserve()
 	if reserveErr != nil {
+		outcome = "budget_unavailable"
 		http.Error(w, "budget unavailable", 503)
 		return
 	}
 	if !allowed {
 		w.Header().Set("Retry-After", "60")
+		outcome = "limited"
 		http.Error(w, "token budget", 429)
 		return
 	}
@@ -882,7 +915,10 @@ func (g *Gateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// tools, backend URLs or a server-side chat template.
 	payload, _ := json.Marshal(map[string]any{"messages": input.Messages,
 		"max_tokens": input.MaxTokens, "stream": true, "temperature": 0, "cache_prompt": false, "stream_options": map[string]bool{"include_usage": true}})
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, g.url+"/v1/chat/completions", bytes.NewReader(payload))
+	backendCtx, endBackend := g.stage(ctx, "inference.backend_stream")
+	defer endBackend()
+	outcome = "backend_error"
+	req, err := http.NewRequestWithContext(backendCtx, http.MethodPost, g.url+"/v1/chat/completions", bytes.NewReader(payload))
 	if err != nil {
 		http.Error(w, "backend configuration", 502)
 		return
@@ -909,14 +945,21 @@ func (g *Gateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	for {
 		n, readErr := res.Body.Read(buf)
 		if n > 0 {
+			if err := state.accept(buf[:n]); err != nil {
+				outcome = "protocol_error"
+				g.failures.Add(1)
+				return
+			}
 			// HTTP streaming requires a write deadline too: an upstream deadline
 			// alone cannot unblock a write to a client that stopped reading.
 			_ = http.NewResponseController(w).SetWriteDeadline(time.Now().Add(5 * time.Second))
 			if _, err := w.Write(buf[:n]); err != nil {
+				outcome = "cancelled"
 				g.failures.Add(1)
 				return
 			}
 			if err := http.NewResponseController(w).Flush(); err != nil {
+				outcome = "cancelled"
 				g.failures.Add(1)
 				return
 			}
@@ -927,9 +970,24 @@ func (g *Gateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					g.fast.Add(1)
 				}
 			}
+			if state.done {
+				if state.first.IsZero() {
+					outcome = "incomplete"
+					g.failures.Add(1)
+				} else {
+					outcome = "complete"
+				}
+				return
+			}
 		}
 		if readErr != nil {
-			if readErr != io.EOF {
+			if readErr == io.EOF && state.done && !state.first.IsZero() {
+				outcome = "complete"
+			} else {
+				outcome = "incomplete"
+				if ctx.Err() != nil {
+					outcome = "cancelled"
+				}
 				g.failures.Add(1)
 			}
 			return
@@ -963,7 +1021,10 @@ import (
 // LlamaTokenizer uses the pinned server's chat template and tokenizer together.
 // Tokenizing raw user text would omit role markers and template overhead.
 func LlamaTokenizer(url string) Tokenizer {
-	client := &http.Client{}
+	return LlamaTokenizerWithClient(url, &http.Client{})
+}
+
+func LlamaTokenizerWithClient(url string, client *http.Client) Tokenizer {
 	return func(ctx context.Context, messages json.RawMessage) (int, error) {
 		post := func(path string, input, output any) error {
 			body, err := json.Marshal(input)
@@ -1031,7 +1092,7 @@ func call(g *Gateway, authorized bool) *httptest.ResponseRecorder {
 }
 func TestAuthAndTokenReservations(t *testing.T) {
 	backend := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("data: [DONE]\n\n"))
+		w.Write([]byte("data: {\"choices\":[{\"delta\":{\"content\":\"river\"}}]}\n\ndata: [DONE]\n\n"))
 	}))
 	defer backend.Close()
 	g := New(backend.URL, identity, tokens, 1, 0, 12)
@@ -1097,7 +1158,9 @@ import (
 )
 
 func TestSharedReservationAcrossGatewaysAndFailClosed(t *testing.T) {
-	backend := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { w.Write([]byte("data: [DONE]\n\n")) }))
+	backend := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("data: {\"choices\":[{\"delta\":{\"content\":\"river\"}}]}\n\ndata: [DONE]\n\n"))
+	}))
 	defer backend.Close()
 	var mu sync.Mutex
 	remaining := 12
@@ -1123,6 +1186,140 @@ func TestSharedReservationAcrossGatewaysAndFailClosed(t *testing.T) {
 	b.UseReservation(func(context.Context, string, int) (bool, error) { return false, errors.New("unavailable") })
 	if got := call(b, true).Code; got != 503 {
 		t.Fatal(got)
+	}
+}
+~~~
+
+The telemetry hooks below are inert until Step 5 configures them. The stream observer keeps transport first byte separate from first nonempty content, requires the terminal event for successful completion, bounds SSE line buffering and uses authoritative usage rather than counting text chunks. A tokenizer transport failure is a backend error, not an invalid prompt.
+
+<!-- file: gateway/internal/inference/observe.go -->
+~~~go
+package inference
+
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"errors"
+	"net/http"
+	"time"
+)
+
+// Hooks are installed before serving. Names/outcomes are fixed strings; never
+// pass prompts, credentials, answers or tenant identifiers to telemetry.
+type Hooks struct {
+	Stage  func(context.Context, string) (context.Context, func())
+	Finish func(context.Context, string, time.Duration, time.Duration, int)
+}
+
+func (g *Gateway) UseHooks(h Hooks)                 { g.hooks = h }
+func (g *Gateway) UseTransport(t http.RoundTripper) { g.client.Transport = t }
+func (g *Gateway) InFlight() (active, admitted int) { return len(g.active), len(g.admitted) }
+func (g *Gateway) stage(ctx context.Context, name string) (context.Context, func()) {
+	if g.hooks.Stage != nil {
+		return g.hooks.Stage(ctx, name)
+	}
+	return ctx, func() {}
+}
+
+type streamState struct {
+	pending []byte
+	first   time.Time
+	done    bool
+	tokens  int
+}
+
+func (s *streamState) accept(chunk []byte) error {
+	s.pending = append(s.pending, chunk...)
+	for {
+		i := bytes.IndexByte(s.pending, '\n')
+		if i < 0 {
+			break
+		}
+		if i > 64<<10 {
+			return errors.New("SSE line exceeds 64 KiB")
+		}
+		line := bytes.TrimSpace(s.pending[:i])
+		s.pending = s.pending[i+1:]
+		if !bytes.HasPrefix(line, []byte("data:")) {
+			continue
+		}
+		data := bytes.TrimSpace(line[5:])
+		if bytes.Equal(data, []byte("[DONE]")) {
+			s.done = true
+			continue
+		}
+		var event struct {
+			Choices []struct {
+				Delta struct {
+					Content string `json:"content"`
+				} `json:"delta"`
+			} `json:"choices"`
+			Usage *struct {
+				Tokens int `json:"completion_tokens"`
+			} `json:"usage"`
+		}
+		if err := json.Unmarshal(data, &event); err != nil {
+			return err
+		}
+		if event.Usage != nil {
+			s.tokens = event.Usage.Tokens
+		}
+		if len(event.Choices) > 0 && event.Choices[0].Delta.Content != "" && s.first.IsZero() {
+			s.first = time.Now()
+		}
+	}
+	if len(s.pending) > 64<<10 {
+		return errors.New("SSE line exceeds 64 KiB")
+	}
+	return nil
+}
+~~~
+
+<!-- file: gateway/internal/inference/observe_test.go -->
+~~~go
+package inference
+
+import (
+	"context"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+	"time"
+)
+
+func TestContentTimingAndIncompleteStreams(t *testing.T) {
+	for _, complete := range []bool{false, true} {
+		t.Run(map[bool]string{false: "truncated", true: "complete"}[complete], func(t *testing.T) {
+			backend := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "text/event-stream")
+				w.Write([]byte("data: {\"choices\":[{\"delta\":{\"role\":\"assistant\"}}]}\n\n"))
+				http.NewResponseController(w).Flush()
+				time.Sleep(80 * time.Millisecond)
+				w.Write([]byte("data: {\"choices\":[{\"delta\":{\"content\":\"river\"}}]}\n\n"))
+				if complete {
+					w.Write([]byte("data: {\"choices\":[],\"usage\":{\"completion_tokens\":1}}\n\ndata: [DONE]\n\n"))
+				}
+			}))
+			defer backend.Close()
+			g := New(backend.URL, identity, tokens, 1, 1, 100)
+			var outcome string
+			var first time.Duration
+			var usage int
+			g.UseHooks(Hooks{Finish: func(_ context.Context, o string, f, q time.Duration, n int) { outcome = o; first = f; usage = n }})
+			if got := call(g, true).Code; got != 200 {
+				t.Fatal(got)
+			}
+			if first < 70*time.Millisecond {
+				t.Fatalf("role event incorrectly counted as first content: %v", first)
+			}
+			if complete && (outcome != "complete" || usage != 1) {
+				t.Fatalf("%s tokens=%d", outcome, usage)
+			}
+			if !complete && outcome != "incomplete" {
+				t.Fatalf("truncated stream counted as %s", outcome)
+			}
+		})
 	}
 }
 ~~~
@@ -1356,13 +1553,177 @@ Write the objective before measuring: for this lab, at least 99% of offered vali
 
 Scrape `/internal/inference/metrics` on the internal listener. Plot admitted minus active as waiting, active versus slots, rejection responses from Runway's existing HTTP metrics, backend token throughput and process RSS. A useful symptom is sustained waiting plus a falling share of good requests. CPU utilisation alone misses a memory-bandwidth-bound decoder.
 
-For traces, keep Phase 6/7's existing instrumentation: start at the authenticated API, add queue wait, template/tokenizer calls and upstream streaming spans; end the stream span only on EOF, cancellation or failure. Propagate the existing trace context via the instrumented HTTP transport. Never record prompts, bearer tokens, model answers or tenant IDs as unbounded metric labels. Compare the client TTFT with queue wait plus backend prefill plus network delay.
+For traces, keep Phase 6/7's existing instrumentation: start at the authenticated API, add queue wait, template/tokenizer calls and upstream streaming spans; end the stream span only on the terminal event, EOF, cancellation or failure. Propagate the existing trace context via the instrumented HTTP transport. Never record prompts, bearer tokens, model answers or tenant IDs as unbounded metric labels. Compare the client TTFT with queue wait plus backend prefill plus network delay.
 
 **Break it:** introduce a 2-second delay before the fake server's first content, while sending its role event immediately. Show that first-byte diagnostics can pass while the TTFT objective fails. Disable buffering at every proxy and verify with a timestamped client; a fast backend behind a buffering proxy still feels slow.
 
+### Mount the real API and record first-content evidence
+
+The earlier route fragment explains the boundary; this adapter connects it to the real Phase 7 `cmd/api` process. Copy the following file to `cmd/api/inference.go` in your Runway checkout, alongside the gateway and shared-reservation files already copied into `internal/inference`. It reuses Runway's JWT middleware, metric registry, trace provider and identity claims. The separate `generator` role (or `admin`) authorises generation; a job reader does not gain inference access merely by having a valid JWT.
+
+The streaming route stays outside the jobs request-deadline middleware. Jobs retain their original write deadline; inference has a thirty-second admission/stream deadline and a per-write slow-consumer deadline. The server's outer write allowance accommodates that contract. Redis reservations fail closed across API instances; the adapter refuses to enable inference with authentication disabled.
+
+<!-- file: runway-integration/api_inference.go -->
+~~~go
+package main
+
+import (
+	"context"
+	"errors"
+	"net/http"
+	"strconv"
+	"time"
+
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/redis/go-redis/v9"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
+	"runway/internal/auth"
+	"runway/internal/authz"
+	"runway/internal/envconfig"
+	"runway/internal/httpapi"
+	"runway/internal/inference"
+)
+
+// mountInference extends the actual API composition root. Jobs retain their
+// middleware/deadline; streaming has its own thirty-second admission deadline.
+func mountInference(getenv envconfig.Getenv, metrics *httpapi.Metrics, authenticate func(http.Handler) http.Handler, jobs http.Handler, jobWriteTimeout time.Duration) (http.Handler, func(), error) {
+	url := getenv("INFERENCE_UPSTREAM")
+	if url == "" {
+		return jobs, func() {}, nil
+	}
+	if getenv("AUTH_MODE") == "off" {
+		return nil, nil, errors.New("inference requires JWT authentication")
+	}
+	addr := getenv("INFERENCE_REDIS_ADDR")
+	if addr == "" {
+		return nil, nil, errors.New("INFERENCE_REDIS_ADDR is required; shared accounting fails closed")
+	}
+	slots, err := envconfig.PositiveInt(getenv, "INFERENCE_SLOTS", 1)
+	if err != nil {
+		return nil, nil, err
+	}
+	queue, err := envconfig.PositiveInt(getenv, "INFERENCE_QUEUE", 8)
+	if err != nil {
+		return nil, nil, err
+	}
+	budget, err := envconfig.PositiveInt(getenv, "INFERENCE_TOKEN_BUDGET", 8192)
+	if err != nil {
+		return nil, nil, err
+	}
+	client := redis.NewClient(&redis.Options{Addr: addr})
+	transport := otelhttp.NewTransport(http.DefaultTransport)
+	g := inference.New(url, func(r *http.Request) (string, bool) { c, ok := auth.FromContext(r.Context()); return c.Tenant, ok }, inference.LlamaTokenizerWithClient(url, &http.Client{Transport: transport}), slots, queue, budget)
+	g.UseReservation(inference.SharedReservation(client, "runway:inference:v1", budget))
+	g.UseTransport(transport)
+	outcomes := prometheus.NewCounterVec(prometheus.CounterOpts{Name: "inference_outcomes_total", Help: "Authenticated generation outcomes, including rejections and incomplete streams."}, []string{"outcome"})
+	good := prometheus.NewCounter(prometheus.CounterOpts{Name: "inference_good_total", Help: "Completed requests with first content observed at the gateway within one second."})
+	ttft := prometheus.NewHistogram(prometheus.HistogramOpts{Name: "inference_first_content_seconds", Help: "First content at the gateway, not transport first byte; missing content excluded.", Buckets: []float64{.05, .1, .25, .5, 1, 2, 5, 10, 30}})
+	waiting := prometheus.NewHistogram(prometheus.HistogramOpts{Name: "inference_queue_seconds", Help: "Time spent waiting for generation capacity.", Buckets: []float64{.001, .01, .05, .1, .25, .5, 1, 2, 5, 10, 30}})
+	tokens := prometheus.NewCounter(prometheus.CounterOpts{Name: "inference_output_tokens_total", Help: "Authoritative completed output-token usage, when supplied."})
+	statuses := prometheus.NewCounterVec(prometheus.CounterOpts{Name: "inference_http_total", Help: "Generation HTTP responses including authentication and authorization failures."}, []string{"code"})
+	metrics.MustRegister(outcomes, good, ttft, waiting, tokens, statuses,
+		prometheus.NewGaugeFunc(prometheus.GaugeOpts{Name: "inference_active", Help: "Active inference requests."}, func() float64 { a, _ := g.InFlight(); return float64(a) }),
+		prometheus.NewGaugeFunc(prometheus.GaugeOpts{Name: "inference_waiting", Help: "Admitted requests waiting for active capacity."}, func() float64 { a, n := g.InFlight(); return float64(max(0, n-a)) }))
+	tracer := otel.Tracer("runway.inference")
+	g.UseHooks(inference.Hooks{
+		Stage: func(ctx context.Context, name string) (context.Context, func()) {
+			ctx, span := tracer.Start(ctx, name)
+			return ctx, func() { span.End() }
+		},
+		Finish: func(ctx context.Context, outcome string, first, queue time.Duration, n int) {
+			outcomes.WithLabelValues(outcome).Inc()
+			waiting.Observe(queue.Seconds())
+			if first >= 0 {
+				ttft.Observe(first.Seconds())
+			}
+			if outcome == "complete" && first >= 0 && first <= time.Second {
+				good.Inc()
+			}
+			if outcome == "complete" && n >= 0 {
+				tokens.Add(float64(n))
+			}
+			span := trace.SpanFromContext(ctx)
+			span.SetAttributes(attribute.String("inference.outcome", outcome), attribute.Int64("inference.queue_ms", queue.Milliseconds()))
+			if first >= 0 {
+				span.SetAttributes(attribute.Int64("inference.first_content_ms", first.Milliseconds()))
+			}
+		},
+	})
+	action := authz.Action("inference.generate")
+	policy := authz.Policy{"generator": {action}, "admin": {action}}
+	allowed := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !policy.Decide(r.Context(), action).Allow {
+			http.Error(w, "permission denied", 403)
+			return
+		}
+		g.ServeHTTP(w, r)
+	})
+	protected := authenticate(allowed)
+	mux := http.NewServeMux()
+	mux.Handle("POST /v1/chat/completions", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		recorder := &inferenceStatus{ResponseWriter: w}
+		protected.ServeHTTP(recorder, r)
+		code := recorder.code
+		if code == 0 {
+			code = 200
+		}
+		statuses.WithLabelValues(strconv.Itoa(code)).Inc()
+	}))
+	mux.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_ = http.NewResponseController(w).SetWriteDeadline(time.Now().Add(jobWriteTimeout))
+		jobs.ServeHTTP(w, r)
+	}))
+	return mux, func() { _ = client.Close() }, nil
+}
+
+type inferenceStatus struct {
+	http.ResponseWriter
+	code int
+}
+
+func (w *inferenceStatus) Unwrap() http.ResponseWriter { return w.ResponseWriter }
+func (w *inferenceStatus) WriteHeader(code int) {
+	if w.code == 0 {
+		w.code = code
+	}
+	w.ResponseWriter.WriteHeader(code)
+}
+func (w *inferenceStatus) Write(b []byte) (int, error) {
+	if w.code == 0 {
+		w.code = 200
+	}
+	return w.ResponseWriter.Write(b)
+}
+~~~
+
+In your existing `cmd/api/main.go`, replace the block beginning at `handler := httpapi.NewHandler(service, options...)` through the following `server := &http.Server{` with:
+
+~~~go
+handler := httpapi.NewHandler(service, options...)
+handler, closeInference, err := mountInference(getenv, metrics, authenticate, handler, cfg.RequestTimeout+5*time.Second)
+if err != nil { return err }
+defer closeInference()
+writeTimeout := cfg.RequestTimeout + 5*time.Second
+if getenv("INFERENCE_UPSTREAM") != "" { writeTimeout = 35*time.Second }
+server := &http.Server{
+~~~
+
+Set that server's existing `WriteTimeout` field to `writeTimeout`. All other startup/shutdown, TLS, workers, persistence and gRPC wiring stays in the existing composition root. This integration source depends on the Phase 7 module; the stdlib-only gateway replay does not pretend to compile the entire API or deploy telemetry.
+
+Configure `INFERENCE_UPSTREAM`, `INFERENCE_REDIS_ADDR`, `INFERENCE_SLOTS`, `INFERENCE_QUEUE` and `INFERENCE_TOKEN_BUDGET` on the API process. Keep the raw model and Redis endpoints private. Register a synthetic issuer client with `generator+submitter+reader`, and another with only `reader` for the denial test. Never put their secrets or bearer tokens in committed commands/evidence.
+
+Scrape Runway's existing `/metrics`: `inference_outcomes_total` retains overload, limited, backend, cancellation and incomplete outcomes; `inference_good_total` counts only completed requests whose first content is observed at the gateway within one second. `inference_first_content_seconds` is a latency diagnostic, not a success-only SLO denominator. `inference_waiting` and `inference_active` expose approximate admission state; waiting is clamped at zero because channel lengths are sampled separately; output tokens come from usage. Use the client measurements for user-visible transport latency.
+
+Send the existing API OTLP exporter to a real collector and inspect `inference.queue`, `inference.tokenize`, `inference.reserve` and `inference.backend_stream` plus the enclosing HTTP span. The instrumented tokenizer/upstream HTTP clients propagate trace context. None of these hooks records prompts, answers, tenant identifiers or credentials as span attributes/metric labels.
+
+The [platform validation report](evidence/platform-validation/report.md) records the running environment, observed outcomes and retained live checks. A local in-memory jobs mode can verify real API startup/routing without asserting that database/broker production operation was revalidated.
+
 ## Step 6: Deploy a slow-starting dependency
 
-Use Phase 5's kind cluster and Phase 6's namespace and network policies. First provision a `phase8-weights` PVC with at least 1 GiB and populate `model.gguf` with the verified file. Storage classes and access modes vary: use a local-path provisioner in kind, and remember that a ReadWriteOnce volume may prevent replicas on different nodes. Weight distribution is part of scaling, not a detail to ignore. This manifest starts at one replica and is a learner-run deployment, not a claim that a cluster was tested here.
+Use Phase 5's kind cluster and Phase 6's namespace and network policies. First provision a `phase8-weights` PVC with at least 1 GiB and populate `model.gguf` with the verified file. Storage classes and access modes vary: use a local-path provisioner in kind, and remember that a ReadWriteOnce volume may prevent replicas on different nodes. Weight distribution is part of scaling, not a detail to ignore. This initial manifest starts at one replica. Step 7 replaces its image with the release-bound verified image; the [platform report](evidence/platform-validation/report.md) retains the exact signed deployment, startup timings, insufficient-startup-budget failure and real-metric HPA run.
 
 
 <!-- file: deploy/inference/llm.yaml -->
@@ -1534,7 +1895,124 @@ kubectl apply -f deploy/inference/image-policy.template.yaml
 
 Admission verifies **images**. The entrypoint verifies **weights**; admission does not inspect arbitrary PVC bytes. Both must pass. Also bind the allowed model manifest digest into the deployment's reviewed release configuration: a valid signature for an older authorised model is otherwise a possible rollback. Archive the release bundle, SBOMs, scan results and manifest digest. Key compromise and revocation need a separate trust-key rotation runbook.
 
-**Break it, with evidence:** deploy an unsigned image (admission must reject); change one byte of `model.gguf` while keeping its bundle (startup must refuse); remove the bundle (startup must refuse); replace the public key with another key (verification must fail); restore the authorised artifact (readiness must return). Capture each command, exit status and event. The [dated CPU evidence](evidence/2026-11-07/report.md) exercises the weight verification/refusal cases and recovery. Unsigned container-image admission and complete deployed enforcement are still **not measured**; do not call the supply-chain exercise complete from the weight checks alone. Never paste the private key into the transcript.
+**Break it, with evidence:** deploy an unsigned image (admission must reject); change one byte of `model.gguf` while keeping its bundle (startup must refuse); remove the bundle (startup must refuse); replace the public key with another key (verification must fail); restore the authorised artifact (readiness must return). Capture each command, exit status and event. The [dated CPU evidence](evidence/2026-11-07/report.md) exercises the weight verification/refusal cases and recovery. The [platform validation report](evidence/platform-validation/report.md) adds live image-admission, startup-verification and rollback evidence; the local signer is still a lab trust authority. Never paste the private key into the transcript.
+
+### Bind the verifier to the reviewed release
+
+The live deployment uses this stricter entrypoint. It copies the input artifacts into a private `emptyDir`, verifies that copy, and opens the fixed server port only after success. The authorised manifest digest is compiled into the launcher; the image contains the public model key and public Sigstore trust root. Pod environment variables and arguments cannot select another key, model or manifest. The running model reads the verified private copy, so a later write to the source PVC does not change the file it opens.
+
+<!-- file: deploy/inference/launcher.go -->
+~~~go
+// A release-bound entrypoint: copy, verify, then start the fixed model server.
+package main
+
+import (
+	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
+	"fmt"
+	"io"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"syscall"
+	"time"
+)
+
+var expectedManifest string // set by the reviewed build, never from Pod env
+func fatal(err error)       { fmt.Fprintln(os.Stderr, "model startup refused:", err); os.Exit(1) }
+func digest(path string) (string, error) {
+	f, e := os.Open(path)
+	if e != nil {
+		return "", e
+	}
+	defer f.Close()
+	h := sha256.New()
+	if _, e = io.Copy(h, f); e != nil {
+		return "", e
+	}
+	return hex.EncodeToString(h.Sum(nil)), nil
+}
+func main() {
+	names := []string{"manifest.json", "manifest.sigstore.json", "model.gguf", "weights.spdx.json", "provenance.json"}
+	for _, name := range names {
+		src, e := os.Open(filepath.Join("/models", name))
+		if e != nil {
+			fatal(e)
+		}
+		dst, e := os.OpenFile(filepath.Join("/verified", name), os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0600)
+		if e != nil {
+			src.Close()
+			fatal(e)
+		}
+		_, e = io.Copy(dst, src)
+		src.Close()
+		closeErr := dst.Close()
+		if e != nil {
+			fatal(e)
+		}
+		if closeErr != nil {
+			fatal(closeErr)
+		}
+	}
+	got, e := digest("/verified/manifest.json")
+	if e != nil {
+		fatal(e)
+	}
+	if len(expectedManifest) != 64 || got != expectedManifest {
+		fatal(fmt.Errorf("unauthorised manifest digest"))
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	cmd := exec.CommandContext(ctx, "/usr/local/bin/cosign", "verify-blob", "--key", "/trust/model.pub", "--trusted-root", "/trust/trusted_root.json", "--bundle", "/verified/manifest.sigstore.json", "/verified/manifest.json")
+	cmd.Env = []string{"PATH=/usr/local/bin:/usr/bin:/bin", "HOME=/tmp"}
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if e = cmd.Run(); e != nil {
+		fatal(e)
+	}
+	var m struct {
+		SHA256 map[string]string `json:"sha256"`
+	}
+	data, e := os.ReadFile("/verified/manifest.json")
+	if e != nil {
+		fatal(e)
+	}
+	if e = json.Unmarshal(data, &m); e != nil {
+		fatal(e)
+	}
+	for _, name := range []string{"model.gguf", "weights.spdx.json", "provenance.json"} {
+		got, e = digest(filepath.Join("/verified", name))
+		if e != nil {
+			fatal(e)
+		}
+		if got != m.SHA256[name] {
+			fatal(fmt.Errorf("digest mismatch: %s", name))
+		}
+	}
+	for _, name := range names {
+		if e = os.Chmod(filepath.Join("/verified", name), 0444); e != nil {
+			fatal(e)
+		}
+	}
+	fmt.Println("verified private copy: model, SBOM, provenance and authorised manifest")
+	args := []string{"/app/llama-server", "-m", "/verified/model.gguf", "--host", "0.0.0.0", "--port", "8080", "-c", "4096", "-t", "2", "--parallel", "1", "--metrics"}
+	if e = syscall.Exec(args[0], args, []string{"PATH=/usr/local/bin:/usr/bin:/bin", "HOME=/tmp", "LD_LIBRARY_PATH=/app"}); e != nil {
+		fatal(e)
+	}
+}
+~~~
+
+<!-- run: CGO_ENABLED=0 go build -o /tmp/phase8-launcher-check deploy/inference/launcher.go -->
+
+For the release build, set `-ldflags "-X main.expectedManifest=$MANIFEST_SHA256"` to the reviewed manifest hash. Copy the compiled launcher and checksum-verified Cosign binary to `/usr/local/bin/`, and the model public key and verified public Sigstore trust root to `/trust/model.pub` and `/trust/trusted_root.json` in your derived server image. Set its entrypoint to the launcher, clear the inherited CMD, and run as UID/GID 1000. Mount only `/models` read-only, a private disk-backed `/verified` emptyDir, and `/tmp`; grant the nonroot user access to its emptyDirs with `fsGroup`. Never put the private signing key into this build context.
+
+Image signatures alone do not prevent a user from replacing the entrypoint. Add a namespace-scoped native `ValidatingAdmissionPolicy` that pins the approved image digest and rejects command, argument, environment, extra container and trust-path mount overrides. Use restricted Pod Security, a read-only root filesystem, no service-account token and deployment RBAC that prevents unreviewed pod exec/volume access. The [retained deployment and policy](evidence/platform-validation/report.md) show the exact tested configuration. Model provenance still has the historical publisher-revision limitation; local signing does not repair it.
+
+The pinned live tool pair was Cosign 3.1.4 with policy-controller 0.13.1 (chart 0.10.8). Its key-based image policy uses the legacy signature format. The isolated local registry test explicitly used `--use-signing-config=false --tlog-upload=false --new-bundle-format=false --registry-referrers-mode=legacy`; it tested the pinned public key, without claiming image transparency-log publication. The model's existing Sigstore bundle was verified separately against the public trust root. Production should adopt a reviewed signing configuration and compatible bundle policy rather than inherit these lab flags.
+
+For a private TLS registry, this chart's `webhook.registryCaBundle` expects `{name: CONFIGMAP, key: ca.crt}`, not a map of PEM filenames. Inspect the rendered mount and test a valid signature as well as rejections: a TLS error that rejects every image does not demonstrate signature enforcement. The live negative cases now cover unsigned/wrong-key images, revoked trust, a fully stopped webhook, corrupted/missing weights, and verifier overrides.
 
 ## Step 8: Benchmark performance, cost and quality together
 
@@ -1982,7 +2460,7 @@ Write the runbook before injecting faults. Define incident start with a monotoni
 
 Runbook order: identify the release digests; stop further rollout; inspect queue, RSS and errors without prompts; shed excess work; restore the last tested **image+model+template** release; verify signatures; wait for readiness; run the synthetic contract; compare the all-arrivals objective; record detection and recovery times. Never automatically retry a partially delivered answer: the user may receive duplicate text. A failed optional prediction in Phase 7 could fall back; a generation endpoint cannot pretend a partial answer is complete.
 
-**Done when:** two repetitions of every fault have transcripts, recovery times and the expected bounded behaviour. This guide supplies the procedure, not fabricated game-day timings. Leave any unrun fault explicitly `not measured` in step 14.
+**Done when:** two repetitions of every fault have transcripts, recovery times and the expected bounded behaviour. The [platform report](evidence/platform-validation/report.md) retains two runs each for model exit, overload, disconnect, scraper loss and OOM, plus additional Redis-outage and Kubernetes corrupt-weight rollback runs. Leave any additional unrun fault explicitly `not measured` in step 14.
 
 ## Step 10: Data parallelism, with a reference you can check
 
@@ -2213,10 +2691,10 @@ Use a separate optional extra so ordinary CI does not start another runtime. Add
 <!-- append: serve/pyproject.toml -->
 ~~~toml
 [project.optional-dependencies]
-ray = ["ray[serve,train]==2.49.2"]
+ray = ["ray[serve,train]==2.49.2", "protobuf==6.33.5"]
 ~~~
 
-This is a pinned teaching version, not a claim that it is the latest release. Read the matching [Ray tasks and actors documentation](https://docs.ray.io/en/latest/ray-core/actors.html) when upgrading.
+This is a pinned teaching version, not a claim that it is the latest release. The Protobuf pin is required: the live Serve run failed with Protobuf 7.36.2 because Ray 2.49.2 still reads `FieldDescriptor.label`, which newer Protobuf releases removed ([migration guide](https://protobuf.dev/support/migration/)). Train and Serve both passed after resolving 6.33.5. Retain the resolved lockfile; a successful import does not establish Serve compatibility. Read the matching [Ray tasks and actors documentation](https://docs.ray.io/en/latest/ray-core/actors.html) when upgrading.
 
 
 <!-- file: serve/src/serve/raylab.py -->
@@ -2368,7 +2846,7 @@ Stop Serve with Ctrl-C after recording the result. Use Serve as an alternative c
 
 Read the [linear-algebra guide](../../math/03-linear-algebra/README.md) first: arithmetic intensity and the roofline explain why prefill, decode and tiny kernels hit different limits. CUDA has a host and device address space; transfer time and launch overhead are work too. Pinned host buffers allow efficient DMA, but pinning costs memory and setup, and `non_blocking=True` alone does not prove overlap. See [NVIDIA's CUDA best practices](https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/).
 
-**Evidence status:** no GPU is available in this checkout. These scripts are provided for the previously agreed rented-GPU run. They have no measured output yet. Rent only for the run, record the rate, and stop/destroy the instance afterwards. First capture `nvidia-smi`, driver/CUDA versions, CPU/RAM, image/environment digest and the model revision. Use a fresh GPU-specific environment rather than the lab's CPU-only PyTorch index.
+**Evidence status:** no GPU is available in this checkout. These scripts are provided for a run on an authorised NVIDIA host. They have no measured output yet. If using a rented host, agree its budget first, record the rate, and stop/destroy the instance afterwards. First capture `nvidia-smi`, driver/CUDA versions, CPU/RAM, image/environment digest and the model revision. Use a fresh GPU-specific environment rather than the lab's CPU-only PyTorch index.
 
 ~~~bash
 uv venv --python 3.12 .gpu-venv
@@ -2528,12 +3006,13 @@ Use this starting evidence ledger:
 |---|---|---|
 | KV caching preserves greedy outputs | Tiny-model parity test; historical timing capture | Random untrained transformer, one CPU |
 | SSE measurement retains usage and detects truncation | Fake-server contract test | Chunk gaps are not guaranteed token gaps |
-| Admission stays bounded; reservations are shared across gateway instances | Go race tests and real JWT/tokenizer/Redis component integration | Full API startup, fairness and actual backend slot release still need deployed checks |
-| DDP updates equal global-batch SGD | Two CPU/Gloo ranks and serial reference | Not a network scaling benchmark |
+| Admission stays bounded; reservations are shared across gateway instances | Go race checks, real JWT API/shared Redis, and actual backend slot release after disconnect | Tenant scheduling fairness and production isolation remain unestablished |
+| DDP updates equal global-batch SGD after failure | CPU/Gloo ranks across shaped container links; killed rank/partition, checkpoint resume and serial reference | One host; not a physical-network, GPU or RDMA scaling benchmark |
 | Tensor/pipeline decompositions preserve gradients | Single-process reference and two-rank send/recv checks | Sequential pipeline; no overlap benchmark |
-| Signed weight manifest accepts/refuses the intended bytes | Six real verification cases in the dated report | Local test signer, not publisher identity; image admission remains unmeasured |
-| Deployment, image admission and failure recovery work live | Procedure supplied | Not measured on this checkout |
-| Ray runtime and GPU/vLLM performance | Runnable/manual procedures supplied | Not measured on this checkout |
+| Signed weights and images accept/refuse the intended release | Signed-image admission, private-copy startup gate, revoked key, webhook outage and corrupt/missing-weight cases | Lab trust authority; publisher revision unknown; no production security clearance |
+| Deployment, queue-based HPA and failure recovery work live | Actual custom metric, 1→2 replicas receiving work, repeated faults and ten-request recovery contract | One-node lab; overload run missed the chosen latency objective |
+| Ray runtime works | Tasks, retries/actor loss, two-worker Train parity and Serve HTTP results | In-memory actor deduplication is not durable exactly-once accounting |
+| GPU/CUDA and vLLM performance | Runnable/manual procedures and local hardware preflight | Not measured; no exposed NVIDIA host |
 | A configuration meets latency, quality and cost targets | Scorer plus 60-run CPU grid and frozen toy quality results | No accepted production configuration established |
 
 Rebuild the CPU evidence from the repository root:

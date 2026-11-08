@@ -1,0 +1,23 @@
+{
+  "image": "172.18.254.250:5000/phase8-api-admission2@sha256:ad06fe5567146ccb630408e856a6ce6c04f38cc17af62173a5ec9ebb8f1a8917",
+  "cases": [
+    {
+      "case": "unsigned",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error from server (BadRequest): error when creating \"STDIN\": admission webhook \"policy.sigstore.dev\" denied the request: validation failed: failed policy: phase8-trusted-release: spec.containers[0].image\n172.18.254.250:5000/phase8-api-admission2@sha256:ad06fe5567146ccb630408e856a6ce6c04f38cc17af62173a5ec9ebb8f1a8917 signature key validation failed for authority authority-0 for 172.18.254.250:5000/phase8-api-admission2@sha256:ad06fe5567146ccb630408e856a6ce6c04f38cc17af62173a5ec9ebb8f1a8917: no signatures found\n"
+    },
+    {
+      "case": "wrong-signature",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error from server (BadRequest): error when creating \"STDIN\": admission webhook \"policy.sigstore.dev\" denied the request: validation failed: failed policy: phase8-trusted-release: spec.containers[0].image\n172.18.254.250:5000/phase8-api-admission2@sha256:ad06fe5567146ccb630408e856a6ce6c04f38cc17af62173a5ec9ebb8f1a8917 signature key validation failed for authority authority-0 for 172.18.254.250:5000/phase8-api-admission2@sha256:ad06fe5567146ccb630408e856a6ce6c04f38cc17af62173a5ec9ebb8f1a8917: no matching signatures: invalid signature when validating ASN.1 encoded signature\n"
+    },
+    {
+      "case": "trusted-signature",
+      "exit_code": 0,
+      "stdout": "pod/admission-probe created (server dry run)\n",
+      "stderr": ""
+    }
+  ]
+}

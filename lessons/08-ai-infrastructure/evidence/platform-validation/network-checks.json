@@ -1,0 +1,154 @@
+[
+  {
+    "case": "baseline",
+    "initial_exit_codes": [
+      0,
+      0
+    ],
+    "elapsed_seconds": 6.480847308999728,
+    "qdisc": [
+      "qdisc noqueue 0: root refcnt 2 \n",
+      "qdisc noqueue 0: root refcnt 2 \n"
+    ],
+    "qdisc_stats": [
+      "qdisc noqueue 0: root refcnt 2 \n Sent 0 bytes 0 pkt (dropped 0, overlimits 0 requeues 0) \n backlog 0b 0p requeues 0\n",
+      "qdisc noqueue 0: root refcnt 2 \n Sent 0 bytes 0 pkt (dropped 0, overlimits 0 requeues 0) \n backlog 0b 0p requeues 0\n"
+    ],
+    "results": [
+      {
+        "rank": 0,
+        "mode": "baseline",
+        "resumed": false,
+        "start_step": 0,
+        "end_step": 6,
+        "serial_parity": true,
+        "train_seconds": 0.01519319299950439
+      },
+      {
+        "rank": 1,
+        "mode": "baseline",
+        "resumed": false,
+        "start_step": 0,
+        "end_step": 6,
+        "serial_parity": true,
+        "train_seconds": 0.015258383999025682
+      }
+    ]
+  },
+  {
+    "case": "shaped",
+    "initial_exit_codes": [
+      0,
+      0
+    ],
+    "elapsed_seconds": 8.345588078000219,
+    "qdisc": [
+      "qdisc netem 8001: root refcnt 17 limit 1000 delay 20ms rate 100Mbit\n",
+      "qdisc netem 8002: root refcnt 17 limit 1000 delay 20ms rate 100Mbit\n"
+    ],
+    "qdisc_stats": [
+      "qdisc netem 8001: root refcnt 17 limit 1000 delay 20ms rate 100Mbit\n Sent 73434 bytes 165 pkt (dropped 0, overlimits 0 requeues 0) \n backlog 0b 0p requeues 0\n",
+      "qdisc netem 8002: root refcnt 17 limit 1000 delay 20ms rate 100Mbit\n Sent 65146 bytes 167 pkt (dropped 0, overlimits 0 requeues 0) \n backlog 0b 0p requeues 0\n"
+    ],
+    "results": [
+      {
+        "rank": 0,
+        "mode": "shaped",
+        "resumed": false,
+        "start_step": 0,
+        "end_step": 6,
+        "serial_parity": true,
+        "train_seconds": 0.6245148409998365
+      },
+      {
+        "rank": 1,
+        "mode": "shaped",
+        "resumed": false,
+        "start_step": 0,
+        "end_step": 6,
+        "serial_parity": true,
+        "train_seconds": 0.6212402669989388
+      }
+    ]
+  },
+  {
+    "case": "worker-exit",
+    "initial_exit_codes": [
+      1,
+      17
+    ],
+    "elapsed_seconds": 6.579637889000878,
+    "qdisc": [
+      "qdisc noqueue 0: root refcnt 2 \n",
+      "qdisc noqueue 0: root refcnt 2 \n"
+    ],
+    "qdisc_stats": [
+      "qdisc noqueue 0: root refcnt 2 \n Sent 0 bytes 0 pkt (dropped 0, overlimits 0 requeues 0) \n backlog 0b 0p requeues 0\n",
+      "qdisc noqueue 0: root refcnt 2 \n Sent 0 bytes 0 pkt (dropped 0, overlimits 0 requeues 0) \n backlog 0b 0p requeues 0\n"
+    ],
+    "resumed_exit_codes": [
+      0,
+      0
+    ],
+    "results": [
+      {
+        "rank": 1,
+        "mode": "worker-exit",
+        "resumed": true,
+        "start_step": 3,
+        "end_step": 6,
+        "serial_parity": true,
+        "train_seconds": 0.005944422000538907
+      },
+      {
+        "rank": 0,
+        "mode": "worker-exit",
+        "resumed": true,
+        "start_step": 3,
+        "end_step": 6,
+        "serial_parity": true,
+        "train_seconds": 0.005947482999545173
+      }
+    ]
+  },
+  {
+    "case": "partition",
+    "initial_exit_codes": [
+      1,
+      1
+    ],
+    "elapsed_seconds": 15.539403721000781,
+    "qdisc": [
+      "qdisc netem 8003: root refcnt 17 limit 1000 loss 100%\n",
+      "qdisc netem 8004: root refcnt 17 limit 1000 loss 100%\n"
+    ],
+    "qdisc_stats": [
+      "qdisc netem 8003: root refcnt 17 limit 1000 loss 100%\n Sent 0 bytes 0 pkt (dropped 14, overlimits 0 requeues 0) \n backlog 0b 0p requeues 0\n",
+      "qdisc netem 8004: root refcnt 17 limit 1000 loss 100%\n Sent 0 bytes 0 pkt (dropped 15, overlimits 0 requeues 0) \n backlog 0b 0p requeues 0\n"
+    ],
+    "resumed_exit_codes": [
+      0,
+      0
+    ],
+    "results": [
+      {
+        "rank": 1,
+        "mode": "partition",
+        "resumed": true,
+        "start_step": 3,
+        "end_step": 6,
+        "serial_parity": true,
+        "train_seconds": 0.005299132000800455
+      },
+      {
+        "rank": 0,
+        "mode": "partition",
+        "resumed": true,
+        "start_step": 3,
+        "end_step": 6,
+        "serial_parity": true,
+        "train_seconds": 0.0053232699992804555
+      }
+    ]
+  }
+]

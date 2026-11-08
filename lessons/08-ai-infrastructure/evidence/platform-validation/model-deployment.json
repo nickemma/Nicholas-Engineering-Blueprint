@@ -1,0 +1,119 @@
+{
+  "apiVersion": "apps/v1",
+  "kind": "Deployment",
+  "metadata": {
+    "name": "llm",
+    "namespace": "phase8-model"
+  },
+  "spec": {
+    "replicas": 1,
+    "strategy": {
+      "type": "Recreate"
+    },
+    "selector": {
+      "matchLabels": {
+        "app": "llm"
+      }
+    },
+    "template": {
+      "metadata": {
+        "labels": {
+          "app": "llm"
+        }
+      },
+      "spec": {
+        "automountServiceAccountToken": false,
+        "securityContext": {
+          "runAsNonRoot": true,
+          "runAsUser": 1000,
+          "runAsGroup": 1000,
+          "fsGroup": 1000,
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          }
+        },
+        "containers": [
+          {
+            "name": "server",
+            "image": "172.18.254.250:5000/phase8-model@sha256:2c96ff00515985e072954679fbcb715cb1ba853387e136b0a2265a6bfa30e588",
+            "imagePullPolicy": "IfNotPresent",
+            "securityContext": {
+              "allowPrivilegeEscalation": false,
+              "readOnlyRootFilesystem": true,
+              "capabilities": {
+                "drop": [
+                  "ALL"
+                ]
+              }
+            },
+            "ports": [
+              {
+                "name": "http",
+                "containerPort": 8080
+              }
+            ],
+            "resources": {
+              "requests": {
+                "cpu": "1",
+                "memory": "768Mi"
+              },
+              "limits": {
+                "cpu": "2",
+                "memory": "1536Mi"
+              }
+            },
+            "startupProbe": {
+              "httpGet": {
+                "path": "/health",
+                "port": "http"
+              },
+              "periodSeconds": 1,
+              "failureThreshold": 120
+            },
+            "readinessProbe": {
+              "httpGet": {
+                "path": "/health",
+                "port": "http"
+              },
+              "periodSeconds": 1
+            },
+            "volumeMounts": [
+              {
+                "name": "weights",
+                "mountPath": "/models",
+                "readOnly": true
+              },
+              {
+                "name": "verified",
+                "mountPath": "/verified"
+              },
+              {
+                "name": "temp",
+                "mountPath": "/tmp"
+              }
+            ]
+          }
+        ],
+        "volumes": [
+          {
+            "name": "weights",
+            "persistentVolumeClaim": {
+              "claimName": "phase8-weights",
+              "readOnly": true
+            }
+          },
+          {
+            "name": "verified",
+            "emptyDir": {
+              "sizeLimit": "1Gi"
+            }
+          },
+          {
+            "name": "temp",
+            "emptyDir": {}
+          }
+        ]
+      }
+    }
+  }
+}

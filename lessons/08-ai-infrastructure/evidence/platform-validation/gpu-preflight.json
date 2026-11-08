@@ -1,0 +1,19 @@
+{
+  "status": "not measured",
+  "reason": "No NVIDIA device or driver interface exposed in this environment",
+  "device_paths": {
+    "/dev/nvidia0": false,
+    "/dev/dxg": false,
+    "/usr/lib/wsl/lib/nvidia-smi": false
+  },
+  "tools": {
+    "nvidia-smi": null,
+    "nvcc": null,
+    "compute-sanitizer": null
+  },
+  "torch": {
+    "torch": "2.15.0+cpu",
+    "cuda_build": null,
+    "cuda_available": false
+  }
+}

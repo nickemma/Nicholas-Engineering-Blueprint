@@ -1,0 +1,25 @@
+begin model-exit 1
+passed model-exit 1 6.384757062000062
+begin redis-unavailable 1
+passed redis-unavailable 1 4.1267131959994
+begin overload 1
+passed overload 1 32.73440427099922
+begin client-disconnect 1
+passed client-disconnect 1 3.048047285999928
+begin scraper-loss 1
+passed scraper-loss 1 3.8029564660009783
+begin model-oom 1
+passed model-oom 1 4.5773577359996125
+begin model-exit 2
+passed model-exit 2 4.126864919000582
+begin redis-unavailable 2
+passed redis-unavailable 2 3.652306027999657
+begin overload 2
+passed overload 2 34.25907021900093
+begin client-disconnect 2
+passed client-disconnect 2 4.245397361999494
+begin scraper-loss 2
+passed scraper-loss 2 4.319537388999379
+begin model-oom 2
+passed model-oom 2 5.690791381999588
+All game-day cases passed twice

@@ -1,0 +1,9 @@
+{
+  "verified_with_public_key": "image-signing-test.pub",
+  "image_sha256": "2c96ff00515985e072954679fbcb715cb1ba853387e136b0a2265a6bfa30e588",
+  "predicate_type": "https://spdx.dev/Document",
+  "predicate_matches_inventory": true,
+  "verification": "cosign verify-attestation --key trusted.pub --insecure-ignore-tlog --type spdxjson --registry-cacert lab-ca.crt IMAGE_DIGEST",
+  "transparency_log_verified": false,
+  "dsse_sha256": "5f915053f837ef4a7ae7a1b200bf4f04d421c6a2ce40c84dd3eb985df83e1588"
+}

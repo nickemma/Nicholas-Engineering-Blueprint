@@ -1,0 +1,7 @@
+{
+  "sha256": "224c50c29550720dcdaa34b6ccae4a3b5ee45920110569f588fada4ac8a96f8a",
+  "packages": 652,
+  "spdx_version": "SPDX-2.3",
+  "compressed_evidence": "model-image.spdx.json.gz",
+  "vulnerability_scan": "not measured; SBOM inventory does not establish absence of vulnerabilities"
+}

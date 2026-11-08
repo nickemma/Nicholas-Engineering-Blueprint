@@ -1,0 +1,41 @@
+{
+  "fullnameOverride": "phase8-adapter",
+  "prometheus": {
+    "url": "http://172.18.0.1",
+    "port": 19091
+  },
+  "metricsRelistInterval": "10s",
+  "rules": {
+    "default": false,
+    "custom": [
+      {
+        "seriesQuery": "inference_waiting{namespace!=\"\",service!=\"\"}",
+        "resources": {
+          "overrides": {
+            "namespace": {
+              "resource": "namespace"
+            },
+            "service": {
+              "resource": "service"
+            }
+          }
+        },
+        "name": {
+          "matches": "^inference_waiting$",
+          "as": "inference_waiting"
+        },
+        "metricsQuery": "sum(<<.Series>>{<<.LabelMatchers>>}) by (<<.GroupBy>>)"
+      }
+    ]
+  },
+  "resources": {
+    "requests": {
+      "cpu": "100m",
+      "memory": "128Mi"
+    },
+    "limits": {
+      "cpu": "500m",
+      "memory": "384Mi"
+    }
+  }
+}

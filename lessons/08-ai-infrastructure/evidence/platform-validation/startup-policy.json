@@ -1,0 +1,52 @@
+{
+  "apiVersion": "admissionregistration.k8s.io/v1",
+  "kind": "ValidatingAdmissionPolicy",
+  "metadata": {
+    "name": "phase8-model-startup"
+  },
+  "spec": {
+    "failurePolicy": "Fail",
+    "matchConstraints": {
+      "matchPolicy": "Equivalent",
+      "namespaceSelector": {},
+      "objectSelector": {},
+      "resourceRules": [
+        {
+          "apiGroups": [
+            ""
+          ],
+          "apiVersions": [
+            "v1"
+          ],
+          "operations": [
+            "CREATE",
+            "UPDATE"
+          ],
+          "resources": [
+            "pods",
+            "pods/ephemeralcontainers"
+          ],
+          "scope": "*"
+        }
+      ]
+    },
+    "validations": [
+      {
+        "expression": "size(object.spec.containers) == 1 && object.spec.containers.all(c, c.image == '172.18.254.250:5000/phase8-model@sha256:2c96ff00515985e072954679fbcb715cb1ba853387e136b0a2265a6bfa30e588' && (!has(c.command) || size(c.command)==0) && (!has(c.args) || size(c.args)==0) && (!has(c.env) || size(c.env)==0) && (!has(c.envFrom) || size(c.envFrom)==0))",
+        "message": "Use the approved release and its fixed startup verifier; no command/env/mount overrides."
+      },
+      {
+        "expression": "(!has(object.spec.initContainers) || size(object.spec.initContainers)==0) && (!has(object.spec.ephemeralContainers) || size(object.spec.ephemeralContainers)==0)",
+        "message": "Use the approved release and its fixed startup verifier; no command/env/mount overrides."
+      },
+      {
+        "expression": "object.spec.containers.all(c, has(c.volumeMounts) && c.volumeMounts.all(v, v.mountPath in ['/models','/verified','/tmp'] && !has(v.subPath) && !has(v.subPathExpr)))",
+        "message": "Use the approved release and its fixed startup verifier; no command/env/mount overrides."
+      },
+      {
+        "expression": "has(object.spec.volumes) && object.spec.volumes.all(v, (v.name == 'weights' && has(v.persistentVolumeClaim) && v.persistentVolumeClaim.claimName == 'phase8-weights') || (v.name in ['verified','temp'] && has(v.emptyDir)))",
+        "message": "Use the approved release and its fixed startup verifier; no command/env/mount overrides."
+      }
+    ]
+  }
+}
