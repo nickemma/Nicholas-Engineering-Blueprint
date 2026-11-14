@@ -12,7 +12,7 @@ with:
 
 The second is a **research project**. Every capstone here is built that way.
 
-The ten projects are infrastructure, not demos. Four of them build the systems underneath AI products, not apps that call a model's API; the rest cover distributed systems, networking, security and big data. Each one is chosen to show what the strongest portfolio projects show: distributed systems, concurrency, resource management, performance, fault tolerance, and cost you can measure.
+The twelve projects are infrastructure, not demos. Four of them build the systems underneath AI products, not apps that call a model's API. Two are about security under attack: an AI agent that untrusted content tries to take over, and a replicated store with a compromised member. The rest cover distributed systems, networking, security and big data. Each one is chosen to show what the strongest portfolio projects show: distributed systems, concurrency, resource management, performance, fault tolerance, and cost you can measure.
 
 ## The research loop
 
@@ -31,7 +31,7 @@ Every project follows the same structure. Your proposal, your report and your ta
 | **Results** | What did you find? (You fill this in; the briefs only suggest what you *might* find) |
 | **Limitations** | Where does the answer stop being true? What's still unsolved? |
 
-## The ten projects
+## The twelve projects
 
 | # | Project | Field | The question in one line |
 |---|---|---|---|
@@ -45,6 +45,8 @@ Every project follows the same structure. Your proposal, your report and your ta
 | 8 | [Consistent authorization at scale](08-consistent-authorization.md) | Security · distributed systems | How do consistency choices in a Zanzibar-style permission service trade check latency against "new enemy" violations? |
 | 9 | [Late data in stream processing](09-streaming-late-data.md) | Big data · distributed systems | Which watermark strategies trade result latency against completeness best on real, heavy-tailed lateness? |
 | 10 | [Simulation testing for consensus](10-simulation-testing.md) | Distributed systems · testing | Which fault-exploration strategy finds real Raft bugs fastest, and does coverage predict it? |
+| 11 | [Agents that can't be talked into it](11-agent-injection-defences.md) | AI security · distributed systems | How much do prompt-level and enforced defences each cut indirect prompt injection, and how many legitimate tasks does each cost? |
+| 12 | [One bad replica](12-compromised-replica.md) | Security · distributed systems | What can one compromised but authenticated replica do to a Raft store, and what do cheap defences and full Byzantine tolerance each cost? |
 
 Every brief has the same parts: the research loop above, plus a **suggested stack**, the **features to implement**, and how to **benchmark your work**.
 

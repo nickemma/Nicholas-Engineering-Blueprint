@@ -1,4 +1,4 @@
-# The Blueprint: from first request to distributed systems and infrastructure
+# The Blueprint: from first request to secure distributed systems
 
 This is a complete path from your first web request to building, operating, securing and measuring distributed systems, then running the infrastructure AI workloads need, and finally a research project of your own. You learn it by building one teaching system, **Runway**, phase by phase. You finish by choosing a **capstone research project** and taking it from problem to evidence.
 
@@ -78,11 +78,11 @@ That's where Runway ends up by Phase 7. You build every box yourself, and you ca
 
 ### Your capstone
 
-After Phase 8, the capstone is yours. You pick one of ten **research projects** in [`capstones/`](capstones/README.md): systems that sit underneath real products, across distributed systems, networking, security, big data and AI infrastructure. Each brief comes with a suggested stack, the features to implement, and how to benchmark them. You take it through the full research loop:
+After Phase 8, the capstone is yours. You pick one of twelve **research projects** in [`capstones/`](capstones/README.md): systems that sit underneath real products, across distributed systems, networking, security, big data and AI infrastructure. Each brief comes with a suggested stack, the features to implement, and how to benchmark them. You take it through the full research loop:
 
 > real-world problem → who has it → why existing solutions fall short → research question → system → experiment → evidence → limitations
 
-The skills come from Runway; the capstone is where you show you can apply them to a question nobody has handed you an answer for. One of the ten, **KESTREL** (replication under intermittent, partial network partitions at under-resourced health sites), is the author's own capstone and serves as the worked example.
+The skills come from Runway; the capstone is where you show you can apply them to a question nobody has handed you an answer for. One of the twelve, **KESTREL** (replication under intermittent, partial network partitions at under-resourced health sites), is the author's own capstone and serves as the worked example.
 
 ### Engineering rules the code follows
 
@@ -198,9 +198,9 @@ flowchart LR
 | [6. Secure it](lessons/06-safe-shared-queries/README.md) | Who may do what, and how do you contain abuse? | A threat model; tokens, authorization, tenant isolation, rate limiting, signed webhooks, your own CA and mTLS, a sidecar, secrets from OpenBao, a tamper-evident audit log, privacy, cluster hardening, fuzzing, and a security game day | 10 | **Ready** |
 | [7. Measure and learn](lessons/07-utility-evaluation/README.md) | Is it actually better, and can its own data improve it? | Experiments with plans and intervals; jobs that do real work; a data contract and a Kafka-to-Parquet pipeline; MapReduce, Spark and COST; baselines, gradient-boosted trees and neural networks compared honestly; serving behind the Go API with a fallback; priority lanes; MLflow, a gate and model cards; drift and a shadow; anomaly detection scored against injected incidents; a report that re-tests itself | 10 | **Ready** |
 | [8. AI infrastructure](lessons/08-ai-infrastructure/README.md) | What does it take to run the infrastructure under AI products? | A production-ready model-serving platform on Runway; distributed training on several workers; how data moves between CPU and GPU memory; Ray; a performance and cost benchmark | ~8 | **Ready** (GPU step learner-run) |
-| [Capstone](capstones/README.md) | Can you answer a research question nobody has answered for you? | One of ten research projects, end to end, plus a hardening review and a defended report | 10+ | **Briefs ready** |
+| [Capstone](capstones/README.md) | Can you answer a research question nobody has answered for you? | One of twelve research projects, end to end, plus a hardening review and a defended report | 10+ | **Briefs ready** |
 
-Phase 8's GPU step (step 13) is learner-run: its code is compiled and checked without a GPU, but it has no measured results. The capstone isn't a guide: it's your own project, from one of the [ten briefs](capstones/README.md).
+Phase 8's GPU step (step 13) is learner-run: its code is compiled and checked without a GPU, but it has no measured results. The capstone isn't a guide: it's your own project, from one of the [twelve briefs](capstones/README.md).
 
 ### Known limits
 
@@ -370,7 +370,7 @@ Follow the fourteen-step [type-along guide](lessons/08-ai-infrastructure/TEACHIN
 
 ### The capstone
 
-- **Choose** one of the ten [capstone projects](capstones/README.md), or propose your own in the same format.
+- **Choose** one of the twelve [capstone projects](capstones/README.md), or propose your own in the same format.
 - **Write a proposal:** problem, who has it, the gap, the research question, the hypothesis, the baseline, the measures.
 - **Build** the system, reusing Runway's components where they fit.
 - **Run** the experiments and benchmarks: throughput-versus-latency curves, p99 during failures, the bottleneck named, failure and adversarial cases.
