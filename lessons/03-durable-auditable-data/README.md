@@ -1,6 +1,6 @@
 # Phase 3: make data durable
 
-**Assessment routes:** [junior, intermediate and senior assignments](assessment.md), with [review and ownership criteria](../ownership/README.md).
+**Practice:** build the phase, complete the [independent exercise](exercises.md), explain it, and test it.
 
 **Question:** how do you keep data correct when it must survive crashes, be shared by many requests, processes and instances, and be read far more often than it's written?
 

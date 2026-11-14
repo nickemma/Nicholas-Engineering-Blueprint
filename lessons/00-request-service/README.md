@@ -1,6 +1,6 @@
 # Phase 0: make one request work
 
-**Assessment routes:** [junior, intermediate and senior assignments](assessment.md), with [review and ownership criteria](../ownership/README.md).
+**Practice:** build the phase, complete the [independent exercise](exercises.md), explain it, and test it.
 
 **Question:** what actually happens between typing a command and getting an answer from a web service?
 

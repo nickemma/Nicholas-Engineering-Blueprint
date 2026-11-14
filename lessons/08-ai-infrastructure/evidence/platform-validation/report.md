@@ -50,4 +50,4 @@ The scale experiment deliberately offered long responses with eight concurrent p
 
 ## Reproduction and ownership
 
-[Methods and final harnesses](methods.md) retain the assertions and exact resource scope. The [plan](plan.md) distinguishes planned work from measured results. Secrets, private keys, kubeconfigs, weight blobs and model checkpoints stay out of Git. The image/model public digests, refusal outputs, raw arrivals and public signer are reviewable here. Long-running service ownership and external review criteria in the assessment track still require a learner/operator to perform them.
+[Methods and final harnesses](methods.md) retain the assertions and exact resource scope. The [plan](plan.md) distinguishes planned work from measured results. Secrets, private keys, kubeconfigs, weight blobs and model checkpoints stay out of Git. The image/model public digests, refusal outputs, raw arrivals and public signer are reviewable here. These local experiments do not establish long-term production operation.

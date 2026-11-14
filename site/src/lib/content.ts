@@ -168,7 +168,6 @@ export function tabsOf(file: string): { label: string; url: string }[] {
     ["Syllabus", "README.md"],
     ["Guide", "TEACHING.md"],
     ["Exercises", "exercises.md"],
-    ["Assessment", "assessment.md"],
     ["Answers", "learned.md"],
   ];
   return tabs

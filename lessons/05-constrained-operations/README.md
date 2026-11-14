@@ -1,6 +1,6 @@
 # Phase 5: operate it
 
-**Assessment routes:** [junior, intermediate and senior assignments](assessment.md), with [review and ownership criteria](../ownership/README.md).
+**Practice:** build the phase, complete the [independent exercise](exercises.md), explain it, and test it.
 
 **Question:** can you deploy Runway, see inside it while it runs, know when users are hurting, change it without dropping requests, and recover it when it breaks?
 

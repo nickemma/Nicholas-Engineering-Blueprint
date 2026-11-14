@@ -1,6 +1,6 @@
 # Phase 4: replicate and scale out
 
-**Assessment routes:** [junior, intermediate and senior assignments](assessment.md), with [review and ownership criteria](../ownership/README.md).
+**Practice:** build the phase, complete the [independent exercise](exercises.md), explain it, and test it.
 
 **Question:** what can several machines agree on when messages are lost and delayed, machines crash, and the network splits, sometimes only partly? And how do you spread data over machines when one is no longer enough?
 

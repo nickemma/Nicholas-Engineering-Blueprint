@@ -8,7 +8,7 @@ This is the **only roadmap** in the repository. Everything else is a lesson (`le
 
 1. [Who this is for](#1-who-this-is-for)
 2. [What you'll build](#2-what-youll-build)
-3. [How to study](#3-how-to-study), including [level-based assessment and ownership](#assessment-and-ownership-routes)
+3. [How to study](#3-how-to-study)
 4. [The route](#4-the-route)
 5. [Foundation-gap ledger](#5-foundation-gap-ledger)
 6. [Patterns ledger](#6-patterns-ledger)
@@ -30,7 +30,7 @@ The scope is **backend, distributed systems and infrastructure engineering**, pl
 
 It is **not** a technology checklist. Every tool appears because the system needs it at that point, and phases end when their evidence is in place, not when a calendar says so.
 
-For a smaller first goal, use the [beginner minimum route](lessons/ownership/beginner.md): a reliable service first, then connected services, then durable data. Experienced learners can demonstrate prerequisites and choose the [intermediate or senior assessment route](lessons/ownership/README.md) without repeating unrelated beginner work. These routes assess capabilities, not job titles.
+Work through one phase at a time: **build the phase, complete one independent exercise, explain it, and test it.**
 
 **Time:** about 70 weeks at 12–15 focused hours a week, plus the capstone (see [§10](#10-timeline-and-progress-tracker)). Experienced engineers often move faster through Phases 0–2.
 
@@ -136,28 +136,10 @@ You follow each lesson in a scratch `practice/` folder. At the end of each phase
 
 ### What "done" means for a phase
 
-1. Your own repository runs from a clean checkout, and CI is green.
-2. You can explain its data flow without notes.
-3. You reproduced the phase's key failures and can explain them.
-4. You can point to evidence for each guarantee it claims.
-5. You can name the trade-offs you made.
-6. The exercise project meets its acceptance checks.
-7. learned.md is complete and the self-test is answered.
-8. Record the selected route's [assessment verdict](lessons/ownership/reviews.md), evidence and outstanding review. Technical phase completion, route readiness and sustained ownership are distinct claims; do not mark unreviewed leadership or unrun operational work complete.
-
-### Assessment and ownership routes
-
-Every phase has an `assessment.md`, linked from its syllabus, with junior tickets, an intermediate unfamiliar-system assignment and a senior decision/coordination assignment. Choose one route for the phase; beginners are not expected to complete all three. The existing rebuild, exercise and self-test still establish the technical foundation.
-
-| Route | Evidence added to the phase |
-|---|---|
-| Junior | A bounded independent change, positive/negative and relevant isolation tests, clear documentation, review and correction |
-| Intermediate | Investigation in unfamiliar code, agreed requirements, compatible delivery, capacity/monitoring and demonstrated recovery |
-| Senior | A justified strategy with non-goals, negotiated trade-offs, cross-owner sequencing, review/mentoring and an operational plan |
-
-Use the [track guide](lessons/ownership/README.md), [review rubric](lessons/ownership/reviews.md) and [artifact templates](lessons/ownership/templates.md). Reviewers record `ready`, `needs revision` or `not assessed` with evidence; a high score in one dimension cannot erase a critical safety failure. Label solo/AI review honestly and leave external review pending when no reviewer is available.
-
-From Phase 5 onward, intermediate/senior learners run the [twelve-week ownership exercise](lessons/ownership/sustained.md) alongside later phase work: releases, maintenance, requirement changes, incidents, capacity/cost decisions, collaboration and handover. Actual elapsed time and review evidence matter. This is lab ownership, not real production on-call; a weekend simulation is rehearsal. This optional route has its own work budget and does not silently enlarge the beginner minimum route.
+1. **Build the phase.** Your own repository runs from a clean checkout.
+2. **Complete one independent exercise.** Build the project in the phase's `exercises.md` on your own and meet its acceptance checks.
+3. **Explain it.** Describe the data flow, failures and trade-offs in `learned.md`, then answer the self-test without notes.
+4. **Test it.** Run the phase and exercise checks, demonstrate the key failure and recovery cases, and keep evidence for the guarantees you claim. CI is green.
 
 ### A week, roughly
 
@@ -429,7 +411,7 @@ This table shows each foundation gap, where it's introduced, where it's practise
 | 24 | Load balancing and service discovery | Infrastructure | 5 | 6 | L4/L7 experiments; readiness behaviour | Global traffic management |
 | 25 | Cloud (AWS) and infrastructure as code | Cloud, platform | 5 | Capstone | A reviewed Terraform plan of Runway on AWS, checked in CI; applied and destroyed by you, if you choose to pay for it | A second cloud |
 | 26 | Observability and SLOs | SRE, platform | 1 | 5, 7 | A dashboard, an SLO, burn-rate alerts | Telemetry at huge scale |
-| 27 | Incident response | SRE | 5 | 8; capstone | A game day and a postmortem; lab ownership record from the assessment track | Real production on-call |
+| 27 | Incident response | SRE | 5 | 8; capstone | A game day and a postmortem | Real production on-call |
 | 28 | Authentication, authorization, multi-tenancy | Security, platform | 2 (credentials); 6 | 8; capstone | Allowed, denied, cross-tenant and replay tests | Enterprise IAM administration |
 | 29 | TLS, PKI, mTLS, secrets | Security, infrastructure | 6 | Capstone | A local CA, mTLS, rotation | Public PKI operations |
 | 30 | API security and rate limiting | Backend, security | 0 validation | 1 limits; 3 injection; 6 OWASP, rate limits and fuzzing; 8 rate limits; capstone fuzzing | OWASP test cases; fuzzing findings | Penetration testing |

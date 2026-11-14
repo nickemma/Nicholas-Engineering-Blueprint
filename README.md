@@ -7,9 +7,9 @@ You learn by building **Runway**, a jobs platform, one phase at a time. It start
 ## Start here
 
 1. Read **[JOURNEY.md](JOURNEY.md)**, the single map: what you'll build, the route, the gaps each phase closes, the patterns you'll use, and the roles each phase prepares you for.
-2. Beginners: choose a stopping point in the **[minimum route](lessons/ownership/beginner.md)**, then begin **[Phase 0](lessons/00-request-service/README.md)**. It assumes no prior Go, Linux or HTTP.
-3. Follow the parallel tracks at a pace appropriate to your route. Start the **[DSA track](dsa/README.md)** at the same time. Add the **[system-design track](system-design/README.md)** at Phase 2, and the **[maths track](math/README.md)** when each guide's phase needs it.
-4. Choose your **[assessment and ownership route](lessons/ownership/README.md)**: junior delivery, intermediate service ownership or senior technical leadership. Every phase has concrete assignments and review gates. Browse the **[capstones](capstones/README.md)** when you want a research goal.
+2. Begin **[Phase 0](lessons/00-request-service/README.md)**. It assumes no prior Go, Linux or HTTP.
+3. Follow the parallel tracks at your own pace. Start the **[DSA track](dsa/README.md)** at the same time. Add the **[system-design track](system-design/README.md)** at Phase 2, and the **[maths track](math/README.md)** when each guide's phase needs it.
+4. For each phase: **build the phase, complete one independent exercise, explain it, and test it.** Browse the **[capstones](capstones/README.md)** when you want a research goal.
 
 ## Repository map
 
@@ -17,7 +17,6 @@ You learn by building **Runway**, a jobs platform, one phase at a time. It start
 |---|---|
 | [lessons/](lessons) | One folder per phase: a syllabus, a type-along guide, an exercise project, and an answer sheet |
 | [capstones/](capstones/README.md) | Ten research projects for the capstone, after Phase 8: distributed systems, networking, security, big data and AI infrastructure, each with a stack, features and a benchmark plan; a proposal template and the judging criteria |
-| [lessons/ownership/](lessons/ownership/README.md) | Beginner minimum route, phase assessments, structured review, delivery/proposal templates and twelve-week lab service ownership |
 | [dsa/](dsa/README.md) | Algorithm patterns in Go and Python, linked to the real systems that use them |
 | [math/](math/README.md) | Queueing, proofs and linear algebra, each checked against something real: Runway, a model checker, your own CPU |
 | [open-source/](open-source/README.md) | How to read a real codebase and get a first change merged, with projects next to each phase |

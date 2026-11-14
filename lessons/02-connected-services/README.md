@@ -1,6 +1,6 @@
 # Phase 2: connect services
 
-**Assessment routes:** [junior, intermediate and senior assignments](assessment.md), with [review and ownership criteria](../ownership/README.md).
+**Practice:** build the phase, complete the [independent exercise](exercises.md), explain it, and test it.
 
 **Question:** what changes when work crosses a process boundary, and how do you keep it correct when messages are lost, duplicated, delayed or poisoned?
 

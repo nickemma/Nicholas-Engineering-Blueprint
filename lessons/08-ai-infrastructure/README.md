@@ -1,6 +1,6 @@
 # Phase 8: AI infrastructure
 
-**Assessment routes:** [junior, intermediate and senior assignments](assessment.md), with [review and ownership criteria](../ownership/README.md).
+**Practice:** build the phase, complete the [independent exercise](exercises.md), explain it, and test it.
 
 **Question:** what does it take to serve an open-weight language model reliably, train across workers, and keep GPUs busy?
 

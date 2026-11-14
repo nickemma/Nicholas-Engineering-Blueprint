@@ -1,6 +1,6 @@
 # Phase 6: secure it
 
-**Assessment routes:** [junior, intermediate and senior assignments](assessment.md), with [review and ownership criteria](../ownership/README.md).
+**Practice:** build the phase, complete the [independent exercise](exercises.md), explain it, and test it.
 
 **Question:** who may do what in Runway, how does each service know who it's talking to, how do you keep one customer's data and capacity away from another's, and how would you know if any of it failed?
 

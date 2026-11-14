@@ -1,6 +1,6 @@
 # Phase 1: make one service reliable
 
-**Assessment routes:** [junior, intermediate and senior assignments](assessment.md), with [review and ownership criteria](../ownership/README.md).
+**Practice:** build the phase, complete the [independent exercise](exercises.md), explain it, and test it.
 
 **Question:** what happens when requests overlap, stall, contain bad input, or arrive while the process is stopping?
 

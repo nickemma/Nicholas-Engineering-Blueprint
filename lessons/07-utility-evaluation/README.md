@@ -1,6 +1,6 @@
 # Phase 7: measure and learn
 
-**Assessment routes:** [junior, intermediate and senior assignments](assessment.md), with [review and ownership criteria](../ownership/README.md).
+**Practice:** build the phase, complete the [independent exercise](exercises.md), explain it, and test it.
 
 **Question:** is Runway actually any good, how would you prove a change made it better, and can its own record of everything it has done make it better still?
 
