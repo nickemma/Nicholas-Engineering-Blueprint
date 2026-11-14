@@ -1,0 +1,6 @@
+NAME                  READY   STATUS             RESTARTS      AGE
+llm-867bfcbd9-m87xt   0/1     CrashLoopBackOff   4 (38s ago)   98s
+1       Startup probe failed: HTTP probe failed with statuscode: 503
+6       Readiness probe failed: Get "http://10.244.2.5:8080/health": dial tcp 10.244.2.5:8080: connect: connection refused
+5       Startup probe failed: HTTP probe failed with statuscode: 503
+{"requests": 1, "completed": 0, "failed": {"timed out": 1}, "ttft_p50": null, "ttft_max": null, "outage_seconds": null}

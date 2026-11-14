@@ -1,0 +1,36 @@
+[
+  {
+    "fault": "model-oom",
+    "repetition": 1,
+    "injected": 0.0,
+    "detected": 0.796,
+    "mitigated": null,
+    "recovered": null,
+    "during": [
+      {
+        "ttft": null,
+        "gaps": [],
+        "chunks": 0,
+        "output_tokens": null,
+        "total": 0.007703423994826153,
+        "error": "status 502",
+        "started": 0.215
+      },
+      {
+        "ttft": null,
+        "gaps": [],
+        "chunks": 0,
+        "output_tokens": null,
+        "total": 0.0022212799958651885,
+        "error": "status 502",
+        "started": 0.794
+      }
+    ],
+    "recovery": [],
+    "notes": {
+      "oom_killed": true
+    },
+    "passed": false,
+    "failure": "TimeoutError: model not ready"
+  }
+]

@@ -1,0 +1,2 @@
+[rank0] {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 0, "steps": 6, "step_ms": 282.3, "allreduce_ms": 248.5, "matches_serial": true}
+[rank0] {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 0, "steps": 6, "step_ms": 286.5, "allreduce_ms": 249.2, "matches_serial": true}

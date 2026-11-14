@@ -1,0 +1,5 @@
+     0.0  begin  model-oom 1
+    61.3  FAILED  model-oom 1
+stop: fix the system before injecting another fault
+fault              rep  detect s  recover s  result
+model-oom            1      0.80          -  FAILED TimeoutError: model not ready

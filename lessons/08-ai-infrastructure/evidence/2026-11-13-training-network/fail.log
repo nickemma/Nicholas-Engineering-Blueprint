@@ -1,0 +1,9 @@
+case=kill rep=1 injected_after=12.0s job_exit=1 ended_after_fault=1.3s checkpoint_step=5
+[rank0] {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 5, "steps": 30, "step_ms": 922.7, "allreduce_ms": 889.1, "matches_serial": true}
+case=kill rep=2 injected_after=12.0s job_exit=1 ended_after_fault=1.3s checkpoint_step=6
+[rank0] {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 6, "steps": 30, "step_ms": 924.0, "allreduce_ms": 908.0, "matches_serial": true}
+case=loss rep=1 injected_after=12.0s job_exit=1 ended_after_fault=22.1s checkpoint_step=4
+[rank0] {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 4, "steps": 30, "step_ms": 929.8, "allreduce_ms": 927.8, "matches_serial": true}
+case=loss rep=2 injected_after=12.0s job_exit=1 ended_after_fault=22.0s checkpoint_step=4
+[rank0] {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 4, "steps": 30, "step_ms": 942.6, "allreduce_ms": 888.6, "matches_serial": true}
+DONE

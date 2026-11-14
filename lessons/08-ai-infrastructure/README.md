@@ -20,7 +20,7 @@ The [type-along guide](TEACHING.md) builds a serving lab and a bounded inference
 | 6 | Kubernetes startup/readiness, weight storage, cold starts and queue-based scaling |
 | 7 | SBOMs, provenance, signed images and weight manifests; fail-closed deployment |
 | 8 | Repeated performance/cost experiments with frozen quality checks and honest denominators |
-| 9 | Overload, process failure, cancellation, corrupt artifacts and recovery runbook |
+| 9 | A game day: model exit, Redis outage, overload, cancellation, monitoring loss and out-of-memory, each run twice; recovery measured with real requests; sizing the queue from the deadline; the runbook |
 | 10 | CPU DDP, global-batch parity, atomic checkpoints and the shaped-link experiment |
 | 11 | Tensor and pipeline splits, forward/gradient parity in two processes, Megatron-LM |
 | 12 | Ray tasks, references, actors, Train and Serve; idempotent commits |
@@ -33,7 +33,7 @@ The CPU replay checks transformer correctness, streaming contracts, batching sch
 
 The [2026-11-07 CPU report](evidence/2026-11-07/report.md) now retains **60 serving runs / 720 arrivals**, a frozen quality suite, real JWT/tokenizer/Redis integration across two gateway instances, and six signed-weight verification checks. The shared weighted reservation adapter uses Runway's existing Redis dependency and fails closed. The per-process fallback remains a lab-only default. No configuration establishes the chosen 99% first-content objective from this short experiment.
 
-The [live platform report](evidence/platform-validation/report.md) adds the actual JWT API with Prometheus/OTLP, delayed/truncated-stream accounting, signed Kubernetes startup and admission refusal cases, real queue-driven one-to-two replica scaling with traffic on both replicas, two repetitions of each game-day fault, shaped-link CPU checkpoint recovery, and Ray tasks/actor/Train/Serve execution. **GPU/CUDA/vLLM remains not measured**, so Phase 8 is not fully validated. The short load experiments do not establish a production SLO, tenant fairness or an accepted quality/cost configuration. The historical publisher revision was not retained; its known weight digest and provenance limitation remain explicit.
+The evidence is kept per experiment: the [initial CPU bundle](evidence/2026-11-07/report.md), the [platform report](evidence/platform-validation/report.md) (the real JWT API, signed Kubernetes deployment and admission, Ray), and the type-along runs for [the game day](evidence/2026-11-13-game-day/), [Kubernetes start-up, replacement and scaling](evidence/2026-11-13-kubernetes/README.md) and [training across a shaped link](evidence/2026-11-13-training-network/README.md). **Step 13 (GPU, CUDA, vLLM) is learner-run:** its kernel compiles without a GPU, but none of its numbers are measured. The short load experiments don't establish a production SLO, tenant fairness or an accepted quality and cost configuration. The historical publisher revision of the model wasn't retained; its known weight digest and provenance limitation remain explicit.
 
 ## How to work through it
 

@@ -1723,8 +1723,89 @@ The [platform validation report](evidence/platform-validation/report.md) records
 
 ## Step 6: Deploy a slow-starting dependency
 
-Use Phase 5's kind cluster and Phase 6's namespace and network policies. First provision a `phase8-weights` PVC with at least 1 GiB and populate `model.gguf` with the verified file. Storage classes and access modes vary: use a local-path provisioner in kind, and remember that a ReadWriteOnce volume may prevent replicas on different nodes. Weight distribution is part of scaling, not a detail to ignore. This initial manifest starts at one replica. Step 7 replaces its image with the release-bound verified image; the [platform report](evidence/platform-validation/report.md) retains the exact signed deployment, startup timings, insufficient-startup-budget failure and real-metric HPA run.
+A model server isn't like the Runway API. Its image is hundreds of megabytes, its weights are hundreds more, and it can take seconds or minutes before it can answer. Kubernetes' defaults assume a process that's ready in a second and can be replaced at any moment. This step deploys the model into Phase 5's cluster and measures what those differences cost:
 
+| You'll measure | Why it matters |
+|---|---|
+| Whether the weights in the cluster are the ones you verified | A model is code you didn't write; the bytes must match the digest from Step 2 |
+| Cold start and warm start, phase by phase | Scaling up only helps if a new copy is ready before the queue overflows |
+| What users see while the model Pod is replaced | "Graceful shutdown" is a claim; measure it |
+| What a too-short startup allowance does | The most common way to turn a slow start into an outage |
+| Scaling on queue depth | CPU use says little about a decoder; waiting requests say a lot |
+
+You need Phase 5's kind cluster, with Phase 5's Prometheus in `observability` and Phase 6's default-deny policies in `runway`.
+
+### Weights into the cluster
+
+The model needs a volume, and something to copy the file into it:
+
+<!-- file: deploy/inference/weights.yaml -->
+~~~yaml
+# A volume for the model weights, and a short-lived Pod to copy them in.
+# Delete the loader once the copy is verified; the volume stays.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: phase8-weights
+  namespace: runway
+spec:
+  accessModes: [ReadWriteOnce] # one node at a time: every replica lands on that node
+  resources:
+    requests: { storage: 1Gi }
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: weights-loader
+  namespace: runway
+spec:
+  # The namespace refuses root Pods (Phase 5's "restricted" Pod Security).
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65534
+    seccompProfile: { type: RuntimeDefault }
+  containers:
+    - name: loader
+      image: busybox:1.37
+      command: ["sleep", "3600"]
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities: { drop: [ALL] }
+      volumeMounts:
+        - { name: weights, mountPath: /models }
+  volumes:
+    - name: weights
+      persistentVolumeClaim: { claimName: phase8-weights }
+~~~
+
+Phase 5 set the `runway` namespace to the **restricted** Pod Security level, so every Pod must say it runs as a non-root user, can't gain privileges, drops all Linux capabilities and uses the default seccomp filter. Leave those settings out and the namespace refuses the Pod:
+
+~~~text
+Error from server (Forbidden): pods "pss-check" is forbidden: violates PodSecurity "restricted:latest": allowPrivilegeEscalation != false (container "pss-check" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (container "pss-check" must set securityContext.capabilities.drop=["ALL"]), runAsNonRoot != true (pod or container "pss-check" must set securityContext.runAsNonRoot=true), seccompProfile (pod or container "pss-check" must set securityContext.seccompProfile.type to "RuntimeDefault" or "Localhost")
+~~~
+
+Copy the verified file in, then check its digest *inside* the cluster:
+
+~~~bash
+kubectl apply -f deploy/inference/weights.yaml
+kubectl -n runway wait --for=condition=Ready pod/weights-loader --timeout=3m
+kubectl -n runway cp models/qwen2.5-0.5b-instruct-q4_k_m.gguf weights-loader:/models/model.gguf
+kubectl -n runway exec weights-loader -- sha256sum /models/model.gguf
+~~~
+
+~~~text
+74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db  /models/model.gguf
+~~~
+
+That's the digest Step 2 recorded. The copy took 9 s. Delete the loader; the volume and the file stay:
+
+~~~bash
+kubectl -n runway delete pod weights-loader
+~~~
+
+The volume is `ReadWriteOnce`: it can be mounted on one node at a time. kind's storage puts it on one node (`runway-worker`, for me), so every replica of the model must run on that node. On a real cluster, that's the first thing that stops scaling. Weight distribution (a read-only copy per node, or an image that contains the weights) is part of the design, not a detail.
+
+### The model Deployment
 
 <!-- file: deploy/inference/llm.yaml -->
 ~~~yaml
@@ -1736,76 +1817,671 @@ metadata:
 spec:
   replicas: 1
   strategy:
-    type: Recreate # the laptop has capacity for one set of weights
+    type: Recreate # the laptop has room for few copies of the weights
   selector:
-    matchLabels: {app: llm}
+    matchLabels: { app: llm }
   template:
     metadata:
-      labels: {app: llm}
+      labels: { app: llm }
+      annotations: # Phase 5's Prometheus scrapes Pods that ask for it
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: /metrics
     spec:
+      automountServiceAccountToken: false # the model never calls the Kubernetes API
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile: { type: RuntimeDefault }
       containers:
         - name: server
           image: ghcr.io/ggml-org/llama.cpp@sha256:e67d88af487390098c76d7982b1761484339fa147b7e41d3c64ae1318759f78b
-          args: ["-m", "/models/model.gguf", "--host", "0.0.0.0", "--port", "8080", "-c", "4096", "-t", "2", "--parallel", "1", "--metrics"]
-          ports: [{name: http, containerPort: 8080}]
+          args: ["-m", "/models/model.gguf", "--host", "0.0.0.0", "--port", "8080",
+                 "-c", "4096", "-t", "2", "--parallel", "1", "--metrics"]
+          ports: [{ name: http, containerPort: 8080 }]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: [ALL] }
           resources:
-            requests: {cpu: "1", memory: 768Mi}
-            limits: {cpu: "2", memory: 1536Mi}
+            requests: { cpu: "1", memory: 768Mi }
+            limits: { cpu: "2", memory: 1536Mi }
+          # Loading may take minutes: allow up to 120 x 5 s before giving up.
           startupProbe:
-            httpGet: {path: /health, port: http}
+            httpGet: { path: /health, port: http }
             periodSeconds: 5
             failureThreshold: 120
+          # After start-up: stop routing here while it can't answer.
           readinessProbe:
-            httpGet: {path: /health, port: http}
+            httpGet: { path: /health, port: http }
             periodSeconds: 5
           volumeMounts:
-            - {name: weights, mountPath: /models, readOnly: true}
+            - { name: weights, mountPath: /models, readOnly: true }
       volumes:
         - name: weights
-          persistentVolumeClaim: {claimName: phase8-weights}
+          persistentVolumeClaim: { claimName: phase8-weights, readOnly: true }
 ---
 apiVersion: v1
 kind: Service
-metadata: {name: llm, namespace: runway}
+metadata: { name: llm, namespace: runway }
 spec:
-  selector: {app: llm}
-  ports: [{port: 8080, targetPort: http}]
+  selector: { app: llm }
+  ports: [{ name: http, port: 8080, targetPort: http }]
+~~~
+
+Three probes, three questions:
+
+- The **startup probe** asks "has it finished loading?" It allows up to 120 × 5 s = 10 minutes. Until it passes, Kubernetes runs no other probe, so a slow load isn't mistaken for a hang.
+- The **readiness probe** asks "should it get traffic right now?" A Pod that fails it is taken out of the Service but not restarted.
+- There's no **liveness probe**. One that's too strict would restart a model that's busy decoding a long answer. A restart costs a reload, so add one only for a failure you've actually seen, with a generous threshold.
+
+The annotations ask Phase 5's Prometheus to scrape the server's `/metrics`. `readOnlyRootFilesystem` works because llama-server writes nothing to disk.
+
+Phase 6's default-deny policy blocks everything until a policy allows it. The model answers the API, Prometheus and, in this lab, a probe Pod; it calls nobody:
+
+<!-- file: deploy/inference/llm-policy.yaml -->
+~~~yaml
+# The namespace denies all traffic by default (Phase 6). The model answers only
+# the API, Prometheus and, in this lab, the probe Pod; it calls nobody.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: llm
+  namespace: runway
+spec:
+  podSelector: { matchLabels: { app: llm } }
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector: { matchLabels: { app: api } }
+        - podSelector: { matchLabels: { role: llm-probe } }
+        - namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: observability } }
+          podSelector: { matchLabels: { app: prometheus } }
+      ports: [{ port: 8080 }]
+  egress: []
+---
+# The lab's probe may reach the model, and nothing else.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: llm-probe
+  namespace: runway
+spec:
+  podSelector: { matchLabels: { role: llm-probe } }
+  policyTypes: [Ingress, Egress]
+  ingress: []
+  egress:
+    - to: [{ podSelector: { matchLabels: { app: llm } } }]
+      ports: [{ port: 8080 }]
+~~~
+
+When you wire Step 5's API into the cluster, its own egress policy needs `llm:8080` too.
+
+### Measure start-up
+
+Kubernetes records when each Pod was scheduled, when its container started and when it became ready. This reads them:
+
+<!-- file: serve/src/serve/podtimes.py -->
+~~~python
+"""How long did a pod take to be scheduled, start and become ready? Ask Kubernetes.
+
+  kubectl -n runway get pods -l app=llm -o json | uv run python -m serve.podtimes
+
+Times are seconds after the pod was created. Kubernetes stores them to the second,
+so differences of a second or two are noise.
+"""
+
+import json
+import sys
+from datetime import datetime
+
+
+def _at(stamp: str | None) -> datetime | None:
+    return datetime.fromisoformat(stamp.replace("Z", "+00:00")) if stamp else None
+
+
+def phases(pod: dict) -> dict:
+    created = _at(pod["metadata"]["creationTimestamp"])
+    true = {c["type"]: c for c in pod["status"].get("conditions", []) if c["status"] == "True"}
+    container = (pod["status"].get("containerStatuses") or [{}])[0]
+    running = container.get("state", {}).get("running", {})
+
+    def since(stamp):
+        at = _at(stamp)
+        return None if at is None else (at - created).total_seconds()
+
+    return {
+        "pod": pod["metadata"]["name"],
+        "scheduled": since(true.get("PodScheduled", {}).get("lastTransitionTime")),
+        "started": since(running.get("startedAt")),  # the latest start, after any restart
+        "ready": since(true.get("Ready", {}).get("lastTransitionTime")),
+        "restarts": container.get("restartCount", 0),
+    }
+
+
+def main() -> None:
+    data = json.load(sys.stdin)
+    pods = data["items"] if data.get("kind") == "List" else [data]
+    print(f"{'pod':<26} {'scheduled':>9} {'started':>8} {'ready':>6} {'restarts':>8}")
+    for p in map(phases, pods):
+        cells = [
+            ("-" if p[k] is None else f"{p[k]:.0f}") for k in ("scheduled", "started", "ready")
+        ]
+        print(f"{p['pod']:<26} {cells[0]:>9} {cells[1]:>8} {cells[2]:>6} {p['restarts']:>8}")
+
+
+if __name__ == "__main__":
+    main()
+~~~
+
+<!-- file: serve/tests/test_podtimes.py -->
+~~~python
+from serve.podtimes import phases
+
+
+def pod(ready=True):
+    conditions = [
+        {"type": "PodScheduled", "status": "True", "lastTransitionTime": "2026-11-13T10:00:01Z"},
+        {
+            "type": "Ready",
+            "status": "True" if ready else "False",
+            "lastTransitionTime": "2026-11-13T10:00:31Z",
+        },
+    ]
+    return {
+        "metadata": {"name": "llm-1", "creationTimestamp": "2026-11-13T10:00:00Z"},
+        "status": {
+            "conditions": conditions,
+            "containerStatuses": [
+                {"restartCount": 2, "state": {"running": {"startedAt": "2026-11-13T10:00:27Z"}}}
+            ],
+        },
+    }
+
+
+def test_phases_are_seconds_after_creation():
+    assert phases(pod()) == {
+        "pod": "llm-1",
+        "scheduled": 1,
+        "started": 27,
+        "ready": 31,
+        "restarts": 2,
+    }
+
+
+def test_a_pod_that_is_not_ready_has_no_ready_time():
+    assert phases(pod(ready=False))["ready"] is None
+~~~
+
+<!-- run: cd serve && uv run ruff format --check . && uv run ruff check . && uv run pytest -q tests/test_podtimes.py -->
+
+Now deploy. The image isn't on any node yet, so this is a true cold start:
+
+~~~bash
+kubectl apply -f deploy/inference/llm-policy.yaml -f deploy/inference/llm.yaml
+kubectl -n runway rollout status deployment/llm --timeout=10m
+kubectl -n runway get pods -l app=llm -o json | (cd serve && uv run python -m serve.podtimes)
+kubectl -n runway get events --field-selector reason=Pulled -o custom-columns=MESSAGE:.message
+~~~
+
+~~~text
+pod                        scheduled  started  ready restarts
+llm-75974b7f6c-fddvp               0      169    175        0
+Successfully pulled image "ghcr.io/ggml-org/llama.cpp@sha256:e67d88af...f78b" in 2m48.799s (2m48.799s including waiting). Image size: 309499562 bytes.
+~~~
+
+Of the 175 seconds, 169 were spent pulling a 309 MB image. Loading the model took about 6 seconds. A node pulls an image once, so the next start on the same node skips that part. If a new replica lands on a node that has never run the model, it pays the whole 169 s again. That's why clusters that serve models pre-pull images onto their nodes.
+
+### Probe from inside the cluster
+
+To see what users see, send requests from inside the cluster, through the Service, as the API would. This needs only the standard library and Step 2's `stream.py`:
+
+<!-- file: serve/src/serve/probe.py -->
+~~~python
+"""Send requests to a model server for a while, and report what users saw.
+
+It needs only the standard library, so it runs in a plain Python container inside
+the cluster, where it reaches the model through its Service like the API would.
+
+  python -m serve.probe http://llm:8080 --seconds 60             # one at a time
+  python -m serve.probe http://llm:8080 --seconds 120 --workers 6 --max-tokens 128
+"""
+
+import argparse
+import json
+import threading
+import time
+from collections import Counter
+
+from serve.stream import chat
+
+
+def outage(rows: list[dict]) -> float | None:
+    """Seconds from the first failed request to the next one that succeeded."""
+    rows = sorted(rows, key=lambda r: r["start"])
+    first = next((r for r in rows if r["error"]), None)
+    if first is None:
+        return None
+    back = next((r for r in rows if r["start"] > first["start"] and not r["error"]), None)
+    return None if back is None else round(back["start"] - first["start"], 2)
+
+
+def summarise(rows: list[dict]) -> dict:
+    ok = sorted(r["ttft"] for r in rows if not r["error"])
+    return {
+        "requests": len(rows),
+        "completed": len(ok),
+        "failed": dict(Counter(r["error"] for r in rows if r["error"])),
+        "ttft_p50": round(ok[len(ok) // 2], 2) if ok else None,
+        "ttft_max": round(ok[-1], 2) if ok else None,
+        "outage_seconds": outage(rows),
+    }
+
+
+def main() -> None:
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("url")
+    p.add_argument("--seconds", type=float, default=60)
+    p.add_argument("--workers", type=int, default=1)
+    p.add_argument("--every", type=float, default=0.25, help="pause between one worker's requests")
+    p.add_argument("--max-tokens", type=int, default=4)
+    p.add_argument("--rows", action="store_true", help="print every request, then the summary")
+    a = p.parse_args()
+    prompt = "Count from one to one thousand." if a.max_tokens > 8 else "Say yes."
+    epoch = time.monotonic()
+    stop = epoch + a.seconds
+    rows: list[dict] = []
+    lock = threading.Lock()
+
+    def worker():
+        while time.monotonic() < stop:
+            start = time.monotonic() - epoch
+            t = chat(a.url, prompt, a.max_tokens, timeout=60)
+            row = {"start": round(start, 2), "total": round(t.total, 2), "error": t.error}
+            row["ttft"] = None if t.ttft is None else round(t.ttft, 2)
+            with lock:
+                rows.append(row)
+            time.sleep(a.every)
+
+    threads = [threading.Thread(target=worker) for _ in range(a.workers)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    if a.rows:
+        for row in sorted(rows, key=lambda r: r["start"]):
+            print(json.dumps(row))
+    print(json.dumps(summarise(rows)))
+
+
+if __name__ == "__main__":
+    main()
+~~~
+
+<!-- file: serve/tests/test_probe.py -->
+~~~python
+from serve.probe import outage, summarise
+
+
+def test_outage_runs_from_first_failure_to_next_success():
+    rows = [
+        {"start": 0.0, "error": "", "ttft": 0.1},
+        {"start": 0.5, "error": "status 503", "ttft": None},
+        {"start": 1.0, "error": "[Errno 111] Connection refused", "ttft": None},
+        {"start": 4.25, "error": "", "ttft": 0.3},
+    ]
+    s = summarise(rows)
+    assert s["outage_seconds"] == 3.75 and s["completed"] == 2 and s["ttft_max"] == 0.3
+    assert s["failed"] == {"status 503": 1, "[Errno 111] Connection refused": 1}
+    assert outage(rows[:1]) is None
+~~~
+
+<!-- run: cd serve && uv run ruff format --check . && uv run ruff check . && uv run pytest -q tests/test_probe.py -->
+
+It runs in a plain Python container. Its code comes from a ConfigMap, so no image needs building:
+
+<!-- file: deploy/inference/probe.yaml -->
+~~~yaml
+# A Pod that sends requests to the model from inside the cluster.
+# Its code comes from a ConfigMap; see the commands in the guide.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: llm-probe
+  namespace: runway
+  labels: { role: llm-probe }
+spec:
+  automountServiceAccountToken: false
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    seccompProfile: { type: RuntimeDefault }
+  containers:
+    - name: probe
+      image: python:3.12-slim
+      command: ["sleep", "infinity"]
+      env:
+        - { name: PYTHONPATH, value: /code }
+        - { name: PYTHONDONTWRITEBYTECODE, value: "1" }
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities: { drop: [ALL] }
+      volumeMounts:
+        - { name: code, mountPath: /code/serve }
+  volumes:
+    - name: code
+      configMap: { name: llm-probe-code }
+~~~
+
+~~~bash
+kubectl -n runway create configmap llm-probe-code \
+  --from-file=serve/src/serve/stream.py --from-file=serve/src/serve/probe.py
+kubectl apply -f deploy/inference/probe.yaml
+kubectl -n runway wait --for=condition=Ready pod/llm-probe --timeout=5m
+kubectl -n runway exec llm-probe -- python -m serve.probe http://llm:8080 --seconds 5
+~~~
+
+~~~text
+{"requests": 6, "completed": 6, "failed": {}, "ttft_p50": 0.55, "ttft_max": 0.63, "outage_seconds": null}
+~~~
+
+Check that the policy really is what lets it through. Remove the probe's label, and the same request has nowhere to go:
+
+~~~bash
+kubectl -n runway label pod llm-probe role-
+kubectl -n runway exec llm-probe -- python -m serve.probe http://llm:8080 --seconds 1
+kubectl -n runway label pod llm-probe role=llm-probe
+~~~
+
+~~~text
+{"requests": 1, "completed": 0, "failed": {"timed out": 1}, "ttft_p50": null, "ttft_max": null, "outage_seconds": null}
+~~~
+
+The request waited out its full 60-second timeout: the policy dropped the connection without an answer. Put the label back before going on.
+
+### Replace the model while users wait
+
+Kubernetes replaces Pods all the time: node upgrades, rollouts, evictions. Delete the model Pod while three probe workers keep sending requests:
+
+~~~bash
+kubectl -n runway exec llm-probe -- \
+  python -m serve.probe http://llm:8080 --seconds 60 --workers 3 --rows > replace.txt &
+sleep 10
+kubectl -n runway delete pod -l app=llm --wait=false
+wait
+tail -1 replace.txt
+grep -v '"error": ""' replace.txt | head -3
+~~~
+
+~~~text
+{"requests": 47, "completed": 44, "failed": {"Remote end closed connection without response": 2, "incomplete or empty stream": 1}, "ttft_p50": 1.7, "ttft_max": 2.0, "outage_seconds": 31.76}
+{"start": 7.82, "total": 31.5, "error": "incomplete or empty stream", "ttft": 1.71}
+{"start": 8.51, "total": 30.82, "error": "Remote end closed connection without response", "ttft": null}
+{"start": 9.25, "total": 30.08, "error": "Remote end closed connection without response", "ttft": null}
+~~~
+
+The replacement Pod was ready about 5 s after it was created. But the three requests that were on the old Pod when it was deleted, one streaming and two queued behind it, hung for **30 seconds** and then failed. Kubernetes sent the server SIGTERM; it stopped generating but didn't close its connections. Kubernetes waited out the default 30-second grace period, then killed it. For those users, a routine Pod replacement was a 30-second failure.
+
+The fix is a **preStop hook**: a command Kubernetes runs *before* it sends SIGTERM. Wait two seconds for the Service to stop sending new work here, then wait until the server's own counters show nothing in progress and nothing queued:
+
+<!-- edit: deploy/inference/llm.yaml -->
+~~~yaml
+          readinessProbe:
+            httpGet: { path: /health, port: http }
+            periodSeconds: 5
+          volumeMounts:
+~~~
+~~~yaml
+          readinessProbe:
+            httpGet: { path: /health, port: http }
+            periodSeconds: 5
+          # Before Kubernetes sends SIGTERM: wait for the Service to stop sending
+          # new work, then for the requests already here to finish. All within
+          # the 30 s grace period, after which the container is killed anyway.
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - |
+                    sleep 2
+                    for i in $(seq 1 50); do
+                      curl -s localhost:8080/metrics |
+                        grep -qE '^llamacpp:requests_(processing|deferred) [1-9]' || exit 0
+                      sleep 0.5
+                    done
+          volumeMounts:
 ~~~
 
 ~~~bash
 kubectl apply -f deploy/inference/llm.yaml
-kubectl -n runway rollout status deployment/llm --timeout=10m
-kubectl -n runway port-forward service/llm 8000:8080
+kubectl -n runway rollout status deployment/llm --timeout=5m
 ~~~
 
-A **startup probe** grants ten minutes for loading; readiness stops routing until loading completes. An aggressive liveness probe would repeatedly kill a healthy but loading model. The health endpoint is not a throughput test: a busy healthy decoder can still miss every latency target. Keep Phase 6's deny-by-default policy and permit only API-to-llm:8080 plus monitoring. Exposing the raw server bypasses JWT and limits.
+Run the same replacement again, twice:
 
-Measure cold start from pod creation to readiness and first completed request. Then recreate the pod with weights already cached and compare. Record image pull separately from model load. A queue that takes thirty seconds to drain cannot be saved by a replica that takes a minute to load: admission must reject excess work meanwhile.
+~~~text
+{"requests": 84, "completed": 84, "failed": {}, "ttft_p50": 1.76, "ttft_max": 2.33, "outage_seconds": null}
+{"requests": 89, "completed": 89, "failed": {}, "ttft_p50": 1.68, "ttft_max": 1.96, "outage_seconds": null}
+~~~
 
-For queue-depth scaling, export the existing gateway's `admitted - active` through the Prometheus custom-metrics adapter, then use an HPA `Object` metric on the gateway Service with `AverageValue` target 2, minReplicas 1, maxReplicas 3, and a 300-second scale-down stabilisation window. This requires the adapter, a named Service and a metric mapping; Kubernetes alone does not understand the Go metric. **Do not enable this for the one-CPU laptop or single-node-bound PVC.** Before enabling it on a real cluster, verify `kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1` exposes that Service metric, and prove the metric represents work reaching the scalable backend. A single fixed-upstream connection can strand replicas. Use the existing service discovery and verify requests reach each endpoint.
+Every request completed, both times. There's a detail of current Kubernetes behind this. When a Service has no ready Pods, it keeps sending traffic to Pods that are shutting down but still pass their readiness probe. With the hook, the old server keeps working, so it carries the traffic until the new Pod is ready. Then it goes idle, the hook exits, and SIGTERM finds nothing to interrupt.
 
-Here is the HPA object for that adapter contract. It is deliberately not applied until the custom metric exists and the cluster has capacity. Replace `api` if your gateway Service has a different name. `AverageValue` divides the aggregate waiting work by the backend replica count; verify that interpretation against the adapter's returned metric before trusting its scaling decisions.
+The hook must fit inside the grace period: 2 s plus at most 25 s of waiting, within 30 s. If your longest answer takes longer than that, raise `terminationGracePeriodSeconds`, or the kill arrives mid-answer anyway.
+
+**Break it:** give the model less time to start than it needs. One second, one try:
+
+~~~bash
+kubectl -n runway patch deployment llm --type=json -p='[
+  {"op":"replace","path":"/spec/template/spec/containers/0/startupProbe/periodSeconds","value":1},
+  {"op":"replace","path":"/spec/template/spec/containers/0/startupProbe/failureThreshold","value":1}]'
+sleep 100
+kubectl -n runway get pods -l app=llm
+kubectl -n runway get events --field-selector reason=Unhealthy -o custom-columns=COUNT:.count,MSG:.message
+kubectl -n runway exec llm-probe -- python -m serve.probe http://llm:8080 --seconds 5
+~~~
+
+~~~text
+NAME                  READY   STATUS             RESTARTS      AGE
+llm-867bfcbd9-m87xt   0/1     CrashLoopBackOff   4 (38s ago)   98s
+1       Startup probe failed: HTTP probe failed with statuscode: 503
+6       Readiness probe failed: Get "http://10.244.2.5:8080/health": dial tcp 10.244.2.5:8080: connect: connection refused
+5       Startup probe failed: HTTP probe failed with statuscode: 503
+{"requests": 1, "completed": 0, "failed": {"timed out": 1}, "ttft_p50": null, "ttft_max": null, "outage_seconds": null}
+~~~
+
+The server answers 503 while it loads, so the first check fails, Kubernetes kills it, and it starts loading again: four restarts in 98 seconds, and the back-off between attempts keeps growing. And because the Deployment uses `Recreate`, the old, working Pod was removed *first*, so nothing at all was serving. A bad configuration change became a complete outage. With `RollingUpdate`, the old Pod would have kept serving while the new one failed, but that needs room for a second copy of the weights. Restore the measured allowance:
+
+~~~bash
+kubectl apply -f deploy/inference/llm.yaml
+kubectl -n runway rollout status deployment/llm --timeout=5m
+~~~
+
+Mine was ready again 6 s later, and all six probe requests completed.
+
+### Scale on queue depth
+
+CPU is a poor scaling signal for a decoder. It's limited by memory bandwidth, and it can look much the same idle or swamped. A better signal is how many requests are waiting. llama-server exports that as `llamacpp:requests_deferred`, and Phase 5's Prometheus is already scraping it:
+
+~~~bash
+kubectl -n observability port-forward svc/prometheus 19090:9090 &
+curl -s 127.0.0.1:19090/api/v1/query --data-urlencode 'query=llamacpp:requests_deferred'
+~~~
+
+The result carries `namespace="runway"` and `pod="llm-..."` labels, from Phase 5's scrape configuration. A HorizontalPodAutoscaler can't query Prometheus, though; it reads metrics from the Kubernetes API. The **Prometheus adapter** sits between them: it serves chosen Prometheus series as Kubernetes metrics.
+
+<!-- file: deploy/inference/adapter-values.yaml -->
+~~~yaml
+# Values for the official Prometheus adapter chart (prometheus-community/
+# prometheus-adapter 5.4.1). It turns one Prometheus series into a metric the
+# Kubernetes API serves, so a HorizontalPodAutoscaler can read it.
+prometheus:
+  url: http://prometheus.observability.svc
+  port: 9090
+metricsRelistInterval: 15s # how soon a new Pod's series is found
+rules:
+  default: false # serve only what we ask for
+  custom:
+    # Requests waiting inside each model server, per Pod. Phase 5's scrape
+    # config adds the namespace and pod labels the adapter maps to objects.
+    - seriesQuery: 'llamacpp:requests_deferred{namespace!="",pod!=""}'
+      resources:
+        overrides:
+          namespace: { resource: namespace }
+          pod: { resource: pod }
+      name:
+        matches: "^llamacpp:requests_deferred$"
+        as: llm_requests_waiting
+      metricsQuery: sum(<<.Series>>{<<.LabelMatchers>>}) by (<<.GroupBy>>)
+resources:
+  requests: { cpu: 100m, memory: 128Mi }
+  limits: { memory: 384Mi }
+~~~
+
+Phase 5 lets only Grafana query Prometheus. Policies add up, so a second one admits the adapter, without editing Phase 5's:
+
+<!-- file: deploy/inference/adapter-policy.yaml -->
+~~~yaml
+# Phase 5 lets only Grafana query Prometheus. Policies add up, so this one
+# admits the adapter as well, without editing Phase 5's file.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: prometheus-from-adapter
+  namespace: observability
+spec:
+  podSelector: { matchLabels: { app: prometheus } }
+  policyTypes: [Ingress]
+  ingress:
+    - from: [{ podSelector: { matchLabels: { app.kubernetes.io/name: prometheus-adapter } } }]
+      ports: [{ port: 9090 }]
+~~~
+
+~~~bash
+kubectl apply -f deploy/inference/adapter-policy.yaml
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm upgrade --install llm-adapter prometheus-community/prometheus-adapter --version 5.4.1 \
+  -n observability -f deploy/inference/adapter-values.yaml --wait
+kubectl get --raw "/apis/custom.metrics.k8s.io/v1beta1/namespaces/runway/pods/*/llm_requests_waiting"
+~~~
+
+After about 20 seconds, the Kubernetes API answers with one item per model Pod: `"metricName": "llm_requests_waiting"` and `"value": "0"`.
+
+Now the autoscaler. It aims for an average of two waiting requests per Pod:
 
 <!-- file: deploy/inference/hpa.yaml -->
 ~~~yaml
+# Scale the model on how many requests wait inside it, not on CPU: a decoder
+# is limited by memory bandwidth, and its CPU can look the same idle or swamped.
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
-metadata: {name: llm, namespace: runway}
+metadata: { name: llm, namespace: runway }
 spec:
-  scaleTargetRef: {apiVersion: apps/v1, kind: Deployment, name: llm}
+  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: llm }
   minReplicas: 1
-  maxReplicas: 3
+  maxReplicas: 2 # the laptop has room for two copies of the weights
   behavior:
     scaleDown:
-      stabilizationWindowSeconds: 300
+      stabilizationWindowSeconds: 300 # don't drop a replica that took time to load
   metrics:
-    - type: Object
-      object:
-        describedObject: {apiVersion: v1, kind: Service, name: api}
-        metric: {name: inference_waiting}
-        target: {type: AverageValue, averageValue: "2"}
+    - type: Pods
+      pods:
+        metric: { name: llm_requests_waiting }
+        target: { type: AverageValue, averageValue: "2" }
 ~~~
-**Break it:** delete the server pod while offering requests below capacity. Capture unavailable duration, queue peak, rejected requests and recovery. Then set the startup allowance shorter than the measured load time and observe the restart loop. Restore the measured allowance. A zero-downtime rollout requires capacity for old and new replicas; `Recreate` deliberately makes no such promise.
+
+With one model Pod and six requests in flight, one is processed and five wait. The autoscaler wants `ceil(1 × 5 ÷ 2) = 3` replicas, and is capped at 2. With two Pods, each has about two waiting, which is the target, so it holds there.
+
+This script prints what the autoscaler sees every 2 seconds:
+
+<!-- file: deploy/inference/watch-hpa.sh -->
+~~~bash
+#!/bin/sh
+# Print the autoscaler's view every 2 seconds: what it measured, how many
+# replicas it wants, and how many model Pods are ready. Stop with Ctrl-C.
+start=$(date +%s)
+get() { kubectl -n runway get "$1" -o jsonpath="$2" 2>/dev/null; }
+while true; do
+  waiting=$(get hpa/llm '{.status.currentMetrics[0].pods.current.averageValue}')
+  desired=$(get hpa/llm '{.status.desiredReplicas}')
+  ready=$(get deployment/llm '{.status.readyReplicas}')
+  printf '%4ss  waiting/pod=%-5s desired=%-2s ready=%s\n' \
+    "$(( $(date +%s) - start ))" "${waiting:--}" "${desired:--}" "${ready:-0}"
+  sleep 2
+done
+~~~
+
+<!-- run: sh -n deploy/inference/watch-hpa.sh -->
+
+Apply the autoscaler, start the watcher in a second terminal, then offer six long requests at a time for 150 seconds:
+
+~~~bash
+kubectl apply -f deploy/inference/hpa.yaml
+sh deploy/inference/watch-hpa.sh            # in a second terminal
+kubectl -n runway exec llm-probe -- \
+  python -m serve.probe http://llm:8080 --seconds 150 --workers 6 --max-tokens 128
+~~~
+
+The watcher, from just before the load started:
+
+~~~text
+   9s  waiting/pod=0     desired=1  ready=1
+  11s  waiting/pod=0     desired=1  ready=1
+  14s  waiting/pod=0     desired=1  ready=1
+  17s  waiting/pod=5     desired=2  ready=1
+  19s  waiting/pod=5     desired=2  ready=1
+  22s  waiting/pod=5     desired=2  ready=2
+  25s  waiting/pod=5     desired=2  ready=2
+  28s  waiting/pod=5     desired=2  ready=2
+  31s  waiting/pod=4     desired=2  ready=2
+  34s  waiting/pod=4     desired=2  ready=2
+~~~
+
+The load started at about 4 s. By 17 s the adapter reported five requests waiting and the autoscaler asked for a second replica, which was ready at 22 s. That's quick because the image was already on the node and the weights were in its page cache: on a node that had never run the model, add the 169-second pull from earlier. Later samples show values such as `2500m` and `1500m`: Kubernetes' way of writing 2.5 and 1.5, averages across the two Pods.
+
+The load stopped at about 158 s. The autoscaler waited out its 300-second stabilisation window, then removed the second replica:
+
+~~~text
+ 463s  waiting/pod=0     desired=2  ready=2
+ 466s  waiting/pod=0     desired=2  ready=2
+ 468s  waiting/pod=0     desired=1  ready=1
+ 471s  waiting/pod=0     desired=1  ready=1
+ 473s  waiting/pod=0     desired=1  ready=1
+ 475s  waiting/pod=0     desired=1  ready=1
+~~~
+
+The probe's summary, then each Pod's token counter, read from inside the cluster (run the loop before the load too, and subtract):
+
+~~~bash
+for ip in $(kubectl -n runway get pods -l app=llm -o jsonpath='{.items[*].status.podIP}'); do
+  kubectl -n runway exec llm-probe -- python -c "import urllib.request
+for line in urllib.request.urlopen('http://$ip:8080/metrics').read().decode().splitlines():
+    if line.startswith('llamacpp:tokens_predicted_total'): print('$ip', line)"
+done
+~~~
+
+~~~text
+{"requests": 34, "completed": 34, "failed": {}, "ttft_p50": 25.52, "ttft_max": 56.1, "outage_seconds": null}
+10.244.2.14 llamacpp:tokens_predicted_total 1280
+10.244.2.13 llamacpp:tokens_predicted_total 5504
+~~~
+
+| | Requests started in the first 20 s (mostly one Pod) | Requests started after 60 s (two Pods) |
+|---|---|---|
+| Median time to decode one 128-token answer | 5.8 s | 8.1 s |
+| Tokens per second, all Pods together (128 ÷ decode time × Pods) | about 22 | about 32 |
+
+Before the load, the first Pod's counter read 2,432 and the second Pod didn't exist. So the old Pod generated 3,072 tokens during the run (24 answers of 128 tokens) and the new one 1,280 (10 answers). Every request completed, and both Pods did work. But two things in these numbers matter more than the scaling itself:
+
+- **The second replica added about 40% throughput, not 100%.** Both Pods run on `runway-worker`, because the `ReadWriteOnce` volume is there, so they share its CPUs and memory bandwidth, and each decodes more slowly. A replica on another node wouldn't share them; I couldn't measure that here, because the volume pins every replica to one node. That's the weight-distribution problem from the start of this step, now measured.
+- **The target decides the latency, and this one is too loose.** "Two waiting per Pod" means a request waits for about two 8-second answers before its own starts. The median wait for first content was 25.5 s, and the slowest was 56 s. Choose the target the way Step 9 chose the queue length: from the time budget. Waiting requests × time per answer must fit inside your time-to-first-token objective. For Step 5's one second, no number of waiting requests fits, so the honest conclusion is that this laptop can't offer that objective for long answers at this load. Measuring tells you that before users do.
+
+**Done when:** the weights' digest matches inside the cluster, you have cold and warm start timelines, a Pod replacement under load completes every request, and the model scales out on queue depth and back in. Keep the outputs; Step 14's report uses them. Mine are in [evidence/2026-11-13-kubernetes](evidence/2026-11-13-kubernetes/README.md).
+
+**What this proves, and what it doesn't.** It proves the model runs under the namespace's security rules and network policy, that replacing it no longer drops requests, and that queue depth drives scaling on this cluster. It doesn't prove anything about a cluster with many nodes: here every replica shares one node and one copy of the volume, so a second replica adds a second decoder, not more memory bandwidth from a second machine. Nor does it cover the gateway: in the full system the queue sits in Step 4's admission queue, and you'd scale on the gateway's waiting gauge instead. The [platform report](evidence/platform-validation/report.md) did that once, through the real API.
 
 ## Step 7: A supply chain for code and weights
 
@@ -2447,25 +3123,551 @@ uv run python -m serve.report "$PHASE8_RESULTS" > "$PHASE8_RESULTS/summary.json"
 
 ## Step 9: Failure, recovery and the game day
 
-Write the runbook before injecting faults. Define incident start with a monotonic clock, detection, mitigation, and recovery as ten consecutive successful synthetic requests, not merely readiness. Run one fault at a time at a fixed offered load. Keep the raw trace and objective rows before, during and after each fault.
+Steps 4 to 8 built defences. The API returns 502 when the model is gone and 503 when the shared budget can't be checked. Admission refuses work it can't serve. Cancellation frees the model when a client leaves. A **game day** tests those defences on purpose: you break one thing at a time, watch what happens, and write it down. Finding out that a defence doesn't work is much cheaper on a quiet afternoon than during a real outage.
 
-| Fault | Expected signal | Mitigation | Recovery evidence |
-|---|---|---|---|
-| Kill model process | Upstream failures, missing readiness | Restart known-good digest; bound admission | Requests recover; no capacity leak |
-| Offer twice measured capacity | Waiting, 503, bad TTFT fraction | Reduce admission/offered rate; add proven capacity | Queue drains within deadline |
-| Disconnect clients during decode | Cancelled spans; backend slots should free | Propagate cancellation; deadline backstop | Actual backend slots return idle |
-| Deploy corrupt weights | Signature/hash refusal, unready pod | Roll back manifest and image together | Verified startup and completed request |
-| Exhaust memory | OOMKilled, rising RSS | Reduce context/slots; restore memory budget | Stable RSS and objective over fixed window |
-| Lose metrics scraper | Missing series | Repair monitoring; do not assume silence means healthy | Synthetic requests still reveal failures |
+The rules:
 
-Runbook order: identify the release digests; stop further rollout; inspect queue, RSS and errors without prompts; shed excess work; restore the last tested **image+model+template** release; verify signatures; wait for readiness; run the synthetic contract; compare the all-arrivals objective; record detection and recovery times. Never automatically retry a partially delivered answer: the user may receive duplicate text. A failed optional prediction in Phase 7 could fall back; a generation endpoint cannot pretend a partial answer is complete.
+1. **Write down what you expect first.** For each fault: what users should see, how you'll notice, what you'll do, and what counts as fixed. A drill with no prediction can't fail, so it can't teach you anything.
+2. **One fault at a time.** With two faults at once, you can't tell which one caused what. If a drill fails, stop and fix the system before starting the next one.
+3. **Four timestamps:** when the fault was injected, detected, mitigated and recovered. Use a monotonic clock: Phase 7 showed that the wall clock can jump.
+4. **Recovered means users are served.** Here, that's ten requests in a row through the API that stream a complete, nonempty answer. A green `/health` only says a process started. One failure among the ten restarts the count.
+5. **Run every drill twice.** A fault that recovered once might have been luck.
 
-**Done when:** two repetitions of every fault have transcripts, recovery times and the expected bounded behaviour. The [platform report](evidence/platform-validation/report.md) retains two runs each for model exit, overload, disconnect, scraper loss and OOM, plus additional Redis-outage and Kubernetes corrupt-weight rollback runs. Leave any additional unrun fault explicitly `not measured` in step 14.
+| Fault | How you cause it | What users should see | Mitigation | Fixed when |
+|---|---|---|---|---|
+| Model exits | `docker kill` the model | 502, at once | Restart the same verified release | Ten good streams |
+| Redis is down | `docker stop` Redis | 503: without the shared budget there's no generation (Step 4 fails closed) | Restart Redis | Ten good streams |
+| Overload | 18 long requests at the same instant | Some 503s within milliseconds; admitted requests still get answers | None: admission sheds the excess | The queue drains, then ten good streams |
+| Client leaves mid-answer | Reset the connection while tokens stream | Nothing: that client is gone | Cancellation reaches the model | The model's slot is idle within 8 s |
+| Scraper is down | `docker stop` Prometheus | Nothing: requests still succeed | Restart Prometheus | Ten good streams |
+| Model runs out of memory | Shrink the model container's limit to 32 MiB | 502 once the kernel kills the model | Restore the limit, then restart | Ten good streams |
+
+The scraper row looks odd, since users don't notice anything. That's the point: losing monitoring doesn't hurt anyone directly, but it means you can't see when something else does. No alerts doesn't mean healthy.
+
+### The recovery check
+
+This part needs no Docker, so it can be tested properly. Recovery and the record of each drill go in their own module:
+
+<!-- file: serve/src/serve/recovery.py -->
+~~~python
+"""Recovery is measured with real requests, and a failed drill is still a result.
+
+Recovery means ten consecutive completed, nonempty streams through the API.
+A green /health only says the process started; it does not say users are served.
+"""
+
+import time
+from collections.abc import Callable
+from dataclasses import dataclass, field
+
+
+class Clock:
+    """Seconds since the drill started, on a clock that never jumps."""
+
+    def __init__(self) -> None:
+        self.start = time.monotonic()
+
+    def __call__(self) -> float:
+        return round(time.monotonic() - self.start, 3)
+
+
+@dataclass
+class Case:
+    fault: str
+    repetition: int
+    injected: float
+    detected: float | None = None
+    mitigated: float | None = None
+    recovered: float | None = None
+    during: list[dict] = field(default_factory=list)
+    recovery: list[dict] = field(default_factory=list)
+    notes: dict = field(default_factory=dict)
+    passed: bool = False
+    failure: str = ""
+
+
+class NotRecovered(Exception):
+    pass
+
+
+def recover(probe: Callable[[], dict], clock: Callable[[], float], need=10, limit=90.0):
+    """Probe until `need` requests in a row succeed. Any failure restarts the count."""
+    rows, streak = [], 0
+    deadline = clock() + limit
+    while streak < need:
+        if clock() > deadline:
+            raise NotRecovered(f"{streak} of {need} consecutive successes after {limit:.0f} s")
+        row = probe()
+        rows.append(row)
+        streak = 0 if row["error"] else streak + 1
+    return rows
+
+
+def run_case(name, repetition, fault, recovery, clock) -> Case:
+    """Inject, mitigate, then require recovery. A failed drill is a result: keep it."""
+    case = Case(name, repetition, injected=clock())
+    try:
+        fault(case)
+        case.mitigated = clock()
+        case.recovery = recovery()
+        case.recovered = clock()
+        case.passed = True
+    except Exception as exc:
+        case.failure = f"{type(exc).__name__}: {exc}"
+    return case
+
+
+def summary(cases: list[Case]) -> str:
+    lines = [f"{'fault':<18} {'rep':>3} {'detect s':>9} {'recover s':>10}  result"]
+    for c in cases:
+        detect = f"{c.detected - c.injected:.2f}" if c.detected is not None else "-"
+        total = f"{c.recovered - c.injected:.1f}" if c.recovered is not None else "-"
+        result = "passed" if c.passed else "FAILED " + c.failure
+        lines.append(f"{c.fault:<18} {c.repetition:>3} {detect:>9} {total:>10}  {result}")
+    return "\n".join(lines)
+~~~
+
+`recover` accepts any `probe` function and any clock. In a real drill, the probe streams a request through the API and the clock is `Clock`. The tests pass in a list of results and a fake clock that moves on one second every time it's read, so no test waits for real time. `run_case` deliberately catches every exception: a failed drill is a result to keep, not a crash to hide. The record stores the exception's name and message.
+
+<!-- file: serve/tests/test_recovery.py -->
+~~~python
+import pytest
+
+from serve.recovery import NotRecovered, recover, run_case
+
+
+class FakeClock:
+    """Each reading moves time on by one second."""
+
+    def __init__(self) -> None:
+        self.now = 0.0
+
+    def __call__(self) -> float:
+        self.now += 1
+        return self.now
+
+
+def probes(errors: list[str]):
+    rows = iter(errors)
+    return lambda: {"error": next(rows)}
+
+
+def test_recovery_needs_consecutive_successes():
+    # Five good, one failure, then ten good: the failure restarts the count.
+    sequence = [""] * 5 + ["status 502"] + [""] * 10
+    rows = recover(probes(sequence), FakeClock(), need=10, limit=100)
+    assert len(rows) == 16
+
+
+def test_recovery_gives_up_at_the_deadline():
+    with pytest.raises(NotRecovered, match="0 of 10"):
+        recover(lambda: {"error": "status 502"}, FakeClock(), need=10, limit=20)
+
+
+def test_a_failed_drill_is_kept_with_its_reason():
+    def broken(case):
+        case.detected = 1.0
+        raise AssertionError("expected 'status 503', got ''")
+
+    case = run_case("redis-unavailable", 1, broken, lambda: [], FakeClock())
+    assert not case.passed and case.recovered is None
+    assert "expected 'status 503'" in case.failure
+
+    ok = run_case("model-exit", 1, lambda case: None, lambda: [{"error": ""}], FakeClock())
+    assert ok.passed and ok.injected < ok.mitigated < ok.recovered
+~~~
+
+<!-- run: cd serve && uv run ruff format --check . && uv run ruff check . && uv run pytest -q tests/test_recovery.py -->
+
+~~~bash
+cd serve
+uv run pytest -q tests/test_recovery.py
+~~~
+
+All three tests pass.
+
+**Break it:** make `recover` count *total* successes instead of successes *in a row*. Replace the `streak = 0 if ...` line with `streak += not row["error"]`, then run the tests again:
+
+~~~text
+>       assert len(rows) == 16
+E       AssertionError: assert 11 == 16
+1 failed, 2 passed
+~~~
+
+Five good answers, one failure and five more good ones, and it declared recovery. A service that keeps failing every few requests would pass that check. Put the line back.
+
+### The faults
+
+The drills themselves talk to Docker and to the running stack:
+
+<!-- file: serve/src/serve/gameday.py -->
+~~~python
+"""Run a game day: inject one fault at a time, mitigate it, then prove recovery."""
+
+import argparse
+import concurrent.futures
+import json
+import os
+import socket
+import struct
+import subprocess
+import threading
+import time
+import urllib.request
+from dataclasses import asdict, dataclass
+from pathlib import Path
+from urllib.parse import urlsplit
+
+from serve.recovery import Case, Clock, recover, run_case, summary
+from serve.stream import chat
+
+LONG = "Count from one to one thousand, one number per line."
+
+
+@dataclass
+class Lab:
+    api: str
+    model: str
+    scraper: str
+    model_container: str
+    redis_container: str
+    scraper_container: str
+    clock: Clock
+
+    def probe(self, max_tokens=8, prompt="Reply with the word river.") -> dict:
+        started = self.clock()
+        row = asdict(chat(self.api, prompt, max_tokens, timeout=35))
+        del row["text"]  # keep timings and errors, not model output
+        row["started"] = started
+        return row
+
+    def docker(self, *args: str) -> str:
+        done = subprocess.run(["docker", *args], capture_output=True, text=True)
+        if done.returncode:
+            raise RuntimeError(f"docker {args[0]}: {done.stderr.strip()}")
+        return done.stdout.strip()
+
+    def model_get(self, path: str):
+        with urllib.request.urlopen(self.model + path, timeout=2) as response:
+            return json.load(response)
+
+    def wait_ready(self, limit=60.0) -> None:
+        deadline = time.monotonic() + limit
+        while time.monotonic() < deadline:
+            try:
+                if self.model_get("/health").get("status") == "ok":
+                    return
+            except OSError:
+                pass
+            time.sleep(0.1)
+        raise TimeoutError("model not ready")
+
+    def busy_slots(self) -> int:
+        return sum(1 for slot in self.model_get("/slots") if slot["is_processing"])
+
+
+def expect(row: dict, error: str) -> None:
+    if row["error"] != error:
+        raise AssertionError(f"expected {error!r}, got {row['error']!r}")
+
+
+def model_exit(lab: Lab, case: Case) -> None:
+    lab.docker("kill", lab.model_container)
+    case.during.append(lab.probe())
+    expect(case.during[-1], "status 502")
+    case.detected = lab.clock()
+    lab.docker("start", lab.model_container)
+    lab.wait_ready()
+
+
+def redis_unavailable(lab: Lab, case: Case) -> None:
+    lab.docker("stop", "-t", "1", lab.redis_container)
+    case.during.append(lab.probe())
+    expect(case.during[-1], "status 503")  # fail closed: no shared budget, no generation
+    case.detected = lab.clock()
+    lab.docker("start", lab.redis_container)
+
+
+def overload(lab: Lab, case: Case, offered=18) -> None:
+    gate = threading.Barrier(offered)
+
+    def one(_):
+        gate.wait()  # release every request at once
+        return lab.probe(128, LONG)
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=offered) as pool:
+        case.during = list(pool.map(one, range(offered)))
+    rejected = [r for r in case.during if r["error"] == "status 503"]
+    if not rejected:
+        raise AssertionError("no request was refused: admission is unbounded")
+    case.detected = min(r["started"] + r["total"] for r in rejected)
+    case.notes["rejected"] = len(rejected)
+    case.notes["completed"] = sum(1 for r in case.during if not r["error"])
+
+
+def client_disconnect(lab: Lab, case: Case) -> None:
+    api = urlsplit(lab.api)
+    body = json.dumps(
+        {"messages": [{"role": "user", "content": LONG}], "stream": True, "max_tokens": 512}
+    ).encode()
+    head = (
+        f"POST /v1/chat/completions HTTP/1.1\r\nHost: {api.hostname}\r\n"
+        f"Content-Type: application/json\r\nContent-Length: {len(body)}\r\n"
+        f"Authorization: Bearer {os.environ['RUNWAY_TOKEN']}\r\n\r\n"
+    ).encode()
+    conn = socket.create_connection((api.hostname, api.port), timeout=10)
+    conn.sendall(head + body)
+    received = b""
+    while b"data:" not in received:
+        received += conn.recv(4096)
+    case.notes["busy_before"] = lab.busy_slots()
+    if not case.notes["busy_before"]:
+        raise AssertionError("model was not generating when the client left")
+    conn.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER, struct.pack("ii", 1, 0))
+    conn.close()  # linger 0 sends a reset, like a client that vanished
+    case.notes["reset"] = lab.clock()
+    deadline = time.monotonic() + 8
+    while lab.busy_slots():
+        if time.monotonic() > deadline:
+            raise AssertionError("the abandoned request still holds a model slot")
+        time.sleep(0.05)
+    case.notes["slot_free"] = lab.clock()
+
+
+def scraper_loss(lab: Lab, case: Case) -> None:
+    lab.docker("stop", "-t", "1", lab.scraper_container)
+    try:
+        urllib.request.urlopen(lab.scraper + "/-/ready", timeout=2)
+        raise AssertionError("scraper still answers")
+    except OSError:
+        case.detected = lab.clock()
+    case.during.append(lab.probe())
+    expect(case.during[-1], "")  # users are fine; you are blind, not down
+    lab.docker("start", lab.scraper_container)
+
+
+def model_oom(lab: Lab, case: Case) -> None:
+    lab.docker("update", "--memory", "32m", "--memory-swap", "32m", lab.model_container)
+    case.during.append(lab.probe(128, LONG))
+    deadline = time.monotonic() + 15
+    while json.loads(lab.docker("inspect", lab.model_container))[0]["State"]["Running"]:
+        if time.monotonic() > deadline:
+            raise AssertionError("model survived the memory limit")
+        time.sleep(0.1)
+    state = json.loads(lab.docker("inspect", lab.model_container))[0]["State"]
+    case.notes["oom_killed"] = state["OOMKilled"]
+    case.during.append(lab.probe())
+    expect(case.during[-1], "status 502")
+    case.detected = lab.clock()
+    lab.docker("update", "--memory", "2g", "--memory-swap", "2g", lab.model_container)
+    lab.docker("start", lab.model_container)
+    lab.wait_ready()
+
+
+FAULTS = {
+    "model-exit": model_exit,
+    "redis-unavailable": redis_unavailable,
+    "overload": overload,
+    "client-disconnect": client_disconnect,
+    "scraper-loss": scraper_loss,
+    "model-oom": model_oom,
+}
+
+
+def main() -> None:
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--api", default="http://127.0.0.1:18081")
+    p.add_argument("--model", default="http://127.0.0.1:18080")
+    p.add_argument("--scraper", default="http://127.0.0.1:19090")
+    p.add_argument("--model-container", default="blueprint-phase8-llm")
+    p.add_argument("--redis-container", default="blueprint-phase8-redis")
+    p.add_argument("--scraper-container", default="blueprint-phase8-prometheus")
+    p.add_argument("--faults", default=",".join(FAULTS))
+    p.add_argument("--repeat", type=int, default=2)
+    p.add_argument("--out", type=Path, default=Path("results/gameday.json"))
+    a = p.parse_args()
+    clock = Clock()
+    lab = Lab(
+        a.api,
+        a.model,
+        a.scraper,
+        a.model_container,
+        a.redis_container,
+        a.scraper_container,
+        clock,
+    )
+    cases: list[Case] = []
+    a.out.parent.mkdir(parents=True, exist_ok=True)
+    for rep in range(1, a.repeat + 1):
+        for name in a.faults.split(","):
+            print(f"{clock():8.1f}  begin  {name} {rep}", flush=True)
+            fault = FAULTS[name]
+            case = run_case(
+                name, rep, lambda c, f=fault: f(lab, c), lambda: recover(lab.probe, clock), clock
+            )
+            cases.append(case)
+            a.out.write_text(json.dumps([asdict(c) for c in cases], indent=2) + "\n")
+            print(
+                f"{clock():8.1f}  {'passed' if case.passed else 'FAILED'}  {name} {rep}", flush=True
+            )
+            if not case.passed:
+                print(summary(cases))
+                raise SystemExit("stop: fix the system before injecting another fault")
+    print(summary(cases))
+
+
+if __name__ == "__main__":
+    main()
+~~~
+
+<!-- run: cd serve && uv run ruff format --check . && uv run ruff check . && uv run python -m serve.gameday --help -->
+
+How each drill works:
+
+- **`model_exit` and `redis_unavailable`** kill or stop a container, send one request, check that it fails with the expected status, then restart the container. `expect` checks the exact error: a 500 where you designed a 503 means the failure took a path you didn't plan for.
+- **`overload`** uses a `Barrier` to hold 18 threads until all of them are ready, so the requests arrive at the same instant. With one slot and a queue of eight, nine should be admitted and nine refused.
+- **`client_disconnect`** writes the HTTP request by hand on a raw socket and waits for the first streamed event. Then it closes the socket with `SO_LINGER` set to zero. That sends a TCP reset, like a phone losing signal, instead of a polite goodbye. Finally it polls the model server's `/slots` until no slot is busy. The Go context being cancelled isn't enough: as Step 4 showed, the model server itself has to stop generating.
+- **`scraper_loss`** checks that Prometheus really is down, then expects a request to *succeed*.
+- **`model_oom`** lowers the memory limit below what the model needs, waits until Docker reports the container stopped with `OOMKilled`, checks for the 502, and puts the 2 GiB limit back *before* restarting. The order matters, as the second Break it shows.
+- **`main`** saves the JSON after every drill, so a drill that hangs still leaves the earlier records. It also stops at the first failure.
+
+### Run it
+
+The drills need the live stack from Steps 4 and 5:
+
+| Service | Address | Notes |
+|---|---|---|
+| Model, `blueprint-phase8-llm` | 127.0.0.1:18080 | As in Step 8, plus a 2 GiB memory limit |
+| Redis, `blueprint-phase8-redis` | 127.0.0.1:16379 | Holds the shared token budget |
+| Runway's API with the inference route | 127.0.0.1:18081 | From Step 5, with `INFERENCE_UPSTREAM=http://127.0.0.1:18080`, `INFERENCE_REDIS_ADDR=127.0.0.1:16379`, `INFERENCE_SLOTS=1`, `INFERENCE_QUEUE=8` and authentication required |
+| Prometheus, `blueprint-phase8-prometheus` | 127.0.0.1:19090 | Scrapes the API every 2 seconds |
+
+Prometheus needs a small config file:
+
+<!-- file: experiments/gameday/prometheus.yaml -->
+~~~yaml
+global:
+  scrape_interval: 2s
+scrape_configs:
+  - job_name: runway-api
+    static_configs:
+      - targets: ['127.0.0.1:18081']
+~~~
+
+Start the three containers. If Step 8's model container is still there, remove it first (`docker rm -f blueprint-phase8-llm`): it has no memory limit, and the out-of-memory drill restores 2 GiB.
+
+~~~bash
+# From the lab root; PHASE8_MODELS is the verified model directory from Step 8.
+docker run -d --name blueprint-phase8-llm -p 127.0.0.1:18080:8080 \
+  --memory 2g --memory-swap 2g -v "$PHASE8_MODELS:/models:ro" \
+  ghcr.io/ggml-org/llama.cpp@sha256:e67d88af487390098c76d7982b1761484339fa147b7e41d3c64ae1318759f78b \
+  -m /models/qwen2.5-0.5b-instruct-q4_k_m.gguf -c 4096 -t 4 \
+  --parallel 1 --metrics --host 0.0.0.0 --port 8080
+docker run -d --name blueprint-phase8-redis -p 127.0.0.1:16379:6379 redis:8
+docker run -d --name blueprint-phase8-prometheus --network host \
+  -v "$PWD/experiments/gameday/prometheus.yaml:/etc/prometheus/prometheus.yml:ro" \
+  prom/prometheus:v3.15.0 \
+  --config.file=/etc/prometheus/prometheus.yml --web.listen-address=127.0.0.1:19090
+~~~
+
+Start the API as in Step 5. Put a token for a client with the `generator` role in `RUNWAY_TOKEN`; it's a secret, so never commit it or paste it into notes. Check that one stream works, then run the game day:
+
+~~~bash
+cd serve
+uv run python -m serve.stream http://127.0.0.1:18081
+uv run python -m serve.gameday
+~~~
+
+It takes about two minutes. Each drill prints a `begin` and a `passed` line, then you get a summary:
+
+~~~text
+fault              rep  detect s  recover s  result
+model-exit           1      0.56        5.9  passed
+redis-unavailable    1      1.05        5.3  passed
+overload             1      0.03       33.0  passed
+client-disconnect    1         -        3.2  passed
+scraper-loss         1      0.27        3.8  passed
+model-oom            1      0.62        4.7  passed
+model-exit           2      0.43        4.5  passed
+redis-unavailable    2      1.09        5.2  passed
+overload             2      0.02       32.8  passed
+client-disconnect    2         -        3.2  passed
+scraper-loss         2      0.22        3.6  passed
+model-oom            2      0.57        4.6  passed
+~~~
+
+Your times will differ. Here's what mine say:
+
+- **Detection is fast because the drill is watching.** A dead model shows up in about half a second, because the drill sends a request straight after `docker kill`. In real life nobody sends that request on cue: you find out from Step 5's alerts, which take minutes. The detect column measures the system's error path, not your monitoring.
+- **The Redis 503 takes half a second.** That's the 500 ms Redis timeout from Step 4's `SharedReservation`. Failing closed is right, but while Redis is down, every request waits that long before it's refused.
+- **Most of the recovery time is the check itself.** Restarting the model until `/health` is ok took 1.5–2 s. The ten checks took another 3–4 s, about 0.3 s each.
+- **The cancelled request freed the model's slot 0.11 s after the reset,** in both runs.
+- **Docker reported `OOMKilled: true`** both times, so the memory drill really did run the model out of memory.
+- **Overload took 33 s to recover, and the details show a real problem.** Nine requests were refused within 30 ms: good. The nine admitted requests are served one at a time, and a long answer takes about 4 s, so their first content arrived at 0.3, 5.1, 9.7, 14.1, 17.6, 20.9 and 24.6 s. The last two in the first run never finished: they hit the 30-second deadline, one as a 504 and one cut off mid-answer. In the second run, all nine finished, the last one just under the deadline. Over six overload runs with this setting, at least one admitted request failed in five of them.
+
+An admitted request that then times out is the worst outcome: it used model time, and the user still got nothing. The queue is longer than the deadline can drain. One slot can serve about 30 s ÷ 4 s ≈ 7 long requests before the deadline, but one running plus eight waiting is nine.
+
+**Your turn:** restart the API with `INFERENCE_QUEUE=5` and run only the overload drill:
+
+~~~bash
+uv run python -m serve.gameday --faults overload
+~~~
+
+~~~text
+fault              rep  detect s  recover s  result
+overload             1      0.03       25.5  passed
+overload             2      0.02       25.3  passed
+~~~
+
+All six admitted requests finished in both runs (the slowest complete answer took 22.7 s), twelve were refused at once, and recovery took 25 s instead of 33. The model completed the same number of answers (six or seven either way), because it isn't any faster. The shorter queue only refused, straight away, requests that would otherwise have waited and failed. The right length depends on how long the answers are and on the hardware, so work it out again whenever either one changes. Keep the queue at 5 for the rest of this phase, and write the reason in the runbook.
+
+**Break it:** in `model_oom`, delete the `docker update` line that puts back the 2 GiB limit. Run only that drill:
+
+~~~bash
+uv run python -m serve.gameday --faults model-oom --repeat 1
+~~~
+
+~~~text
+     0.0  begin  model-oom 1
+    61.3  FAILED  model-oom 1
+stop: fix the system before injecting another fault
+fault              rep  detect s  recover s  result
+model-oom            1      0.80          -  FAILED TimeoutError: model not ready
+~~~
+
+The restarted model was killed again while it loaded its weights, and the drill gave up after 60 s. Restarting a process doesn't fix anything while the cause is still there. Roll back the whole release, meaning the image, the weights and their resource limits, not just the process. Fix it by hand, the way the runbook says:
+
+~~~bash
+docker update --memory 2g --memory-swap 2g blueprint-phase8-llm
+docker start blueprint-phase8-llm
+~~~
+
+Then put the line back.
+
+### The runbook
+
+Write the runbook before the first drill, and correct it after every drill that surprised you. Mine, in order:
+
+1. Identify the running release: image, model and chat-template digests.
+2. Stop any rollout that's in progress.
+3. Look at queue depth, memory use and error rates. Don't look at prompts.
+4. Shed excess work.
+5. Restore the last tested **image + model + template** release, including its resource limits.
+6. Verify the signatures (Step 7) and wait for readiness.
+7. Run the ten-request check, and compare the all-arrivals objective from Step 5.
+8. Record the detection and recovery times.
+
+Two more rules. **Never automatically retry a partly delivered answer:** the user may already have seen part of it, and would get duplicate text. In Phase 7, a failed optional prediction could fall back to a default; a generation endpoint can't pretend a partial answer is complete. And **size the queue from the deadline:** slots × deadline ÷ time per long answer is the most work you can promise to finish.
+
+**Done when:** every fault has passed twice, `results/gameday.json` is kept, the queue is sized from your measured answer time, and the runbook matches what you actually did. My raw results for every run above are in [evidence/2026-11-13-game-day](evidence/2026-11-13-game-day/). The [platform report](evidence/platform-validation/report.md) keeps an earlier run of the same six faults, plus Kubernetes drills (rolling back corrupt weights) that this local stack doesn't cover.
+
+**What this proves, and what it doesn't.** It proves that each failure returns the status you designed, that cancellation frees the model, that admission bounds the work, and that the stack recovers on one machine. It doesn't prove how fast your *alerts* detect a fault, how the system behaves when a whole node or the network fails, or anything about production. Two runs per fault is a small sample: the overload result changed between runs, which is exactly why you repeat them.
 
 ## Step 10: Data parallelism, with a reference you can check
 
-Inference batches different users; training batches examples to estimate a gradient. **Data parallelism** replicates the model and gives each rank a shard of examples. DDP reduces gradients across ranks before each optimiser update. With equal-size shards and a mean loss, averaging the rank gradients must equal the gradient on the combined batch. Build that test before measuring speed. [PyTorch's DDP tutorial](https://docs.pytorch.org/tutorials/intermediate/ddp_tutorial.html) explains the process-group and model wrapper.
+Inference batches different users' requests. Training batches examples to estimate one gradient. **Data parallelism** gives every rank (one process, often one GPU) a full copy of the model and a different share of the examples. After the backward pass, the ranks **all-reduce** their gradients: each ends up with the average of everyone's. Then each takes the same optimiser step, so the copies stay identical.
 
+That's a claim you can test. With equal shares and a mean loss, the average of the ranks' gradients must equal the gradient of the whole batch on one process. So two ranks must end up with exactly the weights that one process would, apart from rounding. Build that check before measuring any speed. [PyTorch's DDP tutorial](https://docs.pytorch.org/tutorials/intermediate/ddp_tutorial.html) explains the process group and the model wrapper.
 
 <!-- file: serve/src/serve/ddp.py -->
 ~~~python
@@ -2541,20 +3743,396 @@ cd serve
 uv run python -m torch.distributed.run --standalone --nproc-per-node=2 -m serve.ddp
 ~~~
 
-This compares four distributed SGD updates with four serial full-batch updates, then saves one atomic checkpoint. It proves gradient semantics, not training speed: the serial reference is intentionally inside the measured loop. For a speed experiment remove the reference work from both timed variants, keep global batch and update count fixed, warm up, synchronise at the boundaries and compare 1 versus 2 ranks. Report samples/s and time to a fixed validation loss, not just time per local batch. For real epochs use `DistributedSampler` and call `set_epoch`; unequal shard sizes require weighted gradient accounting.
+`torch.distributed.run` (also installed as `torchrun`) starts two processes and tells each its rank. They meet through a rendezvous on this machine, and gloo, PyTorch's CPU backend, carries the all-reduce over TCP. The script prints `"serial_parity": true`: four distributed updates matched four serial ones. Its timing isn't a speed measurement, because the serial reference runs inside the timed loop.
 
-Across [netlab](../network-bridge/README.md)'s shaped link, run the same CPU environment in each of its two containers. Use TCP on the shaped interfaces, not loopback; set `GLOO_SOCKET_IFNAME` to that interface. Start both commands against rank zero's reachable IP and the same rendezvous port:
+### Checkpoint, crash, resume
 
-~~~bash
-# Container A
-GLOO_SOCKET_IFNAME=eth0 uv run python -m torch.distributed.run --nnodes=2 --nproc-per-node=1 --node-rank=0 --master-addr=172.28.0.2 --master-port=29500 -m serve.ddp
-# Container B (substitute the actual address from your netlab)
-GLOO_SOCKET_IFNAME=eth0 uv run python -m torch.distributed.run --nnodes=2 --nproc-per-node=1 --node-rank=1 --master-addr=172.28.0.2 --master-port=29500 -m serve.ddp
+Long training runs fail: a machine dies, a network link drops. What matters is what you can resume from. Three things make a resume correct:
+
+1. **The whole training state.** The weights, the optimiser's state (SGD with momentum keeps a running average of past gradients), and the step number. Weights alone aren't enough.
+2. **An atomic write.** Write to a temporary file, then rename it. A crash mid-write leaves the previous checkpoint intact; the rename either happened or it didn't.
+3. **The same data.** A resumed run must see the examples the uninterrupted run would have, with none repeated or skipped. Here, each step's examples are generated from the step number, so that's automatic. With a real dataset, you save the sampler's position and the random state too.
+
+<!-- file: serve/src/serve/ddpnet.py -->
+~~~python
+"""Train across ranks, checkpoint every step, survive a failure, and prove it.
+
+  torchrun --standalone --nproc-per-node=2 -m serve.ddpnet --steps 6 --dir ckpt
+
+Each step's examples come from the step number, so a resumed run sees exactly
+the examples the uninterrupted run would have. At the end, rank 0 trains a serial
+copy from the same start and checks that the distributed model matches it.
+"""
+
+import argparse
+import json
+import os
+import statistics
+import time
+from datetime import timedelta
+from pathlib import Path
+
+import torch
+import torch.distributed as dist
+from torch.nn.parallel import DistributedDataParallel as DDP
+
+BATCH = 64  # the global batch; each rank gets an equal share
+
+
+def make_model(hidden: int) -> torch.nn.Module:
+    torch.manual_seed(41)
+    return torch.nn.Sequential(
+        torch.nn.Linear(64, hidden), torch.nn.ReLU(), torch.nn.Linear(hidden, 1)
+    )
+
+
+def batch(step: int) -> tuple[torch.Tensor, torch.Tensor]:
+    g = torch.Generator().manual_seed(1000 + step)
+    x = torch.randn(BATCH, 64, generator=g)
+    return x, x[:, :8].sum(dim=1, keepdim=True)
+
+
+def optimiser(model: torch.nn.Module) -> torch.optim.Optimizer:
+    # A wider layer sums more terms, so the same step moves its output further:
+    # shrink the learning rate with width, or training diverges.
+    hidden = model[0].out_features
+    return torch.optim.SGD(model.parameters(), lr=0.01 * min(1, 32 / hidden), momentum=0.9)
+
+
+def train_step(model, opt, x, y) -> None:
+    opt.zero_grad()
+    (model(x) - y).square().mean().backward()
+    opt.step()
+
+
+def save(path: Path, model, opt, step: int) -> None:
+    """Write the whole training state, then rename: a crash leaves the old file intact."""
+    tmp = path.with_suffix(".tmp")
+    torch.save({"model": model.state_dict(), "opt": opt.state_dict(), "step": step}, tmp)
+    os.replace(tmp, path)
+
+
+def resume(path: Path, model, opt) -> int:
+    if not path.exists():
+        return 0
+    state = torch.load(path)
+    model.load_state_dict(state["model"])
+    opt.load_state_dict(state["opt"])  # the momentum buffers are training state too
+    return state["step"]
+
+
+def main() -> None:
+    p = argparse.ArgumentParser()
+    p.add_argument("--steps", type=int, default=6)
+    p.add_argument("--hidden", type=int, default=32)
+    p.add_argument("--dir", type=Path, default=Path("ckpt"))
+    p.add_argument("--stop-at", type=int, default=0, help="exit after this step, like a crash")
+    p.add_argument(
+        "--timeout", type=float, default=20, help="seconds before a stuck collective fails"
+    )
+    a = p.parse_args()
+    torch.set_num_threads(1)
+    dist.init_process_group("gloo", timeout=timedelta(seconds=a.timeout))
+    rank, world = dist.get_rank(), dist.get_world_size()
+    path = a.dir / "checkpoint.pt"
+    try:
+        model = make_model(a.hidden)
+        opt = optimiser(model)
+        start = resume(path, model, opt)
+        ddp = DDP(model)
+        params = sum(p.numel() for p in model.parameters())
+        step_times = []
+        for step in range(start, a.steps):
+            x, y = batch(step)
+            began = time.perf_counter()
+            train_step(ddp, opt, x.chunk(world)[rank], y.chunk(world)[rank])
+            step_times.append(time.perf_counter() - began)
+            dist.barrier()  # every rank finished this step before it is recorded
+            if rank == 0:
+                save(path, model, opt, step + 1)
+            if step + 1 == a.stop_at:
+                if rank == 0:
+                    print(json.dumps({"stopped_after": step + 1}), flush=True)
+                return
+        # The network alone: all-reduce a buffer the size of the gradients.
+        grads = torch.zeros(params)
+        reduce_times = []
+        for _ in range(5):
+            began = time.perf_counter()
+            dist.all_reduce(grads)
+            reduce_times.append(time.perf_counter() - began)
+        if rank == 0:
+            serial = make_model(a.hidden)
+            serial_opt = optimiser(serial)
+            for step in range(a.steps):
+                train_step(serial, serial_opt, *batch(step))
+            for mine, ref in zip(model.parameters(), serial.parameters(), strict=True):
+                torch.testing.assert_close(mine, ref, rtol=1e-4, atol=1e-5)
+            report = {
+                "world": world,
+                "params": params,
+                "grad_mb": round(params * 4 / 1e6, 2),
+                "resumed_from": start,
+                "steps": a.steps,
+                "step_ms": round(statistics.median(step_times) * 1000, 1) if step_times else None,
+                "allreduce_ms": round(statistics.median(reduce_times) * 1000, 1),
+                "matches_serial": True,
+            }
+            print(json.dumps(report), flush=True)
+    finally:
+        dist.destroy_process_group()
+
+
+if __name__ == "__main__":
+    main()
 ~~~
 
-Allow the Gloo peer connections on the isolated lab network as well as the rendezvous port. Run baseline, then netlab's 10/50/100 ms RTT and bandwidth/loss conditions. Prove packets cross the shaped interface with `ss`/packet capture. The tiny model is latency dominated; increase parameter bytes in a separate benchmark to see bandwidth dominate. Approximate ring all-reduce traffic per rank is 2(P−1)/P times gradient bytes, before protocol overhead. Do not infer RDMA or NCCL performance from CPU Gloo.
+How it fits together:
 
-**Break it:** kill rank 1 during backward. The process-group timeout should fail the job rather than commit another checkpoint. Restore the previous checkpoint, optimiser state and step; document whether the data sampler repeats or skips examples. The guide checks atomic publication, not a complete resumable data pipeline. Capture the multi-container failure/recovery experiment separately: it has not been run here.
+- `batch(step)` builds that step's 64 examples from a seed derived from the step number. Each rank takes its half with `chunk`.
+- After every step, a `barrier` makes sure both ranks finished, then rank 0 saves. Only one rank writes, so there's one checkpoint, not two that might disagree. Both ranks read it when they start again.
+- `--stop-at` exits after a step, as a clean stand-in for a crash. Real crashes come later.
+- The all-reduce timing sends a buffer exactly the size of the gradients, five times, and keeps the median. That isolates the network from the computation.
+- At the end, rank 0 trains a serial copy from the same starting weights for the same steps, and `assert_close` fails the run if the two models differ.
+- The learning rate shrinks as the hidden layer gets wider. I found out why the hard way: with 32,768 hidden units and a learning rate of 0.01, the loss went from 7 to about 8 × 10¹⁴ in six steps, and the parity check failed by 0.9. Training that diverges magnifies tiny rounding differences until two correct implementations disagree. The check caught a real problem, just not the one it was written for.
+
+Run it straight through, then stopped at step 3 and resumed:
+
+<!-- run: cd serve && rm -rf /tmp/ddpnet-a /tmp/ddpnet-b && mkdir -p /tmp/ddpnet-a /tmp/ddpnet-b && uv run python -m torch.distributed.run --standalone --nproc-per-node=2 -m serve.ddpnet --steps 6 --dir /tmp/ddpnet-a && uv run python -m torch.distributed.run --standalone --nproc-per-node=2 -m serve.ddpnet --steps 6 --stop-at 3 --dir /tmp/ddpnet-b && uv run python -m torch.distributed.run --standalone --nproc-per-node=2 -m serve.ddpnet --steps 6 --dir /tmp/ddpnet-b -->
+
+~~~bash
+cd serve
+mkdir -p ckpt-a ckpt-b
+uv run python -m torch.distributed.run --standalone --nproc-per-node=2 -m serve.ddpnet --steps 6 --dir ckpt-a
+uv run python -m torch.distributed.run --standalone --nproc-per-node=2 -m serve.ddpnet --steps 6 --stop-at 3 --dir ckpt-b
+uv run python -m torch.distributed.run --standalone --nproc-per-node=2 -m serve.ddpnet --steps 6 --dir ckpt-b
+~~~
+
+~~~text
+{"world": 2, "params": 2113, "grad_mb": 0.01, "resumed_from": 0, "steps": 6, "step_ms": 2.3, "allreduce_ms": 0.9, "matches_serial": true}
+{"stopped_after": 3}
+{"world": 2, "params": 2113, "grad_mb": 0.01, "resumed_from": 3, "steps": 6, "step_ms": 2.2, "allreduce_ms": 0.6, "matches_serial": true}
+~~~
+
+Both runs end with weights that match the serial model; the second resumed from step 3. Above each result, `torchrun` prints a banner saying it set `OMP_NUM_THREADS` to 1 for each process. That's expected, and harmless here.
+
+**Break it:** in `resume`, delete the line that loads the optimiser state, so a resumed run starts with no momentum. Run the stop-and-resume pair again (delete `ckpt-b` first):
+
+~~~text
+[rank0]: AssertionError: Tensor-likes are not close!
+
+[rank0]: Mismatched elements: 2028 / 2048 (99.0%)
+[rank0]: Greatest absolute difference: 0.016440898180007935 at index (7, 6) (up to 1e-05 allowed)
+[rank0]: Greatest relative difference: 23.150144577026367 at index (29, 5) (up to 0.0001 allowed)
+...
+serve.ddpnet FAILED
+~~~
+
+The weights were restored exactly, yet the model no longer matches. Momentum is part of the training state. Put the line back.
+
+### Across a real network link
+
+On one machine, the ranks talk over loopback, which is almost free. Put them in two containers with a link you control, as in the [Networking Bridge](../network-bridge/README.md)'s netlab:
+
+<!-- file: experiments/ddp/Dockerfile -->
+~~~text
+# One training rank: Python, CPU PyTorch at the version serve/ locks, and tc.
+FROM python:3.12-slim
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends iproute2 \
+ && rm -rf /var/lib/apt/lists/*
+RUN pip install --no-cache-dir numpy==2.5.4 \
+ && pip install --no-cache-dir torch==2.15.0 --index-url https://download.pytorch.org/whl/cpu
+ENV PYTHONPATH=/lab/serve/src
+~~~
+
+<!-- file: experiments/ddp/compose.yaml -->
+~~~yaml
+# Two training ranks joined by one link, like netlab: tc on each side shapes
+# what that side sends. Run from the lab root:
+#   docker compose -f experiments/ddp/compose.yaml up -d --build
+name: ddp
+services:
+  rank0: &rank
+    image: ddp-rank
+    build: .
+    command: sleep infinity
+    cap_add: [NET_ADMIN] # for tc on this container's own interface
+    volumes: ["../..:/lab"] # the code, and a shared checkpoint directory
+    working_dir: /lab
+    environment:
+      GLOO_SOCKET_IFNAME: eth0 # talk over the shaped link, not loopback
+  rank1:
+    <<: *rank
+~~~
+
+<!-- file: experiments/ddp/link.sh -->
+~~~bash
+#!/bin/sh
+# Shape the link between the two ranks. All-reduce sends both ways, so each
+# side gets half the round trip, the full rate limit and the loss. The queue
+# holds 10,000 packets: a gradient burst is thousands, and netem drops beyond it.
+#   experiments/ddp/link.sh 40ms 100mbit 0%     round trip, rate, loss
+#   experiments/ddp/link.sh off
+set -eu
+c() { docker compose -f "$(dirname "$0")/compose.yaml" exec -T "$@"; }
+for r in rank0 rank1; do
+  if [ "$1" = off ]; then
+    c "$r" tc qdisc del dev eth0 root 2>/dev/null || true
+  else
+    c "$r" tc qdisc replace dev eth0 root netem delay "$(( ${1%ms} / 2 ))ms" rate "$2" loss "$3" limit 10000
+  fi
+done
+~~~
+
+<!-- run: chmod +x experiments/ddp/link.sh && sh -n experiments/ddp/link.sh -->
+
+`GLOO_SOCKET_IFNAME=eth0` matters: without it, gloo may choose an interface that bypasses the shaped one, and your measurements would be of the wrong link. Start the two containers and check the shaping works:
+
+~~~bash
+docker compose -f experiments/ddp/compose.yaml up -d --build
+experiments/ddp/link.sh 40ms 100mbit 0%
+docker compose -f experiments/ddp/compose.yaml exec rank0 tc qdisc show dev eth0
+experiments/ddp/link.sh off
+~~~
+
+~~~text
+qdisc netem 8001: root refcnt 17 limit 10000 delay 20ms rate 100Mbit seed 7001724481774582651
+~~~
+
+Half the round trip on each side, as `link.sh` intends. If it fails with `Specified qdisc kind is unknown`, your kernel needs netem loaded as a module: load it with netlab's image, `docker run --rm --privileged -v /lib/modules:/lib/modules:ro nettools modprobe sch_netem`.
+
+Each training run needs one command per container. `train.sh` starts both, with rank 0's container as the meeting point:
+
+<!-- file: experiments/ddp/train.sh -->
+~~~bash
+#!/usr/bin/env bash
+# Start one training job across the two containers; arguments go to serve.ddpnet.
+#   experiments/ddp/train.sh --steps 6 --hidden 2048 --dir ckpt
+# Exits non-zero if either rank failed.
+set -uo pipefail
+here=$(dirname "$0")
+node() {
+  local r=$1; shift
+  docker compose -f "$here/compose.yaml" exec -T "rank$r" \
+    python -m torch.distributed.run --nnodes=2 --nproc-per-node=1 --node-rank="$r" \
+    --master-addr=rank0 --master-port=29500 -m serve.ddpnet "$@" 2>&1 | sed "s/^/[rank$r] /"
+}
+node 1 "$@" &
+other=$!
+node 0 "$@"
+mine=$?
+wait "$other"
+theirs=$?
+exit $(( mine || theirs ))
+~~~
+
+<!-- run: chmod +x experiments/ddp/train.sh && bash -n experiments/ddp/train.sh -->
+
+### Predict, then measure
+
+Before running anything, predict. A step's all-reduce must at least:
+
+- **wait for round trips.** Gloo's ring all-reduce for two ranks takes a few message exchanges, each costing a round trip, whatever the size.
+- **move the bytes.** Each rank sends about 2(P−1)/P times the gradient size, where P is the number of ranks. For P = 2 that's the gradient size once.
+
+So a small model is **latency-bound**: its step time grows with the round trip and ignores bandwidth. A big model is **bandwidth-bound**: With `--hidden 32768` the model has 2.16 million parameters: 8.65 MB of gradients. At 100 Mbit/s (12.5 MB/s) that's at least 0.69 s per all-reduce, whatever the round trip; at 10 Gbit/s, under 10 ms.
+
+Now measure. Each run below is one call to `train.sh`, on a link set by `link.sh`, and prints the same JSON line as before. For example, the big model on a 40 ms, 100 Mbit/s link:
+
+~~~bash
+experiments/ddp/link.sh 40ms 100mbit 0%
+rm -rf ckpt-m && mkdir ckpt-m
+experiments/ddp/train.sh --steps 6 --hidden 32768 --dir ckpt-m
+experiments/ddp/link.sh off
+~~~
+
+~~~text
+[rank0] {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 0, "steps": 6, "step_ms": 972.5, "allreduce_ms": 928.3, "matches_serial": true}
+~~~
+
+`10gbit` stands in for "no bandwidth limit": netem needs some rate, and this one is far above what the link can actually do. I ran every combination twice, in shuffled order, and checked that the laptop didn't sleep. All-reduce times, in milliseconds:
+
+| Link | Small model (8 KB) | Big model (8.65 MB) |
+|---|---:|---:|
+| No shaping | 0.7, 0.8 | 7.8, 8.4 |
+| 100 Mbit/s, no added delay | 1.4, 1.5 | 728, 728 |
+| 40 ms round trip, no bandwidth limit | 81, 81 | 248, 248 |
+| 40 ms round trip and 100 Mbit/s | 82, 82 | 889, 928 |
+
+Every run also passed the serial check. The predictions held in two cases and failed in one:
+
+- **The small model is latency-bound, as predicted.** A bandwidth limit barely touched it (0.7 → 1.4 ms). A 40 ms round trip made each all-reduce cost 81 ms: two round trips.
+- **The big model is bandwidth-bound, as predicted.** At 100 Mbit/s it took 728 ms, close to the 692 ms the bytes alone need.
+- **But the big model also paid far more for latency than predicted.** With no bandwidth limit, a 40 ms round trip cost 248 ms, not "under 10 ms". So I varied the round trip:
+
+| Round trip | Big model all-reduce |
+|---|---:|
+| 20 ms | 128 ms |
+| 40 ms | 248 ms |
+| 80 ms | 489 ms |
+
+That's six round trips every time, three times as many as the small model's two. My first explanation was the bandwidth-delay product from the Networking Bridge: TCP's send buffer is capped at 4 MB here, which limits a connection to about 100 MB/s at a 40 ms round trip. So I raised the cap to 64 MB in both containers and reran: 248.5 and 249.2 ms, no change. My second explanation was TCP restarting slowly after idle (`net.ipv4.tcp_slow_start_after_idle`). Turning that off also changed nothing: 249.2 and 248.6 ms. What's left is the most likely cause, though I haven't verified it: gloo's all-reduce splits a large buffer into steps that each wait for the other rank, so it pays more round trips than a small message does. Two wrong explanations, each ruled out with a measurement, is a normal day in performance work. Write them down; they stop the next person from trying them again.
+
+What the measurements do support is a simple model you can use to plan:
+
+**all-reduce time ≈ (round trips × RTT) + (bytes ÷ bandwidth)**
+
+With six round trips for the big model, it predicts 6 × 40 + 692 = 932 ms at 40 ms and 100 Mbit/s. I measured 889 and 928 ms. Without any shaping, the big model's step took 35–53 ms, of which the all-reduce was only 8 ms: computation dominated. On the 100 Mbit/s link, the all-reduce was more than 90% of every step. That's why real clusters put GPUs on links a thousand times faster, and why frameworks overlap communication with the backward pass.
+
+**Your turn:** add a fifth row with loss, `link.sh 40ms 100mbit 1%`, and predict it first. The Networking Bridge measured what 1% loss does to a single TCP download.
+
+### Break it: lose a rank, lose the link
+
+A training job across machines can lose a rank (the process or the machine dies) or lose the link (packets stop arriving). Either way, the other rank is left waiting inside an all-reduce. The questions: does the job end, how quickly, and can it resume exactly?
+
+Run a longer job, 30 steps of the big model on the 40 ms, 100 Mbit/s link, and break it about 12 seconds in. First, kill rank 1's container outright:
+
+~~~bash
+experiments/ddp/link.sh 40ms 100mbit 0%
+rm -rf ckpt-f && mkdir ckpt-f
+experiments/ddp/train.sh --steps 30 --hidden 32768 --dir ckpt-f > kill.txt 2>&1 &
+sleep 12
+docker compose -f experiments/ddp/compose.yaml kill rank1
+wait
+grep -m1 "RuntimeError" kill.txt
+~~~
+
+~~~text
+[rank0] [rank0]: RuntimeError: [/__w/pytorch/pytorch/third_party/gloo/gloo/transport/tcp/pair.cc:545] Read error [172.26.0.3]:11445: Connection reset by peer. This is typically caused by a remote worker hanging or bugs in the appl...
+~~~
+
+Rank 0 failed 1.3 seconds after the kill. The dead container's kernel reset the connection, so rank 0 found out at once. Restart the container and run the same command again: it resumes from the last checkpoint.
+
+~~~bash
+docker compose -f experiments/ddp/compose.yaml start rank1
+experiments/ddp/train.sh --steps 30 --hidden 32768 --dir ckpt-f
+~~~
+
+~~~text
+[rank0] {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 5, "steps": 30, "step_ms": 922.7, "allreduce_ms": 889.1, "matches_serial": true}
+~~~
+
+It resumed from step 5 and finished with exactly the model the serial reference computes. Only the step in progress was lost, because this job checkpoints after every step; most of those first 12 seconds were start-up. A real job checkpoints far less often, because writing a large model's state takes time, and everything since the last checkpoint is lost and redone.
+
+Now cut the link instead: replace the `docker compose kill` line with `experiments/ddp/link.sh 40ms 100mbit 100%`. Every packet is dropped, and both processes stay alive.
+
+~~~text
+[rank0] [rank0]: RuntimeError: [/__w/pytorch/pytorch/third_party/gloo/gloo/transport/tcp/unbound_buffer.cc:78] Timed out waiting 20000ms for recv operation to complete
+~~~
+
+This time the job ended 22 seconds after the fault: nothing told the ranks that anything was wrong, so each waited out the 20-second timeout from `--timeout`. Without a timeout, a partition hangs the job until someone notices. Restore the link (`link.sh off`, then the 40 ms, 100 Mbit/s shape again) and resume: mine resumed from step 4 and matched the serial model.
+
+| Fault, twice each | Job ended after the fault | Resumed from | Matches serial |
+|---|---|---|---|
+| Rank 1 killed | 1.3 s, 1.3 s | step 5, step 6 | yes, yes |
+| 100% packet loss | 22.1 s, 22.0 s | step 4, step 4 | yes, yes |
+
+The timeout is a trade-off you now have numbers for. Each big-model step takes about a second, so 20 seconds is long enough not to fire on a slow step, and short enough that a partition wastes only 20 seconds of every rank. Set it much shorter and a slow but healthy step kills the job; set it much longer and a partition idles the whole cluster.
+
+**Done when:** the serial-parity and resume checks pass locally, your measured step and all-reduce times are in a table with your predictions next to them, and both failures ended within the timeout and resumed to a model that matches the serial one. My raw results are in [evidence/2026-11-13-training-network](evidence/2026-11-13-training-network/README.md).
+
+**What this proves, and what it doesn't.** It proves that data-parallel training here computes the same model as one process, that a checkpoint resumes it exactly, and that a dead rank or a dead link fails the job in bounded time instead of hanging. It doesn't measure GPU training: NCCL over NVLink or InfiniBand overlaps communication with computation and uses links a thousand times faster than this one, so only the *shape* of the trade-off carries over. Two containers on one machine aren't two machines, and a job that fails cleanly and resumes from a checkpoint still loses the work since that checkpoint. Elastic training, which continues with fewer ranks, is a different design.
 
 ## Step 11: Split the model, not just the examples
 
@@ -2989,6 +4567,40 @@ vllm serve Qwen/Qwen2.5-0.5B-Instruct --host 127.0.0.1 --port 8000 --max-model-l
 ~~~
 
 Use the step-3 load client through an SSH tunnel bound to loopback, at concurrency/arrival rates that fit the GPU. Repeat the performance/cost/quality grid, collecting server token usage, GPU memory and utilisation. vLLM's batching and paged KV management target different overheads from our tick simulator; explain which bottleneck moved. Compare the same precision/model when possible, and label Q4 GGUF versus FP16 as a combined engine-and-precision comparison. One GPU cannot verify multi-GPU tensor parallelism.
+
+### What you can check without a GPU
+
+Before you pay for a GPU, check everything that doesn't need one, so the paid hour isn't spent fixing typos. NVIDIA publishes its CUDA compiler as Python wheels, so you can install it without a GPU and without admin rights:
+
+~~~bash
+uv venv --python 3.12 .cuda-tools
+uv pip install --python .cuda-tools/bin/python nvidia-cuda-nvcc==13.5.37 nvidia-cuda-runtime==13.5.37
+NVCC=.cuda-tools/lib/python3.12/site-packages/nvidia/cu13/bin/nvcc
+$NVCC --version | tail -2
+$NVCC -O2 gpu/add.cu -o gpu/add && ./gpu/add
+~~~
+
+~~~text
+Cuda compilation tools, release 13.5, V13.5.37
+Build cuda_13.5.r13.5/compiler.39125733_0
+CUDA driver version is insufficient for CUDA runtime version
+~~~
+
+The kernel compiles. Running it fails at the first CUDA call, and the `CHECK` macro reports why and exits with status 1, instead of carrying on and checking answers that were never computed. That's the error path working. (The CUDA 12 wheel, `nvidia-cuda-nvcc-cu12`, contains only `ptxas`, not `nvcc`; use the CUDA 13 one.)
+
+Now the Break it without a GPU: delete `if(i<n)` and compile again. It compiles without a warning. The compiler can't know the last block is partial, which is exactly why the step runs `compute-sanitizer` on real hardware. Put the guard back.
+
+The timing script refuses rather than inventing numbers:
+
+~~~bash
+cd serve && uv run python ../gpu/capture.py
+~~~
+
+~~~text
+not measured: CUDA device unavailable
+~~~
+
+This proves the code compiles and that both programs fail cleanly without a GPU. It proves nothing about correctness or speed on one: those need the run above, on real hardware.
 
 **Done when:** the kernel passes sanitizer, transfer and matmul parity pass, the repeated timing records exist, vLLM completes the frozen quality/performance suite, and the instance is destroyed. Until those artifacts exist, step 13 remains **not measured**, never an expected numerical output invented from a spec sheet.
 

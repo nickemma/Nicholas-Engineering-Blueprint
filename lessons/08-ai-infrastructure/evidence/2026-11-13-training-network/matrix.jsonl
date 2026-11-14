@@ -1,0 +1,16 @@
+{"rep": 1, "link": "40ms 100mbit 0%", "hidden": 32768, "result": {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 0, "steps": 6, "step_ms": 972.5, "allreduce_ms": 928.3, "matches_serial": true}}
+{"rep": 1, "link": "0ms 100mbit 0%", "hidden": 32, "result": {"world": 2, "params": 2113, "grad_mb": 0.01, "resumed_from": 0, "steps": 6, "step_ms": 2.2, "allreduce_ms": 1.4, "matches_serial": true}}
+{"rep": 2, "link": "0ms 100mbit 0%", "hidden": 32, "result": {"world": 2, "params": 2113, "grad_mb": 0.01, "resumed_from": 0, "steps": 6, "step_ms": 2.6, "allreduce_ms": 1.5, "matches_serial": true}}
+{"rep": 1, "link": "40ms 10gbit 0%", "hidden": 32768, "result": {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 0, "steps": 6, "step_ms": 283.9, "allreduce_ms": 247.8, "matches_serial": true}}
+{"rep": 2, "link": "40ms 10gbit 0%", "hidden": 32768, "result": {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 0, "steps": 6, "step_ms": 278.0, "allreduce_ms": 248.1, "matches_serial": true}}
+{"rep": 2, "link": "off", "hidden": 32768, "result": {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 0, "steps": 6, "step_ms": 52.8, "allreduce_ms": 8.4, "matches_serial": true}}
+{"rep": 1, "link": "40ms 100mbit 0%", "hidden": 32, "result": {"world": 2, "params": 2113, "grad_mb": 0.01, "resumed_from": 0, "steps": 6, "step_ms": 83.4, "allreduce_ms": 81.8, "matches_serial": true}}
+{"rep": 2, "link": "off", "hidden": 32, "result": {"world": 2, "params": 2113, "grad_mb": 0.01, "resumed_from": 0, "steps": 6, "step_ms": 1.5, "allreduce_ms": 0.7, "matches_serial": true}}
+{"rep": 2, "link": "40ms 100mbit 0%", "hidden": 32768, "result": {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 0, "steps": 6, "step_ms": 969.2, "allreduce_ms": 888.6, "matches_serial": true}}
+{"rep": 1, "link": "off", "hidden": 32, "result": {"world": 2, "params": 2113, "grad_mb": 0.01, "resumed_from": 0, "steps": 6, "step_ms": 1.4, "allreduce_ms": 0.8, "matches_serial": true}}
+{"rep": 2, "link": "40ms 10gbit 0%", "hidden": 32, "result": {"world": 2, "params": 2113, "grad_mb": 0.01, "resumed_from": 0, "steps": 6, "step_ms": 82.5, "allreduce_ms": 81.1, "matches_serial": true}}
+{"rep": 1, "link": "off", "hidden": 32768, "result": {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 0, "steps": 6, "step_ms": 35.4, "allreduce_ms": 7.8, "matches_serial": true}}
+{"rep": 2, "link": "40ms 100mbit 0%", "hidden": 32, "result": {"world": 2, "params": 2113, "grad_mb": 0.01, "resumed_from": 0, "steps": 6, "step_ms": 83.8, "allreduce_ms": 81.8, "matches_serial": true}}
+{"rep": 2, "link": "0ms 100mbit 0%", "hidden": 32768, "result": {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 0, "steps": 6, "step_ms": 758.1, "allreduce_ms": 728.3, "matches_serial": true}}
+{"rep": 1, "link": "40ms 10gbit 0%", "hidden": 32, "result": {"world": 2, "params": 2113, "grad_mb": 0.01, "resumed_from": 0, "steps": 6, "step_ms": 82.3, "allreduce_ms": 81.2, "matches_serial": true}}
+{"rep": 1, "link": "0ms 100mbit 0%", "hidden": 32768, "result": {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 0, "steps": 6, "step_ms": 774.5, "allreduce_ms": 727.7, "matches_serial": true}}

@@ -1,0 +1,102 @@
+[rank0] [rank0]: Traceback (most recent call last):
+[rank0] [rank0]:   File "<frozen runpy>", line 198, in _run_module_as_main
+[rank0] [rank0]:   File "<frozen runpy>", line 88, in _run_code
+[rank0] [rank0]:   File "/lab/serve/src/serve/ddpnet.py", line 130, in <module>
+[rank0] [rank0]:     main()
+[rank0] [rank0]:   File "/lab/serve/src/serve/ddpnet.py", line 91, in main
+[rank0] [rank0]:     train_step(ddp, opt, x.chunk(world)[rank], y.chunk(world)[rank])
+[rank0] [rank0]:   File "/lab/serve/src/serve/ddpnet.py", line 47, in train_step
+[rank0] [rank0]:     (model(x) - y).square().mean().backward()
+[rank0] [rank0]:   File "/usr/local/lib/python3.12/site-packages/torch/_tensor.py", line 623, in backward
+[rank0] [rank0]:     torch.autograd.backward(
+[rank0] [rank0]:   File "/usr/local/lib/python3.12/site-packages/torch/autograd/__init__.py", line 395, in backward
+[rank0] [rank0]:     _engine_run_backward(
+[rank0] [rank0]:   File "/usr/local/lib/python3.12/site-packages/torch/autograd/graph.py", line 1113, in _engine_run_backward
+[rank0] [rank0]:     return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+[rank0] [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0] [rank0]: RuntimeError: [/__w/pytorch/pytorch/third_party/gloo/gloo/transport/tcp/unbound_buffer.cc:78] Timed out waiting 20000ms for recv operation to complete
+[rank0] E1113 23:54:03.727000 1444 site-packages/torch/distributed/elastic/multiprocessing/api.py:1002] failed (exitcode: 1) local_rank: 0 (pid: 1466) of binary: /usr/local/bin/python
+[rank0] Traceback (most recent call last):
+[rank0]   File "<frozen runpy>", line 198, in _run_module_as_main
+[rank0]   File "<frozen runpy>", line 88, in _run_code
+[rank0]   File "/usr/local/lib/python3.12/site-packages/torch/distributed/run.py", line 1142, in <module>
+[rank0]     main()
+[rank0]   File "/usr/local/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 384, in wrapper
+[rank0]     result = f(*args, **kwargs)
+[rank0]              ^^^^^^^^^^^^^^^^^^
+[rank0]   File "/usr/local/lib/python3.12/site-packages/torch/distributed/run.py", line 1138, in main
+[rank0]     run(args)
+[rank0]   File "/usr/local/lib/python3.12/site-packages/torch/distributed/run.py", line 1129, in run
+[rank0]     elastic_launch(
+[rank0]   File "/usr/local/lib/python3.12/site-packages/torch/distributed/launcher/api.py", line 197, in __call__
+[rank0]     return launch_agent(
+[rank0]            ^^^^^^^^^^^^^
+[rank0]   File "/usr/local/lib/python3.12/site-packages/torch/distributed/launcher/api.py", line 386, in launch_agent
+[rank0]     raise ChildFailedError(
+[rank0] torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+[rank0] ============================================================
+[rank0] serve.ddpnet FAILED
+[rank0] ------------------------------------------------------------
+[rank0] Failures:
+[rank0]   <NO_OTHER_FAILURES>
+[rank0] ------------------------------------------------------------
+[rank0] Root Cause (first observed failure):
+[rank0] [0]:
+[rank0]   time      : 2026-11-13_23:54:03
+[rank0]   host      : e5a2b9e975eb
+[rank0]   rank      : 0 (local_rank: 0)
+[rank0]   exitcode  : 1 (pid: 1466) 
+[rank0]   error_file: <N/A>
+[rank0]   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[rank0] ============================================================
+[rank1] [rank1]: Traceback (most recent call last):
+[rank1] [rank1]:   File "<frozen runpy>", line 198, in _run_module_as_main
+[rank1] [rank1]:   File "<frozen runpy>", line 88, in _run_code
+[rank1] [rank1]:   File "/lab/serve/src/serve/ddpnet.py", line 130, in <module>
+[rank1] [rank1]:     main()
+[rank1] [rank1]:   File "/lab/serve/src/serve/ddpnet.py", line 91, in main
+[rank1] [rank1]:     train_step(ddp, opt, x.chunk(world)[rank], y.chunk(world)[rank])
+[rank1] [rank1]:   File "/lab/serve/src/serve/ddpnet.py", line 47, in train_step
+[rank1] [rank1]:     (model(x) - y).square().mean().backward()
+[rank1] [rank1]:   File "/usr/local/lib/python3.12/site-packages/torch/_tensor.py", line 623, in backward
+[rank1] [rank1]:     torch.autograd.backward(
+[rank1] [rank1]:   File "/usr/local/lib/python3.12/site-packages/torch/autograd/__init__.py", line 395, in backward
+[rank1] [rank1]:     _engine_run_backward(
+[rank1] [rank1]:   File "/usr/local/lib/python3.12/site-packages/torch/autograd/graph.py", line 1113, in _engine_run_backward
+[rank1] [rank1]:     return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+[rank1] [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1] [rank1]: RuntimeError: [/__w/pytorch/pytorch/third_party/gloo/gloo/transport/tcp/unbound_buffer.cc:78] Timed out waiting 20000ms for recv operation to complete
+[rank1] E1113 23:54:03.789000 181 site-packages/torch/distributed/elastic/multiprocessing/api.py:1002] failed (exitcode: 1) local_rank: 0 (pid: 202) of binary: /usr/local/bin/python
+[rank1] Traceback (most recent call last):
+[rank1]   File "<frozen runpy>", line 198, in _run_module_as_main
+[rank1]   File "<frozen runpy>", line 88, in _run_code
+[rank1]   File "/usr/local/lib/python3.12/site-packages/torch/distributed/run.py", line 1142, in <module>
+[rank1]     main()
+[rank1]   File "/usr/local/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 384, in wrapper
+[rank1]     result = f(*args, **kwargs)
+[rank1]              ^^^^^^^^^^^^^^^^^^
+[rank1]   File "/usr/local/lib/python3.12/site-packages/torch/distributed/run.py", line 1138, in main
+[rank1]     run(args)
+[rank1]   File "/usr/local/lib/python3.12/site-packages/torch/distributed/run.py", line 1129, in run
+[rank1]     elastic_launch(
+[rank1]   File "/usr/local/lib/python3.12/site-packages/torch/distributed/launcher/api.py", line 197, in __call__
+[rank1]     return launch_agent(
+[rank1]            ^^^^^^^^^^^^^
+[rank1]   File "/usr/local/lib/python3.12/site-packages/torch/distributed/launcher/api.py", line 386, in launch_agent
+[rank1]     raise ChildFailedError(
+[rank1] torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+[rank1] ============================================================
+[rank1] serve.ddpnet FAILED
+[rank1] ------------------------------------------------------------
+[rank1] Failures:
+[rank1]   <NO_OTHER_FAILURES>
+[rank1] ------------------------------------------------------------
+[rank1] Root Cause (first observed failure):
+[rank1] [0]:
+[rank1]   time      : 2026-11-13_23:54:03
+[rank1]   host      : a18341bc4d22
+[rank1]   rank      : 1 (local_rank: 0)
+[rank1]   exitcode  : 1 (pid: 202) 
+[rank1]   error_file: <N/A>
+[rank1]   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[rank1] ============================================================

@@ -1,0 +1,4 @@
+[rank0] {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 0, "steps": 6, "step_ms": 279.6, "allreduce_ms": 249.2, "matches_serial": true}
+[rank0] {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 0, "steps": 6, "step_ms": 280.6, "allreduce_ms": 248.6, "matches_serial": true}
+rtt=20ms [rank0] {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 0, "steps": 6, "step_ms": 153.3, "allreduce_ms": 128.1, "matches_serial": true}
+rtt=80ms [rank0] {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 0, "steps": 6, "step_ms": 523.8, "allreduce_ms": 488.1, "matches_serial": true}

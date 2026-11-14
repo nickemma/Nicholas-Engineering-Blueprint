@@ -1,0 +1,2 @@
+rtt=20ms {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 0, "steps": 6, "step_ms": 156.7, "allreduce_ms": 128.4, "matches_serial": true}
+rtt=80ms {"world": 2, "params": 2162689, "grad_mb": 8.65, "resumed_from": 0, "steps": 6, "step_ms": 526.6, "allreduce_ms": 489.3, "matches_serial": true}

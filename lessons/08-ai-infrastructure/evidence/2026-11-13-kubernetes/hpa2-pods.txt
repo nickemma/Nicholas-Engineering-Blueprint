@@ -1,0 +1,3 @@
+NAME                 READY   STATUS    RESTARTS   AGE     IP            NODE            NOMINATED NODE   READINESS GATES
+llm-d6ddf995-6tfrq   1/1     Running   0          2m48s   10.244.2.14   runway-worker   <none>           <none>
+llm-d6ddf995-q68p9   1/1     Running   0          15m     10.244.2.13   runway-worker   <none>           <none>

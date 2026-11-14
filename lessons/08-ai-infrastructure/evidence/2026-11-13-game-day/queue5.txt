@@ -1,0 +1,7 @@
+     0.0  begin  overload 1
+    25.5  passed  overload 1
+    25.5  begin  overload 2
+    50.7  passed  overload 2
+fault              rep  detect s  recover s  result
+overload             1      0.03       25.5  passed
+overload             2      0.02       25.3  passed

@@ -1,0 +1,33 @@
+{"start": 0.0, "total": 0.75, "error": "", "ttft": 0.6}
+{"start": 1.0, "total": 0.69, "error": "", "ttft": 0.54}
+{"start": 1.94, "total": 0.67, "error": "", "ttft": 0.53}
+{"start": 2.86, "total": 0.69, "error": "", "ttft": 0.53}
+{"start": 3.8, "total": 0.69, "error": "", "ttft": 0.53}
+{"start": 4.74, "total": 0.74, "error": "", "ttft": 0.58}
+{"start": 5.73, "total": 0.69, "error": "", "ttft": 0.55}
+{"start": 6.67, "total": 0.7, "error": "", "ttft": 0.54}
+{"start": 7.62, "total": 0.72, "error": "", "ttft": 0.55}
+{"start": 8.58, "total": 30.75, "error": "incomplete or empty stream", "ttft": 0.57}
+{"start": 39.58, "total": 0.69, "error": "", "ttft": 0.54}
+{"start": 40.52, "total": 0.7, "error": "", "ttft": 0.55}
+{"start": 41.46, "total": 0.68, "error": "", "ttft": 0.53}
+{"start": 42.39, "total": 0.74, "error": "", "ttft": 0.6}
+{"start": 43.38, "total": 0.72, "error": "", "ttft": 0.57}
+{"start": 44.35, "total": 0.69, "error": "", "ttft": 0.54}
+{"start": 45.28, "total": 0.74, "error": "", "ttft": 0.57}
+{"start": 46.27, "total": 0.72, "error": "", "ttft": 0.57}
+{"start": 47.25, "total": 0.71, "error": "", "ttft": 0.56}
+{"start": 48.21, "total": 0.75, "error": "", "ttft": 0.6}
+{"start": 49.21, "total": 0.72, "error": "", "ttft": 0.56}
+{"start": 50.18, "total": 0.7, "error": "", "ttft": 0.55}
+{"start": 51.13, "total": 0.78, "error": "", "ttft": 0.61}
+{"start": 52.15, "total": 0.7, "error": "", "ttft": 0.54}
+{"start": 53.1, "total": 0.72, "error": "", "ttft": 0.56}
+{"start": 54.07, "total": 0.66, "error": "", "ttft": 0.51}
+{"start": 54.98, "total": 0.68, "error": "", "ttft": 0.53}
+{"start": 55.91, "total": 0.67, "error": "", "ttft": 0.51}
+{"start": 56.83, "total": 0.68, "error": "", "ttft": 0.53}
+{"start": 57.76, "total": 0.72, "error": "", "ttft": 0.56}
+{"start": 58.73, "total": 0.73, "error": "", "ttft": 0.58}
+{"start": 59.71, "total": 0.69, "error": "", "ttft": 0.54}
+{"requests": 32, "completed": 31, "failed": {"incomplete or empty stream": 1}, "ttft_p50": 0.55, "ttft_max": 0.61, "outage_seconds": 31.0}
