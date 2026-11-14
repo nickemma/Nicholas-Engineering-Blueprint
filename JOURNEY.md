@@ -32,7 +32,7 @@ It is **not** a technology checklist. Every tool appears because the system need
 
 Work through one phase at a time: **build the phase, complete one independent exercise, explain it, and test it.**
 
-**Time:** about 70 weeks at 12–15 focused hours a week, plus the capstone (see [§10](#10-timeline-and-progress-tracker)). Experienced engineers often move faster through Phases 0–2.
+**Time:** about 84 weeks at 12–15 focused hours a week, plus the capstone (see [§10](#10-timeline-and-progress-tracker)). Experienced engineers often move faster through Phases 0–2.
 
 ---
 
@@ -78,7 +78,7 @@ That's where Runway ends up by Phase 7. You build every box yourself, and you ca
 
 ### Your capstone
 
-After Phase 8, the capstone is yours. You pick one of twelve **research projects** in [`capstones/`](capstones/README.md): systems that sit underneath real products, across distributed systems, networking, security, big data and AI infrastructure. Each brief comes with a suggested stack, the features to implement, and how to benchmark them. You take it through the full research loop:
+After Phase 9, the capstone is yours. You pick one of twelve **research projects** in [`capstones/`](capstones/README.md): systems that sit underneath real products, across distributed systems, networking, security, big data and AI infrastructure. Each brief comes with a suggested stack, the features to implement, and how to benchmark them. You take it through the full research loop:
 
 > real-world problem → who has it → why existing solutions fall short → research question → system → experiment → evidence → limitations
 
@@ -198,6 +198,7 @@ flowchart LR
 | [6. Secure it](lessons/06-safe-shared-queries/README.md) | Who may do what, and how do you contain abuse? | A threat model; tokens, authorization, tenant isolation, rate limiting, signed webhooks, your own CA and mTLS, a sidecar, secrets from OpenBao, a tamper-evident audit log, privacy, cluster hardening, fuzzing, and a security game day | 10 | **Ready** |
 | [7. Measure and learn](lessons/07-utility-evaluation/README.md) | Is it actually better, and can its own data improve it? | Experiments with plans and intervals; jobs that do real work; a data contract and a Kafka-to-Parquet pipeline; MapReduce, Spark and COST; baselines, gradient-boosted trees and neural networks compared honestly; serving behind the Go API with a fallback; priority lanes; MLflow, a gate and model cards; drift and a shadow; anomaly detection scored against injected incidents; a report that re-tests itself | 10 | **Ready** |
 | [8. AI infrastructure](lessons/08-ai-infrastructure/README.md) | What does it take to run the infrastructure under AI products? | A production-ready model-serving platform on Runway; distributed training on several workers; how data moves between CPU and GPU memory; Ray; a performance and cost benchmark | ~8 | **Ready** (GPU step learner-run) |
+| [9. Secure the AI layer](lessons/09-secure-ai-layer/README.md) | What can an AI agent on your platform be tricked into doing, and how do you make sure it can't? | An operations assistant with retrieval and tools, then attacked: prompt injection, tool authorization, tenant leaks, secrets, resource abuse, the AI supply chain, an adversarial suite and a red team | ~11 | **In progress** (step 1 of 14) |
 | [Capstone](capstones/README.md) | Can you answer a research question nobody has answered for you? | One of twelve research projects, end to end, plus a hardening review and a defended report | 10+ | **Briefs ready** |
 
 Phase 8's GPU step (step 13) is learner-run: its code is compiled and checked without a GPU, but it has no measured results. The capstone isn't a guide: it's your own project, from one of the [twelve briefs](capstones/README.md).
@@ -366,7 +367,24 @@ Follow the fourteen-step [type-along guide](lessons/08-ai-infrastructure/TEACHIN
   - **Ray**, to scale Python work across a cluster: tasks, actors, and its serving and training libraries;
   - KV caches, batching, prefill and decode, and what they do to latency and cost.
 - **Hardware:** most of it runs on CPU, including distributed training with several processes, Ray, and a small model. The CUDA steps need an NVIDIA GPU; a few hours of a rented one is enough, or read those steps with their expected output.
-- **Why next:** you can build and run the infrastructure. The capstone asks you to answer a question about it that nobody has answered for you.
+- **Why next:** you can build and run the infrastructure. Phase 9 puts an agent on it, and attacks it.
+
+### Phase 9: Secure the AI layer
+
+Follow the fourteen-step [type-along guide](lessons/09-secure-ai-layer/TEACHING.md). It's being written, one step at a time.
+
+- **Build, on Runway:** an operations assistant that answers a tenant's questions from its own runbooks and job history, and acts on request through a tool server: retry or cancel a job, add a note, send the tenant's webhook.
+- **Attack, then fix:** every step attacks what it built until the attack works, fixes it in code the model can't influence, and keeps the attack as a regression test:
+  - direct and indirect prompt injection, and what prompt-level defences can and can't do;
+  - tool authorization outside the model, and the confused deputy;
+  - unsafe use of model output (SQL, HTML, Markdown links);
+  - leaks between tenants through retrieval, the shared prompt cache and logs;
+  - secrets and canary tokens;
+  - token-cost attacks and runaway agent loops;
+  - the AI supply chain: model files that run code, poisoned tool descriptions.
+- **Learn:** how to attack a system methodically (scope, attack surface, hypotheses, evidence, an intercepting proxy) and how to write a vulnerability report; then a red-team exercise against the finished system, as an outsider.
+- **Hardware:** a laptop's CPUs, with a 1.5-billion-parameter model.
+- **Why next:** you can build, run, attack and secure the infrastructure. The capstone asks you to answer a question about it that nobody has answered for you.
 
 ### The capstone
 
@@ -589,8 +607,9 @@ These estimates assume 12–15 focused hours a week. A phase ends when its evide
 | 6. Secure | 10 | ☐ | threat model, game-day report | flagpole ☐ | ☐ |
 | 7. Measure and learn | 10 | ☐ | the report, model card | buildcast ☐ | ☐ |
 | 8. AI infrastructure | ~8 | ☐ | serving benchmark and cost report | ☐ | ☐ |
+| 9. Secure the AI layer | ~11 | ☐ | threat model, vulnerability reports, red-team report | ☐ | ☐ |
 | Capstone | 10+ | ☐ | final report and talk | — | ☐ |
-| **Total** | **~83** | | | | |
+| **Total** | **~94** | | | | |
 
 Copy this table into your own repository's README and fill it in as you go.
 

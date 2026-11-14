@@ -73,10 +73,10 @@ test("images load from the repository", () => {
 
 test("the real route parses", () => {
   const stops = parseJourney(fs.readFileSync("../JOURNEY.md", "utf8"));
-  assert.equal(stops.length, 14);
+  assert.equal(stops.length, 15);
   assert.equal(stops[0].url, "/lessons/00-request-service/");
   assert.equal(stops.filter((stop) => stop.bridge).length, 4);
   assert.equal(stops.at(-1)!.url, "/capstones/");
-  assert.equal(totalWeeks(stops), 83);
-  assert.equal(new Set(stops.map((stop) => stop.id)).size, 14);
+  assert.equal(totalWeeks(stops), 94);
+  assert.equal(new Set(stops.map((stop) => stop.id)).size, 15);
 });
