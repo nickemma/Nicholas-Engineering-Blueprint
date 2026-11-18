@@ -1,0 +1,2 @@
+$ uv run --project serve python -c "...run(user, padded_question)..."
+11783 characters -> 'question too long' 0 tokens

@@ -1,0 +1,18 @@
+$ rag --tenant acme eval experiments/rag/eval.jsonl
+ -  a job has said running for twenty minutes and the worker is gone
+ -  why would a worker vanish while it holds a job?
+ -  should I cancel a stuck job?
+ -  lots of jobs are stuck at the same time, who do I call?
+ 1  when does the orders export run?
+ -  export failed because something held a lock
+ -  the downstream load is missing orders after a big export
+ -  receiver rejects our signature
+ -  how long do we keep retrying a webhook?
+ -  a customer endpoint returned gone
+ -  how many jobs can we submit per minute?
+ -  our client keeps getting throttled, what should it do?
+ -  can support increase our quota during an outage?
+ -  which job failed with a lost lease?
+ -  the reindex submission was refused
+ -  what time is the reporting query finished?
+{"questions": 16, "hit@1": 0.062, "hit@3": 0.062, "mrr": 0.062}

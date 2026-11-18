@@ -1,0 +1,4 @@
+$ uv run -q --project serve python -m serve.agent --tenant acme --user maria What state is job 4182 in?
+answer  The job is completed.
+sources ['job/4182']
+0 tool calls, 386 tokens, 6.2 s

@@ -1,0 +1,7 @@
+$ bash -c cd serve && uv run -q pytest -q tests/test_web.py 2>&1 | tail -6
+
+tests/test_web.py:25: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_web.py::test_answer_is_shown_as_text - assert ('<img' not i...
+FAILED tests/test_web.py::test_page_forbids_loading_anything - assert "defaul...
+2 failed in 0.99s

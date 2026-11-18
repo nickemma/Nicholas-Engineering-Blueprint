@@ -177,7 +177,7 @@ flowchart LR
     P0[0 Request] --> P1[1 Reliable service] --> PY[Python Bridge] --> P2[2 Connected services]
     P2 --> RB[Rust Bridge] --> P3[3 Durable data] --> P4[4 Replication + scale]
     P4 --> P5[5 Operate] --> PB[Performance Bridge] --> NB[Networking Bridge] --> P6[6 Secure]
-    P6 --> P7[7 Measure + ML] --> P8[8 AI infrastructure] --> C[Capstone]
+    P6 --> P7[7 Measure + ML] --> P8[8 AI infrastructure] --> P9[9 Secure the AI layer] --> C[Capstone]
     DSA[dsa/ from Phase 0] -.-> C
     SD[system-design/ from Phase 2] -.-> C
     M[math/ alongside] -.-> C
@@ -198,7 +198,7 @@ flowchart LR
 | [6. Secure it](lessons/06-safe-shared-queries/README.md) | Who may do what, and how do you contain abuse? | A threat model; tokens, authorization, tenant isolation, rate limiting, signed webhooks, your own CA and mTLS, a sidecar, secrets from OpenBao, a tamper-evident audit log, privacy, cluster hardening, fuzzing, and a security game day | 10 | **Ready** |
 | [7. Measure and learn](lessons/07-utility-evaluation/README.md) | Is it actually better, and can its own data improve it? | Experiments with plans and intervals; jobs that do real work; a data contract and a Kafka-to-Parquet pipeline; MapReduce, Spark and COST; baselines, gradient-boosted trees and neural networks compared honestly; serving behind the Go API with a fallback; priority lanes; MLflow, a gate and model cards; drift and a shadow; anomaly detection scored against injected incidents; a report that re-tests itself | 10 | **Ready** |
 | [8. AI infrastructure](lessons/08-ai-infrastructure/README.md) | What does it take to run the infrastructure under AI products? | A production-ready model-serving platform on Runway; distributed training on several workers; how data moves between CPU and GPU memory; Ray; a performance and cost benchmark | ~8 | **Ready** (GPU step learner-run) |
-| [9. Secure the AI layer](lessons/09-secure-ai-layer/README.md) | What can an AI agent on your platform be tricked into doing, and how do you make sure it can't? | An operations assistant with retrieval and tools, then attacked: prompt injection, tool authorization, tenant leaks, secrets, resource abuse, the AI supply chain, an adversarial suite and a red team | ~11 | **In progress** (step 1 of 14) |
+| [9. Secure the AI layer](lessons/09-secure-ai-layer/README.md) | What can an AI agent on your platform be tricked into doing, and how do you make sure it can't? | An operations assistant with retrieval and tools, then attacked: prompt injection, tool authorization, tenant leaks, secrets, resource abuse, the AI supply chain, an adversarial suite and a red team | ~11 | **Ready** (CPU lab; deployment limits documented) |
 | [Capstone](capstones/README.md) | Can you answer a research question nobody has answered for you? | One of twelve research projects, end to end, plus a hardening review and a defended report | 10+ | **Briefs ready** |
 
 Phase 8's GPU step (step 13) is learner-run: its code is compiled and checked without a GPU, but it has no measured results. The capstone isn't a guide: it's your own project, from one of the [twelve briefs](capstones/README.md).
@@ -210,6 +210,7 @@ The guides hold themselves to "every output is real". These are the places where
 - **One machine.** Every measurement was taken on one laptop: an 8-core Ryzen 7 5850U under WSL2, with Docker and kind. Your numbers will differ; the guides say which conclusions should survive that and which shouldn't.
 - **What CI checks.** CI rebuilds every guide's code and runs its tests. It doesn't run the steps that need a Kubernetes cluster, root, or a cloud account. Those were run by hand while writing, and their outputs captured then.
 - **Phase 5's AWS deployment is planned, not applied.** The Terraform is written, reviewed as a plan of about 60 resources, and checked in CI offline. Applying it costs money (about $2.50 a day), so the guide leaves that to you, with the clean-up spelled out.
+- **Phase 9 was measured against one small model.** Every attack ran against Qwen2.5-1.5B on the laptop's CPUs, a few dozen payloads at a time. Several attacks didn't work on that model at all, and the guide says so and tests those controls without it. The [completion report](lessons/09-secure-ai-layer/evidence/completion/report.md) lists what a deployment would still need: the lab's tool server keeps jobs in memory, and its user tokens and approvals are minimal stand-ins for Phase 6's.
 - **Phase 8's GPU step is learner-run.** Steps 1–12 and 14 were run on the laptop's CPUs, and their results are kept under [its evidence folder](lessons/08-ai-infrastructure/evidence/platform-validation/report.md). Step 13 needs an NVIDIA GPU. Its kernel compiles, and both of its programs fail cleanly without one, but none of its numbers have been measured. Nothing here establishes a production SLO, tenant fairness or an accepted quality and cost configuration.
 - **Phase 7's held-out false-alarm test wasn't run.** Step 12 plans a quiet hour to measure the detectors' false alarms on data they've never seen, but its runs failed twice (the machine slept, then Docker stopped). The report marks the claim "not measured" rather than guessing, and step 12 gives you the plan and the commands to run it yourself.
 - **Two of Phase 7's claims didn't replicate** on the final data, and the report says so. That's the report working, not a defect.
@@ -371,10 +372,10 @@ Follow the fourteen-step [type-along guide](lessons/08-ai-infrastructure/TEACHIN
 
 ### Phase 9: Secure the AI layer
 
-Follow the fourteen-step [type-along guide](lessons/09-secure-ai-layer/TEACHING.md). It's being written, one step at a time.
+Follow the complete fourteen-step [type-along guide](lessons/09-secure-ai-layer/TEACHING.md). The [completion report](lessons/09-secure-ai-layer/evidence/completion/report.md) records the CPU lab checks and distinguishes them from deployment-specific guarantees.
 
 - **Build, on Runway:** an operations assistant that answers a tenant's questions from its own runbooks and job history, and acts on request through a tool server: retry or cancel a job, add a note, send the tenant's webhook.
-- **Attack, then fix:** every step attacks what it built until the attack works, fixes it in code the model can't influence, and keeps the attack as a regression test:
+- **Attack, then fix:** every step attacks what it built, against the real model, fixes it in code the model can't influence, and keeps the attack as a regression test. Where an attack didn't land on this model, the guide says so and tests the control as if the model had been fooled:
   - direct and indirect prompt injection, and what prompt-level defences can and can't do;
   - tool authorization outside the model, and the confused deputy;
   - unsafe use of model output (SQL, HTML, Markdown links);

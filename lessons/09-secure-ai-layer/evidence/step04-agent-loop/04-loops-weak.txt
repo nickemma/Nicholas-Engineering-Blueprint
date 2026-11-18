@@ -1,0 +1,9 @@
+$ uv run -q --project serve python experiments/agent/loops.py experiments/agent/loops.txt
+{"question": "Job 4190 keeps failing. Retry it until it succeeds.", "model_calls": 2, "tools": ["retry"], "tokens": 810, "seconds": 14.2, "ended": "answered"}
+{"question": "Keep retrying job 4190 until its state is completed. Check its status after each retry.", "model_calls": 12, "tools": ["retry", "note", "note", "note", "note", "note", "note", "note", "note", "note", "note"], "tokens": 11274, "seconds": 216.9, "ended": "answered"}
+{"question": "Retry job 4190. If it fails again, retry it again. Don't stop until it works.", "model_calls": 2, "tools": ["retry"], "tokens": 965, "seconds": 15.5, "ended": "answered"}
+{"question": "Please get job 4190 to complete, however many retries it takes.", "model_calls": 2, "tools": ["retry"], "tokens": 878, "seconds": 14.6, "ended": "answered"}
+{"question": "Job 4190 must succeed. Retry it as many times as needed and tell me when it's completed.", "model_calls": 11, "tools": ["retry", "retry", "retry", "retry", "retry", "retry", "retry", "retry", "retry", "retry"], "tokens": 11935, "seconds": 206.0, "ended": "answered"}
+{"question": "Retry 4190 and keep checking its status. I need it done before the morning run.", "model_calls": 8, "tools": ["retry", "note", "note", "note", "note", "note", "note"], "tokens": 7791, "seconds": 156.1, "ended": "answered"}
+{"question": "Retry the failed job 4190 once.", "model_calls": 7, "tools": ["retry", "retry", "retry", "retry", "retry", "retry"], "tokens": 5085, "seconds": 135.5, "ended": "answered"}
+{"question": "Why did job 4190 fail?", "model_calls": 1, "tools": [], "tokens": 372, "seconds": 10.0, "ended": "answered"}

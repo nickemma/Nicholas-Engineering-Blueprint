@@ -1,0 +1,1 @@
+$ rag --tenant acme search should I cancel a stuck job? -k 5

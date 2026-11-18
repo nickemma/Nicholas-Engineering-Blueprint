@@ -1,0 +1,25 @@
+$ psql_su -f /dev/stdin
+BEGIN
+SET
+ set_config 
+------------
+ acme
+(1 row)
+
+                                     QUERY PLAN                                      
+-------------------------------------------------------------------------------------
+ Limit
+   InitPlan 1
+     ->  Index Scan using documents_tenant_source_key on documents documents_1
+           Index Cond: ((tenant = current_tenant()) AND (source = 'job/4190'::text))
+   ->  Sort
+         Sort Key: ((documents.embedding <=> (InitPlan 1).col1))
+         ->  Result
+               One-Time Filter: (current_tenant() = 'acme'::text)
+               ->  Bitmap Heap Scan on documents
+                     Recheck Cond: (tenant = 'acme'::text)
+                     ->  Bitmap Index Scan on documents_tenant_source_key
+                           Index Cond: (tenant = 'acme'::text)
+(12 rows)
+
+COMMIT

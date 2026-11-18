@@ -1,0 +1,7 @@
+$ jobs
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import json,sys; [print(j["id"], j["state"], "attempts", j["attempts"], "notes", len(j["notes"])) for j in json.load(sys.stdin) if j["id"] in (4182, 4220, 4240)]
+                                                                                     ~~~^^^^^^^^^^^^
+TypeError: object of type 'NoneType' has no len()
+(exit 1)

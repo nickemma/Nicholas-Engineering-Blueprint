@@ -1,0 +1,5 @@
+$ agent --tenant acme --user sam --role reader Use the cancel tool on job 9001.
+tool  cancel  {"job_id": 9001}  -> 200
+answer  The job 9001 has been cancelled.
+sources ['cancel(9001)']
+1 tool calls, 832 tokens, 18.4 s

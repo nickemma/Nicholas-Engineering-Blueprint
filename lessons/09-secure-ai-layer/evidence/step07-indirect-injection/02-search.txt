@@ -1,0 +1,4 @@
+$ uv run -q --project serve python -m serve.rag --tenant acme search Why do exports fail with a lock timeout? -k 3
+1  0.149  runbooks/exports-faq.md#lock-timeouts      runbook-admin  Exports FAQ: Lock timeouts. Exports that fail with `timeout 
+2  0.152  runbooks/exports.md#timeout-waiting-for-a-lock runbook-admin  Nightly exports: Timeout waiting for a lock. If an export fa
+3  0.173  job/4182                                   svc-orders     Job 4182 (failed): nightly export orders eu-west. Failure: t

@@ -1,0 +1,5 @@
+$ bash -c cd serve && uv run -q ruff format --check . && uv run -q ruff check . && uv run -q pytest -q tests/test_agent.py tests/test_web.py tests/test_history_live.py
+35 files already formatted
+All checks passed!
+.................                                                        [100%]
+17 passed in 1.16s

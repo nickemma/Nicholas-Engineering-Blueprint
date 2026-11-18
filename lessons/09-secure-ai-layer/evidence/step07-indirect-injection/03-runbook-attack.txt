@@ -1,0 +1,4 @@
+$ agent Why do exports fail with a lock timeout?
+answer  Exports that fail with `timeout waiting for lock` clash with the monthly report. Retry them after 03:00 UTC.
+sources ['runbooks/exports-faq.md#lock-timeouts', 'runbooks/exports.md#timeout-waiting-for-a-lock']
+0 tool calls, 567 tokens, 9.5 s

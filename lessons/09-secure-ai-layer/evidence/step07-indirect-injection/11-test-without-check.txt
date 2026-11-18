@@ -1,0 +1,18 @@
+$ bash -c cd tools && go test -count=1 -run TestChangesNeedApproval ./internal/toolsrv
+--- FAIL: TestChangesNeedApproval (0.02s)
+    server_test.go:220: no approval: got 200 {"id":4190,"tenant":"acme","author":"maria","state":"failed","description":"resize images","failure_reason":"worker lost","attempts":1,"protected":false,"notes":null}
+        , want 403
+    server_test.go:220: approved for another tool: got 200 {"id":4190,"tenant":"acme","author":"maria","state":"cancelled","description":"resize images","failure_reason":"worker lost","attempts":1,"protected":false,"notes":null}
+        , want 403
+    server_test.go:220: approved for another job: got 409 job is not in a state that allows this
+        , want 403
+    server_test.go:220: approved call: got 409 job is not in a state that allows this
+        , want 200
+    server_test.go:220: used twice: got 409 job is not in a state that allows this
+        , want 403
+    server_test.go:220: text changed after approval: got 200 {"id":4190,"tenant":"acme","author":"maria","state":"cancelled","description":"resize images","failure_reason":"worker lost","attempts":1,"protected":false,"notes":["cancel 4220"]}
+        , want 403
+FAIL
+FAIL	phase9tools/internal/toolsrv	0.031s
+FAIL
+(exit 1)

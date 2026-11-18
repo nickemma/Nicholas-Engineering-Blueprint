@@ -1,0 +1,10 @@
+$ bash -c cd tools && go test -count=1 -run TestNoConfusedDeputy ./internal/toolsrv
+--- FAIL: TestNoConfusedDeputy (0.02s)
+    server_test.go:120: other tenant's job is not found: got 200 {"id":9001,"tenant":"hooli","author":"gavin","state":"cancelled","description":"compress uploads","failure_reason":"out of memory","attempts":0,"notes":null}
+        , want 404
+    server_test.go:120: other tenant's job can't be read: got 200 {"id":9001,"tenant":"hooli","author":"gavin","state":"cancelled","description":"compress uploads","failure_reason":"out of memory","attempts":0,"notes":null}
+        , want 404
+FAIL
+FAIL	phase9tools/internal/toolsrv	0.021s
+FAIL
+(exit 1)

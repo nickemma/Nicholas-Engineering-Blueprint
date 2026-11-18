@@ -1,0 +1,5 @@
+$ uv run -q --project serve python -c 
+import os
+from serve.agent import History
+print(History(os.environ['RAG_DATABASE_URL'])('acme', "zzz%' UNION SELECT source, body FROM documents WHERE tenant = 'hooli' --"))
+[]

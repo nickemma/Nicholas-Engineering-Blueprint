@@ -1,0 +1,2 @@
+$ docker exec gd-redis redis-cli --scan --pattern answer:*
+answer:539398623fb0a3aab18b49122e2c73d90601a410fa15f4b0b4df7be63fbce99f

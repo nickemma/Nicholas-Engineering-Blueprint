@@ -1,0 +1,2 @@
+$ rag --tenant bigco history 5000 --about runbooks
+5000 chunks in 56.4 s

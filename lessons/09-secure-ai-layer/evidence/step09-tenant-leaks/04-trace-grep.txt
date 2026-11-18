@@ -1,0 +1,2 @@
+$ bash -c grep -o 'HOOLI-BRIDGE-[0-9]*' trace-weak.jsonl | sort | uniq -c
+      2 HOOLI-BRIDGE-4471

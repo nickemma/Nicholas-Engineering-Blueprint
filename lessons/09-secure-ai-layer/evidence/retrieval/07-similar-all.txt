@@ -1,0 +1,5 @@
+$ bash -c PYTHONPATH=<scratch>/p9s/s03a/serve/src uv run -q --project serve python -m serve.rag --tenant acme similar 'runbooks/stuck-jobs.md#escalate' -k 100 | grep -i -e hooli -e bridge
+3  0.248  runbooks/stuck-jobs.md#symptoms            runbook-admin  Stuck jobs at Hooli: Symptoms. Jobs stay in `running` after 
+4  0.255  runbooks/stuck-jobs.md#fix                 runbook-admin  Stuck jobs at Hooli: Fix. Restart the worker pool from the H
+17  0.422  runbooks/incident-bridge.md#when           runbook-admin  Joining the incident bridge: When. Join the bridge for any s
+27  0.482  runbooks/incident-bridge.md#how            runbook-admin  Joining the incident bridge: How. Hooli's incident bridge co

@@ -1,0 +1,2 @@
+$ uv run -q --project serve python -m serve.release keygen secrets/release.key
+public key e174eaccc40575f9ffdf9c6b98f9a06c8f34179bb395149c55be7e4d377df959

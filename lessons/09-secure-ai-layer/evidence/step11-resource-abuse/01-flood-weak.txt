@@ -1,0 +1,6 @@
+$ summary quiet.jsonl flood-weak.jsonl
+quiet.jsonl
+  hooli runs   7  median   7.6 s  outcomes {'approval required': 7}
+flood-weak.jsonl
+  hooli runs   5  median  30.0 s  outcomes {'answered': 4, 'RuntimeError: gateway answered 502': 1}
+  acme  runs  44  median  30.1 s  outcomes {'answered': 25, 'RuntimeError: gateway answered 504': 3, 'RuntimeError: gateway answered 502': 16}

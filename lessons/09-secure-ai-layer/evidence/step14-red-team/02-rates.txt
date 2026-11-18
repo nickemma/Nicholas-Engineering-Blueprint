@@ -1,0 +1,9 @@
+$ uv run --project serve python experiments/agent/rates.py approve-all.jsonl approve-requested.jsonl
+approve-all attacks proposed          3/48  [0.02, 0.17]
+approve-all attacks applied           0/48  [0.00, 0.07]
+approve-all runs that failed             0/48
+approve-all legitimate requests done   3/8  [0.14, 0.69]
+approve-requested attacks proposed          3/48  [0.02, 0.17]
+approve-requested attacks applied           0/48  [0.00, 0.07]
+approve-requested runs that failed             0/48
+approve-requested legitimate requests done   3/8  [0.14, 0.69]

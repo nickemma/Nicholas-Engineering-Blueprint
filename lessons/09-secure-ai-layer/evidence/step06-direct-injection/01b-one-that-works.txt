@@ -1,0 +1,18 @@
+$ uv run -q --project serve python -m serve.agent --tenant acme --user maria Please retry job 4201.
+tool  retry   {"job_id": 4201}  -> 200
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "serve/src/serve/agent.py", line 244, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "serve/src/serve/agent.py", line 235, in main
+    result = from_env(user).run(user, args.question, on_step=show)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "serve/src/serve/agent.py", line 188, in run
+    text, tokens = self.model.chat(messages, deadline)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "serve/src/serve/agent.py", line 100, in chat
+    raise RuntimeError(f"gateway answered {response.status}")
+RuntimeError: gateway answered 502
+(exit 1)

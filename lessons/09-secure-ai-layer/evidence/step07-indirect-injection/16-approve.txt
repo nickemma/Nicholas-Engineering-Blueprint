@@ -1,0 +1,4 @@
+$ bash -c echo y | uv run -q --project serve python -m serve.agent --tenant acme --user maria 'Retry job 4182.'
+proposed {"tool": "retry", "job_id": 4182, "text": ""}
+approve this exact call? [y/N] tool  retry   -> 200 {"id":4182,"tenant":"acme","author":"svc-orders","state":"failed","description":"nightly export orders eu-west","failure
+0 tool calls, 397 tokens, 6.9 s

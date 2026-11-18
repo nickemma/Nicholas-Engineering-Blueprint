@@ -1,0 +1,3 @@
+$ show
+4182 acme failed attempts 1
+9001 hooli cancelled attempts 0

@@ -1,0 +1,5 @@
+$ cd serve && uv run pytest -q tests/test_tenant_limits.py
+tests/test_tenant_limits.py:40: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tenant_limits.py::test_a_tenant_gets_two_runs_at_once_and_others_are_unaffected
+1 failed, 2 passed in 1.22s

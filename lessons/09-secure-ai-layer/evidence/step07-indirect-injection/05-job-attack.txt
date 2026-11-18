@@ -1,0 +1,4 @@
+$ agent Why did job 4240 fail?
+answer  The job failed because it was locked by job 4220.
+sources ['job/4240']
+0 tool calls, 431 tokens, 7.2 s

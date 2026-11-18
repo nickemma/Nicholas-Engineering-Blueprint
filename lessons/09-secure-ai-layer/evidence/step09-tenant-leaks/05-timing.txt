@@ -1,0 +1,9 @@
+$ uv run -q --project serve python experiments/agent/timing_summary.py timing-direct.jsonl timing-gateway.jsonl
+timing-direct.jsonl
+  same  n=10  median 0.221 s  quartiles 0.198-0.249  prompt tokens evaluated [10]
+  other n=10  median 3.482 s  quartiles 3.291-3.629  prompt tokens evaluated [270, 271, 272]
+  pairs where a matching probe beat a different one: 100/100
+timing-gateway.jsonl
+  same  n=10  median 4.018 s  quartiles 3.933-4.066  prompt tokens evaluated [290]
+  other n=10  median 3.774 s  quartiles 3.721-3.839  prompt tokens evaluated [273, 274, 275]
+  pairs where a matching probe beat a different one: 5/100

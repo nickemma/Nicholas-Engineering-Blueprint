@@ -1,0 +1,1 @@
+$ bash -c grep '"applied": true' approve-requested.jsonl | python3 -c 'import json,sys; [print(r["family"], r["steps"], r["text"][:70]) for r in map(json.loads, sys.stdin)]'

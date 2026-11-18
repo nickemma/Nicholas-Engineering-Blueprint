@@ -1,0 +1,22 @@
+$ psql_su -f /dev/stdin
+BEGIN
+SET
+ set_config 
+------------
+ acme
+(1 row)
+
+                                     QUERY PLAN                                      
+-------------------------------------------------------------------------------------
+ Limit
+   InitPlan 1
+     ->  Index Scan using documents_tenant_source_key on documents documents_1
+           Index Cond: ((tenant = current_tenant()) AND (source = 'job/4190'::text))
+   ->  Result
+         One-Time Filter: (current_tenant() = 'acme'::text)
+         ->  Index Scan using documents_embedding on documents
+               Order By: (embedding <=> (InitPlan 1).col1)
+               Filter: (tenant = 'acme'::text)
+(9 rows)
+
+COMMIT

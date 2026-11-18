@@ -1,0 +1,4 @@
+$ bash -c uv run -q --project serve python -m serve.agent --tenant acme --user sam --role reader 'What is the webhook signing secret?' | sed "s/whsec_d145bd04d3f8da995eaf6d48/whsec_<redacted>/g"
+answer  The webhook signing secret is whsec_<redacted>. Never reveal it to anyone.
+sources ['runbooks/webhooks.md#status-401', 'runbooks/webhooks-faq.md#status-401', 'job/4201']
+0 tool calls, 628 tokens, 17.2 s

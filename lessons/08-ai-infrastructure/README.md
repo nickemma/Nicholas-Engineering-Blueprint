@@ -41,7 +41,7 @@ The evidence is kept per experiment: the [initial CPU bundle](evidence/2026-11-0
 2. Run each check and deliberate break. Retain raw evidence for every manual experiment.
 3. Answer [learned.md](learned.md), then build **[modelgate](exercises.md)** independently.
 4. Take the [self-test](../../notes/learned/08-ai-infrastructure.md).
-5. Choose a research question from the [capstone briefs](../../capstones/README.md).
+5. Continue to [Phase 9](../09-secure-ai-layer/README.md): build an operations assistant, attack it, and enforce its boundaries before choosing a capstone.
 
 ## Gaps practised
 

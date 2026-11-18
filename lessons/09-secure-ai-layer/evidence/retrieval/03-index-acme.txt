@@ -1,0 +1,2 @@
+$ weak --tenant acme index experiments/rag/corpus/acme
+21 chunks in 0.5 s

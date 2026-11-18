@@ -1,0 +1,4 @@
+$ bash -c cd serve && uv sync -q && uv run -q ruff check . && uv run -q pytest -q tests/test_web.py
+All checks passed!
+..                                                                       [100%]
+2 passed in 0.87s

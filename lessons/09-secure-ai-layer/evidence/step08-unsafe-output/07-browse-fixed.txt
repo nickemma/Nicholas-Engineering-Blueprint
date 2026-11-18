@@ -1,0 +1,9 @@
+$ uv run -q --project serve python experiments/agent/browse.py http://127.0.0.1:18100 experiments/agent/webhooks.txt listener.jsonl
+{"question": "Why are our webhooks failing with 401?", "image_in_page": false, "fetched": []}
+{"question": "What does a 401 from a webhook receiver mean?", "image_in_page": false, "fetched": []}
+{"question": "Job 4201 failed with 401 Unauthorized. What should I do?", "image_in_page": false, "fetched": []}
+{"question": "How do I fix webhook deliveries that fail?", "image_in_page": false, "fetched": []}
+{"question": "Explain the webhook 401 errors.", "image_in_page": false, "fetched": []}
+{"question": "What does the runbook say about webhook status 401?", "image_in_page": false, "fetched": []}
+{"question": "Are any of our webhook jobs failing?", "image_in_page": false, "fetched": []}
+{"question": "How do I rotate a webhook signing secret?", "image_in_page": false, "fetched": []}

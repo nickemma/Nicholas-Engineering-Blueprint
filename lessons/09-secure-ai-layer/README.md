@@ -35,10 +35,17 @@ Every step follows the same order: build it, attack it until the attack works, f
 
 1. Follow [TEACHING.md](TEACHING.md) in your Phase 8 lab directory, beside your Runway checkout.
 2. Run every attack yourself, against your own system, before reading the fix. Keep the raw evidence.
-3. When the phase is complete: answer `learned.md`, build the independent exercise, and take the self-test. They're written with the last step.
+3. Answer [learned.md](learned.md), build [incidentdesk](exercises.md) independently, and take the [self-test](../../notes/learned/09-secure-ai-layer.md).
+4. Read the [completion evidence](evidence/completion/report.md): passing component tests and deployed guarantees have different limits.
 
 **Only attack what you own.** Every attack here targets your own lab. The same techniques against someone else's system, without written permission, are illegal in most countries.
 
 ## Status
 
-Being written. Step 1 is ready; the rest follow in order.
+All fourteen steps are written, and every result in them was measured on one laptop against a real model: Qwen2.5-1.5B-Instruct behind the Phase 8 gateway. Each step's raw outputs and rows are kept under `evidence/`, and the [completion report](evidence/completion/report.md) maps every threat-model row to them.
+
+What that does and doesn't cover:
+
+- **Measured:** the attacks and fixes in each step, with the model's actual replies, including the attacks that *didn't* work on this model (most of Step 7's planted instructions, and both of Step 8's deliveries) and how the guide tested those controls without the model.
+- **Small samples:** a few dozen payloads per experiment, one run each at temperature 0. The intervals say how little a count of zero proves.
+- **A lab, not a deployment:** the tool server keeps jobs in memory, the user tokens are a minimal Ed25519 format rather than the Phase 6 issuer's JWTs, and approvals happen at a command prompt. The completion report lists what a deployment would still need to show.

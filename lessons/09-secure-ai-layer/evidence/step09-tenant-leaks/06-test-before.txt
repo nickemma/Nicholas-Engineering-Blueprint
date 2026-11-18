@@ -1,0 +1,7 @@
+$ bash -c cd serve && uv run -q pytest -q tests/test_leaks.py 2>&1 | tail -6
+
+tests/test_leaks.py:22: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_leaks.py::test_cache_keys_belong_to_one_tenant - assert 'an...
+FAILED tests/test_leaks.py::test_trace_keeps_no_text - assert ('HOOLI-BRIDGE'...
+2 failed in 0.54s

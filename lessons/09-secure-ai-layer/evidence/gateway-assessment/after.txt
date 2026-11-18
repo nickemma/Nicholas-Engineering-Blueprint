@@ -1,0 +1,75 @@
+=== RUN   TestAuthAndTokenReservations
+--- PASS: TestAuthAndTokenReservations (0.01s)
+=== RUN   TestDisconnectCancelsUpstreamAndReleasesSlot
+--- PASS: TestDisconnectCancelsUpstreamAndReleasesSlot (0.00s)
+=== RUN   TestGatewayRejectsMalformedMessages
+=== RUN   TestGatewayRejectsMalformedMessages/null
+    message_boundary_test.go:108: status=400 template=0 reservation=0 generation=0
+=== RUN   TestGatewayRejectsMalformedMessages/empty
+    message_boundary_test.go:108: status=400 template=0 reservation=0 generation=0
+=== RUN   TestGatewayRejectsMalformedMessages/scalar
+    message_boundary_test.go:108: status=400 template=0 reservation=0 generation=0
+=== RUN   TestGatewayRejectsMalformedMessages/object
+    message_boundary_test.go:108: status=400 template=0 reservation=0 generation=0
+=== RUN   TestGatewayRejectsMalformedMessages/null-entry
+    message_boundary_test.go:108: status=400 template=0 reservation=0 generation=0
+=== RUN   TestGatewayRejectsMalformedMessages/missing-content
+    message_boundary_test.go:108: status=400 template=0 reservation=0 generation=0
+=== RUN   TestGatewayRejectsMalformedMessages/null-content
+    message_boundary_test.go:108: status=400 template=0 reservation=0 generation=0
+=== RUN   TestGatewayRejectsMalformedMessages/blank-content
+    message_boundary_test.go:108: status=400 template=0 reservation=0 generation=0
+=== RUN   TestGatewayRejectsMalformedMessages/unknown-role
+    message_boundary_test.go:108: status=400 template=0 reservation=0 generation=0
+=== RUN   TestGatewayRejectsMalformedMessages/tool-role
+    message_boundary_test.go:108: status=400 template=0 reservation=0 generation=0
+=== RUN   TestGatewayRejectsMalformedMessages/nested-tool
+    message_boundary_test.go:108: status=400 template=0 reservation=0 generation=0
+=== RUN   TestGatewayRejectsMalformedMessages/image-content
+    message_boundary_test.go:108: status=400 template=0 reservation=0 generation=0
+=== RUN   TestGatewayRejectsMalformedMessages/too-many
+    message_boundary_test.go:108: status=400 template=0 reservation=0 generation=0
+--- PASS: TestGatewayRejectsMalformedMessages (0.01s)
+    --- PASS: TestGatewayRejectsMalformedMessages/null (0.00s)
+    --- PASS: TestGatewayRejectsMalformedMessages/empty (0.00s)
+    --- PASS: TestGatewayRejectsMalformedMessages/scalar (0.00s)
+    --- PASS: TestGatewayRejectsMalformedMessages/object (0.00s)
+    --- PASS: TestGatewayRejectsMalformedMessages/null-entry (0.00s)
+    --- PASS: TestGatewayRejectsMalformedMessages/missing-content (0.00s)
+    --- PASS: TestGatewayRejectsMalformedMessages/null-content (0.00s)
+    --- PASS: TestGatewayRejectsMalformedMessages/blank-content (0.00s)
+    --- PASS: TestGatewayRejectsMalformedMessages/unknown-role (0.00s)
+    --- PASS: TestGatewayRejectsMalformedMessages/tool-role (0.00s)
+    --- PASS: TestGatewayRejectsMalformedMessages/nested-tool (0.00s)
+    --- PASS: TestGatewayRejectsMalformedMessages/image-content (0.00s)
+    --- PASS: TestGatewayRejectsMalformedMessages/too-many (0.00s)
+=== RUN   TestGatewayMalformedMessagesBeforeAdmission
+--- PASS: TestGatewayMalformedMessagesBeforeAdmission (0.00s)
+=== RUN   TestGatewayBoundaryControls
+=== RUN   TestGatewayBoundaryControls/valid
+=== RUN   TestGatewayBoundaryControls/no-token
+=== RUN   TestGatewayBoundaryControls/oversized
+=== RUN   TestGatewayBoundaryControls/output-limit
+=== RUN   TestGatewayBoundaryControls/missing-messages
+=== RUN   TestGatewayBoundaryControls/allowlist
+=== RUN   TestGatewayBoundaryControls/conversation
+=== RUN   TestGatewayBoundaryControls/64-messages
+--- PASS: TestGatewayBoundaryControls (0.03s)
+    --- PASS: TestGatewayBoundaryControls/valid (0.01s)
+    --- PASS: TestGatewayBoundaryControls/no-token (0.00s)
+    --- PASS: TestGatewayBoundaryControls/oversized (0.00s)
+    --- PASS: TestGatewayBoundaryControls/output-limit (0.00s)
+    --- PASS: TestGatewayBoundaryControls/missing-messages (0.00s)
+    --- PASS: TestGatewayBoundaryControls/allowlist (0.00s)
+    --- PASS: TestGatewayBoundaryControls/conversation (0.00s)
+    --- PASS: TestGatewayBoundaryControls/64-messages (0.01s)
+=== RUN   TestContentTimingAndIncompleteStreams
+=== RUN   TestContentTimingAndIncompleteStreams/truncated
+=== RUN   TestContentTimingAndIncompleteStreams/complete
+--- PASS: TestContentTimingAndIncompleteStreams (0.17s)
+    --- PASS: TestContentTimingAndIncompleteStreams/truncated (0.08s)
+    --- PASS: TestContentTimingAndIncompleteStreams/complete (0.08s)
+=== RUN   TestSharedReservationAcrossGatewaysAndFailClosed
+--- PASS: TestSharedReservationAcrossGatewaysAndFailClosed (0.00s)
+PASS
+ok  	phase8gateway/internal/inference	1.257s

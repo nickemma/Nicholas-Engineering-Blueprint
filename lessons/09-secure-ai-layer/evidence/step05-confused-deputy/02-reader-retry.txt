@@ -1,0 +1,5 @@
+$ agent --tenant acme --user sam --role reader Retry job 4182.
+tool  retry   {"job_id": 4182}  -> 200
+answer  The job 4182 has been retried.
+sources ['job/4182']
+1 tool calls, 768 tokens, 18.4 s

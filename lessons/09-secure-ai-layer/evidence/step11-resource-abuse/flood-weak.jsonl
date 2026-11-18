@@ -1,0 +1,49 @@
+{"who": "acme", "outcome": "answered", "seconds": 7.8}
+{"who": "acme", "outcome": "answered", "seconds": 14.7}
+{"who": "acme", "outcome": "answered", "seconds": 21.7}
+{"who": "acme", "outcome": "answered", "seconds": 28.8}
+{"who": "acme", "outcome": "answered", "seconds": 30.3}
+{"who": "acme", "outcome": "RuntimeError: gateway answered 504", "seconds": 30.3}
+{"who": "acme", "outcome": "RuntimeError: gateway answered 502", "seconds": 30.3}
+{"who": "acme", "outcome": "RuntimeError: gateway answered 504", "seconds": 30.3}
+{"who": "hooli", "outcome": "answered", "seconds": 30.0}
+{"who": "acme", "outcome": "RuntimeError: gateway answered 502", "seconds": 30.0}
+{"who": "acme", "outcome": "answered", "seconds": 30.0}
+{"who": "acme", "outcome": "answered", "seconds": 30.0}
+{"who": "acme", "outcome": "answered", "seconds": 30.0}
+{"who": "acme", "outcome": "answered", "seconds": 30.1}
+{"who": "acme", "outcome": "RuntimeError: gateway answered 502", "seconds": 30.1}
+{"who": "acme", "outcome": "RuntimeError: gateway answered 504", "seconds": 30.1}
+{"who": "acme", "outcome": "RuntimeError: gateway answered 502", "seconds": 30.1}
+{"who": "hooli", "outcome": "answered", "seconds": 30.0}
+{"who": "acme", "outcome": "RuntimeError: gateway answered 502", "seconds": 30.0}
+{"who": "acme", "outcome": "answered", "seconds": 30.1}
+{"who": "acme", "outcome": "answered", "seconds": 30.1}
+{"who": "acme", "outcome": "answered", "seconds": 30.1}
+{"who": "acme", "outcome": "answered", "seconds": 30.0}
+{"who": "acme", "outcome": "RuntimeError: gateway answered 502", "seconds": 30.1}
+{"who": "acme", "outcome": "RuntimeError: gateway answered 502", "seconds": 30.1}
+{"who": "acme", "outcome": "RuntimeError: gateway answered 502", "seconds": 30.1}
+{"who": "acme", "outcome": "answered", "seconds": 30.1}
+{"who": "hooli", "outcome": "RuntimeError: gateway answered 502", "seconds": 30.0}
+{"who": "acme", "outcome": "RuntimeError: gateway answered 502", "seconds": 30.0}
+{"who": "acme", "outcome": "answered", "seconds": 30.1}
+{"who": "acme", "outcome": "answered", "seconds": 30.1}
+{"who": "acme", "outcome": "answered", "seconds": 30.1}
+{"who": "acme", "outcome": "RuntimeError: gateway answered 502", "seconds": 30.1}
+{"who": "acme", "outcome": "RuntimeError: gateway answered 502", "seconds": 30.1}
+{"who": "acme", "outcome": "RuntimeError: gateway answered 502", "seconds": 30.1}
+{"who": "acme", "outcome": "answered", "seconds": 30.1}
+{"who": "hooli", "outcome": "answered", "seconds": 30.0}
+{"who": "acme", "outcome": "RuntimeError: gateway answered 502", "seconds": 30.0}
+{"who": "acme", "outcome": "answered", "seconds": 30.0}
+{"who": "acme", "outcome": "answered", "seconds": 30.1}
+{"who": "acme", "outcome": "answered", "seconds": 30.0}
+{"who": "acme", "outcome": "RuntimeError: gateway answered 502", "seconds": 30.0}
+{"who": "acme", "outcome": "RuntimeError: gateway answered 502", "seconds": 30.1}
+{"who": "acme", "outcome": "RuntimeError: gateway answered 502", "seconds": 30.1}
+{"who": "acme", "outcome": "answered", "seconds": 30.0}
+{"who": "hooli", "outcome": "answered", "seconds": 30.0}
+{"who": "acme", "outcome": "answered", "seconds": 30.1}
+{"who": "acme", "outcome": "answered", "seconds": 30.1}
+{"who": "acme", "outcome": "answered", "seconds": 30.1}

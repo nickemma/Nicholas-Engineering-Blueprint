@@ -1,0 +1,10 @@
+$ bash -c cd serve && uv run -q ruff format --check . && uv run -q ruff check . && uv run -q pytest -q tests/ 2>&1 | tail -3; cd ../tools && go vet ./... && go test -race -count=1 ./...
+42 files already formatted
+All checks passed!
+........................................................................ [ 61%]
+.............................................                            [100%]
+117 passed in 5.10s
+?   	phase9tools/cmd/tools	[no test files]
+?   	phase9tools/internal/identity	[no test files]
+?   	phase9tools/internal/jobs	[no test files]
+ok  	phase9tools/internal/toolsrv	1.174s

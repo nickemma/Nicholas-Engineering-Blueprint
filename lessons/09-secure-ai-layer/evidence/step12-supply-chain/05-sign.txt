@@ -1,0 +1,2 @@
+$ uv run -q --project serve python -m serve.release sign secrets/release.key serve/src/serve/tools.json models/qwen2.5-1.5b-instruct-q4_k_m.gguf
+approved digest a83ca9c8c86f7ac76309a54a324a631e042eb5bc6aed1a0b77e30c6cbe640a31

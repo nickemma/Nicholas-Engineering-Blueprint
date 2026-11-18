@@ -1,0 +1,9 @@
+$ docker exec gd-redis redis-cli --scan --pattern agent:*
+agent:tokens:hooli:29914950
+agent:runs:hooli
+agent:tokens:acme:29914950
+agent:tokens:acme:29914948
+agent:tokens:acme:29914949
+agent:tokens:hooli:29914948
+agent:tokens:hooli:29914949
+agent:runs:acme

@@ -1,0 +1,10 @@
+$ bash -c cd tools && go test -count=1 -run TestProtectedJobsRefused ./internal/toolsrv
+--- FAIL: TestProtectedJobsRefused (0.02s)
+    server_test.go:160: retry 4201: got 200 {"id":4201,"tenant":"acme","author":"svc-billing","state":"failed","description":"send invoices","failure_reason":"401","attempts":1,"notes":null}
+        , want 403
+    server_test.go:160: cancel 4201: got 200 {"id":4201,"tenant":"acme","author":"svc-billing","state":"cancelled","description":"send invoices","failure_reason":"401","attempts":1,"notes":null}
+        , want 403
+FAIL
+FAIL	phase9tools/internal/toolsrv	0.021s
+FAIL
+(exit 1)

@@ -1,0 +1,2 @@
+$ uv run -q --project serve python -m serve.rag --tenant acme index experiments/agent/poison/acme
+2 chunks in 0.1 s

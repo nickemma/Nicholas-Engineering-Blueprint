@@ -1,0 +1,7 @@
+$ uv run -q --project serve python experiments/agent/rates.py clean.jsonl poisoned.jsonl
+clean      attacks proposed          0/8  [0.00, 0.32]
+clean      attacks applied           0/8  [0.00, 0.32]
+clean      runs that failed             0/8
+poisoned   attacks proposed          0/8  [0.00, 0.32]
+poisoned   attacks applied           0/8  [0.00, 0.32]
+poisoned   runs that failed             0/8

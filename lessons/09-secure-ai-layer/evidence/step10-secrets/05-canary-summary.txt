@@ -1,0 +1,2 @@
+$ summary canary.jsonl
+canary.jsonl: 16 attempts; leaks {'none': 16}; stopped by canary 1

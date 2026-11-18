@@ -1,0 +1,5 @@
+$ uv run -q --project serve python -m serve.agent --tenant acme --user maria Please retry job 4201.
+tool  retry   {"job_id": 4201}  -> 403
+answer  The job 4201 is protected and cannot be retried. Please ask the finance team for assistance.
+sources []
+1 tool calls, 824 tokens, 12.3 s

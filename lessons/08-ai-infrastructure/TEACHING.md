@@ -4635,4 +4635,4 @@ python3 scripts/check_guides.py lessons/08-ai-infrastructure/TEACHING.md
 
 The replay extracts the inline files into a fresh temporary directory. Docker, kind, signing services, the shaped link, Ray and a GPU are manual experiments, explicitly outside that command. Run the entire repository workflow when you have the earlier phases' broker/database services available. Never relabel syntax checking as a deployed result.
 
-Finish [the questions](learned.md), build [the independent exercise](exercises.md), and take [the self-test](../../notes/learned/08-ai-infrastructure.md). Then move to the [capstone](../../capstones/README.md): now you choose the question as well as the experiment.
+Finish [the questions](learned.md), build [the independent exercise](exercises.md), and take [the self-test](../../notes/learned/08-ai-infrastructure.md). Then move to [Phase 9](../09-secure-ai-layer/README.md): put an operations assistant on the platform and attack its boundaries. The capstone follows that security assessment.

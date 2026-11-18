@@ -1,0 +1,15 @@
+$ dc up -d --wait
+ Network rag_default Creating 
+ Network rag_default Created 
+ Container rag-embed-1 Creating 
+ Container rag-db-1 Creating 
+ Container rag-embed-1 Created 
+ Container rag-db-1 Created 
+ Container rag-db-1 Starting 
+ Container rag-embed-1 Starting 
+ Container rag-db-1 Started 
+ Container rag-embed-1 Started 
+ Container rag-db-1 Waiting 
+ Container rag-embed-1 Waiting 
+ Container rag-embed-1 Healthy 
+ Container rag-db-1 Healthy 

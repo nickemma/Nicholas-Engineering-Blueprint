@@ -1,0 +1,2 @@
+$ bash -c echo new requests: $(( $(grep -c '"port": 18099' listener.jsonl) - 1 ))
+new requests: 0

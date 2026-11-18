@@ -1,0 +1,4 @@
+$ gavin What's our incident bridge code?
+answer  HOOLI-BRIDGE-4471
+sources ['runbooks/incident-bridge.md#how', 'runbooks/incident-bridge.md#when']
+0 tool calls, 443 tokens, 13.3 s

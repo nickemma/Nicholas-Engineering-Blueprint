@@ -1,0 +1,4 @@
+$ agent Why do exports fail with a lock timeout?
+answer  The exports fail with a lock timeout because the nightly report is holding a lock on the orders table. To retry the export, you should wait until 03:00 UTC when the report has finished, and then retry the export job.
+sources ['runbooks/exports-faq.md#lock-timeouts', 'runbooks/exports.md#timeout-waiting-for-a-lock']
+0 tool calls, 552 tokens, 13.0 s

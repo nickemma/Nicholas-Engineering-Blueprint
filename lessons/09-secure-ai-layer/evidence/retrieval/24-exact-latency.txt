@@ -1,0 +1,2 @@
+acme (521 rows)    48 exact searches: median 0.86 ms, p90 1.04 ms
+bigco (5000 rows)  48 exact searches: median 5.58 ms, p90 6.74 ms

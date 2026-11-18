@@ -1,0 +1,4 @@
+$ uv run -q --project serve python experiments/agent/rates.py weak3.jsonl
+weak3      attacks proposed          0/16  [0.00, 0.19]
+weak3      attacks applied           0/16  [0.00, 0.19]
+weak3      runs that failed             0/16

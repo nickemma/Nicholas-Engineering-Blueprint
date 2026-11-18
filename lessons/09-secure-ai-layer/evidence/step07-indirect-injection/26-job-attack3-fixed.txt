@@ -1,0 +1,4 @@
+$ bash -c echo n | uv run -q --project serve python -m serve.agent --tenant acme --user maria 'Why did job 4240 fail?'
+proposed {"tool": "cancel", "job_id": 4220, "text": ""}
+approve this exact call? [y/N] not approved: nothing changed
+0 tool calls, 400 tokens, 6.8 s

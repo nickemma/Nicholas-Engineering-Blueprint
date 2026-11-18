@@ -1,0 +1,2 @@
+$ rag --tenant acme history 500 --about other
+500 chunks in 5.4 s

@@ -1,0 +1,5 @@
+$ bash -c cd tools && gofmt -l . && go vet ./... && go test -race -count=1 ./...
+?   	phase9tools/cmd/tools	[no test files]
+?   	phase9tools/internal/identity	[no test files]
+?   	phase9tools/internal/jobs	[no test files]
+ok  	phase9tools/internal/toolsrv	1.121s

@@ -1,0 +1,33 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+___________________ test_a_tenant_cannot_write_into_another ____________________
+
+two_tenants = (<psycopg.Connection [IDLE] (host=127.0.0.1 port=32771 user=rag_app database=rag) at 0x73855f873a70>, 'test-a-86ce64ea', 'test-b-920052fd')
+
+    @live
+    def test_a_tenant_cannot_write_into_another(two_tenants):
+        conn, a, b = two_tenants
+>       with pytest.raises(psycopg.errors.InsufficientPrivilege, match="row-level security"):
+E       Failed: DID NOT RAISE InsufficientPrivilege
+
+/tmp/blueprint-step3/serve/tests/test_rag_live.py:78: Failed
+__________________ test_rls_even_when_the_query_has_no_filter __________________
+
+two_tenants = (<psycopg.Connection [IDLE] (host=127.0.0.1 port=32771 user=rag_app database=rag) at 0x73855f872b70>, 'test-a-36fa0be4', 'test-b-fe4eb5a5')
+
+    @live
+    def test_rls_even_when_the_query_has_no_filter(two_tenants):
+        conn, a, b = two_tenants
+        with as_tenant(conn, a):
+>           assert {r[0] for r in conn.execute("SELECT tenant FROM documents")} == {a}
+E           AssertionError: assert {'test-a-36fa...t-b-fe4eb5a5'} == {'test-a-36fa0be4'}
+E             
+E             Extra items in the left set:
+E             'test-b-fe4eb5a5'
+E             Use -v to get more diff
+
+/tmp/blueprint-step3/serve/tests/test_rag_live.py:106: AssertionError
+=========================== short test summary info ============================
+FAILED ../../../../tmp/blueprint-step3/serve/tests/test_rag_live.py::test_a_tenant_cannot_write_into_another
+FAILED ../../../../tmp/blueprint-step3/serve/tests/test_rag_live.py::test_rls_even_when_the_query_has_no_filter
+2 failed, 7 deselected in 0.23s

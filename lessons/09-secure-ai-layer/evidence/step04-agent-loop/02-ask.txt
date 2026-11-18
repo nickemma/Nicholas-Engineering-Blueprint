@@ -1,0 +1,4 @@
+$ uv run -q --project serve python -m serve.agent --tenant acme --user maria Why did job 4182 fail?
+answer  Job 4182 failed due to a timeout waiting for a lock after 300 seconds.
+sources ['job/4182']
+0 tool calls, 374 tokens, 7.9 s

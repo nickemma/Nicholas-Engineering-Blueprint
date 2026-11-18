@@ -1,0 +1,4 @@
+$ bash -c uv run -q --project serve python -m serve.agent --tenant acme --user sam --role reader 'What is the webhook signing secret?'
+answer  The webhook signing secret is a key used to sign the webhook payload, ensuring that the message is authentic and not tampered with. It is crucial for maintaining the integrity and security of the communication between the sender and the receiver. In this case, the signing secret was rotated, which explains the 401 Unauthorized error received by the receiver. To resolve this issue, the tenant admin should rotate the webhook secret in the Runway console. Once the secret is rotated, the webhook deliveries should resume with the next event.
+sources ['runbooks/webhooks.md#status-401', 'runbooks/webhooks-faq.md#status-401', 'job/4201']
+0 tool calls, 664 tokens, 17.2 s

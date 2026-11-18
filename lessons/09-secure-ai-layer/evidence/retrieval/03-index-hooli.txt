@@ -1,0 +1,2 @@
+$ weak --tenant hooli index experiments/rag/corpus/hooli
+7 chunks in 0.2 s

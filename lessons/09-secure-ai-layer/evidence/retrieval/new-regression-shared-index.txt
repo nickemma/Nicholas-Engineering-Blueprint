@@ -1,0 +1,28 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___________________ test_no_approximate_index_spans_tenants ____________________
+
+two_tenants = (<psycopg.Connection [IDLE] (host=127.0.0.1 port=32771 user=rag_app database=rag) at 0x7a27a61c15b0>, 'test-a-4c668dd1', 'test-b-b305cd05')
+
+    @live
+    def test_no_approximate_index_spans_tenants(two_tenants):
+        # R2: an HNSW or IVFFlat index over every tenant's rows returns other
+        # tenants' neighbours, which row-level security then throws away, so a
+        # tenant can get fewer rows than it asked for, or none. Whether it
+        # happens depends on table statistics, so test the design, not luck.
+        conn, _, _ = two_tenants
+        shared = conn.execute(
+            "SELECT indexname FROM pg_indexes"
+            " WHERE tablename = 'documents' AND schemaname = current_schema()"
+            " AND indexdef ~* 'using (hnsw|ivfflat)'"
+        ).fetchall()
+>       assert shared == []
+E       AssertionError: assert [('documents_embedding',)] == []
+E         
+E         Left contains one more item: ('documents_embedding',)
+E         Use -v to get more diff
+
+/tmp/blueprint-step3/serve/tests/test_rag_live.py:99: AssertionError
+=========================== short test summary info ============================
+FAILED ../../../../tmp/blueprint-step3/serve/tests/test_rag_live.py::test_no_approximate_index_spans_tenants
+1 failed, 8 deselected in 0.25s

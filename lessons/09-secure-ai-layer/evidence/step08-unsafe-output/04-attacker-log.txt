@@ -1,0 +1,2 @@
+$ bash -c tail -n +1 listener.jsonl | grep '"port": 18099'
+(exit 1)

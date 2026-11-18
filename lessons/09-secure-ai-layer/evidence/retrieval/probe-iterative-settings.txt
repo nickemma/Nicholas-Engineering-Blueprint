@@ -1,0 +1,7 @@
+exact (no index scans)               rows 10.00  hit@1 0.94 hit@3 0.94 mrr 0.94  median 1.6 ms
+hnsw default                         rows  1.25  hit@1 0.25 hit@3 0.25 mrr 0.25  recall@10 vs exact 0.12  median 1.6 ms
+iterative relaxed                    rows 10.00  hit@1 0.62 hit@3 0.69 mrr 0.66  recall@10 vs exact 0.85  median 10.7 ms
+iterative strict                     rows 10.00  hit@1 0.38 hit@3 0.44 mrr 0.41  recall@10 vs exact 0.52  median 11.0 ms
+iterative relaxed, ef_search 100     rows 10.00  hit@1 0.94 hit@3 0.94 mrr 0.94  recall@10 vs exact 1.00  median 1.5 ms
+iterative relaxed, ef_search 400     rows 10.00  hit@1 0.94 hit@3 0.94 mrr 0.94  recall@10 vs exact 1.00  median 1.5 ms
+ef_search 1000, no iterative         rows 10.00  hit@1 0.94 hit@3 0.94 mrr 0.94  recall@10 vs exact 1.00  median 1.4 ms

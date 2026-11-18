@@ -1,0 +1,5 @@
+$ uv run -q --project serve python -m serve.agent --tenant acme --user maria Search our job history for lock timeouts.
+tool  find    {"text": "lock timeouts"}  -> 200
+answer  The search did not find any results related to lock timeouts.
+sources ['find(text)']
+1 tool calls, 1042 tokens, 24.3 s

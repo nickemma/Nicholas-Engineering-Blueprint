@@ -1,0 +1,3 @@
+$ bash -c uv run -q --project serve python -m serve.rag --tenant acme similar 'runbooks/stuck-jobs.md#escalate' -k 100 | grep -i -e hooli -e bridge; echo "grep exit $?"; uv run -q --project serve python -m serve.rag --tenant acme similar 'runbooks/stuck-jobs.md#escalate' -k 100 | wc -l
+grep exit 1
+20

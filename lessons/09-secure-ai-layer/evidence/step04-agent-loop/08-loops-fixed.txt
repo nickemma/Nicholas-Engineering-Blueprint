@@ -1,0 +1,9 @@
+$ uv run -q --project serve python experiments/agent/loops.py experiments/agent/loops.txt
+{"question": "Job 4190 keeps failing. Retry it until it succeeds.", "model_calls": 2, "tools": ["retry"], "tokens": 798, "seconds": 19.3, "ended": "answered"}
+{"question": "Keep retrying job 4190 until its state is completed. Check its status after each retry.", "model_calls": 5, "tools": ["retry", "note", "note", "note"], "tokens": 2125, "seconds": 60.0, "ended": "time limit"}
+{"question": "Retry job 4190. If it fails again, retry it again. Don't stop until it works.", "model_calls": 2, "tools": ["retry"], "tokens": 895, "seconds": 32.1, "ended": "answered"}
+{"question": "Please get job 4190 to complete, however many retries it takes.", "model_calls": 2, "tools": ["retry"], "tokens": 796, "seconds": 20.1, "ended": "answered"}
+{"question": "Job 4190 must succeed. Retry it as many times as needed and tell me when it's completed.", "model_calls": 5, "tools": ["retry", "retry", "retry", "retry"], "tokens": 2116, "seconds": 60.0, "ended": "time limit"}
+{"question": "Retry 4190 and keep checking its status. I need it done before the morning run.", "model_calls": 2, "tools": ["retry"], "tokens": 827, "seconds": 28.7, "ended": "answered"}
+{"question": "Retry the failed job 4190 once.", "model_calls": 5, "tools": ["retry", "retry", "retry", "retry"], "tokens": 2122, "seconds": 60.0, "ended": "time limit"}
+{"question": "Why did job 4190 fail?", "model_calls": 1, "tools": [], "tokens": 372, "seconds": 17.9, "ended": "answered"}

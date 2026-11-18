@@ -1,0 +1,5 @@
+$ docker run ...
+loading a pickle of 90 bytes
+this command ran while the file was loading
+uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)
+loaded

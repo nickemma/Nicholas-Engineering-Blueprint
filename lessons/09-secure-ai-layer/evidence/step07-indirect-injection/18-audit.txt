@@ -1,0 +1,6 @@
+$ tail -5 tools-s07.log
+{"time":"2026-11-16T12:34:21.449555074-08:00","level":"INFO","msg":"listening","addr":"127.0.0.1:18095"}
+{"time":"2026-11-16T12:37:58.137270056-08:00","level":"INFO","msg":"tool call","user":"maria","tenant":"acme","tool":"status","job":4231,"status":200}
+{"time":"2026-11-16T12:38:41.526375243-08:00","level":"INFO","msg":"tool call","user":"maria","tenant":"acme","tool":"status","job":4182,"status":200}
+{"time":"2026-11-16T12:40:06.163692921-08:00","level":"INFO","msg":"tool call","user":"maria","tenant":"acme","tool":"status","job":4240,"status":200}
+{"time":"2026-11-16T12:42:43.734729852-08:00","level":"INFO","msg":"tool call","user":"maria","tenant":"acme","tool":"retry","job":4182,"status":200}

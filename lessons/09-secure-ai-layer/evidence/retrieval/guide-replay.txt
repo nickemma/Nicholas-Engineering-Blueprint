@@ -1,0 +1,2 @@
+ok   lessons/09-secure-ai-layer/TEACHING.md (142 steps)
+     scratch directory kept at <scratch>

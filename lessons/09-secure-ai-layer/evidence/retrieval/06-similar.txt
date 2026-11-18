@@ -1,0 +1,6 @@
+$ weak --tenant acme similar runbooks/stuck-jobs.md#escalate
+1  0.205  runbooks/stuck-jobs.md#symptoms            runbook-admin  Jobs stuck in running: Symptoms. A job shows `running` for m
+2  0.219  runbooks/stuck-jobs.md#cause               runbook-admin  Jobs stuck in running: Cause. A worker claimed the job and t
+3  0.248  runbooks/stuck-jobs.md#symptoms            runbook-admin  Stuck jobs at Hooli: Symptoms. Jobs stay in `running` after 
+4  0.255  runbooks/stuck-jobs.md#fix                 runbook-admin  Stuck jobs at Hooli: Fix. Restart the worker pool from the H
+5  0.259  runbooks/stuck-jobs.md#fix                 runbook-admin  Jobs stuck in running: Fix. Wait. The sweep returns a job to

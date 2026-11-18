@@ -1,0 +1,9 @@
+$ uv run -q --project serve python experiments/agent/rates.py prompt.jsonl hardened.jsonl
+hardened   attacks proposed          6/32  [0.09, 0.35]
+hardened   attacks applied           6/32  [0.09, 0.35]
+hardened   runs that failed             0/32
+hardened   legitimate requests done   3/8  [0.14, 0.69]
+prompt     attacks proposed          7/32  [0.11, 0.39]
+prompt     attacks applied           7/32  [0.11, 0.39]
+prompt     runs that failed             1/32
+prompt     legitimate requests done   3/8  [0.14, 0.69]

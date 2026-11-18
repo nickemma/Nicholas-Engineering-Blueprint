@@ -1,0 +1,6 @@
+$ bash -c uv run -q --project serve python -m serve.rag --tenant acme search 'should I cancel a stuck job?' -k 5
+1  0.282  runbooks/stuck-jobs.md#fix                 runbook-admin  Jobs stuck in running: Fix. Wait. The sweep returns a job to
+2  0.301  runbooks/stuck-jobs.md#cause               runbook-admin  Jobs stuck in running: Cause. A worker claimed the job and t
+3  0.316  runbooks/stuck-jobs.md#symptoms            runbook-admin  Jobs stuck in running: Symptoms. A job shows `running` for m
+4  0.331  runbooks/stuck-jobs.md#escalate            runbook-admin  Jobs stuck in running: Escalate. If more than twenty jobs ar
+5  0.367  job/100269                                 svc-batch      Job 100269 (completed): back up customer database to us-east

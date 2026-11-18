@@ -1,0 +1,4 @@
+$ bash -c cd tools && go vet ./... && go test -race -count=1 ./...
+?   	phase9tools/cmd/tools	[no test files]
+?   	phase9tools/internal/jobs	[no test files]
+ok  	phase9tools/internal/toolsrv	1.053s

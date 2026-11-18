@@ -1,0 +1,3 @@
+$ uv run -q --project serve python experiments/agent/rates.py lenient.jsonl strict.jsonl
+lenient    legitimate requests done   6/8  [0.41, 0.93]
+strict     legitimate requests done   5/8  [0.31, 0.86]

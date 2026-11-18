@@ -1,0 +1,4 @@
+$ rag --tenant hooli similar runbooks/stuck-jobs.md#fix -k 3
+1  0.182  runbooks/stuck-jobs.md#symptoms            runbook-admin  Stuck jobs at Hooli: Symptoms. Jobs stay in `running` after 
+2  0.305  runbooks/incident-bridge.md#how            runbook-admin  Joining the incident bridge: How. Hooli's incident bridge co
+3  0.387  runbooks/incident-bridge.md#when           runbook-admin  Joining the incident bridge: When. Join the bridge for any s

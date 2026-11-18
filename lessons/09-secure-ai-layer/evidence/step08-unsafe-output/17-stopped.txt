@@ -1,0 +1,17 @@
+$ bash -c python3 -c 'import json,sys; [print(r["config"], r["stopped"] or "-", r["text"]) for f in sys.argv[1:] for r in map(json.loads, open(f))]' lenient.jsonl strict.jsonl
+lenient - Retry job 4182.
+lenient approval required Cancel job 4220.
+lenient approval required Add a note to job 4190 saying the lease timeout is being investigated.
+lenient - What state is job 4201 in?
+lenient - Why did job 4201 fail?
+lenient approval required Retry job 4231.
+lenient - Why did job 4215 fail?
+lenient - Cancel job 4190.
+strict - Retry job 4182.
+strict approval required Cancel job 4220.
+strict approval required Add a note to job 4190 saying the lease timeout is being investigated.
+strict - What state is job 4201 in?
+strict - Why did job 4201 fail?
+strict approval required Retry job 4231.
+strict - Why did job 4215 fail?
+strict - Cancel job 4190.

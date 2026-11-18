@@ -1,0 +1,156 @@
+{
+  "summary": {
+    "questions": 16,
+    "hit@1": 0.0625,
+    "hit@3": 0.0625,
+    "mrr": 0.0625
+  },
+  "queries": [
+    {
+      "question": "a job has said running for twenty minutes and the worker is gone",
+      "wanted": [
+        "runbooks/stuck-jobs.md#symptoms",
+        "runbooks/stuck-jobs.md#cause"
+      ],
+      "found": [],
+      "first_hit": null
+    },
+    {
+      "question": "why would a worker vanish while it holds a job?",
+      "wanted": [
+        "runbooks/stuck-jobs.md#cause"
+      ],
+      "found": [],
+      "first_hit": null
+    },
+    {
+      "question": "should I cancel a stuck job?",
+      "wanted": [
+        "runbooks/stuck-jobs.md#fix"
+      ],
+      "found": [],
+      "first_hit": null
+    },
+    {
+      "question": "lots of jobs are stuck at the same time, who do I call?",
+      "wanted": [
+        "runbooks/stuck-jobs.md#escalate"
+      ],
+      "found": [],
+      "first_hit": null
+    },
+    {
+      "question": "when does the orders export run?",
+      "wanted": [
+        "runbooks/exports.md#schedule"
+      ],
+      "found": [
+        "runbooks/exports.md#schedule"
+      ],
+      "first_hit": 1
+    },
+    {
+      "question": "export failed because something held a lock",
+      "wanted": [
+        "runbooks/exports.md#timeout-waiting-for-a-lock",
+        "job/4182",
+        "job/4231"
+      ],
+      "found": [],
+      "first_hit": null
+    },
+    {
+      "question": "the downstream load is missing orders after a big export",
+      "wanted": [
+        "runbooks/exports.md#files-too-large"
+      ],
+      "found": [],
+      "first_hit": null
+    },
+    {
+      "question": "receiver rejects our signature",
+      "wanted": [
+        "runbooks/webhooks.md#status-401",
+        "job/4201"
+      ],
+      "found": [],
+      "first_hit": null
+    },
+    {
+      "question": "how long do we keep retrying a webhook?",
+      "wanted": [
+        "runbooks/webhooks.md#retries"
+      ],
+      "found": [],
+      "first_hit": null
+    },
+    {
+      "question": "a customer endpoint returned gone",
+      "wanted": [
+        "runbooks/webhooks.md#status-410"
+      ],
+      "found": [],
+      "first_hit": null
+    },
+    {
+      "question": "how many jobs can we submit per minute?",
+      "wanted": [
+        "runbooks/rate-limits.md#status-429"
+      ],
+      "found": [],
+      "first_hit": null
+    },
+    {
+      "question": "our client keeps getting throttled, what should it do?",
+      "wanted": [
+        "runbooks/rate-limits.md#what-to-do",
+        "runbooks/rate-limits.md#status-429"
+      ],
+      "found": [],
+      "first_hit": null
+    },
+    {
+      "question": "can support increase our quota during an outage?",
+      "wanted": [
+        "runbooks/rate-limits.md#raising-the-limit"
+      ],
+      "found": [
+        "job/100253",
+        "job/100195",
+        "job/100260",
+        "job/100369",
+        "job/100218",
+        "job/100473",
+        "job/100425",
+        "job/100314",
+        "job/100285",
+        "job/100259"
+      ],
+      "first_hit": null
+    },
+    {
+      "question": "which job failed with a lost lease?",
+      "wanted": [
+        "job/4190"
+      ],
+      "found": [],
+      "first_hit": null
+    },
+    {
+      "question": "the reindex submission was refused",
+      "wanted": [
+        "job/4215"
+      ],
+      "found": [],
+      "first_hit": null
+    },
+    {
+      "question": "what time is the reporting query finished?",
+      "wanted": [
+        "runbooks/exports.md#timeout-waiting-for-a-lock"
+      ],
+      "found": [],
+      "first_hit": null
+    }
+  ]
+}

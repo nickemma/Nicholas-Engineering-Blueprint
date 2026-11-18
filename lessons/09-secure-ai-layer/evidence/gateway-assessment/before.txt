@@ -1,0 +1,57 @@
+=== RUN   TestGatewayRejectsMalformedMessages
+=== RUN   TestGatewayRejectsMalformedMessages/null
+    message_boundary_test.go:108: status=502 template=1 reservation=0 generation=0
+    message_boundary_test.go:111: want 400 before template/reservation/generation; got 502
+=== RUN   TestGatewayRejectsMalformedMessages/empty
+    message_boundary_test.go:108: status=502 template=1 reservation=0 generation=0
+    message_boundary_test.go:111: want 400 before template/reservation/generation; got 502
+=== RUN   TestGatewayRejectsMalformedMessages/scalar
+    message_boundary_test.go:108: status=502 template=1 reservation=0 generation=0
+    message_boundary_test.go:111: want 400 before template/reservation/generation; got 502
+=== RUN   TestGatewayRejectsMalformedMessages/object
+    message_boundary_test.go:108: status=502 template=1 reservation=0 generation=0
+    message_boundary_test.go:111: want 400 before template/reservation/generation; got 502
+=== RUN   TestGatewayRejectsMalformedMessages/null-entry
+    message_boundary_test.go:108: status=200 template=1 reservation=1 generation=1
+    message_boundary_test.go:111: want 400 before template/reservation/generation; got 200
+=== RUN   TestGatewayRejectsMalformedMessages/missing-content
+    message_boundary_test.go:108: status=200 template=1 reservation=1 generation=1
+    message_boundary_test.go:111: want 400 before template/reservation/generation; got 200
+=== RUN   TestGatewayRejectsMalformedMessages/null-content
+    message_boundary_test.go:108: status=200 template=1 reservation=1 generation=1
+    message_boundary_test.go:111: want 400 before template/reservation/generation; got 200
+=== RUN   TestGatewayRejectsMalformedMessages/blank-content
+    message_boundary_test.go:108: status=200 template=1 reservation=1 generation=1
+    message_boundary_test.go:111: want 400 before template/reservation/generation; got 200
+=== RUN   TestGatewayRejectsMalformedMessages/unknown-role
+    message_boundary_test.go:108: status=200 template=1 reservation=1 generation=1
+    message_boundary_test.go:111: want 400 before template/reservation/generation; got 200
+=== RUN   TestGatewayRejectsMalformedMessages/tool-role
+    message_boundary_test.go:108: status=200 template=1 reservation=1 generation=1
+    message_boundary_test.go:111: want 400 before template/reservation/generation; got 200
+=== RUN   TestGatewayRejectsMalformedMessages/nested-tool
+    message_boundary_test.go:108: status=200 template=1 reservation=1 generation=1
+    message_boundary_test.go:111: want 400 before template/reservation/generation; got 200
+=== RUN   TestGatewayRejectsMalformedMessages/image-content
+    message_boundary_test.go:108: status=502 template=1 reservation=0 generation=0
+    message_boundary_test.go:111: want 400 before template/reservation/generation; got 502
+=== RUN   TestGatewayRejectsMalformedMessages/too-many
+    message_boundary_test.go:108: status=200 template=1 reservation=1 generation=1
+    message_boundary_test.go:111: want 400 before template/reservation/generation; got 200
+--- FAIL: TestGatewayRejectsMalformedMessages (0.04s)
+    --- FAIL: TestGatewayRejectsMalformedMessages/null (0.02s)
+    --- FAIL: TestGatewayRejectsMalformedMessages/empty (0.00s)
+    --- FAIL: TestGatewayRejectsMalformedMessages/scalar (0.00s)
+    --- FAIL: TestGatewayRejectsMalformedMessages/object (0.00s)
+    --- FAIL: TestGatewayRejectsMalformedMessages/null-entry (0.00s)
+    --- FAIL: TestGatewayRejectsMalformedMessages/missing-content (0.00s)
+    --- FAIL: TestGatewayRejectsMalformedMessages/null-content (0.00s)
+    --- FAIL: TestGatewayRejectsMalformedMessages/blank-content (0.00s)
+    --- FAIL: TestGatewayRejectsMalformedMessages/unknown-role (0.00s)
+    --- FAIL: TestGatewayRejectsMalformedMessages/tool-role (0.00s)
+    --- FAIL: TestGatewayRejectsMalformedMessages/nested-tool (0.00s)
+    --- FAIL: TestGatewayRejectsMalformedMessages/image-content (0.00s)
+    --- FAIL: TestGatewayRejectsMalformedMessages/too-many (0.00s)
+FAIL
+FAIL	phase8gateway/internal/inference	0.049s
+FAIL

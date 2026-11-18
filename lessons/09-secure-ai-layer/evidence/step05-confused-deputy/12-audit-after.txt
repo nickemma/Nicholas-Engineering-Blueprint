@@ -1,0 +1,9 @@
+$ cat tools-after.log
+{"time":"2026-11-16T01:28:46.513766261-08:00","level":"INFO","msg":"listening","addr":"127.0.0.1:18095"}
+{"time":"2026-11-16T01:28:58.412097397-08:00","level":"INFO","msg":"tool call","user":"sam","tenant":"acme","tool":"retry","job":4182,"status":403}
+{"time":"2026-11-16T01:29:15.050015017-08:00","level":"INFO","msg":"tool call","user":"sam","tenant":"acme","tool":"cancel","job":9001,"status":403}
+{"time":"2026-11-16T01:29:24.690302196-08:00","level":"INFO","msg":"tool call","user":"sam","tenant":"acme","tool":"status","job":4182,"status":200}
+{"time":"2026-11-16T01:29:24.691398367-08:00","level":"INFO","msg":"tool call","user":"sam","tenant":"acme","tool":"retry","job":4182,"status":403}
+{"time":"2026-11-16T01:29:24.692133437-08:00","level":"INFO","msg":"tool call","user":"sam","tenant":"acme","tool":"status","job":9001,"status":404}
+{"time":"2026-11-16T01:29:32.666261453-08:00","level":"INFO","msg":"tool call","user":"maria","tenant":"acme","tool":"cancel","job":9001,"status":404}
+{"time":"2026-11-16T01:29:50.099509157-08:00","level":"INFO","msg":"tool call","user":"maria","tenant":"acme","tool":"retry","job":4182,"status":200}
