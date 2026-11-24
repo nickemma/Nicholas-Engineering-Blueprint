@@ -13,9 +13,9 @@ npm run check:links   # every internal link and anchor in dist/
 
 ## What gets published
 
-`src/lib/links.ts` holds an allowlist: `JOURNEY.md`, and the Markdown under `lessons/`, `math/`, `dsa/`, `system-design/`, `capstones/` and `open-source/`. Anything else, such as `notes/` or `plan.md`, stays out, and a link to it goes to GitHub instead. A test keeps it that way.
+`src/lib/links.ts` holds an allowlist: `JOURNEY.md`, and the Markdown under `1-foundations/`, `2-core/`, `3-tracks/`, `math/`, `dsa/`, `system-design/` and `ownership/`. Folders named `evidence/` or `practice/`, and names starting with `_`, stay out: a link to them goes to GitHub instead. So does anything outside the allowlist, such as `README.md` or `career.md`. A test keeps it that way.
 
-The publishing allowlist still excludes the root `plan.md`, personal notes and lesson templates. Phase 8's dated experiment plan/report under its public lesson evidence directory are intentionally published; raw JSON, logs and public signature material link to GitHub. Weight blobs, private keys and bearer tokens must never be added to that evidence.
+Raw evidence (JSON, logs, signature material) is linked on GitHub, not published. Weight blobs, private keys and bearer tokens must never be added to it.
 
 ## Adding a lab
 
