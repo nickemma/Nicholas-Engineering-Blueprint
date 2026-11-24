@@ -72,3 +72,5 @@ Close the lessons. Without notes:
 2. Write a small event loop by hand that runs two generator tasks, one sleeping 0.1 s three times and one 0.15 s twice, and prints when each wakes. It must finish in about 0.3 s, using one thread.
 3. Write an open-loop sender for any `async` function: `rate` calls a second for `duration` seconds, each timed from when it was due, recording each call's send lag. Then write the test that shows a closed loop hides a stall that yours reveals.
 4. You're told "the new build is 0.3 ms faster at p99, I ran it once." List what you'd ask for before believing it, and design the experiment that would settle it.
+
+For more questions and a place to record your evidence, use the [extended review](extended-review.md).

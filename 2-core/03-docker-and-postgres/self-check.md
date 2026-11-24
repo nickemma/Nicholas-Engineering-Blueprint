@@ -55,3 +55,5 @@ Answer in your own words. Use the logs, queries, and results from your own runs.
 2. Write a conditional update and a concurrent test that fails if both callers report success.
 3. Design a worker recovery drill with a real process kill. Specify how you will know the old lease was granted, the replacement ran, and the effect was recorded once.
 4. Sketch a Compose stack with a migration job and a named database volume. Explain how you would prove replacement preserved the data.
+
+For more questions and a place to record your evidence, use the [extended review](extended-review.md).

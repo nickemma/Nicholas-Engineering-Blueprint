@@ -1,10 +1,10 @@
-# Performance Bridge: what I learned
+# Linux, networking and profiling · Self-check
 
 Fill this in as you go, with evidence: commands, outputs, profiles and flame graphs saved in your repository.
 
 ## Explain it
 
-| Step | Question | My answer | Evidence |
+| Lesson | Question | My answer | Evidence |
 |---|---|---|---|
 | 1 | What's the difference between utilisation and saturation? Give a resource and a tool for each | | |
 | 1 | What did 92% idle CPUs plus a throughput ceiling tell you? | | |
@@ -95,3 +95,5 @@ Answer from memory, then check yourself against [the lesson](lessons/00-before-y
 | 14 | What evidence confirms the contender ran and the link dropped packets? What would an interval including zero mean for the p99 claim? |
 
 Close the lessons. Draw the request path from `kload` through Go and into Rust. Label the buffer owners, framing checks, deadlines, span boundary, and impaired interface. Then design a matched run that would falsify your preferred performance explanation.
+
+For more questions and a place to record your evidence, use the [extended review](extended-review.md).

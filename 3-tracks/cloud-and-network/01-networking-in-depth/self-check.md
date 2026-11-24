@@ -83,3 +83,5 @@ For each answer, keep the command or observation that supports it. Pick one surp
 - Compare the one-object control with the multi-object transfers. What did the control isolate?
 - Explain what an app-limited sender observation tells you and what other socket fields you need to diagnose the limitation.
 - Explain what a long-lived connection can observe when an anycast route changes.
+
+For more questions and a place to record your evidence, use the [extended review](extended-review.md).

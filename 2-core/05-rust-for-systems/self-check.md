@@ -62,3 +62,5 @@ Use a source line, a diagnostic, or a test result to support each answer.
 2. Sketch a capacity-one SPSC ring. Annotate publication and reuse with their acquire and release edges.
 3. Write the safety contract for a read-only C wrapper around a Rust slice, including the empty slice case.
 4. Design one deterministic test and one model or fuzz test for a broken ownership hand-off.
+
+For more questions and a place to record your evidence, use the [extended review](extended-review.md).

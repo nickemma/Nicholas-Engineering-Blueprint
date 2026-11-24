@@ -32,3 +32,5 @@ A initially preserves index 1 and repairs its incomplete tail. While alone, it c
 With a complete synchronized frame, Rust keeps the old record when A restarts. The Raft leader can later replace that uncommitted suffix by appending a new logical replacement record. The torn run reports trimmed bytes. The complete-local run leaves those bytes valid but still must report no client success while isolated. After heal, client reads agree on the committed application state.
 
 </details>
+
+For more questions and a place to record your evidence, use the [extended review](extended-review.md).

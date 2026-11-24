@@ -11,3 +11,5 @@
 ## From memory
 
 Draw and label both the healthy and paused Redis read paths. Predict the number of PostgreSQL reads for a cold read, a warm read, and 32 overlapping misses inside one process. Run the gate and compare.
+
+For more questions and a place to record your evidence, use the [extended review](extended-review.md).

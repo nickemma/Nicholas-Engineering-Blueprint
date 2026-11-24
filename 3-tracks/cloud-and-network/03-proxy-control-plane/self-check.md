@@ -12,3 +12,5 @@
 ## From memory
 
 Draw the data and management paths. Mark the peer roles, Unix socket, generation readback, and point where a request chooses its origin. Trace a replay of generation 1 after a lost acknowledgement and then a rollback at generation 2.
+
+For more questions and a place to record your evidence, use the [extended review](extended-review.md).

@@ -16,3 +16,5 @@
 ## Rebuild the drill from memory
 
 Draw the path from an image produced by CI to the running candidate. Describe how you prove readiness failure, keep the stable path available, restore the release, and verify the old data remains readable. Write down the role, observation, and evidence for each transition.
+
+For more questions and a place to record your evidence, use the [extended review](extended-review.md).

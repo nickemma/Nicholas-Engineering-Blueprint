@@ -10,3 +10,5 @@
 ## From memory
 
 Draw Kafka and the two PostgreSQL transactions. Mark the points where the writer can roll back, the relay can republish, and the projector can reread. Predict the pending rows, offsets, and count at each point, then compare your predictions with a live gate run.
+
+For more questions and a place to record your evidence, use the [extended review](extended-review.md).

@@ -14,3 +14,5 @@ Write an answer before reopening the lessons.
 10. Which facts can an independent reader establish if it has an older witness receipt and cannot get the current head?
 
 Use the [lessons](README.md) and [reference evidence](evidence/README.md) to check your reasoning.
+
+For more questions and a place to record your evidence, use the [extended review](extended-review.md).
