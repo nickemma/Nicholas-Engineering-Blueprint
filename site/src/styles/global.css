@@ -141,7 +141,6 @@ h1, h2, h3, h4 { line-height: 1.25; text-wrap: balance; }
 
 .home { max-width: 76.5rem; margin: 0 auto; padding: 0 1.25rem; }
 .home-intro { display: grid; grid-template-columns: 1.13fr 1fr; align-items: center; gap: clamp(1.5rem, 5vw, 5rem); padding: clamp(2.5rem, 7vw, 6.25rem) 0; }
-.home-kicker { margin: 0 0 1.125rem; color: var(--accent); font: 600 0.9rem/1.35 var(--mono); }
 .home-copy h1, .home-section h2 { font-family: Georgia, "Times New Roman", serif; font-weight: 500; }
 .home-copy h1 { font-size: clamp(2.65rem, 5.65vw, 5.2rem); line-height: 1.02; letter-spacing: -0.055em; margin: 0; text-wrap: initial; }
 .home-lede { max-width: 33rem; margin: 1.45rem 0; font-size: clamp(1rem, 2vw, 1.2rem); color: var(--text-secondary); }
