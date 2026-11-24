@@ -1,0 +1,3 @@
+$ hello.sh
+bash: line 1: hello.sh: command not found
+[exit 127]

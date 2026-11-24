@@ -1,0 +1,8 @@
+$ ls notes /nope > out.txt 2>&1; cat out.txt; echo "---"; wc -l < notes/first.txt; rm out.txt
+ls: cannot access '/nope': No such file or directory
+notes:
+first.txt
+second.txt
+---
+2
+[exit 0]

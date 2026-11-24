@@ -1,0 +1,11 @@
+$ git add monitor.sh .gitignore && git status --short && git commit -m "Add the system monitor"
+A  .gitignore
+A  monitor.sh
+?? catch.sh
+?? hello.sh
+?? notes/
+[main (root-commit) 831b3c6] Add the system monitor
+ 2 files changed, 50 insertions(+)
+ create mode 100644 .gitignore
+ create mode 100755 monitor.sh
+[exit 0]

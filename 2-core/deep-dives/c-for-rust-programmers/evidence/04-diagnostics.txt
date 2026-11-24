@@ -1,0 +1,11 @@
+ASan shadow: final byte poisoned=0; one-past poisoned=1
+tests/ubsan_probe.c:7:34: runtime error: signed integer overflow: 2147483647 + 1 cannot be represented in type 'int'
+C tests: ordinary
+view bounds: empty, embedded zero, and rejected range checked
+failed growth kept the original bytes and ownership; retry succeeded
+C tests: asan
+view bounds: empty, embedded zero, and rejected range checked
+failed growth kept the original bytes and ownership; retry succeeded
+C tests: ubsan
+view bounds: empty, embedded zero, and rejected range checked
+failed growth kept the original bytes and ownership; retry succeeded

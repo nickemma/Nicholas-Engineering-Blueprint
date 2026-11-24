@@ -1,0 +1,139 @@
+   Compiling switchyard-loom v0.1.0 (/tmp/tmp.aqUH6RYAE0/checks/loom)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.52s
+     Running unittests src/lib.rs (/tmp/blueprint-c05-author/toolchain/target-integrations/debug/deps/switchyard_loom-a066dd047e494214)
+
+running 1 test
+
+thread 'tests::slot_is_published_before_read_and_reused_after_release' (151) panicked at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/loom-0.7.2/src/rt/location.rs:115:9:
+Causality violation: Concurrent read and write accesses.
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'tests::slot_is_published_before_read_and_reused_after_release' (151) panicked at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/loom-0.7.2/src/rt/cell.rs:75:13:
+currently reading from cell
+stack backtrace:
+   0:     0x555f98770a32 - std::backtrace_rs::backtrace::libunwind::trace::h650f3484750cac6f
+                               at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/std/src/../../backtrace/src/backtrace/libunwind.rs:117:9
+   1:     0x555f98770a32 - std::backtrace_rs::backtrace::trace_unsynchronized::hee951f78e969ac04
+                               at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/std/src/../../backtrace/src/backtrace/mod.rs:66:14
+   2:     0x555f98770a32 - std::sys::backtrace::_print_fmt::hb210b023f6e87be7
+                               at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/std/src/sys/backtrace.rs:74:9
+   3:     0x555f98770a32 - <std::sys::backtrace::BacktraceLock::print::DisplayBacktrace as core::fmt::Display>::fmt::hdadc7c28d26d7ce3
+                               at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/std/src/sys/backtrace.rs:44:26
+   4:     0x555f98781eea - core::fmt::rt::Argument::fmt::hca43ba1468fa0a13
+                               at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/core/src/fmt/rt.rs:152:76
+   5:     0x555f98781eea - core::fmt::write::h469843d235cc4241
+   6:     0x555f9873e5c6 - std::io::default_write_fmt::hd7a1b719f1eee29b
+                               at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/std/src/io/mod.rs:639:11
+   7:     0x555f9873e5c6 - std::io::Write::write_fmt::h86cdd20e46f95ef0
+                               at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/std/src/io/mod.rs:1994:13
+   8:     0x555f9874f489 - std::sys::backtrace::BacktraceLock::print::hb91bd19c9b07a6b2
+                               at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/std/src/sys/backtrace.rs:47:9
+   9:     0x555f9874f489 - std::panicking::default_hook::{{closure}}::hd9d92b9a46805102
+                               at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/std/src/panicking.rs:292:27
+  10:     0x555f9874f321 - std::panicking::default_hook::hedb2be0819bbe276
+                               at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/std/src/panicking.rs:316:9
+  11:     0x555f9853c44e - <alloc::boxed::Box<F,A> as core::ops::function::Fn<Args>>::call::he80a7da40294963b
+                               at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/alloc/src/boxed.rs:2220:9
+  12:     0x555f9853c44e - test::test_main_with_exit_callback::{{closure}}::h816111d0ddcced19
+                               at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/test/src/lib.rs:145:21
+  13:     0x555f9871b6a3 - <alloc::boxed::Box<F,A> as core::ops::function::Fn<Args>>::call::h9e701182f4ccad3c
+                               at /home/techieemma/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/alloc/src/boxed.rs:2220:9
+  14:     0x555f9871fa24 - generator::detail::gen::catch_unwind_filter::{{closure}}::{{closure}}::hbc6ac276405bfff7
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/generator-0.8.11/src/detail/gen.rs:19:13
+  15:     0x555f9874f7b2 - <alloc::boxed::Box<F,A> as core::ops::function::Fn<Args>>::call::h575effa6ce691fba
+                               at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/alloc/src/boxed.rs:2220:9
+  16:     0x555f9874f7b2 - std::panicking::panic_with_hook::h0fc23abecf35c6bd
+                               at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/std/src/panicking.rs:833:13
+  17:     0x555f9874f19c - std::panicking::begin_panic::{{closure}}::h918cb43b69f3c480
+                               at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/std/src/panicking.rs:762:9
+  18:     0x555f9874a189 - std::sys::backtrace::__rust_end_short_backtrace::h7f1a0e5f36d349dd
+                               at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/std/src/sys/backtrace.rs:182:18
+  19:     0x555f9874f16e - std::panicking::begin_panic::had1c1af6027bdd0c
+                               at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/std/src/panicking.rs:761:5
+  20:     0x555f9857e3ea - loom::rt::cell::Cell::start_write::{{closure}}::h7e376c97f9585162
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/loom-0.7.2/src/rt/cell.rs:75:13
+  21:     0x555f9856c508 - loom::rt::synchronize::{{closure}}::hd0d9815d616b033d
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/loom-0.7.2/src/rt/mod.rs:144:9
+  22:     0x555f985604db - loom::rt::scheduler::Scheduler::with_execution::{{closure}}::h562ffb1d26915ef1
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/loom-0.7.2/src/rt/scheduler.rs:43:34
+  23:     0x555f9855e5a6 - loom::rt::scheduler::Scheduler::with_state::{{closure}}::h4cdae07dfe4afb9c
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/loom-0.7.2/src/rt/scheduler.rs:131:28
+  24:     0x555f98567986 - scoped_tls::ScopedKey<T>::with::hd57d2f2f9928a625
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/scoped-tls-1.0.1/src/lib.rs:171:13
+  25:     0x555f9855cd78 - loom::rt::scheduler::Scheduler::with_state::h4efca72cc770c270
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/loom-0.7.2/src/rt/scheduler.rs:131:15
+  26:     0x555f985601f4 - loom::rt::scheduler::Scheduler::with_execution::hcb97bc8dfa90ff4c
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/loom-0.7.2/src/rt/scheduler.rs:43:9
+  27:     0x555f9856ebe4 - loom::rt::execution::hb14967b0568b1580
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/loom-0.7.2/src/rt/mod.rs:174:5
+  28:     0x555f9856adf4 - loom::rt::synchronize::hae1181a427a9a888
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/loom-0.7.2/src/rt/mod.rs:141:5
+  29:     0x555f9857e36e - loom::rt::cell::Cell::start_write::h407115929a1085ad
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/loom-0.7.2/src/rt/cell.rs:72:9
+  30:     0x555f98502412 - loom::cell::unsafe_cell::UnsafeCell<T>::with_mut::hd3156a563a8a8b6e
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/loom-0.7.2/src/cell/unsafe_cell.rs:149:35
+  31:     0x555f985005b5 - switchyard_loom::ring_sync::Slot<T>::with_mut::h2b973340765f6149
+                               at /tmp/tmp.aqUH6RYAE0/checks/loom/src/ring_sync.rs:19:16
+  32:     0x555f98506d16 - <switchyard_loom::spsc::Inner<T,_> as core::ops::drop::Drop>::drop::h79ce7a9af70a1351
+                               at /tmp/tmp.aqUH6RYAE0/checks/loom/src/../../../src/spsc.rs:73:18
+  33:     0x555f98504faa - core::ptr::drop_in_place<switchyard_loom::spsc::Inner<u32,1_usize>>::h31fbcee2dbc2ac87
+                               at /home/techieemma/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/ptr/mod.rs:805:1
+  34:     0x555f984ee90e - alloc::sync::Arc<T,A>::drop_slow::h3e85eed656ee2842
+                               at /home/techieemma/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/alloc/src/sync.rs:2120:18
+  35:     0x555f9850577f - <alloc::sync::Arc<T,A> as core::ops::drop::Drop>::drop::hb79aa38044d9a79c
+                               at /home/techieemma/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/alloc/src/sync.rs:2854:18
+  36:     0x555f985051ea - core::ptr::drop_in_place<alloc::sync::Arc<switchyard_loom::spsc::Inner<u32,1_usize>>>::hb64b520acfa2b659
+                               at /home/techieemma/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/ptr/mod.rs:805:1
+  37:     0x555f985052fa - core::ptr::drop_in_place<loom::sync::arc::Arc<switchyard_loom::spsc::Inner<u32,1_usize>>>::h4755a8bbec2f1fd5
+                               at /home/techieemma/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/ptr/mod.rs:805:1
+  38:     0x555f98504fca - core::ptr::drop_in_place<switchyard_loom::spsc::Consumer<u32,1_usize>>::h7519e9d28695b508
+                               at /home/techieemma/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/ptr/mod.rs:805:1
+  39:     0x555f9850467a - core::ptr::drop_in_place<switchyard_loom::tests::slot_is_published_before_read_and_reused_after_release::{{closure}}::{{closure}}>::h15dc5b3a3cc6c06c
+                               at /home/techieemma/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/ptr/mod.rs:805:1
+  40:     0x555f984ffd86 - switchyard_loom::tests::slot_is_published_before_read_and_reused_after_release::{{closure}}::{{closure}}::h9679ed68b14e563f
+                               at /tmp/tmp.aqUH6RYAE0/checks/loom/src/lib.rs:25:13
+  41:     0x555f9850797c - loom::thread::spawn_internal::{{closure}}::h3731f7b1a8b10248
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/loom-0.7.2/src/thread.rs:168:47
+  42:     0x555f9851a510 - loom::rt::spawn::{{closure}}::h5e675e13b352f93c
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/loom-0.7.2/src/rt/mod.rs:78:13
+  43:     0x555f98503fee - core::ops::function::FnOnce::call_once{{vtable.shim}}::ha964acae353d3fff
+                               at /home/techieemma/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/ops/function.rs:250:5
+  44:     0x555f9857234b - <alloc::boxed::Box<F,A> as core::ops::function::FnOnce<Args>>::call_once::h184c6f3a03fa714e
+                               at /home/techieemma/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/alloc/src/boxed.rs:2206:9
+  45:     0x555f9855c4db - loom::rt::scheduler::spawn_thread::{{closure}}::h0878cb321cd0de65
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/loom-0.7.2/src/rt/scheduler.rs:142:17
+  46:     0x555f9857b53e - core::ops::function::FnOnce::call_once::h58e6bbf9cff55e46
+                               at /home/techieemma/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/ops/function.rs:250:5
+  47:     0x555f9858bb43 - generator::gen_impl::GeneratorImpl<A,T>::init_code::{{closure}}::ha72ee2c6bd22879d
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/generator-0.8.11/src/gen_impl.rs:357:21
+  48:     0x555f985761b1 - generator::stack::StackBox<F>::call_once::he26a5394a3415730
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/generator-0.8.11/src/stack/mod.rs:137:13
+  49:     0x555f9871bcdd - generator::stack::Func::call_once::h64a073ee0c79f015
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/generator-0.8.11/src/stack/mod.rs:119:9
+  50:     0x555f9871f4fe - generator::detail::gen::gen_init_impl::{{closure}}::h1f7b1d7487b9c3c5
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/generator-0.8.11/src/detail/gen.rs:35:14
+  51:     0x555f98719913 - core::ops::function::FnOnce::call_once::he6b887771484b3c6
+                               at /home/techieemma/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/ops/function.rs:250:5
+  52:     0x555f987194eb - std::panicking::catch_unwind::do_call::h55e62a96056ee523
+                               at /home/techieemma/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/panicking.rs:581:40
+  53:     0x555f9871c6cb - __rust_try
+  54:     0x555f98719470 - std::panicking::catch_unwind::hdb28f992244866a0
+                               at /home/techieemma/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/panicking.rs:544:19
+  55:     0x555f98719470 - std::panic::catch_unwind::hf5934ec1d9a64b67
+                               at /home/techieemma/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/panic.rs:359:14
+  56:     0x555f9871f8ed - generator::detail::gen::catch_unwind_filter::haa86931e1e713a1d
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/generator-0.8.11/src/detail/gen.rs:23:5
+  57:     0x555f9871f3d7 - generator::detail::gen::gen_init_impl::hdd3ea9c51d6b7009
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/generator-0.8.11/src/detail/gen.rs:50:25
+  58:     0x555f9871f363 - generator::detail::asm::gen_init::ha5c2368aa6452475
+                               at /tmp/blueprint-c05-author/toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/generator-0.8.11/src/detail/x86_64_unix.rs:8:5
+  59:                0x0 - <unknown>
+
+thread 'tests::slot_is_published_before_read_and_reused_after_release' (151) panicked at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/core/src/panicking.rs:233:5:
+panic in a destructor during cleanup
+thread caused non-unwinding panic. aborting.
+error: test failed, to rerun pass `--lib`
+
+Caused by:
+  process didn't exit successfully: `/tmp/blueprint-c05-author/toolchain/target-integrations/debug/deps/switchyard_loom-a066dd047e494214 slot_is_published_before_read_and_reused_after_release` (signal: 6, SIGABRT: process abort signal)

@@ -7,9 +7,9 @@ An interval is a start and an end. Two intervals overlap when each starts before
 **Recognise it when** the input is ranges (meetings, bookings, time windows, byte ranges, IP ranges) and the problem asks to merge them, find overlaps or gaps, or count how many happen at once.
 
 **Real systems:**
-- **Leases.** [Phase 4's lock leases](../../lessons/04-replicated-state/TEACHING.md#step-10-locks-with-leases-and-fencing-tokens) are time intervals. A lock is safe only if two holders' intervals never overlap, and fencing tokens exist because clocks make the interval ends uncertain.
+- **Leases.** [Core 07's lock leases](../../2-core/07-distributed-systems-fundamentals/lessons/09-fence-a-worker-that-outlives-its-lease.md) are time intervals. A lock is safe only if two holders' intervals never overlap, and fencing tokens exist because clocks make the interval ends uncertain.
 - **Byte ranges:** HTTP range requests, and the compaction of a log's segments.
-- **Incidents:** in [Phase 7's anomaly detection](../../lessons/07-utility-evaluation/TEACHING.md#step-12-finding-incidents-nobody-wrote-a-rule-for), each alert span counts as caught only if it overlaps an incident's interval.
+- **Incidents:** in [the AI track's anomaly detection](../../3-tracks/ai-infrastructure/deep-dives/aiops.md), each alert span counts as caught only if it overlaps an incident's interval.
 
 ## Worked problem: Merge Intervals
 

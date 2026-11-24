@@ -1,0 +1,6 @@
+$ uv run python bad.py
+  File "/home/ada/blueprint/internet/measure/bad.py", line 2
+    print(n)
+    ^^^^^
+IndentationError: expected an indented block after 'for' statement on line 1
+[exit 1]

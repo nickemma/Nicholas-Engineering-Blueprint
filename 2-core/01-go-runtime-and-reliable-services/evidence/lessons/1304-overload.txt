@@ -1,0 +1,8 @@
+$ go build -o /tmp/switchyard ./cmd/switchyard && { WORKERS=2 QUEUE_CAPACITY=20 /tmp/switchyard > /dev/null & p=$!; sleep 0.5; go run ./cmd/loadjobs -rate 10 -for 10s -job 500ms; kill $p; }
+sent 100 jobs in 10.0 s (10.0/s): 60 accepted, 40 refused with 503
+first 503 after 3.5 s
+all done after 15.3 s: 60 jobs finished, 3.93 per second
+time in the system: 4.00 s on average (3.50 s waiting + 0.50 s running)
+Little's law: 3.93/s x 3.50 s waiting = 13.7 jobs waiting on average
+measured:     queue depth averaged 14.0 over 152 samples
+[exit 0]

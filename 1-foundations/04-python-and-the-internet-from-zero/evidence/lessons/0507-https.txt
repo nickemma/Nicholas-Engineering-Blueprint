@@ -1,0 +1,19 @@
+$ curl -sv -o /dev/null https://example.com/ 2>&1 | grep -E "^\* (Connected|SSL connection|TLS|Server certificate|.*subject:|.*issuer:)|^> GET|^< HTTP"
+* Connected to example.com (172.66.147.243) port 443
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+* TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
+* TLSv1.3 (IN), TLS handshake, Certificate (11):
+* TLSv1.3 (IN), TLS handshake, CERT verify (15):
+* TLSv1.3 (IN), TLS handshake, Finished (20):
+* TLSv1.3 (OUT), TLS change cipher, Change cipher spec (1):
+* TLSv1.3 (OUT), TLS handshake, Finished (20):
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384 / X25519 / id-ecPublicKey
+* Server certificate:
+*  subject: CN=example.com
+*  issuer: C=US; O=SSL Corporation; CN=Cloudflare TLS Issuing ECC CA 3
+> GET / HTTP/2
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+< HTTP/2 200 
+[exit 0]

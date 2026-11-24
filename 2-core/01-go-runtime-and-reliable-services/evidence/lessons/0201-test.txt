@@ -1,0 +1,5 @@
+$ go test -v ./drills/byhand 2>&1 | grep -E "^(--- |ok|FAIL)"
+--- PASS: TestReadRequest (0.00s)
+--- PASS: TestKeepAlive (0.00s)
+ok  	switchyard/drills/byhand	0.006s
+[exit 0]

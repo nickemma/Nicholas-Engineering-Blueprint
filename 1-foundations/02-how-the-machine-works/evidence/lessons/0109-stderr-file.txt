@@ -1,0 +1,7 @@
+$ ls notes /nonexistent 2> errors.txt; echo "---"; cat errors.txt; rm errors.txt
+notes:
+first.txt
+second.txt
+---
+ls: cannot access '/nonexistent': No such file or directory
+[exit 0]

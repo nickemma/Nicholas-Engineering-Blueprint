@@ -1,0 +1,8 @@
+$ mv ~/.gitconfig ~/.gitconfig.off && bash /gate/run.sh ~/blueprint/day1; s=$?; mv ~/.gitconfig.off ~/.gitconfig; exit $s
+PASS  Go is installed (go1.27.4)
+FAIL  Git identity is set
+      run: git config --global user.name "Your Name" and git config --global user.email "you@example.com"
+PASS  Your code lives inside Linux (/home/ada/blueprint/day1)
+PASS  Your program reports this machine: OS: linux | Arch: amd64 | CPUs: 16
+Gate failed: fix the FAIL lines above and run it again.
+[exit 1]

@@ -1,0 +1,11 @@
+--- a/src/kload/cli.py
++++ b/src/kload/cli.py
+@@ -60,7 +60,7 @@
+     headers = {"Content-Type": "application/json"} if content else {}
+ 
+     async def send(i: int) -> int:
+-        extra = {"Idempotency-Key": f"kload-{run}-{i}"} if method == "POST" else {}
++        extra = {}
+         return (await pool.request(method, path, headers | extra, content)).status
+ 
+     return send

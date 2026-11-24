@@ -1,0 +1,6 @@
+add D: modulo moves 7551/10000; ring moves 2503/10000
+node A holds 1283 keys with 1 point; 2546 with 128 points
+node B holds 3475 keys with 1 point; 2797 with 128 points
+node C holds 4474 keys with 1 point; 2154 with 128 points
+node D holds 768 keys with 1 point; 2503 with 128 points
+node D owns hot key job/42 and gets 8503/16000 requests

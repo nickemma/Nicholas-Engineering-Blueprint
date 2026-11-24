@@ -1,0 +1,4 @@
+page_bytes=4096 mapped_bytes=8388608
+first-touch minor faults=2049
+second-pass minor faults=0
+mapping flushed and file synchronized

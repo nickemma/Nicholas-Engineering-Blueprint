@@ -1,0 +1,3 @@
+POST /jobs: 201 (job 1)
+GET before restart: 200
+GET after restart: 404

@@ -1,0 +1,5 @@
+$ uv add matplotlib 2>&1 | tail -3
+ + pyparsing==3.3.3
+ + python-dateutil==4.0.0
+ + tzdata==2026.6
+[exit 0]

@@ -1,0 +1,3 @@
+$ (lesson 13 step 6)
+{"time":"2026-11-20T04:32:06.885625657Z","level":"INFO","msg":"stopped","jobs_left_in_queue":0}
+[exit 0]

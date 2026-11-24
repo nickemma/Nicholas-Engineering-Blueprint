@@ -1,0 +1,10 @@
+$ ping -c 3 one.one.one.one
+PING one.one.one.one (1.0.0.1) 56(84) bytes of data.
+64 bytes from one.one.one.one (1.0.0.1): icmp_seq=1 ttl=45 time=181 ms
+64 bytes from one.one.one.one (1.0.0.1): icmp_seq=2 ttl=45 time=240 ms
+64 bytes from one.one.one.one (1.0.0.1): icmp_seq=3 ttl=45 time=252 ms
+
+--- one.one.one.one ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 4361ms
+rtt min/avg/max/mdev = 180.755/224.236/252.100/31.149 ms
+[exit 0]

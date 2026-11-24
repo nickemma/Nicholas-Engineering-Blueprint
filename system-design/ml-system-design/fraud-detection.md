@@ -1,6 +1,6 @@
 # ML design: payment fraud detection
 
-**Track:** ml-system-design · **Built in:** [Phase 7](../../lessons/07-utility-evaluation/README.md) (time splits, leakage, gradient-boosted trees, serving with a fallback, drift, a shadow) · **Time:** 45 minutes
+**Track:** ml-system-design · **Built in:** [ML for infrastructure](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md) (time splits, leakage, versioned promotion and rollback, input drift) and its [gradient-boosted trees deep dive](../../3-tracks/ai-infrastructure/deep-dives/gradient-boosted-trees.md) · **Time:** 45 minutes
 
 This is a worked reference. Do the design yourself first, with a timer, then read this and note what you missed.
 
@@ -50,12 +50,12 @@ Decisions come in three bands: **approve**, **send to manual review** (capacity:
 - Serving computes the same thing live.
 - A parity test compares the two on recent payments.
 
-Phase 7 found exactly this kind of leak: training used timestamps the live system only learned later, and the parity test caught it.
+[ML for infrastructure, lesson 03](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/03-split-by-time-and-plan-the-comparison.md) guards against exactly this kind of leak: a label that arrived after the model would have been trained has to stay out of training.
 
 ## 4. Model
 
 1. **Baseline:** the existing rules, scored on the same evaluation.
-2. **Main model: gradient-boosted trees** on tabular features. They're strong on this kind of data, fast to serve, and explainable per feature. Phase 7 found trees hard to beat on tabular data, and cheap networks only matching them.
+2. **Main model: gradient-boosted trees** on tabular features. They're strong on this kind of data, fast to serve, and explainable per feature. On tabular data, trees are a hard baseline to beat, and small networks often only match them.
 3. **Class imbalance:** weight the fraud class, or downsample non-fraud for training; then **calibrate** the scores so thresholds mean something.
 4. **Next:**
    - graph features, such as cards linked through shared devices;
@@ -93,7 +93,7 @@ flowchart LR
 - rules and decision: 1 ms;
 - headroom: 30 ms.
 
-**A fallback is mandatory.** If scoring misses its deadline or fails, the payment API applies the rules alone. Payments never wait for the model. That's Phase 7's breaker-and-fallback pattern.
+**A fallback is mandatory.** If scoring misses its deadline or fails, the payment API applies the rules alone. Payments never wait for the model. That's a circuit breaker, as in [Messaging and resilience](../../3-tracks/shared-units/messaging-and-resilience/lessons/05-stop-calling-a-failing-dependency.md), with the rules as the fallback.
 
 **Log the exact features and score** used for each decision. That's the training data, the audit trail and the explanation, all at once.
 
@@ -102,7 +102,7 @@ flowchart LR
 - **Input drift:** population stability index per feature, daily.
 - **Score drift:** the distribution of scores and the decline rate, hourly. A sudden jump means a broken feature more often than a fraud wave.
 - **Performance:** review outcomes (days) as a leading indicator; chargebacks (months) as the truth.
-- **Retraining:** on a schedule (weekly), plus on drift alerts. Each candidate must beat the champion **beyond noise**, then go through a shadow before promotion (Phase 7's gate).
+- **Retraining:** on a schedule (weekly), plus on drift alerts. Each candidate must beat the champion **beyond noise**, then go through a shadow before promotion. ML for infrastructure's lifecycle gate refuses a weak release the same way.
 - **Adversarial adaptation:** fraud rings probe the thresholds. Watch for clusters of payments just under the decline line.
 
 ## 8. Risks
@@ -114,10 +114,12 @@ flowchart LR
 
 ## 9. Where you've built this
 
-[Phase 7](../../lessons/07-utility-evaluation/README.md):
-- **The data:** a time-split dataset with leakage caught; baselines first; gradient-boosted trees with bootstrap comparisons.
-- **Serving:** behind the Go API with a timeout, a breaker and a fallback, and a parity test that found a real train/serve leak.
-- **Operations:** MLflow and a gate beyond noise; drift metrics; a shadow deployment.
+[ML for infrastructure](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md):
+- **The data:** a time-split dataset that keeps late labels out; baselines first.
+- **Serving:** the active model version over HTTP, and restoring the previous one.
+- **Operations:** versioned promotion that refuses a weak release; an input-drift check.
+
+The [gradient-boosted trees deep dive](../../3-tracks/ai-infrastructure/deep-dives/gradient-boosted-trees.md) compares boosted trees with the baselines on held-out data.
 
 ## 10. What an interviewer will push on
 

@@ -1,0 +1,19 @@
+$ go test -race -count=20 ./internal/queue
+--- FAIL: TestServeStopsTakingJobsButFinishesTheCurrentOne (0.30s)
+    queue_test.go:84: finished 3 jobs, want exactly the 1 in progress
+--- FAIL: TestServeStopsTakingJobsButFinishesTheCurrentOne (0.20s)
+    queue_test.go:84: finished 2 jobs, want exactly the 1 in progress
+--- FAIL: TestServeStopsTakingJobsButFinishesTheCurrentOne (0.20s)
+    queue_test.go:84: finished 2 jobs, want exactly the 1 in progress
+--- FAIL: TestServeStopsTakingJobsButFinishesTheCurrentOne (0.30s)
+    queue_test.go:84: finished 3 jobs, want exactly the 1 in progress
+--- FAIL: TestServeStopsTakingJobsButFinishesTheCurrentOne (0.20s)
+    queue_test.go:84: finished 2 jobs, want exactly the 1 in progress
+--- FAIL: TestServeStopsTakingJobsButFinishesTheCurrentOne (0.20s)
+    queue_test.go:84: finished 2 jobs, want exactly the 1 in progress
+--- FAIL: TestServeStopsTakingJobsButFinishesTheCurrentOne (0.30s)
+    queue_test.go:84: finished 3 jobs, want exactly the 1 in progress
+FAIL
+FAIL	switchyard/internal/queue	5.099s
+FAIL
+[exit 1]

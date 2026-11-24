@@ -1,0 +1,54 @@
+Error: Invariant ElectionSafety is violated.
+Error: The behavior up to this point is:
+State 1: <Initial predicate>
+/\ term = (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0)
+/\ elected = {}
+/\ role = (s1 :> "follower" @@ s2 :> "follower" @@ s3 :> "follower")
+/\ votedFor = (s1 :> "nil" @@ s2 :> "nil" @@ s3 :> "nil")
+/\ votes = (s1 :> {} @@ s2 :> {} @@ s3 :> {})
+
+State 2: <Timeout(s1) line 34, col 5 to line 40, col 24 of module RaftElection>
+/\ term = (s1 :> 1 @@ s2 :> 0 @@ s3 :> 0)
+/\ elected = {}
+/\ role = (s1 :> "candidate" @@ s2 :> "follower" @@ s3 :> "follower")
+/\ votedFor = (s1 :> s1 @@ s2 :> "nil" @@ s3 :> "nil")
+/\ votes = (s1 :> {s1} @@ s2 :> {} @@ s3 :> {})
+
+State 3: <Vote(s2,s1) line 45, col 5 to line 53, col 24 of module RaftElection>
+/\ term = (s1 :> 1 @@ s2 :> 1 @@ s3 :> 0)
+/\ elected = {}
+/\ role = (s1 :> "candidate" @@ s2 :> "follower" @@ s3 :> "follower")
+/\ votedFor = (s1 :> s1 @@ s2 :> s1 @@ s3 :> "nil")
+/\ votes = (s1 :> {s1, s2} @@ s2 :> {} @@ s3 :> {})
+
+State 4: <BecomeLeader(s1) line 57, col 5 to line 61, col 42 of module RaftElection>
+/\ term = (s1 :> 1 @@ s2 :> 1 @@ s3 :> 0)
+/\ elected = {<<s1, 1>>}
+/\ role = (s1 :> "leader" @@ s2 :> "follower" @@ s3 :> "follower")
+/\ votedFor = (s1 :> s1 @@ s2 :> s1 @@ s3 :> "nil")
+/\ votes = (s1 :> {s1, s2} @@ s2 :> {} @@ s3 :> {})
+
+State 5: <Timeout(s3) line 34, col 5 to line 40, col 24 of module RaftElection>
+/\ term = (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1)
+/\ elected = {<<s1, 1>>}
+/\ role = (s1 :> "leader" @@ s2 :> "follower" @@ s3 :> "candidate")
+/\ votedFor = (s1 :> s1 @@ s2 :> s1 @@ s3 :> s3)
+/\ votes = (s1 :> {s1, s2} @@ s2 :> {} @@ s3 :> {s3})
+
+State 6: <Vote(s1,s3) line 45, col 5 to line 53, col 24 of module RaftElection>
+/\ term = (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1)
+/\ elected = {<<s1, 1>>}
+/\ role = (s1 :> "follower" @@ s2 :> "follower" @@ s3 :> "candidate")
+/\ votedFor = (s1 :> s3 @@ s2 :> s1 @@ s3 :> s3)
+/\ votes = (s1 :> {s1, s2} @@ s2 :> {} @@ s3 :> {s1, s3})
+
+State 7: <BecomeLeader(s3) line 57, col 5 to line 61, col 42 of module RaftElection>
+/\ term = (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1)
+/\ elected = {<<s1, 1>>, <<s3, 1>>}
+/\ role = (s1 :> "follower" @@ s2 :> "follower" @@ s3 :> "leader")
+/\ votedFor = (s1 :> s3 @@ s2 :> s1 @@ s3 :> s3)
+/\ votes = (s1 :> {s1, s2} @@ s2 :> {} @@ s3 :> {s1, s3})
+
+2401 states generated, 830 distinct states found, 532 states left on queue.
+The depth of the complete state graph search is 7.
+Finished in 00s at (2026-11-22 18:05:30)

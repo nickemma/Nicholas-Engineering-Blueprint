@@ -1,0 +1,5 @@
+$ git switch -c usage && git branch
+Switched to a new branch 'usage'
+  main
+* usage
+[exit 0]

@@ -1,0 +1,6 @@
+cgroup filesystem: cgroup2fs
+namespaces: pid:[4026532303] mnt:[4026532301]
+ship-lab
+    PID    PPID COMMAND
+      1       0 sh
+      4       1 ps

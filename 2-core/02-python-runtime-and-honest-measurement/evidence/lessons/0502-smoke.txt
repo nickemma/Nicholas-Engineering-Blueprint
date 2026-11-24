@@ -1,0 +1,10 @@
+$ /home/ada/blueprint/switchyard/bin/switchyard > /dev/null 2>&1 & sleep 0.5; uv run kload smoke
+   Building kload @ file:///home/ada/blueprint/kload
+      Built kload @ file:///home/ada/blueprint/kload
+Uninstalled 1 package in 0.54ms
+Installed 1 package in 3ms
+health: ok
+created job 1: queued
+same key again: job 1 (the same job)
+cancelled job 1: cancelled
+[exit 0]

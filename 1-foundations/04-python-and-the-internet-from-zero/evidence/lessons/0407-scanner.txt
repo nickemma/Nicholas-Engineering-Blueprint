@@ -1,0 +1,4 @@
+$ go build -o /tmp/echo . && { /tmp/echo > /dev/null & sleep 0.5; printf "windows\r\nlast" | nc -N 127.0.0.1 9000 | od -c; sleep 0.3; kill %1; }
+0000000   w   i   n   d   o   w   s  \n   l   a   s   t  \n
+0000015
+[exit 0]

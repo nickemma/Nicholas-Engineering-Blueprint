@@ -1,0 +1,6 @@
+=== RUN   TestCompletionRollsBack
+    completion_test.go:69: job is completed with 0 effects, want running with 0
+--- FAIL: TestCompletionRollsBack (0.07s)
+FAIL
+FAIL	switchyard/internal/pgstore	0.097s
+FAIL

@@ -1,0 +1,31 @@
+$ bash gate/run.sh ~/blueprint/switchyard   # cancelcompletes
+PASS  gofmt -l . lists nothing
+PASS  go vet ./...
+FAIL  go test -race ./...
+      --- FAIL: TestFinalStates (0.00s)
+          job_test.go:125: Final() for cancelled = false, want true
+      --- FAIL: TestCancelledJobGetsNoEffect (0.00s)
+          service_test.go:71: Finish after Cancel error = <nil>, want ErrInvalidTransition
+      FAIL
+      FAIL	switchyard/internal/jobs	0.074s
+      FAIL
+sending 10,000 state changes from 32 clients while workers are killed; this takes a minute or two
+sent 10000 state changes in 1.8 s: 7169 creates, 1641 repeated with the same key, 1190 cancels (965 accepted)
+settled after 22.2 s: 7169 jobs: 6208 completed, 961 cancelled, 0 failed
+PASS  every request got an expected answer
+PASS  a repeated request with the same key returned the same job
+PASS  every job reached a final state (none lost, none stuck)
+FAIL  every job cancelled with 200 ended cancelled, never completed
+        job 17 was cancelled (200), but ended completed
+        job 59 was cancelled (200), but ended completed
+        job 1 was cancelled (200), but ended completed
+        job 189 was cancelled (200), but ended completed
+PASS  every completed job has exactly one effect; every other job, none
+      workers killed with SIGKILL: 16; one paused past its lease
+      jobs handed back by the reconcile loop: 12
+PASS  goroutines came back to the baseline (28 before, 28 after)
+PASS  SIGTERM stopped the control plane and every worker within the grace period (1 s)
+PASS  the race detector reported nothing
+
+gate failed
+[exit 1]

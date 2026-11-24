@@ -1,0 +1,5 @@
+$ nc -l 127.0.0.1 9000 > /tmp/got.txt & sleep 0.5; ss -tln; printf "hello\n" | nc -N 127.0.0.1 9000; sleep 0.3; cat /tmp/got.txt
+State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess
+LISTEN 0      1          127.0.0.1:9000      0.0.0.0:*          
+hello
+[exit 0]

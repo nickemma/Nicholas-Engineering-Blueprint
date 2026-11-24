@@ -1,0 +1,11 @@
+network
+writable layer
+CREATE TABLE
+INSERT 0 1
+written
+written
+marker missing
+named volume
+CREATE TABLE
+INSERT 0 1
+on a volume

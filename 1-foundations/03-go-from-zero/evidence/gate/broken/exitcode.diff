@@ -1,0 +1,12 @@
+diff --color -ruN final/cmd/tasks/main.go broken/exitcode/cmd/tasks/main.go
+--- final/cmd/tasks/main.go	2026-11-18 22:24:49.295142699 -0800
++++ broken/exitcode/cmd/tasks/main.go	2026-11-18 22:29:23.075432268 -0800
+@@ -72,7 +72,7 @@
+ 		t, err := tasks.Complete(list, id)
+ 		if errors.Is(err, tasks.ErrNotFound) {
+ 			fmt.Fprintf(os.Stderr, "tasks: no task %d\n", id)
+-			return 1
++			return 0
+ 		}
+ 		if err := tasks.Save(*file, list); err != nil {
+ 			fmt.Fprintln(os.Stderr, "tasks:", err)

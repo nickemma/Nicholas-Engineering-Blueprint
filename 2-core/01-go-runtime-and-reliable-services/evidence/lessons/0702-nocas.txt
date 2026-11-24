@@ -1,0 +1,7 @@
+$ go test -race ./internal/jobs
+--- FAIL: TestConcurrentRunStartsJobOnce (0.02s)
+    service_test.go:153: succeeded = 20, work ran 20 times; want 1 and 1
+FAIL
+FAIL	switchyard/internal/jobs	0.054s
+FAIL
+[exit 1]

@@ -1,0 +1,4 @@
+$ go run ./drills/values
+# gofromzero/drills/values
+drills/values/main.go:30:18: cannot use math.MaxInt64 + 1 (untyped int constant 9223372036854775808) as int64 value in variable declaration (overflows)
+[exit 1]

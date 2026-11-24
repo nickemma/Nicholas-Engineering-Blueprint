@@ -1,0 +1,8 @@
+$ go test -timeout 5s ./internal/queue 2>&1 | grep -E -A1 "^panic|running tests|chan send"
+panic: test timed out after 5s
+	running tests:
+		TestFullQueueRefusesImmediately (5s)
+--
+goroutine 3 [chan send]:
+switchyard/internal/queue.(*Queue).Dispatch(...)
+[exit 0]

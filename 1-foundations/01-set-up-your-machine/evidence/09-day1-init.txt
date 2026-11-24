@@ -1,0 +1,6 @@
+$ mkdir -p ~/blueprint/day1 && cd ~/blueprint/day1 && go mod init blueprint/day1 && cat go.mod
+go: creating new go.mod: module blueprint/day1
+module blueprint/day1
+
+go 1.27.4
+[exit 0]

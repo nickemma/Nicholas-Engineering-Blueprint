@@ -1,0 +1,7 @@
+$ echo $((2#1010)) && echo $((2#11111111)) && echo $((0xff)) && printf "%x\n" 255 && printf "%d\n" 0x41
+10
+255
+255
+ff
+65
+[exit 0]

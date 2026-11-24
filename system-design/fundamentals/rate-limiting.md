@@ -35,9 +35,9 @@ Say the algorithm and why (usually a token bucket), the key (user, tenant, IP, A
 
 ## Where you built it
 
-[Phase 6, step 5](../../lessons/06-safe-shared-queries/TEACHING.md#step-5-rate-limiting):
-- a token bucket per tenant, local then in Redis through a Lua script using the server's clock;
-- a fallback that fails open to a local limit;
+[Tenancy and abuse control, lessons 05–06](../../3-tracks/shared-units/tenancy-and-abuse-control/lessons/05-authorize-routes-and-budget-each-tenant.md):
+- a token bucket per tenant, local then shared in Redis through one script that uses Redis's clock;
+- a failed quota lookup that returns `503`: the cap holds, and availability pays for it;
 - `429` with `Retry-After`;
 - counting only requests the policy allowed.
 

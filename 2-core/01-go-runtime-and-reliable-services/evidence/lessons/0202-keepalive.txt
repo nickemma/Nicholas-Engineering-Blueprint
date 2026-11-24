@@ -1,0 +1,27 @@
+$ go build -o /tmp/byhand ./drills/byhand && { /tmp/byhand > /dev/null 2> /tmp/byhand.log & sleep 0.5; curl -sv http://127.0.0.1:8080/jobs http://127.0.0.1:8080/health 2>&1 | grep -E "^[<>*]|^request" | grep -v "^> \(User\|Accept\)"; }
+*   Trying 127.0.0.1:8080...
+* Connected to 127.0.0.1 (127.0.0.1) port 8080
+> GET /jobs HTTP/1.1
+> Host: 127.0.0.1:8080
+> 
+< HTTP/1.1 200 OK
+< Content-Type: text/plain
+< Content-Length: 57
+< Connection: keep-alive
+< 
+* Connection #0 to host 127.0.0.1 left intact
+request 1 on this connection: GET /jobs, 0 bytes of body
+* Found bundle for host: 0x6153226e68a0 [serially]
+* Can not multiplex, even if we wanted to
+* Re-using existing connection with host 127.0.0.1
+> GET /health HTTP/1.1
+> Host: 127.0.0.1:8080
+> 
+< HTTP/1.1 200 OK
+< Content-Type: text/plain
+< Content-Length: 59
+< Connection: keep-alive
+< 
+* Connection #0 to host 127.0.0.1 left intact
+request 2 on this connection: GET /health, 0 bytes of body
+[exit 0]

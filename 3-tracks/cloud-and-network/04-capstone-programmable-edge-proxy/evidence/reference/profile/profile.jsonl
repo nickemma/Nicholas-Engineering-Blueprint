@@ -1,0 +1,12 @@
+{"variant":"format","operations":5000000,"checksum":60000000,"elapsed_ns":2895339599,"samples":642}
+{"variant":"cached","operations":5000000,"checksum":60000000,"elapsed_ns":1622776794,"samples":384}
+{"variant":"format","operations":5000000,"checksum":60000000,"elapsed_ns":2338813039,"samples":0}
+{"variant":"cached","operations":5000000,"checksum":60000000,"elapsed_ns":1196353328,"samples":0}
+{"variant":"cached","operations":5000000,"checksum":60000000,"elapsed_ns":1229676417,"samples":0}
+{"variant":"format","operations":5000000,"checksum":60000000,"elapsed_ns":2132884551,"samples":0}
+{"variant":"format","operations":5000000,"checksum":60000000,"elapsed_ns":2139034771,"samples":0}
+{"variant":"cached","operations":5000000,"checksum":60000000,"elapsed_ns":1204044966,"samples":0}
+{"variant":"cached","operations":5000000,"checksum":60000000,"elapsed_ns":1218383967,"samples":0}
+{"variant":"format","operations":5000000,"checksum":60000000,"elapsed_ns":2145135104,"samples":0}
+{"variant":"format","operations":5000000,"checksum":60000000,"elapsed_ns":2247042994,"samples":0}
+{"variant":"cached","operations":5000000,"checksum":60000000,"elapsed_ns":1195381794,"samples":0}

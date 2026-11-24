@@ -1,0 +1,6 @@
+$ uv run pytest -q tests/test_load.py 2>&1 | tail -4
+tests/test_load.py:139: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_load.py::test_a_blocking_send_makes_kload_late_and_the_lag_shows_it
+1 failed, 11 passed in 6.13s
+[exit 0]

@@ -1,0 +1,87 @@
+$ go build -o gcdrill ./drills/gc && (ulimit -v 1000000; GOGC=off ./gcdrill); echo "exit $?"; rm -f gcdrill
+runtime: out of memory: cannot allocate 4194304-byte block (272302080 in use)
+fatal error: out of memory
+
+goroutine 1 gp=0xc474befa1e0 m=0 mp=0x53ff00 [running]:
+runtime.throw({0x48529f?, 0x76ca5a268820?})
+	/usr/local/go/src/runtime/panic.go:1245 +0x48 fp=0xc474bf8ed58 sp=0xc474bf8ed28 pc=0x476ce8
+runtime.(*mcache).allocLarge(0xc474bf8edd8?, 0x10000, 0x1)
+	/usr/local/go/src/runtime/mcache.go:259 +0x18b fp=0xc474bf8eda8 sp=0xc474bf8ed58 pc=0x42094b
+runtime.mallocgcLarge(0x530713?, 0x529af0, 0x1)
+	/usr/local/go/src/runtime/malloc.go:1709 +0x79 fp=0xc474bf8ee00 sp=0xc474bf8eda8 pc=0x41a4b9
+runtime.mallocgc(0x10000, 0x529af0, 0x1)
+	/usr/local/go/src/runtime/malloc.go:1137 +0x11a fp=0xc474bf8ee30 sp=0xc474bf8ee00 pc=0x475d5a
+runtime.makeslice(0xc474bfa6008?, 0x44f11f?, 0x0?)
+	/usr/local/go/src/runtime/slice.go:117 +0x49 fp=0xc474bf8ee58 sp=0xc474bf8ee30 pc=0x478089
+main.main()
+	/home/ada/blueprint/switchyard/drills/gc/main.go:19 +0x109 fp=0xc474bf8eeb8 sp=0xc474bf8ee58 pc=0x483489
+runtime.main()
+	/usr/local/go/src/runtime/proc.go:302 +0x427 fp=0xc474bf8efe0 sp=0xc474bf8eeb8 pc=0x445f27
+runtime.goexit({})
+	/usr/local/go/src/runtime/asm_amd64.s:1264 +0x1 fp=0xc474bf8efe8 sp=0xc474bf8efe0 pc=0x47bfe1
+
+goroutine 2 gp=0xc474befa780 m=nil [force gc (idle)]:
+runtime.gopark(0x0?, 0x0?, 0x0?, 0x0?, 0x0?)
+	/usr/local/go/src/runtime/proc.go:474 +0xca fp=0xc474bf64fa8 sp=0xc474bf64f88 pc=0x476dca
+runtime.goparkunlock(...)
+	/usr/local/go/src/runtime/proc.go:480
+runtime.forcegchelper()
+	/usr/local/go/src/runtime/proc.go:387 +0xb3 fp=0xc474bf64fe0 sp=0xc474bf64fa8 pc=0x4461f3
+runtime.goexit({})
+	/usr/local/go/src/runtime/asm_amd64.s:1264 +0x1 fp=0xc474bf64fe8 sp=0xc474bf64fe0 pc=0x47bfe1
+created by runtime.init.7 in goroutine 1
+	/usr/local/go/src/runtime/proc.go:375 +0x1a
+
+goroutine 3 gp=0xc474befad20 m=nil [GC sweep wait]:
+runtime.gopark(0x0?, 0x0?, 0x0?, 0x0?, 0x0?)
+	/usr/local/go/src/runtime/proc.go:474 +0xca fp=0xc474bf65788 sp=0xc474bf65768 pc=0x476dca
+runtime.goparkunlock(...)
+	/usr/local/go/src/runtime/proc.go:480
+runtime.bgsweep(0xc474bf7c000)
+	/usr/local/go/src/runtime/mgcsweep.go:279 +0x94 fp=0xc474bf657c8 sp=0xc474bf65788 pc=0x4321b4
+runtime.gcenable.gowrap1()
+	/usr/local/go/src/runtime/mgc.go:214 +0x17 fp=0xc474bf657e0 sp=0xc474bf657c8 pc=0x4706b7
+runtime.goexit({})
+	/usr/local/go/src/runtime/asm_amd64.s:1264 +0x1 fp=0xc474bf657e8 sp=0xc474bf657e0 pc=0x47bfe1
+created by runtime.gcenable in goroutine 1
+	/usr/local/go/src/runtime/mgc.go:214 +0x66
+
+goroutine 4 gp=0xc474befaf00 m=nil [GC scavenge wait]:
+runtime.gopark(0xc474bf7c000?, 0x48c9d0?, 0x1?, 0x0?, 0xc474befaf00?)
+	/usr/local/go/src/runtime/proc.go:474 +0xca fp=0xc474bf65f78 sp=0xc474bf65f58 pc=0x476dca
+runtime.goparkunlock(...)
+	/usr/local/go/src/runtime/proc.go:480
+runtime.(*scavengerState).park(0x53ef00)
+	/usr/local/go/src/runtime/mgcscavenge.go:425 +0x49 fp=0xc474bf65fa8 sp=0xc474bf65f78 pc=0x42fd89
+runtime.bgscavenge(0xc474bf7c000)
+	/usr/local/go/src/runtime/mgcscavenge.go:653 +0x3c fp=0xc474bf65fc8 sp=0xc474bf65fa8 pc=0x4302dc
+runtime.gcenable.gowrap2()
+	/usr/local/go/src/runtime/mgc.go:215 +0x17 fp=0xc474bf65fe0 sp=0xc474bf65fc8 pc=0x470677
+runtime.goexit({})
+	/usr/local/go/src/runtime/asm_amd64.s:1264 +0x1 fp=0xc474bf65fe8 sp=0xc474bf65fe0 pc=0x47bfe1
+created by runtime.gcenable in goroutine 1
+	/usr/local/go/src/runtime/mgc.go:215 +0xa5
+
+goroutine 5 gp=0xc474befb4a0 m=nil [GOMAXPROCS updater (idle)]:
+runtime.gopark(0x0?, 0x0?, 0x0?, 0x0?, 0x0?)
+	/usr/local/go/src/runtime/proc.go:474 +0xca fp=0xc474bf64788 sp=0xc474bf64768 pc=0x476dca
+runtime.goparkunlock(...)
+	/usr/local/go/src/runtime/proc.go:480
+runtime.updateMaxProcsGoroutine()
+	/usr/local/go/src/runtime/proc.go:7146 +0xe7 fp=0xc474bf647e0 sp=0xc474bf64788 pc=0x453567
+runtime.goexit({})
+	/usr/local/go/src/runtime/asm_amd64.s:1264 +0x1 fp=0xc474bf647e8 sp=0xc474bf647e0 pc=0x47bfe1
+created by runtime.defaultGOMAXPROCSUpdateEnable in goroutine 1
+	/usr/local/go/src/runtime/proc.go:7134 +0x37
+
+goroutine 6 gp=0xc474befb680 m=nil [finalizer wait]:
+runtime.gopark(0x0?, 0x0?, 0x0?, 0x0?, 0x0?)
+	/usr/local/go/src/runtime/proc.go:474 +0xca fp=0xc474bf66620 sp=0xc474bf66600 pc=0x476dca
+runtime.runFinalizers()
+	/usr/local/go/src/runtime/mfinal.go:210 +0x107 fp=0xc474bf667e0 sp=0xc474bf66620 pc=0x423587
+runtime.goexit({})
+	/usr/local/go/src/runtime/asm_amd64.s:1264 +0x1 fp=0xc474bf667e8 sp=0xc474bf667e0 pc=0x47bfe1
+created by runtime.createfing in goroutine 1
+	/usr/local/go/src/runtime/mfinal.go:172 +0x3d
+exit 2
+[exit 0]

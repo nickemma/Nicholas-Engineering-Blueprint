@@ -1,0 +1,5 @@
+$ printf "request,connection,bytes,latency_ms\n0,0,16,fast\n" > bad.csv; uv run python -c "from pathlib import Path; from results import read_csv; read_csv(Path(\"bad.csv\"))" 2>&1 | tail -3; rm bad.csv
+  File "/home/ada/blueprint/internet/measure/results.py", line 41, in read_csv
+    raise ValueError(f"{path}, line {line}: {err}") from err
+ValueError: bad.csv, line 2: could not convert string to float: 'fast'
+[exit 0]

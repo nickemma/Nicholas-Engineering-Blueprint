@@ -1,0 +1,11 @@
+$ /tmp/echo & sleep 0.5; sleep 3 | nc -N 127.0.0.1 9000 & sleep 0.3; date +%T; printf "second\n" | nc -N 127.0.0.1 9000; date +%T; wait $!; kill %1
+listening on 127.0.0.1:9000
+2026/11/19 08:57:33 open 127.0.0.1:44166
+08:57:34
+2026/11/19 08:57:36 closed 127.0.0.1:44166 EOF
+2026/11/19 08:57:36 open 127.0.0.1:44176
+2026/11/19 08:57:36 read 7 bytes
+2026/11/19 08:57:36 closed 127.0.0.1:44176 EOF
+second
+08:57:36
+[exit 0]

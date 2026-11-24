@@ -1,0 +1,13 @@
+$ go test -race ./...
+ok  	switchyard/cmd/switchyard	1.018s
+ok  	switchyard/drills/byhand	(cached)
+ok  	switchyard/drills/escape	(cached) [no tests to run]
+?   	switchyard/drills/gc	[no test files]
+?   	switchyard/drills/sched	[no test files]
+?   	switchyard/drills/spin	[no test files]
+?   	switchyard/drills/stacks	[no test files]
+?   	switchyard/drills/stdhttp	[no test files]
+ok  	switchyard/internal/httpapi	(cached)
+ok  	switchyard/internal/jobs	(cached)
+ok  	switchyard/internal/memstore	(cached)
+[exit 0]

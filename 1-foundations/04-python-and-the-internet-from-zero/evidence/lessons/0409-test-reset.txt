@@ -1,0 +1,7 @@
+$ go test ./...
+--- FAIL: TestLineTooLong (0.00s)
+    main_test.go:81: read tcp 127.0.0.1:54804->127.0.0.1:44423: read: connection reset by peer
+FAIL
+FAIL	echo	0.173s
+FAIL
+[exit 1]

@@ -1,0 +1,22 @@
+all 18 incomplete cuts preserved the committed prefix
+Traceback (most recent call last):
+  File "/home/techieemma/projects/Nicholas-Engineering-Blueprint/2-core/04-rust-foundations/gate/verify.py", line 118, in <module>
+    main()
+    ~~~~^^
+  File "/home/techieemma/projects/Nicholas-Engineering-Blueprint/2-core/04-rust-foundations/gate/verify.py", line 114, in main
+    Gate(Path(sys.argv[1]).resolve(), Path(directory)).check()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/techieemma/projects/Nicholas-Engineering-Blueprint/2-core/04-rust-foundations/gate/verify.py", line 67, in check
+    error = self.run(verb, test, *rest, success=False)
+  File "/home/techieemma/projects/Nicholas-Engineering-Blueprint/2-core/04-rust-foundations/gate/verify.py", line 26, in run
+    require(
+    ~~~~~~~^
+        (result.returncode == 0) is success,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        f"{args}: exit {result.returncode}, out={result.stdout!r}, err={result.stderr!r}",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/techieemma/projects/Nicholas-Engineering-Blueprint/2-core/04-rust-foundations/gate/verify.py", line 14, in require
+    raise RuntimeError(message)
+RuntimeError: ('check', PosixPath('/tmp/klog-gate-_0c_tlyg/corrupt.log')): exit 0, out='2 records, all checksums valid\n', err=''

@@ -1,0 +1,13 @@
+-----
+-----
+Certificate request self-signature ok
+subject=CN = gateway
+-----
+Certificate request self-signature ok
+subject=CN = reader
+-----
+Certificate request self-signature ok
+subject=CN = writer
+gateway.crt: OK
+reader.crt: OK
+writer.crt: OK

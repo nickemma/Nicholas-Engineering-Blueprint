@@ -1,0 +1,11 @@
+$ bash gate/run.sh ~/blueprint/gofromzero   # slurp
+PASS  tasks: add, list, done, -file, and exit codes 1 and 2, across separate runs
+PASS  loganalyse: bad lines reported, a 100 KB line read, ties broken by line, same answer with 1, 7 and the default number of workers
+PASS  loganalyse: a million lines counted correctly
+FAIL  loganalyse: at most 64 MiB of memory
+      it used 229412 KiB. Read the file line by line with bufio.Scanner instead of loading it whole.
+PASS  gofmt: every file formatted
+PASS  go vet: no problems
+PASS  go test -race: all tests pass, no data races
+Gate failed: fix the FAIL lines above and run it again.
+[exit 1]

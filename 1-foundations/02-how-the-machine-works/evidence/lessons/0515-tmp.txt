@@ -1,0 +1,3 @@
+$ ./monitor.sh /tmp
+load1=0.81 mem_used_pct=22 disk_used_pct=21
+[exit 0]

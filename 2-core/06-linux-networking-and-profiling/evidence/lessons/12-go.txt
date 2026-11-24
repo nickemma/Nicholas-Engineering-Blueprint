@@ -1,0 +1,3 @@
+ok  	switchyard/internal/wire	1.045s
+ok  	switchyard/internal/httpapi	1.098s
+ok  	switchyard/cmd/switchyard	1.216s

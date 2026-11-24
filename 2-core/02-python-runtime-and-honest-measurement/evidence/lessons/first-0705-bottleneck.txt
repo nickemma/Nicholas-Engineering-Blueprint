@@ -1,0 +1,13 @@
+$ /home/ada/blueprint/switchyard/bin/switchyard > /dev/null 2>&1 & sleep 0.5; uv run kload load --rate 2000 --duration 5 --out results/h2000.csv; uv run kload load --rate 4000 --duration 5 --out results/h4000.csv; uv run kload load --rate 2000 --duration 5 --out results/split1.csv > /tmp/split1.txt & uv run kload load --rate 2000 --duration 5 --out results/split2.csv > /tmp/split2.txt; wait; cat /tmp/split1.txt /tmp/split2.txt
+open loop: 10000 requests at 2000/s over 5 s
+answers: 200 x10000
+latency (2xx): p50 0.88 ms, p99 1.67 ms, max 6.40 ms
+kload itself: send lag p99 1.15 ms, max 6.13 ms; CPU 1.63 s in 5.01 s (33%)
+wrote results/h2000.csv and results/h2000.json
+kload used 75% of a CPU: close to its limit, so replies may have waited for it to read them. Lower the rate, or split it across processes.
+open loop: 20000 requests at 4000/s over 5 s
+answers: 200 x20000
+latency (2xx): p50 0.52 ms, p99 5.61 ms, max 30.17 ms
+kload itself: send lag p99 2.63 ms, max 16.56 ms; CPU 3.77 s in 5.03 s (75%)
+wrote results/h4000.csv and results/h4000.json
+[exit 124]

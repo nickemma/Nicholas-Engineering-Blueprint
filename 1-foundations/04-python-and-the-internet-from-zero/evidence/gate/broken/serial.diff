@@ -1,0 +1,12 @@
+diff --color -ruN -x .venv -x __pycache__ -x .pytest_cache -x .ruff_cache -x uv.lock -x '*.csv' -x '*.png' -x drills -x hello.py -x .python-version final/echo/main.go broken/serial/echo/main.go
+--- final/echo/main.go
++++ broken/serial/echo/main.go
+@@ -45,7 +45,7 @@
+ 			log.Println("accept:", err)
+ 			continue
+ 		}
+-		go handle(conn, idle)
++		handle(conn, idle)
+ 	}
+ }
+ 

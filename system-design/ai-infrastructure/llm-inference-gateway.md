@@ -1,6 +1,6 @@
 # Design: a multi-tenant LLM inference gateway
 
-**Track:** ai-infrastructure · **Built in:** [Phase 6](../../lessons/06-safe-shared-queries/README.md) (tokens, rate limits), [Phase 7](../../lessons/07-utility-evaluation/README.md) (serving with a fallback), [Phase 8](../../JOURNEY.md#phase-8-ai-infrastructure) (model serving), [capstone 4](../../capstones/04-inference-gateway.md) · **Time:** 45 minutes
+**Track:** ai-infrastructure · **Built in:** [Tenancy and abuse control](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md) (tokens, rate limits), [Serving and scaling models](../../3-tracks/ai-infrastructure/02-serving-and-scaling-models/README.md) (model serving, the admission gateway), [A Rust inference gateway](../../3-tracks/ai-infrastructure/03-rust-inference-gateway/README.md) (streaming, token buckets), [the track's capstone](../../3-tracks/ai-infrastructure/05-capstone-inference-gateway/README.md) · **Time:** 45 minutes
 
 This is a worked reference. Do the design yourself first, with a timer, then read this and note what you missed.
 
@@ -40,7 +40,7 @@ Routing decides the first two: which worker gets each request, considering what 
 - **Output tokens at peak:** 500 requests/s × 300 = 150,000 tokens/s.
 - **Prompt tokens at peak:** 500 × 1,000 = 500,000 tokens/s to prefill. Prefill is compute-bound but processes many tokens at once; shared prefixes cut it.
 - **GPUs needed:**
-  - Assume a medium model reaches about 3,000 output tokens/s per GPU at batch sizes that still meet the latency targets. **This number must be measured, not assumed**: it depends on the model, the GPU, the batching and the prompt lengths. (Capstone 9 and Phase 8's benchmark measure it.)
+  - Assume a medium model reaches about 3,000 output tokens/s per GPU at batch sizes that still meet the latency targets. **This number must be measured, not assumed**: it depends on the model, the GPU, the batching and the prompt lengths. (The [gateway capstone](../../3-tracks/ai-infrastructure/05-capstone-inference-gateway/README.md) and Serving and scaling models' benchmark measure it.)
   - Then 150,000 ÷ 3,000 = 50 GPUs at peak, before headroom; plan ~65.
 - **Cost:** at an assumed $2–4 per GPU-hour, 65 GPUs cost $130–260 an hour.
   - Per million output tokens: 150,000 tokens/s × 3,600 = 540 million an hour, so $0.25–0.50 per million at full use.
@@ -93,7 +93,7 @@ flowchart LR
 - **Add prefix affinity.** Many requests share a long prefix (a system prompt, a document). A worker that already holds that prefix's KV cache skips most of the prefill, so TTFT drops sharply.
   - Hash the first blocks of the prompt, and prefer the worker that served that hash recently.
   - Bound it: if that worker is overloaded, fall back to load-based choice. Consistent hashing **with bounded loads** does both.
-- **Measure, don't assume.** Whether affinity beats plain load-balancing depends on how much of the traffic shares prefixes ([capstone 4](../../capstones/04-inference-gateway.md) is exactly that experiment).
+- **Measure, don't assume.** Whether affinity beats plain load-balancing depends on how much of the traffic shares prefixes.
 
 ### 6.2 Admission and fairness (the crux, part 2)
 
@@ -137,7 +137,7 @@ flowchart LR
 | A tenant floods | Others' queues stall | Per-tenant queue share | Fair share; token budgets |
 | A very long prompt | KV-cache exhausted; others preempted | KV-cache use near 100% | Cap context length per tier; route long prompts to workers set aside for them |
 | One hot prefix | Its worker overloads under pure affinity | Load imbalance | Bounded-load affinity |
-| Redis (budgets) down | Quotas can't be checked | Limiter errors | Fail open to local per-gateway limits (Phase 6's fallback) |
+| Redis (budgets) down | Quotas can't be checked | Limiter errors | Fail closed with `503` (Tenancy and abuse control's choice), or open to local per-gateway limits if availability matters more: say which, and why |
 | A model loads slowly or fails | Scale-up stalls | Readiness never passes | Warm pool; readiness probes that actually run a token |
 
 ## 9. With more time
@@ -150,11 +150,11 @@ flowchart LR
 
 ## 10. Where you've built this
 
-- [Phase 2](../../lessons/02-connected-services/README.md): queues, backpressure, retries and breakers.
-- [Phase 6](../../lessons/06-safe-shared-queries/README.md): tokens, per-tenant rate limits through Redis with a fallback, and tenant isolation.
-- [Phase 7](../../lessons/07-utility-evaluation/README.md): serving a model behind the Go API with a timeout, a breaker and a fallback.
-- [Phase 8](../../JOURNEY.md#phase-8-ai-infrastructure): model serving with batching, KV caches and a cost benchmark.
-- [Capstone 4](../../capstones/04-inference-gateway.md) turns the routing question into an experiment.
+- [Core 01](../../2-core/01-go-runtime-and-reliable-services/README.md) and [Messaging and resilience](../../3-tracks/shared-units/messaging-and-resilience/README.md): queues, backpressure, retries and breakers.
+- [Tenancy and abuse control](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md): tokens, per-tenant rate limits shared through Redis, and tenant isolation.
+- [ML for infrastructure](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md): serving a model's active version over HTTP, and rolling it back.
+- [Serving and scaling models](../../3-tracks/ai-infrastructure/02-serving-and-scaling-models/README.md): model serving with batching, KV caches and a cost benchmark.
+- [The AI infrastructure track's capstone](../../3-tracks/ai-infrastructure/05-capstone-inference-gateway/README.md) builds an inference gateway you can run that routing experiment on.
 
 ## 11. What an interviewer will push on
 
@@ -162,3 +162,13 @@ flowchart LR
 - "Traffic doubles in 30 seconds. What happens, second by second?"
 - "When is it safe to retry a streaming request?"
 - "How did you get 3,000 tokens per second per GPU, and what would change it?"
+
+## 12. Work the capstone evidence into your answer
+
+The reference build serves a pinned CPU model with an OpenAI-compatible chat stream. It checks the stream lifecycle and accounts for output only when the terminal event confirms completion. Treat the earlier GPU fleet, routing policies, and scale figures as interview design assumptions. The capstone measures the gateway and one local model server. [Capstone contract and results](../../3-tracks/ai-infrastructure/05-capstone-inference-gateway/evidence/README.md)
+
+**Failure timeline.** The upstream sends content and usage, then closes before the terminal marker. The client can have seen text, so a retry after delivery starts would risk duplicate output. The gateway and benchmark distinguish premature EOF from a complete response. In the gate, that stream contributed zero completed tokens to goodput. [Lifecycle checks](../../3-tracks/ai-infrastructure/05-capstone-inference-gateway/evidence/gate.txt)
+
+**Tradeoff.** Increasing concurrency can raise throughput at the expense of client latency. For the typed decoder, concurrency one produced 21.95 output tokens/s and 288.04 ms median TTFT. Concurrency two produced 27.41 output tokens/s and 534.11 ms median TTFT. Both runs used the same small Qwen CPU model, with 16 requests per combination and a 16-token output limit. Choose an admission limit against a TTFT objective, then repeat with realistic prompt and output distributions before projecting fleet throughput. [Raw model runs](../../3-tracks/ai-infrastructure/05-capstone-inference-gateway/evidence/model-runs.json)
+
+For a timed review, explain why the completed-token count and visible client output can differ. Score the failure explanation and the admission tradeoff with the [design scorecard](../scorecard.md).

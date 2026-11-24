@@ -1,0 +1,8 @@
+$ /tmp/echo 2>/dev/null > /dev/null & sleep 0.5; uv run measure.py --port 9000 && ls -l latency.png; kill %1
+1000 requests over 10 connections in 0.135 s
+p50 1.264 ms
+p99 1.867 ms
+max 2.058 ms
+wrote results.csv and latency.png
+-rw-r--r-- 1 ada ada 26516 Nov 19 09:00 latency.png
+[exit 0]

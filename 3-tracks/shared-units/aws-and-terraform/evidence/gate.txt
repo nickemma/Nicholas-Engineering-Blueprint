@@ -1,0 +1,17 @@
+Success! The configuration is valid.
+
+tests/plan.tftest.hcl... in progress
+  run "bootstrap_then_review"... pass
+  run "after_migration"... pass
+tests/plan.tftest.hcl... tearing down
+tests/plan.tftest.hcl... pass
+
+Success! 2 passed, 0 failed.
+?   	switchyard/cloud/cmd/cloud-delivery	[no test files]
+=== RUN   TestFailedHandlerKeepsMessage
+    delivery_test.go:72: failed handler kept the message eligible for redelivery; success deleted the second receipt
+--- PASS: TestFailedHandlerKeepsMessage (0.00s)
+PASS
+ok  	switchyard/cloud/internal/sqsprobe	1.027s
+DATABASE_INGRESS: PostgreSQL must accept only the API security group.
+negative control: rejected the widened PostgreSQL ingress

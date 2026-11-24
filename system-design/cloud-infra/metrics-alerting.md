@@ -1,6 +1,6 @@
 # Design: a metrics and alerting system
 
-**Track:** cloud-infra · **Built in:** [Phase 5](../../lessons/05-constrained-operations/README.md) (Prometheus, SLOs, burn-rate alerts), [Phase 7](../../lessons/07-utility-evaluation/README.md) (anomaly detection) · **Time:** 45 minutes
+**Track:** cloud-infra · **Built in:** [Core 08](../../2-core/08-shipping-safely/README.md) (SLOs), [Kubernetes and delivery](../../3-tracks/shared-units/kubernetes-and-delivery/README.md) (Prometheus, burn-rate alerts), [the AI operations deep dive](../../3-tracks/ai-infrastructure/deep-dives/aiops.md) (anomaly detection) · **Time:** 45 minutes
 
 This is a worked reference. Do the design yourself first, with a timer, then read this and note what you missed.
 
@@ -108,7 +108,7 @@ One deployment that adds `user_id` as a label creates millions of series and exh
 - **Rules run in the shards,** in pairs. If one copy dies, the other still fires.
 - **Alertmanager runs as a cluster.** It deduplicates the two copies of each alert, groups related alerts (one page for "20 instances down", not twenty) and routes them.
 - **A watchdog alert always fires.** An **external** service pages if it *stops* arriving, so a dead monitoring system is noticed. That's the dead man's switch.
-- **Alert on symptoms:** SLO burn rates over multiple windows, not CPU thresholds (Phase 5).
+- **Alert on symptoms:** SLO burn rates over multiple windows, not CPU thresholds (Kubernetes and delivery, lesson 08).
 
 ### 6.4 Push or pull?
 
@@ -143,15 +143,13 @@ One deployment that adds `user_id` as a label creates millions of series and exh
 - Logs and traces linked by trace ID (exemplars).
 - Recording rules to precompute expensive queries.
 - Multi-tenancy with per-tenant limits.
-- Anomaly detection for things nobody wrote a rule for (Phase 7, step 12).
+- Anomaly detection for things nobody wrote a rule for (the AI operations deep dive).
 
 ## 10. Where you've built this
 
-- [Phase 5](../../lessons/05-constrained-operations/README.md):
-  - Prometheus on Kubernetes, scraping Runway;
-  - SLOs with multi-window burn-rate alerts, unit-tested with `promtool`;
-  - a game day.
-- [Phase 7, step 12](../../lessons/07-utility-evaluation/TEACHING.md#step-12-finding-incidents-nobody-wrote-a-rule-for): detectors scored against injected incidents and against the burn-rate alerts.
+- [Kubernetes and delivery](../../3-tracks/shared-units/kubernetes-and-delivery/lessons/08-alert-on-budget-burn.md): Prometheus on Kubernetes, scraping Switchyard; multi-window burn-rate alerts, unit-tested with `promtool`.
+- [Core 08](../../2-core/08-shipping-safely/README.md): SLOs defined from the client's side, and a game day.
+- [The AI operations deep dive](../../3-tracks/ai-infrastructure/deep-dives/aiops.md): detectors scored against injected incidents.
 
 ## 11. What an interviewer will push on
 

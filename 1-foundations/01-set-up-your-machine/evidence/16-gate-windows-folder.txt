@@ -1,0 +1,8 @@
+$ bash gate/run.sh /mnt/c/Users/Public/day1-gate-mTaI
+PASS  Go is installed (go1.26.6)
+PASS  Git identity is set (Ada Lovelace <ada@example.com>)
+FAIL  Your code lives inside Linux
+      /mnt/c/Users/Public/day1-gate-mTaI is a Windows folder. Move it under your Linux home (cd ~) and work there.
+PASS  Your program reports this machine: OS: linux | Arch: amd64 | CPUs: 16
+Gate failed: fix the FAIL lines above and run it again.
+[exit 1]

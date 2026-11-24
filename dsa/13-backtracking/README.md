@@ -13,8 +13,8 @@ Every backtracking function has the same three parts:
 **Recognise it when** the problem asks for **all** combinations, subsets, permutations, arrangements or paths, or for one that satisfies constraints (Sudoku, N-Queens), and *n* is small (around 20 or less): the answers themselves are exponential in number.
 
 **Real systems:**
-- **TLC,** the TLA+ model checker from [Phase 4](../../lessons/04-replicated-state/TEACHING.md#step-9-a-tla-model-of-elections), explores every reachable state of a model, skipping states it has already seen. That's a systematic search with pruning.
-- **Phase 4's simulation tests** search the space of message orderings by sampling it randomly.
+- **TLC,** the TLA+ model checker from [Consensus in depth](../../3-tracks/storage-engines/02-consensus-in-depth/lessons/06-model-election-safety.md), explores every reachable state of a model, skipping states it has already seen. That's a systematic search with pruning.
+- **Core 07's simulation tests** search the space of message orderings by sampling it randomly.
 - **Elsewhere:** constraint solvers, package managers resolving versions, and regex engines all backtrack.
 
 ## Worked problem 1: Subsets

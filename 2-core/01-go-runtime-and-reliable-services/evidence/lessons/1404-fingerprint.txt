@@ -1,0 +1,7 @@
+$ go test ./internal/idempotency
+--- FAIL: TestReusedKeyWithDifferentBodyIsRejected (0.00s)
+    idempotency_test.go:70: status = 201, want 422
+FAIL
+FAIL	switchyard/internal/idempotency	0.059s
+FAIL
+[exit 1]

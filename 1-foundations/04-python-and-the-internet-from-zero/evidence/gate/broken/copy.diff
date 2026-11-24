@@ -1,0 +1,49 @@
+diff --color -ruN -x .venv -x __pycache__ -x .pytest_cache -x .ruff_cache -x uv.lock -x '*.csv' -x '*.png' -x drills -x hello.py -x .python-version final/echo/main.go broken/copy/echo/main.go
+--- final/echo/main.go
++++ broken/copy/echo/main.go
+@@ -6,7 +6,6 @@
+ package main
+ 
+ import (
+-	"bufio"
+ 	"errors"
+ 	"flag"
+ 	"fmt"
+@@ -53,34 +52,9 @@
+ // quiet for too long, or sends a line longer than maxLine.
+ func handle(conn net.Conn, idle time.Duration) {
+ 	defer conn.Close()
+-	peer := conn.RemoteAddr()
+-	r := bufio.NewReaderSize(conn, maxLine)
+-	lines, bytes := 0, 0
+-	for {
+-		conn.SetReadDeadline(time.Now().Add(idle))
+-		line, err := r.ReadSlice('\n')
+-		if errors.Is(err, bufio.ErrBufferFull) {
+-			fmt.Fprintf(conn, "error: line longer than %d bytes\n", maxLine)
+-			log.Printf("%s: line too long, closing", peer)
+-			lingeringClose(conn)
+-			return
+-		}
+-		if len(line) > 0 {
+-			if _, werr := conn.Write(line); werr != nil {
+-				log.Printf("%s: write: %v", peer, werr)
+-				return
+-			}
+-			lines++
+-			bytes += len(line)
+-		}
+-		if err != nil {
+-			if !errors.Is(err, io.EOF) {
+-				log.Printf("%s: %v", peer, err)
+-			}
+-			log.Printf("%s: closed after %d lines, %d bytes", peer, lines, bytes)
+-			return
+-		}
+-	}
++	conn.SetReadDeadline(time.Now().Add(idle))
++	n, err := io.Copy(conn, conn)
++	log.Printf("%s: closed after %d bytes (%v)", conn.RemoteAddr(), n, err)
+ }
+ 
+ // lingeringClose gets an error message to the client before closing. Closing

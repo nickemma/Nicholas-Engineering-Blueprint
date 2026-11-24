@@ -1,0 +1,8 @@
+$ ls -ld /root; ls /root; sudo ls -la /root | head -4
+drwx------ 2 root root 4096 Nov 10 04:35 /root
+ls: cannot open directory '/root': Permission denied
+total 16
+drwx------ 2 root root 4096 Nov 10 04:35 .
+drwxr-xr-x 1 root root 4096 Nov 18 16:44 ..
+-rw-r--r-- 1 root root 3106 Apr 22  2024 .bashrc
+[exit 0]

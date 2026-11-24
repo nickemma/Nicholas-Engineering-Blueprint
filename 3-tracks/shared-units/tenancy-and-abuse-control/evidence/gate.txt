@@ -1,0 +1,58 @@
+?   	switchyard/tenantlab/cmd/tenant-lab	[no test files]
+=== RUN   TestLive
+    live_test.go:48: the live gate provides a database and Redis
+--- SKIP: TestLive (0.00s)
+PASS
+ok  	switchyard/tenantlab/internal/api	1.039s
+=== RUN   TestTokenBoundary
+=== RUN   TestTokenBoundary/wrong-issuer
+=== RUN   TestTokenBoundary/wrong-audience
+=== RUN   TestTokenBoundary/expired
+=== RUN   TestTokenBoundary/malformed
+=== RUN   TestTokenBoundary/different-key
+=== NAME  TestTokenBoundary
+    identity_test.go:63: credential, issuer, audience, expiry, and signature boundaries enforced
+--- PASS: TestTokenBoundary (0.02s)
+    --- PASS: TestTokenBoundary/wrong-issuer (0.00s)
+    --- PASS: TestTokenBoundary/wrong-audience (0.00s)
+    --- PASS: TestTokenBoundary/expired (0.00s)
+    --- PASS: TestTokenBoundary/malformed (0.00s)
+    --- PASS: TestTokenBoundary/different-key (0.00s)
+=== RUN   TestKeyRotation
+    identity_test.go:106: overlap accepted both keys; retirement waited for the old token lifetime
+--- PASS: TestKeyRotation (0.01s)
+PASS
+ok  	switchyard/tenantlab/internal/identity	1.058s
+?   	switchyard/tenantlab/internal/jobs	[no test files]
+=== RUN   TestLocalBucketRefills
+    local_test.go:25: the noisy tenant exhausted its bucket; a different tenant kept its budget
+--- PASS: TestLocalBucketRefills (0.00s)
+PASS
+ok  	switchyard/tenantlab/internal/quota	1.033s
+CLI smoke: published public keys, issued a token, and created and read a scoped job
+=== RUN   TestLive
+=== RUN   TestLive/policy_and_tenant_rows
+    live_test.go:118: HTTP policy: authentication and role boundaries held; the job ID resolved inside its tenant
+=== RUN   TestLive/database_policy
+    live_test.go:160: database policy: reused connection saw one scoped row; missing context exposed zero rows and refused the insert
+=== RUN   TestLive/shared_quota
+    live_test.go:203: shared quota: two API instances accepted 2 hot-tenant reads total; 14 returned 429 with Retry-After; quiet tenant succeeded
+=== RUN   TestLive/quota_unavailable
+2026/11/22 02:24:42 WARN quota unavailable error="read tcp 127.0.0.1:57816->127.0.0.1:32857: i/o timeout"
+    live_test.go:221: unavailable quota failed closed with 503 in 304ms
+--- PASS: TestLive (0.47s)
+    --- PASS: TestLive/policy_and_tenant_rows (0.08s)
+    --- PASS: TestLive/database_policy (0.02s)
+    --- PASS: TestLive/shared_quota (0.06s)
+    --- PASS: TestLive/quota_unavailable (0.31s)
+PASS
+ok  	switchyard/tenantlab/internal/api	1.503s
+=== RUN   TestLive
+=== RUN   TestLive/shared_quota
+    live_test.go:198: shared quota: accepted=4, want 2; limited=12, want 14
+--- FAIL: TestLive (0.08s)
+    --- FAIL: TestLive/shared_quota (0.07s)
+FAIL
+FAIL	switchyard/tenantlab/internal/api	0.112s
+FAIL
+negative control: independent replicas doubled the fixture tenant's allowance

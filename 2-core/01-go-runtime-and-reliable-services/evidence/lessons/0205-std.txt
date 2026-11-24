@@ -1,0 +1,13 @@
+$ go build -o /tmp/stdhttp ./drills/stdhttp && { /tmp/stdhttp -safe 2> /dev/null & sleep 0.5; curl -s -d hello http://127.0.0.1:8081/jobs; head -c 2000000 /dev/zero | curl -si --data-binary @- http://127.0.0.1:8081/upload; }
+POST /jobs, 5 bytes of body
+HTTP/1.1 100 Continue
+
+HTTP/1.1 413 Request Entity Too Large
+Content-Type: text/plain; charset=utf-8
+X-Content-Type-Options: nosniff
+Date: Fri, 20 Nov 2026 02:26:44 GMT
+Content-Length: 29
+Connection: close
+
+http: request body too large
+[exit 0]

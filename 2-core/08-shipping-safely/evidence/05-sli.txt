@@ -1,0 +1,12 @@
+=== RUN   TestFiringAndRecovery
+    window_test.go:18: attempt 6: firing (2/4 good)
+    window_test.go:18: attempt 9: clear (3/4 good)
+--- PASS: TestFiringAndRecovery (0.00s)
+PASS
+ok  	switchyard/metad/internal/sli	1.019s
+=== RUN   TestMeasure
+--- PASS: TestMeasure (0.00s)
+=== RUN   TestMeasureDeadline
+--- PASS: TestMeasureDeadline (0.00s)
+PASS
+ok  	switchyard/metad/cmd/ship-probe	1.023s

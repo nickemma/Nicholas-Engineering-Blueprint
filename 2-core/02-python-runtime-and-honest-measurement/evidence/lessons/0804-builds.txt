@@ -1,0 +1,15 @@
+$ bash experiments/builds.sh /home/ada/blueprint/switchyard/bin results/builds && uv run kload compare results/builds/plain results/builds/plain-again && uv run kload compare results/builds/plain results/builds/race
+order: warm-up,plain 2,plain-again 1,plain 4,race 3,race 1,plain-again 2,plain-again 5,race 5,plain 3,race 4,plain-again 4,plain 1,plain 5,race 2,plain-again 3
+p50 A (results/builds/plain, 5 runs): 0.89 0.88 0.89 0.89 0.87 ms
+p50 B (results/builds/plain-again, 5 runs): 0.89 0.89 0.88 0.88 0.88 ms
+p50 B - A: -0.00 ms, 95% CI [-0.01, +0.01] ms: no difference shown: the interval includes 0
+p99 A (results/builds/plain, 5 runs): 1.65 1.62 1.69 1.70 1.64 ms
+p99 B (results/builds/plain-again, 5 runs): 1.60 1.61 1.62 1.68 1.64 ms
+p99 B - A: -0.03 ms, 95% CI [-0.07, +0.01] ms: no difference shown: the interval includes 0
+p50 A (results/builds/plain, 5 runs): 0.89 0.88 0.89 0.89 0.87 ms
+p50 B (results/builds/race, 5 runs): 1.05 1.08 1.04 1.05 1.04 ms
+p50 B - A: +0.17 ms, 95% CI [+0.16, +0.18] ms: B is slower
+p99 A (results/builds/plain, 5 runs): 1.65 1.62 1.69 1.70 1.64 ms
+p99 B (results/builds/race, 5 runs): 1.78 1.98 1.81 1.80 1.86 ms
+p99 B - A: +0.18 ms, 95% CI [+0.13, +0.26] ms: B is slower
+[exit 0]

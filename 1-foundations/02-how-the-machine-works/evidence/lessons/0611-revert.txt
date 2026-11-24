@@ -1,0 +1,9 @@
+$ git revert --no-edit HEAD && git log --oneline | head -3 && ./monitor.sh
+[main 33135ce] Revert "Print a debug line"
+ Date: Wed Nov 18 16:47:52 2026 +0000
+ 1 file changed, 1 deletion(-)
+33135ce Revert "Print a debug line"
+dd0c30a Print a debug line
+de4bee1 Add --help
+load1=0.77 mem_used_pct=22 disk_used_pct=21
+[exit 0]

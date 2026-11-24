@@ -1,0 +1,4 @@
+$ go run ./drills/values
+# gofromzero/drills/values
+drills/values/main.go:37:11: invalid operation: total / 2.0 + height (mismatched types int and float64)
+[exit 1]

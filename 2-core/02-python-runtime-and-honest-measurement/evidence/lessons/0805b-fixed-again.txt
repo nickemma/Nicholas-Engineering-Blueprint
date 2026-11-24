@@ -1,0 +1,9 @@
+$ bash experiments/builds.sh /home/ada/blueprint/switchyard/bin results/fixed && uv run kload compare results/fixed/plain results/fixed/plain-again
+order: plain 1,race 1,plain-again 1,plain 2,race 2,plain-again 2,plain 3,race 3,plain-again 3,plain 4,race 4,plain-again 4,plain 5,race 5,plain-again 5
+p50 A (results/fixed/plain, 5 runs): 0.87 0.89 0.94 0.89 0.90 ms
+p50 B (results/fixed/plain-again, 5 runs): 0.93 0.94 0.94 0.89 0.91 ms
+p50 B - A: +0.03 ms, 95% CI [-0.00, +0.05] ms: no difference shown: the interval includes 0
+p99 A (results/fixed/plain, 5 runs): 1.56 1.67 1.71 1.65 1.67 ms
+p99 B (results/fixed/plain-again, 5 runs): 1.73 1.66 1.59 1.63 1.73 ms
+p99 B - A: +0.01 ms, 95% CI [-0.05, +0.08] ms: no difference shown: the interval includes 0
+[exit 0]

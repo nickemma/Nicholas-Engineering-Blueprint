@@ -1,0 +1,6 @@
+$ uv python install 3.14t
+Downloading cpython-3.14.7+freethreaded-linux-x86_64-gnu (download) (34.4MiB)
+ Downloaded cpython-3.14.7+freethreaded-linux-x86_64-gnu (download)
+Installed Python 3.14.7 in 2.99s
+ + cpython-3.14.7+freethreaded-linux-x86_64-gnu (python3.14t)
+[exit 0]

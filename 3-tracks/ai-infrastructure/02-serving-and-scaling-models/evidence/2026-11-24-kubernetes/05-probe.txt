@@ -1,0 +1,4 @@
+configmap/llm-probe-code created
+pod/llm-probe created
+pod/llm-probe condition met
+{"requests": 7, "completed": 7, "failed": {}, "ttft_p50": 0.39, "ttft_max": 0.47, "outage_seconds": null}

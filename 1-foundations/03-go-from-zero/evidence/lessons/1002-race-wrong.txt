@@ -1,0 +1,5 @@
+$ for i in 1 2 3; do go run ./drills/race | tail -1; done
+counter: 995
+counter: 997
+counter: 998
+[exit 0]

@@ -44,7 +44,7 @@ Powers of two:
 - **Precision theatre.** "11,574 requests a second" isn't more correct than "about 10⁴".
 - **Estimating what doesn't matter.** Nobody needs the bytes of the users table.
 - **Forgetting the peak**, and the replication factor.
-- **Not measuring your own components.** How many requests a second does *one* of your servers handle? In the Python Bridge you measured it, along with where the latency knee is. Use real numbers when you have them.
+- **Not measuring your own components.** How many requests a second does *one* of your servers handle? In core 02 you measured one, and the rate at which its queue started refusing work. Use real numbers when you have them.
 
 ## In an interview
 
@@ -52,4 +52,4 @@ Say: *"Let me estimate only what changes the design: peak QPS, the read/write ra
 
 ## Where you built it
 
-The [Python Bridge](../../lessons/python-bridge/README.md) measured throughput and latency honestly. [Phase 5](../../lessons/05-constrained-operations/README.md) used capacity numbers for SLOs and autoscaling.
+[Core 02](../../2-core/02-python-runtime-and-honest-measurement/README.md) measured throughput and latency honestly. [Core 08](../../2-core/08-shipping-safely/README.md) uses capacity numbers for SLOs, and [Kubernetes and delivery](../../3-tracks/shared-units/kubernetes-and-delivery/README.md) for autoscaling.

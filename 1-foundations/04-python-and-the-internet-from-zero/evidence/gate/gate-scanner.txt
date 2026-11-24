@@ -1,0 +1,33 @@
+$ bash gate/run.sh ~/blueprint/internet    # the scanner version
+== echo/
+PASS  gofmt
+PASS  go vet
+FAIL  go test -race
+      --- FAIL: TestEcho (0.01s)
+          --- FAIL: TestEcho/windows_line_ending (0.00s)
+              main_test.go:73: sent 7 bytes, got back 6: "hello\n"
+          --- FAIL: TestEcho/last_line_without_newline (0.00s)
+              main_test.go:73: sent 7 bytes, got back 8: "one\ntwo\n"
+      FAIL
+      FAIL	echo	0.197s
+      FAIL
+PASS  the server starts and prints 'listening on 127.0.0.1:44045'
+FAIL  100 clients at once get back exactly what they sent (14,009,678 bytes)
+      client 0 sent 17213 bytes and got back 17205 bytes; first difference at byte 1: sent b'\r\n\x10\x17\nf\x99\xa5\x8c\t\x1a\xff', got b'\n\x10\x17\nf\x99\xa5\x8c\t\x1a\xff\xea'
+PASS  a line of exactly 65,536 bytes (newline included) comes back whole
+PASS  a longer line gets the error, then the connection closes
+PASS  a quiet client is disconnected after -idle 3s
+PASS  the server is still running afterwards
+== measure/
+PASS  ruff format
+PASS  ruff check
+PASS  pytest
+PASS  1,000 requests over 10 connections: results.csv has every request
+PASS  the p50 and p99 it prints match the CSV
+PASS  the plot is a PNG image
+PASS  replies that arrive in two pieces are read whole and timed to the end
+PASS  a wrong reply: exit 1 with a message (measure: request 0: sent 16 bytes, got back b'not what you sent\n')
+PASS  nothing listening: exit 1 with a message (measure: [Errno 111] Connect call failed ('127.0.0.1', 40779))
+
+Gate failed: fix each FAIL above and run it again.
+[exit 1]

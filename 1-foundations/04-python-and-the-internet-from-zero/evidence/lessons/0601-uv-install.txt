@@ -1,0 +1,3 @@
+$ curl -fsSLO https://github.com/astral-sh/uv/releases/download/0.12.7/uv-x86_64-unknown-linux-gnu.tar.gz && curl -fsSLO https://github.com/astral-sh/uv/releases/download/0.12.7/uv-x86_64-unknown-linux-gnu.tar.gz.sha256 && sha256sum -c uv-x86_64-unknown-linux-gnu.tar.gz.sha256 && tar -xzf uv-x86_64-unknown-linux-gnu.tar.gz && mkdir -p ~/.local/bin && mv uv-x86_64-unknown-linux-gnu/uv uv-x86_64-unknown-linux-gnu/uvx ~/.local/bin/ && rm -r uv-x86_64-unknown-linux-gnu uv-x86_64-unknown-linux-gnu.tar.gz uv-x86_64-unknown-linux-gnu.tar.gz.sha256
+uv-x86_64-unknown-linux-gnu.tar.gz: OK
+[exit 0]

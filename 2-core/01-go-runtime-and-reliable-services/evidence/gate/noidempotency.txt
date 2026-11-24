@@ -1,0 +1,25 @@
+$ bash gate/run.sh ~/blueprint/switchyard   # noidempotency
+PASS  gofmt -l . lists nothing
+PASS  go vet ./...
+PASS  go test -race ./...
+sending 10,000 state changes from 32 clients while workers are killed; this takes a minute or two
+sent 10000 state changes in 1.8 s: 7105 creates, 1650 repeated with the same key, 1245 cancels (1041 accepted)
+settled after 27.9 s: 7105 jobs: 6064 completed, 1041 cancelled, 0 failed
+PASS  every request got an expected answer
+FAIL  a repeated request with the same key returned the same job
+        key gate-2-0: first job 4, retry got job 16 (replayed=false, err=<nil>)
+        key gate-14-0: first job 6, retry got job 21 (replayed=false, err=<nil>)
+        key gate-5-0: first job 17, retry got job 20 (replayed=false, err=<nil>)
+        key gate-29-0: first job 14, retry got job 22 (replayed=false, err=<nil>)
+        key gate-22-0: first job 12, retry got job 26 (replayed=false, err=<nil>)
+PASS  every job reached a final state (none lost, none stuck)
+PASS  every job cancelled with 200 ended cancelled, never completed
+PASS  every completed job has exactly one effect; every other job, none
+      workers killed with SIGKILL: 20; one paused past its lease
+      jobs handed back by the reconcile loop: 14
+PASS  goroutines came back to the baseline (28 before, 28 after)
+PASS  SIGTERM stopped the control plane and every worker within the grace period (1 s)
+PASS  the race detector reported nothing
+
+gate failed
+[exit 1]

@@ -1,0 +1,8 @@
+$ (l16)
+{"level":"INFO","msg":"job started","worker":"c-3","job_id":2,"token":3}
+{"level":"WARN","msg":"job done, report refused","worker":"c-3","job_id":2,"token":3,"error":"rpc error: code = FailedPrecondition desc = lease lost: the job is no longer yours"}
+{"level":"WARN","msg":"lease expired; job handed back","job_id":2,"worker":"c-3"}
+{"level":"INFO","msg":"job started","worker":"d-4","job_id":2,"token":4}
+{"level":"INFO","msg":"job completed","worker":"d-4","job_id":2,"token":4}
+{"job_id":2,"effects":1}
+[exit 0]

@@ -1,0 +1,73 @@
+APPLY
+BEGIN
+SET
+ pg_advisory_xact_lock 
+-----------------------
+ 
+(1 row)
+
+CREATE TABLE
+CREATE TABLE
+INSERT 0 1
+COMMIT
+1
+INSERT
+PREPARE
+1|Resize O'Reilly's cover|queued
+INSERT 0 1
+INVALID
+ERROR:  new row for relation "jobs" violates check constraint "jobs_duration_ns_check"
+DETAIL:  Failing row contains (2, bad duration, -1, queued, , 2026-11-21 04:09:09.074139+00, 2026-11-21 04:09:09.074139+00).
+BEFORE
+INSERT 0 100000
+ANALYZE
+Limit
+  ->  Index Scan using jobs_pkey on jobs
+        Filter: (state = 'queued'::text)
+AFTER
+BEGIN
+SET
+ pg_advisory_xact_lock 
+-----------------------
+ 
+(1 row)
+
+psql:/migrations/migrate.sql:7: NOTICE:  relation "schema_migrations" already exists, skipping
+CREATE TABLE
+CREATE INDEX
+INSERT 0 1
+COMMIT
+Limit
+  ->  Index Only Scan using jobs_queued_id on jobs
+1|Resize O'Reilly's cover
+RERUN
+BEGIN
+SET
+ pg_advisory_xact_lock 
+-----------------------
+ 
+(1 row)
+
+psql:/migrations/migrate.sql:7: NOTICE:  relation "schema_migrations" already exists, skipping
+CREATE TABLE
+COMMIT
+1
+2
+100001
+FRESH
+CREATE DATABASE
+BEGIN
+SET
+ pg_advisory_xact_lock 
+-----------------------
+ 
+(1 row)
+
+CREATE TABLE
+CREATE TABLE
+INSERT 0 1
+CREATE INDEX
+INSERT 0 1
+COMMIT
+1
+2

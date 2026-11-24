@@ -1,0 +1,7 @@
+deployment.apps/llm patched
+NAME                   READY   STATUS    RESTARTS      AGE
+llm-86f69ccbdc-xgk5l   1/1     Running   2 (90s ago)   98s
+COUNT   MSG
+6       Readiness probe failed: Get "http://10.244.1.5:8080/health": dial tcp 10.244.1.5:8080: connect: connection refused
+2       Startup probe failed: HTTP probe failed with statuscode: 503
+{"requests": 7, "completed": 7, "failed": {}, "ttft_p50": 0.4, "ttft_max": 0.42, "outage_seconds": null}

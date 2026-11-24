@@ -1,0 +1,6 @@
+$ ./tasks -file other.json add "elsewhere" && ./tasks -file other.json list && ./tasks list
+added 1: elsewhere
+1 [ ] elsewhere
+1 [x] write the gate
+2 [ ] test it both ways
+[exit 0]

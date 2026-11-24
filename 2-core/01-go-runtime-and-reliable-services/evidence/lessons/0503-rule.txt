@@ -1,0 +1,8 @@
+$ go test ./internal/jobs
+--- FAIL: TestTransitions (0.00s)
+    --- FAIL: TestTransitions/completed->running (0.00s)
+        job_test.go:81: CanTransitionTo = true, want false
+FAIL
+FAIL	switchyard/internal/jobs	0.004s
+FAIL
+[exit 1]

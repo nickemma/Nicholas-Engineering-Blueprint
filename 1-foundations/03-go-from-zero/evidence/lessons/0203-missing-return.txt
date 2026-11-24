@@ -1,0 +1,4 @@
+$ go run ./drills/flow
+# gofromzero/drills/flow
+drills/flow/main.go:16:1: missing return
+[exit 1]

@@ -1,0 +1,25 @@
+$ /home/ada/blueprint/switchyard/bin/switchyard > /dev/null 2>&1 & sleep 0.5; uv run kload load --rate 3000 --duration 5 --out results/gather.csv | grep itself
+Using CPython 3.14.7
+Creating virtual environment at: .venv
+   Building kload @ file:///home/ada/blueprint/kload
+      Built kload @ file:///home/ada/blueprint/kload
+Downloading pillow (6.8MiB)
+Downloading pygments (1.2MiB)
+Downloading numpy (15.0MiB)
+Downloading pandas (11.5MiB)
+Downloading kiwisolver (1.4MiB)
+Downloading matplotlib (10.4MiB)
+Downloading fonttools (5.1MiB)
+Downloading ruff (10.2MiB)
+ Downloaded pygments
+ Downloaded kiwisolver
+ Downloaded fonttools
+ Downloaded pillow
+ Downloaded ruff
+ Downloaded matplotlib
+ Downloaded pandas
+ Downloaded numpy
+Installed 25 packages in 167ms
+kload fell behind its schedule: send lag p99 48.6 ms is over --max-lag-ms 10. These latencies include time spent waiting inside kload: don't trust them.
+kload itself: send lag p99 48.62 ms, max 66.68 ms; CPU 2.31 s in 5.02 s (46%)
+[exit 0]

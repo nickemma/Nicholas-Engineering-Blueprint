@@ -1,0 +1,11 @@
+$ go run ./cmd/loganalyse long.log | cut -c1-60
+lines: 8
+malformed: 2
+status 200: 4
+status 404: 1
+status 500: 1
+slowest: 1207 ms /jobs (line 6)
+malformed lines:
+  line 5: not JSON: invalid character 'h' in literal true (e
+  line 7: no ms
+[exit 0]

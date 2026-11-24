@@ -1,0 +1,2 @@
+Python OpenAI SDK version 3.57.0
+OpenAI SDK smoke: model discovery, text deltas, and usage succeeded (15 output tokens)

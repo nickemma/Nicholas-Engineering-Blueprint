@@ -1,0 +1,9 @@
+$ go run ./drills/flow
+load 0.5 on 4 CPUs: fine
+load 3.2 on 4 CPUs: busy
+load 7.9 on 4 CPUs: overloaded
+load 12.0 on 4 CPUs: overloaded
+17 / 5 = 3 remainder 2
+sum: 55 first power of two over 100: 128 tries: 3
+55 leaves 6 when divided by 7
+[exit 0]

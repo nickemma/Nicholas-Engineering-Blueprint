@@ -1,0 +1,3 @@
+$ ./monitor.sh
+load1=0.81 mem_used_pct=22
+[exit 0]

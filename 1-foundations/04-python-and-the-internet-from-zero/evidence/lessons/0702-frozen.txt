@@ -1,0 +1,13 @@
+$ PYTHONUNBUFFERED=1 uv run python -c "from drills.classes import Timed; t = Timed(1, 250.0); t.latency_ms = 1.0"
+True False
+False
+<drills.classes.Request object at 0x72c57c113b60>
+True True
+Timed(number=1, latency_ms=250.0)
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    from drills.classes import Timed; t = Timed(1, 250.0); t.latency_ms = 1.0
+                                                           ^^^^^^^^^^^^
+  File "<string>", line 16, in __setattr__
+dataclasses.FrozenInstanceError: cannot assign to field 'latency_ms'
+[exit 1]

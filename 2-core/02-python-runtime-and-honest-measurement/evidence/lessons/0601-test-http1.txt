@@ -1,0 +1,4 @@
+$ uv run pytest -q tests/test_http1.py
+..........                                                               [100%]
+10 passed in 0.14s
+[exit 0]

@@ -1,0 +1,25 @@
+?   	switchyard/messaging/cmd/messages	[no test files]
+?   	switchyard/messaging/internal/broker	[no test files]
+=== RUN   TestBothVersionsNormalize
+    message_test.go:18: two command versions normalize to the same effect
+--- PASS: TestBothVersionsNormalize (0.00s)
+PASS
+ok  	switchyard/messaging/internal/contract	1.021s
+=== RUN   TestBothBreakersOpenAndRecover
+=== RUN   TestBothBreakersOpenAndRecover/store
+    worker_test.go:46: two failures opened the circuit; after cooldown one success closed it
+=== RUN   TestBothBreakersOpenAndRecover/publish
+    worker_test.go:46: two failures opened the circuit; after cooldown one success closed it
+--- PASS: TestBothBreakersOpenAndRecover (0.00s)
+    --- PASS: TestBothBreakersOpenAndRecover/store (0.00s)
+    --- PASS: TestBothBreakersOpenAndRecover/publish (0.00s)
+PASS
+ok  	switchyard/messaging/internal/delivery	1.021s
+?   	switchyard/messaging/internal/ledger	[no test files]
+crash: committed one durable effect and stopped before publishing
+replacement: received the redelivery and published a completion; one durable effect
+compatibility: v1 and v2 shared one effect; unsupported schema and ID conflict dead-lettered
+retry limit: repeated dependency failure exhausted the quorum queue budget
+crash: committed one durable effect and stopped before publishing
+FAIL acknowledged command could not be delivered again after the crash
+negative control: caught premature acknowledgment

@@ -1,0 +1,7 @@
+$ go test ./internal/jobs
+--- FAIL: TestRunRecordsDeadlineAsFailure (0.02s)
+    service_test.go:87: error = context deadline exceeded, want work failed by deadline
+FAIL
+FAIL	switchyard/internal/jobs	0.041s
+FAIL
+[exit 1]

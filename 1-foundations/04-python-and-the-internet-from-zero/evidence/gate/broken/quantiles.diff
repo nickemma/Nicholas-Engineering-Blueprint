@@ -1,0 +1,21 @@
+diff --color -ruN -x .venv -x __pycache__ -x .pytest_cache -x .ruff_cache -x uv.lock -x '*.csv' -x '*.png' -x drills -x hello.py -x .python-version final/measure/stats.py broken/quantiles/measure/stats.py
+--- final/measure/stats.py
++++ broken/quantiles/measure/stats.py
+@@ -1,6 +1,6 @@
+ """Summary statistics for request latencies."""
+ 
+-import math
++import statistics
+ 
+ 
+ def summarize(values: list[float]) -> dict[str, float]:
+@@ -25,6 +25,6 @@
+         raise ValueError("cannot take a percentile of an empty list")
+     if not 0 < p <= 100:
+         raise ValueError(f"p must be above 0 and at most 100, not {p}")
+-    ordered = sorted(values)
+-    rank = math.ceil(p / 100 * len(ordered))
+-    return ordered[rank - 1]
++    if len(values) < 2 or p == 100:
++        return max(values) if p == 100 else values[0]
++    return statistics.quantiles(values, n=100, method="inclusive")[round(p) - 1]

@@ -1,6 +1,6 @@
 # Design: a distributed key-value store
 
-**Track:** distributed-systems · **Built in:** [Phase 4](../../lessons/04-replicated-state/README.md) (Raft, linearizability checks, consistent hashing, leases) · **Time:** 45 minutes
+**Track:** distributed-systems · **Built in:** [Core 07](../../2-core/07-distributed-systems-fundamentals/README.md) (Raft, consistent hashing, leases) and [Consensus in depth](../../3-tracks/storage-engines/02-consensus-in-depth/README.md) (linearizability checks) · **Time:** 45 minutes
 
 This is a worked reference. Do the design yourself first, with a timer, then read this and note what you missed.
 
@@ -133,19 +133,15 @@ A dead node's ranges keep working on the other two replicas. After a **timeout o
 
 ## 9. With more time
 
-- **Multi-key transactions:** two-phase commit across ranges, with a transaction record in one of them (Phase 4, step 12).
+- **Multi-key transactions:** two-phase commit across ranges, with a transaction record in one of them ([Consensus in depth, lesson 08](../../3-tracks/storage-engines/02-consensus-in-depth/lessons/08-recover-a-cross-shard-transfer.md)).
 - **Multi-region**, with per-region leaseholders for local reads.
 - **Change-data-capture streams.**
 - **TTLs.**
 
 ## 10. Where you've built this
 
-[Phase 4](../../lessons/04-replicated-state/README.md):
-- your own Raft: elections, replication, persistence, snapshots, PreVote and CheckQuorum;
-- a replicated key-value store, checked for linearizability with Porcupine;
-- leases and fencing tokens;
-- consistent hashing;
-- transactions across shards.
+- [Core 07](../../2-core/07-distributed-systems-fundamentals/README.md): your own Raft (elections, replication, persistence), leases and fencing tokens, consistent hashing.
+- [Consensus in depth](../../3-tracks/storage-engines/02-consensus-in-depth/README.md): snapshots, PreVote and CheckQuorum, a replicated key-value store checked for linearizability with Porcupine, transactions across shards.
 
 ## 11. What an interviewer will push on
 
@@ -153,3 +149,13 @@ A dead node's ranges keep working on the other two replicas. After a **timeout o
 - "What exactly happens in the first second after a leader dies?"
 - "How do you move a range without a moment when two groups think they own it?"
 - "Your keys are timestamps. What breaks?"
+
+## Capstone evidence for the write path
+
+The capstone fixes the membership at three Raft peers. Each Go peer uses a Rust storage projection of the committed state. It seals tenant-scoped values before proposal and rebuilds the projection from a snapshot and committed suffix. A peer starting with an empty projection waits for the required state before serving success. [Architecture decision record](../../3-tracks/storage-engines/05-capstone-distributed-kv-store/evidence/ADR.md)
+
+**Failure timeline.** The leader commits a put, then stops before the reply reaches the client. The client retries the same operation identity at the new leader and gets the committed result. A later read sees the value. The lagging peer rejoins with an empty projection, installs a snapshot and replays the suffix. The captured history also checks that a later delete stays visible. The gate's deliberately early acknowledgement fails the minority-write check. [Recovery gate](../../3-tracks/storage-engines/05-capstone-distributed-kv-store/evidence/gate.txt) · [Client history](../../3-tracks/storage-engines/05-capstone-distributed-kv-store/evidence/history.json)
+
+**Tradeoff.** Making Rust state rebuildable keeps the committed log and snapshot authoritative. Recovery then pays for snapshot installation and suffix replay before a restarted peer becomes ready. Measure that delay independently from the client request path. In the fixed 64-record, two-worker YCSB matrix, the indexed point path improved the isolated Rust lookup while whole-system throughput varied by workload. Use the YCSB result to discuss client-visible behavior and the paired profile to discuss lookup cost. [Benchmark and profile evidence](../../3-tracks/storage-engines/05-capstone-distributed-kv-store/evidence/README.md)
+
+For a timed review, draw the commit, reply and retry boundaries. Explain what the client can conclude when the reply disappears, then use the [design scorecard](../scorecard.md).

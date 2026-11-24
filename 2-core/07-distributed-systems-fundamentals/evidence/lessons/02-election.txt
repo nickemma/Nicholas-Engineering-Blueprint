@@ -1,0 +1,22 @@
+=== RUN   TestPartitionElectsHigherTerm
+    election_test.go:27: term 1 elected peer 2; partition elected peer 3 in term 2
+--- PASS: TestPartitionElectsHigherTerm (0.00s)
+=== RUN   TestSplitVoteRetries
+    election_test.go:50: three self-votes in term 1; peer 2 won term 2 after healing
+--- PASS: TestSplitVoteRetries (0.00s)
+=== RUN   TestElectionStorm
+    election_test.go:67: checked election safety across 100 seeds
+--- PASS: TestElectionStorm (0.34s)
+PASS
+ok  	switchyard/metad/internal/cluster	1.408s
+?   	switchyard/metad/internal/raft	[no test files]
+=== RUN   TestOneWayLink
+--- PASS: TestOneWayLink (0.00s)
+=== RUN   TestSeedReplays
+--- PASS: TestSeedReplays (0.00s)
+=== RUN   TestSilenceLooksTheSame
+    network_test.go:58: arrivals when paused: [1 2 7 8 9]; when crashed: [1 2]
+    network_test.go:59: at tick 5 both have been silent for three ticks
+--- PASS: TestSilenceLooksTheSame (0.00s)
+PASS
+ok  	switchyard/metad/internal/simnet	1.037s

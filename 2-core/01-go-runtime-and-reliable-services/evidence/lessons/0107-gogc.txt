@@ -1,0 +1,10 @@
+$ go build -o gcdrill ./drills/gc; for g in 50 100 400 off; do echo "GOGC=$g"; GOGC=$g ./gcdrill; done
+GOGC=50
+allocated 1300 MiB in 308ms: 59 collections, heap now 74 MiB, 20.4ms paused in total
+GOGC=100
+allocated 1300 MiB in 413ms: 29 collections, heap now 76 MiB, 12.377ms paused in total
+GOGC=400
+allocated 1300 MiB in 490ms: 7 collections, heap now 231 MiB, 2.661ms paused in total
+GOGC=off
+allocated 1300 MiB in 17ms: 0 collections, heap now 1300 MiB, 0s paused in total
+[exit 0]

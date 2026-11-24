@@ -1,0 +1,4 @@
+$ uv run python drills/waits.py
+one_by_one: ['a', 'b', 'c'] in 1.50 s
+all_at_once: ['a', 'b', 'c'] in 0.50 s
+[exit 0]

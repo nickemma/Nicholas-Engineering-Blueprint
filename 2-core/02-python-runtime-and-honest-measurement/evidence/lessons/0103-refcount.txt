@@ -1,0 +1,16 @@
+$ uv run python drills/refcount.py
+== reference counting
+refcount of a: 1
+after b = a: 2
+after del b: 1
+del a:
+   freed a
+(freed at once: the count reached zero)
+== a cycle
+del x, y:
+(nothing freed: each still has a reference from the other)
+gc.collect():
+   freed x
+   freed y
+(the cycle collector found 108 unreachable objects)
+[exit 0]

@@ -11,9 +11,9 @@ The skill is **choosing the structures from the required costs**. If an operatio
 
 **Recognise it when** the problem is a class with methods, and each method has a target complexity.
 
-**Real systems:** both worked problems here are pieces of Runway, rebuilt from scratch at interview size:
-- the **token bucket** behind [Phase 6's rate limiter](../../lessons/06-safe-shared-queries/TEACHING.md#step-5-rate-limiting);
-- the **consistent-hash ring** behind [Phase 4's sharded cache](../../lessons/04-replicated-state/TEACHING.md#step-11-consistent-hashing-and-a-cache-spread-over-several-servers).
+**Real systems:** both worked problems here are pieces of Switchyard, rebuilt from scratch at interview size:
+- the **token bucket** behind [Tenancy and abuse control's rate limiter](../../3-tracks/shared-units/tenancy-and-abuse-control/lessons/05-authorize-routes-and-budget-each-tenant.md);
+- the **consistent-hash ring** behind [Core 07's sharded cache](../../2-core/07-distributed-systems-fundamentals/lessons/10-move-fewer-keys-with-consistent-hashing.md).
 
 They're also classic interview questions, at this exact size.
 
@@ -168,7 +168,7 @@ Spread keys over *n* servers so that adding or removing a server moves as few ke
 **Think first.**
 - The ring is a **sorted** array of points, so a lookup is a binary search (guide 05): the first point with hash ≥ the key's hash, or index 0 if there's none.
 - Adding a server inserts its points; removing one filters them out.
-- The hash must be the same in every process, and on every machine. Python's built-in `hash()` of a string is randomised per process (Phase 7 met this exact trap), so both versions use SHA-256.
+- The hash must be the same in every process, and on every machine. Python's built-in `hash()` of a string is randomised per process, so two processes disagree on where a key lives; both versions use SHA-256.
 
 <!-- file: design/ring.go -->
 ~~~go
@@ -422,4 +422,4 @@ def test_removing_a_node_moves_only_its_keys():
 
 Also revisit the design problems from earlier guides: Min Stack (04), Time-Based Key-Value Store (05) and LRU Cache (06).
 
-You've finished the patterns. Keep the [spaced review](../README.md#spaced-review) going, and do a [timed mock](../README.md#practising-like-the-real-thing) every two weeks.
+Continue to [Systems data structures](../20-systems-structures/README.md) for a bounded ring and Bloom filter. Keep the [spaced review](../README.md#spaced-review) going, and do a [timed mock](../README.md#practising-like-the-real-thing) every two weeks.

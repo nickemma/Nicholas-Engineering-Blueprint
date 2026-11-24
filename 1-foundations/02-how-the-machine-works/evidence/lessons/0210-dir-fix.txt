@@ -1,0 +1,4 @@
+$ chmod 700 box && ls -ld box && cat box/note.txt
+drwx------ 2 ada ada 4096 Nov 18 16:47 box
+inside
+[exit 0]

@@ -1,0 +1,11 @@
+diff --color -ruN -x .venv -x __pycache__ -x .pytest_cache -x .ruff_cache -x uv.lock -x '*.csv' -x '*.png' -x drills -x hello.py -x .python-version final/echo/main.go broken/nolinger/echo/main.go
+--- final/echo/main.go
++++ broken/nolinger/echo/main.go
+@@ -62,7 +62,6 @@
+ 		if errors.Is(err, bufio.ErrBufferFull) {
+ 			fmt.Fprintf(conn, "error: line longer than %d bytes\n", maxLine)
+ 			log.Printf("%s: line too long, closing", peer)
+-			lingeringClose(conn)
+ 			return
+ 		}
+ 		if len(line) > 0 {

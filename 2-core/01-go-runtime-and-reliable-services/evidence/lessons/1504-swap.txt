@@ -1,0 +1,4 @@
+$ PATH=$PWD/bin:$PATH protoc --go_out=. --go_opt=module=switchyard --go-grpc_out=. --go-grpc_opt=module=switchyard proto/switchyard/jobs/v1/jobs.proto && go build -o /tmp/switchyard ./cmd/switchyard && { /tmp/switchyard > /dev/null & p=$!; sleep 0.5; /tmp/jobsctl create "resize images" 300; echo "exit $?"; curl -s http://127.0.0.1:8080/jobs/1; echo; kill $p; }
+jobsctl: InvalidArgument: description must be between 1 and 200 characters
+exit 1
+[exit 0]

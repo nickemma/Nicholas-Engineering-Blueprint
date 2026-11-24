@@ -1,0 +1,11 @@
+--- a/src/kload/cli.py
++++ b/src/kload/cli.py
+@@ -97,7 +97,7 @@
+             file=sys.stderr,
+         )
+         return 1
+-    return EXIT_FELL_BEHIND if fell_behind else 0
++    return 0
+ 
+ 
+ def report_run(results: list[Result], args: argparse.Namespace, wall: float, cpu: float) -> bool:

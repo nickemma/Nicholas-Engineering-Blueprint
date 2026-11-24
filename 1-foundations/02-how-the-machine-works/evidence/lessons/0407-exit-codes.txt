@@ -1,0 +1,7 @@
+$ true; echo "true: $?"; false; echo "false: $?"; ls /nope 2>/dev/null; echo "ls /nope: $?"; nosuchcommand 2>/dev/null; echo "nosuchcommand: $?"; chmod -x hello.sh; ./hello.sh 2>/dev/null; echo "not executable: $?"; chmod +x hello.sh
+true: 0
+false: 1
+ls /nope: 2
+nosuchcommand: 127
+not executable: 126
+[exit 0]

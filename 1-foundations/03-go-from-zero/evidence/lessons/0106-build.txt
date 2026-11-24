@@ -1,0 +1,5 @@
+$ go build -o values ./drills/values && ls -l values && ./values | head -2 && rm values
+-rwxrwxr-x 1 ada ada 2365196 Nov 19 07:27 values
+Ada 36 1.65
+Ada is a string, 36 is a int, 1.65 is a float64
+[exit 0]

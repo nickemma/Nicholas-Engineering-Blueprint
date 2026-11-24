@@ -1,0 +1,6 @@
+$ uv run python drills/gil.py | tail -4
+== I/O-bound: each task sleeps 0.2 s
+ 1 task in threads: 0.09 s
+ 8 tasks in threads: 0.70 s
+64 tasks in threads: 5.87 s
+[exit 0]

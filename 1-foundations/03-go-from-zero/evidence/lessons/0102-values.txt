@@ -1,0 +1,14 @@
+$ go run ./drills/values
+Ada 36 1.65
+Ada is a string, 36 is a int, 1.65 is a float64
+zero values: 0 0 false ""
+bytes: int 8 float64 8 bool 1 string 16
+largest int64: 9223372036854775807
+one more:      -9223372036854775808
+share: 3.5 rounded down: 3
+bytes: 5 first byte: 99 as a letter: c
+byte 0: c
+byte 1: a
+byte 2: f
+byte 3: é
+[exit 0]

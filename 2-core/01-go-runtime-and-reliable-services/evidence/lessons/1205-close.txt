@@ -1,0 +1,7 @@
+$ go test ./cmd/switchyard
+--- FAIL: TestGracefulShutdownFinishesInFlightRequest (0.11s)
+    main_test.go:99: in-flight request: status=0 state="" err=Post "http://127.0.0.1:35365/jobs/1/run": EOF; graceful shutdown should let it finish
+FAIL
+FAIL	switchyard/cmd/switchyard	0.122s
+FAIL
+[exit 1]

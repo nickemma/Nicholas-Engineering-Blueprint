@@ -1,0 +1,3 @@
+$ cd ~/blueprint/day1 && go run .
+Blueprint ready! OS: linux | Arch: amd64 | CPUs: 16
+[exit 0]

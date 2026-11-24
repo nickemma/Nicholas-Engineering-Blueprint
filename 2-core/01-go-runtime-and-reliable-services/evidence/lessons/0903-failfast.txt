@@ -1,0 +1,4 @@
+$ LISTEN_ADDR=8080 /tmp/switchyard; echo "exit $?"
+LISTEN_ADDR must look like host:port, got "8080"
+exit 1
+[exit 0]

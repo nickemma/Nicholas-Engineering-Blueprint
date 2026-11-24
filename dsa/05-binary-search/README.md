@@ -11,7 +11,7 @@ Binary search halves the candidates at every step, so a million candidates take 
 - *n* is large (10⁵ or more) and O(*n*) per question is too slow;
 - "find the first bad commit": `git bisect` is binary search.
 
-**Real systems:** [Phase 4's consistent-hash ring](../../lessons/04-replicated-state/TEACHING.md#step-11-consistent-hashing-and-a-cache-spread-over-several-servers) finds a key's server with `slices.BinarySearchFunc` over the ring's sorted points. B-tree indexes in [Phase 3](../../lessons/03-durable-auditable-data/README.md) binary-search within each page.
+**Real systems:** [Core 07's consistent-hash ring](../../2-core/07-distributed-systems-fundamentals/lessons/10-move-fewer-keys-with-consistent-hashing.md) finds a key's server with `slices.BinarySearchFunc` over the ring's sorted points. B-tree indexes in [Postgres in depth](../../3-tracks/storage-engines/01-postgres-in-depth/README.md) binary-search within each page.
 
 ## The one template to remember
 

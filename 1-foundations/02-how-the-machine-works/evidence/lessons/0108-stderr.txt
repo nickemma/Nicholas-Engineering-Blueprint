@@ -1,0 +1,6 @@
+$ ls notes /nonexistent
+ls: cannot access '/nonexistent': No such file or directory
+notes:
+first.txt
+second.txt
+[exit 2]

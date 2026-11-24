@@ -1,0 +1,14 @@
+goos: linux
+goarch: amd64
+pkg: switchyard/internal/wire
+cpu: AMD Ryzen 7 PRO 5850U with Radeon Graphics     
+BenchmarkRequestChecksum-16    	     268	   4408876 ns/op	  14.86 MB/s
+PASS
+ok  	switchyard/internal/wire	1.203s
+goos: linux
+goarch: amd64
+pkg: switchyard/internal/wire
+cpu: AMD Ryzen 7 PRO 5850U with Radeon Graphics     
+BenchmarkRequestChecksum-16    	  237770	      5232 ns/op	12524.83 MB/s
+PASS
+ok  	switchyard/internal/wire	1.266s

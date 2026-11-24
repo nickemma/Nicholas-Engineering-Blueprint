@@ -1,0 +1,50 @@
+2026-11-22T02:33:41.287+00:00 TLS rejected missing and untrusted credentials; roles enforced read/write permissions
+2026-11-22T02:33:41.695+00:00 baseline: four good observations in the window
+2026-11-22T02:33:41.698+00:00 fault: deployed a configuration with an unavailable upstream socket
+2026-11-22T02:33:42.829+00:00 alert: firing at attempt 6 (2/4 good)
+2026-11-22T02:33:42.837+00:00 diagnosis: TLS and the gateway work; configured upstream socket is missing
+2026-11-22T02:33:42.855+00:00 rollback: restored the saved upstream configuration
+2026-11-22T02:33:44.274+00:00 recovery: alert cleared and the original value was readable (3/4 good)
+2026-11-22T02:33:44.277+00:00 privacy: gateway, probe, and peer logs omitted the synthetic key, value, and private-key material
+2026-11-22T02:33:50.614+00:00 TLS rejected missing and untrusted credentials; roles enforced read/write permissions
+2026-11-22T02:33:51.036+00:00 baseline: four good observations in the window
+2026-11-22T02:33:51.037+00:00 fault: deployed a configuration with an unavailable upstream socket
+--- peer 1 ---
+recovered peer=1 bytes=0
+listening peer=1
+applied peer=1 index=1 term=1 digest=52062ba771ca0f80b9f2898313e9471466cb60fcf6cebbca1b7f8f23d962d28e
+applied peer=1 index=2 term=1 digest=b75e034f4ba7f2f57f4bbc6a8ae50a9fbdfb077c342421a228bfa61d4b46cdea
+applied peer=1 index=3 term=1 digest=0509c6b010d58121edd3024348c2964e1a490ccfde57366053b4e0114a2db72b
+applied peer=1 index=4 term=1 digest=c9020d2353fd714c412219754dca2b627e38e3efbea99ef41014a1348ef56ba8
+applied peer=1 index=5 term=1 digest=c9020d2353fd714c412219754dca2b627e38e3efbea99ef41014a1348ef56ba8
+applied peer=1 index=6 term=1 digest=c9020d2353fd714c412219754dca2b627e38e3efbea99ef41014a1348ef56ba8
+applied peer=1 index=7 term=1 digest=c9020d2353fd714c412219754dca2b627e38e3efbea99ef41014a1348ef56ba8
+applied peer=1 index=8 term=1 digest=c9020d2353fd714c412219754dca2b627e38e3efbea99ef41014a1348ef56ba8
+
+--- peer 2 ---
+recovered peer=2 bytes=0
+listening peer=2
+elected peer=2 term=1
+applied peer=2 index=1 term=1 digest=52062ba771ca0f80b9f2898313e9471466cb60fcf6cebbca1b7f8f23d962d28e
+applied peer=2 index=2 term=1 digest=b75e034f4ba7f2f57f4bbc6a8ae50a9fbdfb077c342421a228bfa61d4b46cdea
+applied peer=2 index=3 term=1 digest=0509c6b010d58121edd3024348c2964e1a490ccfde57366053b4e0114a2db72b
+applied peer=2 index=4 term=1 digest=c9020d2353fd714c412219754dca2b627e38e3efbea99ef41014a1348ef56ba8
+applied peer=2 index=5 term=1 digest=c9020d2353fd714c412219754dca2b627e38e3efbea99ef41014a1348ef56ba8
+applied peer=2 index=6 term=1 digest=c9020d2353fd714c412219754dca2b627e38e3efbea99ef41014a1348ef56ba8
+applied peer=2 index=7 term=1 digest=c9020d2353fd714c412219754dca2b627e38e3efbea99ef41014a1348ef56ba8
+applied peer=2 index=8 term=1 digest=c9020d2353fd714c412219754dca2b627e38e3efbea99ef41014a1348ef56ba8
+
+--- peer 3 ---
+recovered peer=3 bytes=0
+listening peer=3
+applied peer=3 index=1 term=1 digest=52062ba771ca0f80b9f2898313e9471466cb60fcf6cebbca1b7f8f23d962d28e
+applied peer=3 index=2 term=1 digest=b75e034f4ba7f2f57f4bbc6a8ae50a9fbdfb077c342421a228bfa61d4b46cdea
+applied peer=3 index=3 term=1 digest=0509c6b010d58121edd3024348c2964e1a490ccfde57366053b4e0114a2db72b
+applied peer=3 index=4 term=1 digest=c9020d2353fd714c412219754dca2b627e38e3efbea99ef41014a1348ef56ba8
+applied peer=3 index=5 term=1 digest=c9020d2353fd714c412219754dca2b627e38e3efbea99ef41014a1348ef56ba8
+applied peer=3 index=6 term=1 digest=c9020d2353fd714c412219754dca2b627e38e3efbea99ef41014a1348ef56ba8
+applied peer=3 index=7 term=1 digest=c9020d2353fd714c412219754dca2b627e38e3efbea99ef41014a1348ef56ba8
+applied peer=3 index=8 term=1 digest=c9020d2353fd714c412219754dca2b627e38e3efbea99ef41014a1348ef56ba8
+
+FAIL failed HTTP probes never triggered the alert
+negative control: caught the probe that dropped failed attempts

@@ -1,0 +1,6 @@
+$ mkdir -p box && echo inside > box/note.txt && chmod 600 box && ls -ld box; ls box; cd box; cat box/note.txt
+drw------- 2 ada ada 4096 Nov 18 16:47 box
+note.txt
+bash: line 1: cd: box: Permission denied
+cat: box/note.txt: Permission denied
+[exit 1]

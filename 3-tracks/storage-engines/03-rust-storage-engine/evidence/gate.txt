@@ -1,0 +1,58 @@
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+512 absent keys: block reads 960 -> 10; 11 false-positive table checks
+.
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.26s
+
+
+running 1 test
+reopened two blocks through sequence 34; WAL deletion hid key 15
+.
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+
+running 2 tests
+zero-run compaction preserved watermark 2; reinsert replayed at sequence 3
+.4 seeds, 480 mutations: point reads and scans matched current and pinned models
+.
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.05s
+
+
+running 2 tests
+versions 7 -> 3 -> 2; first compaction 437 -> 242 bytes; last 162 -> 139 bytes
+.pinned scan retained a=old before deletion and hid a at the deletion sequence
+.
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.30s
+
+
+running 1 test
+replayed through sequence 3, trimmed 3 bytes, and preserved the corrupt frame on refusal
+.
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+flush outputs-synced: generation=1, covered=2, recovered sequence=5
+flush before-manifest: generation=1, covered=2, recovered sequence=5
+flush manifest-published: generation=2, covered=5, recovered sequence=5
+flush after-cleanup: generation=2, covered=5, recovered sequence=5
+compact outputs-synced: generation=2, covered=5, recovered sequence=6
+compact before-manifest: generation=2, covered=5, recovered sequence=6
+compact manifest-published: generation=3, covered=5, recovered sequence=6
+compact after-cleanup: generation=3, covered=5, recovered sequence=6
+before-wal: no acknowledgement observed; in-flight value absent
+after-wal-sync: no acknowledgement observed; in-flight value present
+negative control: newest-only compaction changed a pinned read

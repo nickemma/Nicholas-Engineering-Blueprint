@@ -1,0 +1,5 @@
+$ for path in / /nope; do curl -s -o /dev/null -w "GET $path -> %{http_code}\n" http://example.com$path; done; curl -s -o /dev/null -w "POST / -> %{http_code}\n" -X POST http://example.com/
+GET / -> 200
+GET /nope -> 404
+POST / -> 405
+[exit 0]

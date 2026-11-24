@@ -1,0 +1,39 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling compiler_builtins v0.1.160 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/compiler-builtins/compiler-builtins)
+   Compiling core v0.0.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core)
+   Compiling libc v0.2.178
+   Compiling object v0.37.3
+   Compiling std v0.0.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std)
+   Compiling test v0.0.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/test)
+   Compiling klog v0.1.0 (/tmp/blueprint-c05-author/crate)
+   Compiling rustc-std-workspace-core v1.99.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/rustc-std-workspace-core)
+   Compiling alloc v0.0.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/alloc)
+   Compiling unwind v0.0.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/unwind)
+   Compiling memchr v2.7.6
+   Compiling adler2 v2.0.1
+   Compiling rustc-demangle v0.1.27
+   Compiling rustc-std-workspace-alloc v1.99.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/rustc-std-workspace-alloc)
+   Compiling gimli v0.32.3
+   Compiling miniz_oxide v0.8.9
+   Compiling hashbrown v0.16.1
+   Compiling addr2line v0.25.1
+   Compiling std_detect v0.1.5 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std_detect)
+   Compiling panic_unwind v0.0.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/panic_unwind)
+   Compiling panic_abort v0.0.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/panic_abort)
+   Compiling cfg-if v1.0.4
+   Compiling rustc-literal-escaper v0.0.7
+   Compiling rustc-std-workspace-std v1.99.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/rustc-std-workspace-std)
+   Compiling getopts v0.2.24
+   Compiling proc_macro v0.0.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/proc_macro)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 15s
+     Running unittests src/lib.rs (/tmp/blueprint-c05-author/toolchain/target-asan/x86_64-unknown-linux-gnu/debug/deps/klog-998558f88050684b)
+
+running 1 test
+test native::tests::c_matches_the_rust_sum_at_the_slice_bounds ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 23 filtered out; finished in 0.00s
+

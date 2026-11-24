@@ -1,0 +1,4 @@
+$ cd ~ && pwd && whoami
+/home/ada
+ada
+[exit 0]

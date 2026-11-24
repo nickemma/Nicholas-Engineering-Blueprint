@@ -1,0 +1,4 @@
+$ df -P /
+Filesystem     1024-blocks      Used Available Capacity Mounted on
+overlay         1055762868 208284104 793775292      21% /
+[exit 0]

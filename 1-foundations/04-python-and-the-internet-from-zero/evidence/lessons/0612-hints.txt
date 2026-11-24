@@ -1,0 +1,10 @@
+$ uv run python -c "from stats import summarize; summarize([\"12\", \"15\"])"
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    from stats import summarize; summarize(["12", "15"])
+                                 ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/home/ada/blueprint/internet/measure/stats.py", line 10, in summarize
+    "mean": sum(values) / len(values),
+            ~~~^^^^^^^^
+TypeError: unsupported operand type(s) for +: 'int' and 'str'
+[exit 1]

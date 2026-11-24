@@ -1,0 +1,3 @@
+$ go vet ./drills/values
+drills/values/main.go:15:14: fmt.Printf format %d has arg name of wrong type string
+[exit 1]

@@ -1,0 +1,9 @@
+$ (l15)
+job 1: STATE_QUEUED "resize images" (300 ms)
+job 1: STATE_COMPLETED "resize images" (300 ms)
+jobsctl: NotFound: job not found
+exit 1
+jobsctl: InvalidArgument: description must be between 1 and 200 characters
+exit 1
+{"id":1,"state":"completed","description":"resize images","duration_ms":300,"created_at":"2026-11-20T04:52:38.42592189Z","updated_at":"2026-11-20T04:52:38.726509901Z"}
+[exit 0]

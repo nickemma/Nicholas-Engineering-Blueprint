@@ -1,0 +1,284 @@
+ Image c03-bench-1000-1527932-switchyard:lab Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 537B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 29B
+#2 transferring dockerfile: 162B done
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 113B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 41.26MB 0.4s done
+#4 DONE 0.4s
+
+#5 [1/2] COPY bin/linux/switchyard /switchyard
+#5 CACHED
+
+#6 [2/2] COPY bin/linux/worker /worker
+#6 CACHED
+
+#7 exporting to image
+#7 exporting layers done
+#7 exporting manifest sha256:8f553491a36a4e8585e7803b7675e9e665f662677d10656cd5632641b5895126 0.0s done
+#7 exporting config sha256:e87005ff4750960f4db10e97a59141452db184d6e290597221edbd1cb7c05d01 0.0s done
+#7 exporting attestation manifest sha256:f66976a722dbfe08bde7b62e584e8a26aa08fb163e9b1acbeeff8d6089f7ba10
+#7 exporting attestation manifest sha256:f66976a722dbfe08bde7b62e584e8a26aa08fb163e9b1acbeeff8d6089f7ba10 0.0s done
+#7 exporting manifest list sha256:23f43be6bcf1c645facbfe313f01e45f3600d3b9808fc00918951b56c21b78c6 0.0s done
+#7 naming to docker.io/library/c03-bench-1000-1527932-switchyard:lab done
+#7 unpacking to docker.io/library/c03-bench-1000-1527932-switchyard:lab 0.0s done
+#7 DONE 0.2s
+
+#8 resolving provenance for metadata file
+#8 DONE 0.0s
+ Image c03-bench-1000-1527932-switchyard:lab Built 
+ Network c03-bench-1000-1527932_default Creating 
+ Network c03-bench-1000-1527932_default Created 
+ Volume c03-bench-1000-1527932_pgdata Creating 
+ Volume c03-bench-1000-1527932_pgdata Created 
+ Container c03-bench-1000-1527932-postgres-1 Creating 
+ Container c03-bench-1000-1527932-postgres-1 Created 
+ Container c03-bench-1000-1527932-postgres-1 Starting 
+ Container c03-bench-1000-1527932-postgres-1 Started 
+ Container c03-bench-1000-1527932-postgres-1 Waiting 
+ Container c03-bench-1000-1527932-postgres-1 Healthy 
+ Container c03-bench-1000-1527932-migrate-run-b7f91227a076 Creating 
+ Container c03-bench-1000-1527932-migrate-run-b7f91227a076 Created 
+BEGIN
+SET
+ pg_advisory_xact_lock 
+-----------------------
+ 
+(1 row)
+
+CREATE TABLE
+CREATE TABLE
+INSERT 0 1
+CREATE INDEX
+INSERT 0 1
+CREATE TABLE
+INSERT 0 1
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+INSERT 0 1
+CREATE SEQUENCE
+INSERT 0 1
+COMMIT
+ Container c03-bench-1000-1527932-api-1 Creating 
+ Container c03-bench-1000-1527932-api-1 Created 
+ Container c03-bench-1000-1527932-worker-1 Creating 
+ Container c03-bench-1000-1527932-worker-1 Created 
+ Container c03-bench-1000-1527932-api-1 Starting 
+ Container c03-bench-1000-1527932-api-1 Started 
+ Container c03-bench-1000-1527932-worker-1 Starting 
+ Container c03-bench-1000-1527932-worker-1 Started 
+pair 1: postgres
+open loop: 80 requests at 40/s over 2 s
+answers: 201 x80
+latency (2xx): p50 8.04 ms, p99 22.25 ms, max 22.25 ms
+kload itself: send lag p99 2.50 ms, max 2.50 ms; CPU 0.06 s in 1.98 s (3%)
+wrote /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/warmup.csv and /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/warmup.json
+open loop: 120 requests at 40/s over 3 s
+answers: 201 x120
+latency (2xx): p50 8.26 ms, p99 26.04 ms, max 46.37 ms
+kload itself: send lag p99 2.45 ms, max 3.51 ms; CPU 0.10 s in 2.99 s (3%)
+wrote /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/postgres/run-1.csv and /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/postgres/run-1.json
+ Container c03-bench-1000-1527932-api-1 Recreate 
+ Container c03-bench-1000-1527932-api-1 Recreated 
+ Container c03-bench-1000-1527932-worker-1 Recreate 
+ Container c03-bench-1000-1527932-worker-1 Recreated 
+ Container c03-bench-1000-1527932-api-1 Starting 
+ Container c03-bench-1000-1527932-api-1 Started 
+ Container c03-bench-1000-1527932-worker-1 Starting 
+ Container c03-bench-1000-1527932-worker-1 Started 
+pair 1: memory
+open loop: 80 requests at 40/s over 2 s
+answers: 201 x80
+latency (2xx): p50 2.37 ms, p99 3.96 ms, max 3.96 ms
+kload itself: send lag p99 1.43 ms, max 1.43 ms; CPU 0.06 s in 1.98 s (3%)
+wrote /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/warmup.csv and /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/warmup.json
+open loop: 120 requests at 40/s over 3 s
+answers: 201 x120
+latency (2xx): p50 2.36 ms, p99 3.41 ms, max 3.81 ms
+kload itself: send lag p99 1.50 ms, max 1.54 ms; CPU 0.09 s in 2.98 s (3%)
+wrote /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/memory/run-1.csv and /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/memory/run-1.json
+ Container c03-bench-1000-1527932-api-1 Recreate 
+ Container c03-bench-1000-1527932-api-1 Recreated 
+ Container c03-bench-1000-1527932-worker-1 Recreate 
+ Container c03-bench-1000-1527932-worker-1 Recreated 
+ Container c03-bench-1000-1527932-api-1 Starting 
+ Container c03-bench-1000-1527932-api-1 Started 
+ Container c03-bench-1000-1527932-worker-1 Starting 
+ Container c03-bench-1000-1527932-worker-1 Started 
+pair 2: postgres
+open loop: 80 requests at 40/s over 2 s
+answers: 201 x80
+latency (2xx): p50 8.08 ms, p99 14.55 ms, max 14.55 ms
+kload itself: send lag p99 2.61 ms, max 2.61 ms; CPU 0.06 s in 1.98 s (3%)
+wrote /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/warmup.csv and /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/warmup.json
+open loop: 120 requests at 40/s over 3 s
+answers: 201 x120
+latency (2xx): p50 8.03 ms, p99 10.14 ms, max 10.17 ms
+kload itself: send lag p99 2.36 ms, max 2.44 ms; CPU 0.09 s in 2.98 s (3%)
+wrote /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/postgres/run-2.csv and /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/postgres/run-2.json
+ Container c03-bench-1000-1527932-api-1 Recreate 
+ Container c03-bench-1000-1527932-api-1 Recreated 
+ Container c03-bench-1000-1527932-worker-1 Recreate 
+ Container c03-bench-1000-1527932-worker-1 Recreated 
+ Container c03-bench-1000-1527932-api-1 Starting 
+ Container c03-bench-1000-1527932-api-1 Started 
+ Container c03-bench-1000-1527932-worker-1 Starting 
+ Container c03-bench-1000-1527932-worker-1 Started 
+pair 2: memory
+open loop: 80 requests at 40/s over 2 s
+answers: 201 x80
+latency (2xx): p50 2.36 ms, p99 3.84 ms, max 3.84 ms
+kload itself: send lag p99 1.37 ms, max 1.37 ms; CPU 0.06 s in 1.98 s (3%)
+wrote /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/warmup.csv and /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/warmup.json
+open loop: 120 requests at 40/s over 3 s
+answers: 201 x120
+latency (2xx): p50 2.47 ms, p99 3.40 ms, max 3.83 ms
+kload itself: send lag p99 1.54 ms, max 1.55 ms; CPU 0.09 s in 2.98 s (3%)
+wrote /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/memory/run-2.csv and /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/memory/run-2.json
+ Container c03-bench-1000-1527932-api-1 Recreate 
+ Container c03-bench-1000-1527932-api-1 Recreated 
+ Container c03-bench-1000-1527932-worker-1 Recreate 
+ Container c03-bench-1000-1527932-worker-1 Recreated 
+ Container c03-bench-1000-1527932-api-1 Starting 
+ Container c03-bench-1000-1527932-api-1 Started 
+ Container c03-bench-1000-1527932-worker-1 Starting 
+ Container c03-bench-1000-1527932-worker-1 Started 
+pair 3: postgres
+open loop: 80 requests at 40/s over 2 s
+answers: 201 x80
+latency (2xx): p50 7.97 ms, p99 20.89 ms, max 20.89 ms
+kload itself: send lag p99 2.40 ms, max 2.40 ms; CPU 0.06 s in 1.98 s (3%)
+wrote /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/warmup.csv and /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/warmup.json
+open loop: 120 requests at 40/s over 3 s
+answers: 201 x120
+latency (2xx): p50 8.10 ms, p99 11.18 ms, max 12.29 ms
+kload itself: send lag p99 2.44 ms, max 2.88 ms; CPU 0.09 s in 2.99 s (3%)
+wrote /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/postgres/run-3.csv and /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/postgres/run-3.json
+ Container c03-bench-1000-1527932-api-1 Recreate 
+ Container c03-bench-1000-1527932-api-1 Recreated 
+ Container c03-bench-1000-1527932-worker-1 Recreate 
+ Container c03-bench-1000-1527932-worker-1 Recreated 
+ Container c03-bench-1000-1527932-api-1 Starting 
+ Container c03-bench-1000-1527932-api-1 Started 
+ Container c03-bench-1000-1527932-worker-1 Starting 
+ Container c03-bench-1000-1527932-worker-1 Started 
+pair 3: memory
+open loop: 80 requests at 40/s over 2 s
+answers: 201 x80
+latency (2xx): p50 2.48 ms, p99 3.64 ms, max 3.64 ms
+kload itself: send lag p99 1.57 ms, max 1.57 ms; CPU 0.06 s in 1.98 s (3%)
+wrote /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/warmup.csv and /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/warmup.json
+open loop: 120 requests at 40/s over 3 s
+answers: 201 x120
+latency (2xx): p50 2.53 ms, p99 3.77 ms, max 3.79 ms
+kload itself: send lag p99 1.60 ms, max 2.10 ms; CPU 0.09 s in 2.98 s (3%)
+wrote /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/memory/run-3.csv and /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/memory/run-3.json
+ Container c03-bench-1000-1527932-api-1 Recreate 
+ Container c03-bench-1000-1527932-api-1 Recreated 
+ Container c03-bench-1000-1527932-worker-1 Recreate 
+ Container c03-bench-1000-1527932-worker-1 Recreated 
+ Container c03-bench-1000-1527932-api-1 Starting 
+ Container c03-bench-1000-1527932-api-1 Started 
+ Container c03-bench-1000-1527932-worker-1 Starting 
+ Container c03-bench-1000-1527932-worker-1 Started 
+pair 4: postgres
+open loop: 80 requests at 40/s over 2 s
+answers: 201 x80
+latency (2xx): p50 7.82 ms, p99 21.95 ms, max 21.95 ms
+kload itself: send lag p99 2.29 ms, max 2.29 ms; CPU 0.06 s in 1.99 s (3%)
+wrote /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/warmup.csv and /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/warmup.json
+open loop: 120 requests at 40/s over 3 s
+answers: 201 x120
+latency (2xx): p50 7.90 ms, p99 9.86 ms, max 10.25 ms
+kload itself: send lag p99 2.46 ms, max 2.47 ms; CPU 0.09 s in 2.98 s (3%)
+wrote /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/postgres/run-4.csv and /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/postgres/run-4.json
+ Container c03-bench-1000-1527932-api-1 Recreate 
+ Container c03-bench-1000-1527932-api-1 Recreated 
+ Container c03-bench-1000-1527932-worker-1 Recreate 
+ Container c03-bench-1000-1527932-worker-1 Recreated 
+ Container c03-bench-1000-1527932-api-1 Starting 
+ Container c03-bench-1000-1527932-api-1 Started 
+ Container c03-bench-1000-1527932-worker-1 Starting 
+ Container c03-bench-1000-1527932-worker-1 Started 
+pair 4: memory
+open loop: 80 requests at 40/s over 2 s
+answers: 201 x80
+latency (2xx): p50 2.51 ms, p99 4.58 ms, max 4.58 ms
+kload itself: send lag p99 1.67 ms, max 1.67 ms; CPU 0.06 s in 1.98 s (3%)
+wrote /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/warmup.csv and /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/warmup.json
+open loop: 120 requests at 40/s over 3 s
+answers: 201 x120
+latency (2xx): p50 2.64 ms, p99 3.50 ms, max 4.37 ms
+kload itself: send lag p99 1.61 ms, max 1.78 ms; CPU 0.09 s in 2.98 s (3%)
+wrote /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/memory/run-4.csv and /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/memory/run-4.json
+ Container c03-bench-1000-1527932-api-1 Recreate 
+ Container c03-bench-1000-1527932-api-1 Recreated 
+ Container c03-bench-1000-1527932-worker-1 Recreate 
+ Container c03-bench-1000-1527932-worker-1 Recreated 
+ Container c03-bench-1000-1527932-api-1 Starting 
+ Container c03-bench-1000-1527932-api-1 Started 
+ Container c03-bench-1000-1527932-worker-1 Starting 
+ Container c03-bench-1000-1527932-worker-1 Started 
+pair 5: memory
+open loop: 80 requests at 40/s over 2 s
+answers: 201 x80
+latency (2xx): p50 2.41 ms, p99 4.36 ms, max 4.36 ms
+kload itself: send lag p99 1.91 ms, max 1.91 ms; CPU 0.06 s in 1.98 s (3%)
+wrote /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/warmup.csv and /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/warmup.json
+open loop: 120 requests at 40/s over 3 s
+answers: 201 x120
+latency (2xx): p50 2.48 ms, p99 3.48 ms, max 3.80 ms
+kload itself: send lag p99 1.45 ms, max 1.46 ms; CPU 0.09 s in 2.98 s (3%)
+wrote /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/memory/run-5.csv and /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/memory/run-5.json
+ Container c03-bench-1000-1527932-api-1 Recreate 
+ Container c03-bench-1000-1527932-api-1 Recreated 
+ Container c03-bench-1000-1527932-worker-1 Recreate 
+ Container c03-bench-1000-1527932-worker-1 Recreated 
+ Container c03-bench-1000-1527932-api-1 Starting 
+ Container c03-bench-1000-1527932-api-1 Started 
+ Container c03-bench-1000-1527932-worker-1 Starting 
+ Container c03-bench-1000-1527932-worker-1 Started 
+pair 5: postgres
+open loop: 80 requests at 40/s over 2 s
+answers: 201 x80
+latency (2xx): p50 8.25 ms, p99 20.22 ms, max 20.22 ms
+kload itself: send lag p99 2.39 ms, max 2.39 ms; CPU 0.05 s in 1.98 s (3%)
+wrote /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/warmup.csv and /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/warmup.json
+open loop: 120 requests at 40/s over 3 s
+answers: 201 x120
+latency (2xx): p50 7.87 ms, p99 10.25 ms, max 15.46 ms
+kload itself: send lag p99 2.43 ms, max 2.65 ms; CPU 0.08 s in 2.99 s (3%)
+wrote /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/postgres/run-5.csv and /tmp/blueprint-c03-author/08/c03-bench.jeZHRn/postgres/run-5.json
+p50 A (/tmp/blueprint-c03-author/08/c03-bench.jeZHRn/memory, 5 runs): 2.36 2.47 2.53 2.64 2.48 ms
+p50 B (/tmp/blueprint-c03-author/08/c03-bench.jeZHRn/postgres, 5 runs): 8.26 8.03 8.10 7.90 7.87 ms
+p50 B - A: +5.53 ms, 95% CI [+5.39, +5.69] ms: B is slower
+p99 A (/tmp/blueprint-c03-author/08/c03-bench.jeZHRn/memory, 5 runs): 3.41 3.40 3.77 3.50 3.48 ms
+p99 B (/tmp/blueprint-c03-author/08/c03-bench.jeZHRn/postgres, 5 runs): 26.04 10.14 11.18 9.86 10.25 ms
+p99 B - A: +9.98 ms, 95% CI [+6.53, +16.32] ms: B is slower
+raw results: /tmp/blueprint-c03-author/08/c03-bench.jeZHRn
+ Container c03-bench-1000-1527932-postgres-1 Stopping 
+ Container c03-bench-1000-1527932-worker-1 Stopping 
+ Container c03-bench-1000-1527932-worker-1 Stopped 
+ Container c03-bench-1000-1527932-worker-1 Removing 
+ Container c03-bench-1000-1527932-worker-1 Removed 
+ Container c03-bench-1000-1527932-api-1 Stopping 
+ Container c03-bench-1000-1527932-postgres-1 Stopped 
+ Container c03-bench-1000-1527932-postgres-1 Removing 
+ Container c03-bench-1000-1527932-postgres-1 Removed 
+ Container c03-bench-1000-1527932-api-1 Stopped 
+ Container c03-bench-1000-1527932-api-1 Removing 
+ Container c03-bench-1000-1527932-api-1 Removed 
+ Volume c03-bench-1000-1527932_pgdata Removing 
+ Network c03-bench-1000-1527932_default Removing 
+ Volume c03-bench-1000-1527932_pgdata Removed 
+ Network c03-bench-1000-1527932_default Removed 

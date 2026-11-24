@@ -1,0 +1,7 @@
+$ /home/ada/blueprint/switchyard/bin/switchyard > /dev/null 2>&1 & sleep 0.5; for n in 1 2 3 4 5; do uv run kload load --rate 1000 --duration 3 --out results/again/run$n.csv | grep latency; done
+latency (2xx): p50 0.83 ms, p99 1.58 ms, max 6.06 ms
+latency (2xx): p50 0.90 ms, p99 1.72 ms, max 7.39 ms
+latency (2xx): p50 0.89 ms, p99 1.63 ms, max 5.02 ms
+latency (2xx): p50 0.90 ms, p99 1.69 ms, max 9.53 ms
+latency (2xx): p50 0.90 ms, p99 1.67 ms, max 9.18 ms
+[exit 0]

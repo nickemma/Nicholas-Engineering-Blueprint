@@ -1,0 +1,23 @@
+$ /home/ada/blueprint/switchyard/bin/switchyard > /dev/null 2>&1 & sleep 0.5; uv run kload load --rate 2000 --duration 5 --out results/h2000.csv; uv run kload load --rate 4000 --duration 5 --out results/h4000.csv; uv run kload load --rate 2000 --duration 5 --out results/split1.csv > /tmp/split1.txt & first=$!; uv run kload load --rate 2000 --duration 5 --out results/split2.csv > /tmp/split2.txt; wait $first; cat /tmp/split1.txt /tmp/split2.txt
+open loop: 10000 requests at 2000/s over 5 s
+answers: 200 x10000
+latency (2xx): p50 0.86 ms, p99 1.71 ms, max 7.58 ms
+kload itself: send lag p99 1.16 ms, max 7.28 ms; CPU 1.72 s in 5.01 s (34%)
+wrote results/h2000.csv and results/h2000.json
+kload used 78% of a CPU: close to its limit, so replies may have waited for it to read them. Lower the rate, or split it across processes.
+open loop: 20000 requests at 4000/s over 5 s
+answers: 200 x20000
+latency (2xx): p50 0.57 ms, p99 1.56 ms, max 16.95 ms
+kload itself: send lag p99 0.86 ms, max 16.32 ms; CPU 3.94 s in 5.03 s (78%)
+wrote results/h4000.csv and results/h4000.json
+open loop: 10000 requests at 2000/s over 5 s
+answers: 200 x10000
+latency (2xx): p50 0.67 ms, p99 1.93 ms, max 13.34 ms
+kload itself: send lag p99 1.18 ms, max 8.67 ms; CPU 2.06 s in 5.02 s (41%)
+wrote results/split1.csv and results/split1.json
+open loop: 10000 requests at 2000/s over 5 s
+answers: 200 x10000
+latency (2xx): p50 0.68 ms, p99 1.78 ms, max 14.50 ms
+kload itself: send lag p99 1.18 ms, max 9.28 ms; CPU 2.17 s in 5.02 s (43%)
+wrote results/split2.csv and results/split2.json
+[exit 0]

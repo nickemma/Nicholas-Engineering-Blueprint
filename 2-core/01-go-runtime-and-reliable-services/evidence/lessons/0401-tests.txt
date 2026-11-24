@@ -1,0 +1,18 @@
+$ go test -v ./internal/httpapi 2>&1 | grep -E "^(=== RUN|--- |ok|FAIL)"
+=== RUN   TestHealth
+--- PASS: TestHealth (0.00s)
+=== RUN   TestRoutes
+=== RUN   TestRoutes/health
+=== RUN   TestRoutes/greet
+=== RUN   TestRoutes/spaces_trimmed
+=== RUN   TestRoutes/40_characters,_not_bytes
+=== RUN   TestRoutes/no_name
+=== RUN   TestRoutes/blank_name
+=== RUN   TestRoutes/name_too_long
+=== RUN   TestRoutes/wrong_method
+=== RUN   TestRoutes/unknown_path
+--- PASS: TestRoutes (0.00s)
+=== RUN   TestOverRealConnection
+--- PASS: TestOverRealConnection (0.01s)
+ok  	switchyard/internal/httpapi	0.013s
+[exit 0]

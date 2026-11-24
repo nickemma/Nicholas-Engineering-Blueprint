@@ -1,0 +1,5 @@
+$ ls -S /usr/bin | head -3
+x86_64-linux-gnu-lto-dump-13
+git
+perl
+[exit 0]

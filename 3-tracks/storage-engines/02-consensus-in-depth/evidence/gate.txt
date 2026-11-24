@@ -1,0 +1,41 @@
+?   	switchyard/metad/cmd/check-history	[no test files]
+?   	switchyard/metad/cmd/hashdemo	[no test files]
+?   	switchyard/metad/cmd/metad	[no test files]
+ok  	switchyard/metad/internal/cluster	1.705s
+ok  	switchyard/metad/internal/metad	1.026s
+ok  	switchyard/metad/internal/raft	1.026s
+ok  	switchyard/metad/internal/ring	1.117s
+ok  	switchyard/metad/internal/simnet	1.028s
+ok  	switchyard/metad/internal/wal	1.158s
+linearizable (7 observations)
+snapshot recovery: lagging index 0, installed 8, restored vote and term
+retry after failover returned the original compare-and-swap result and preserved done
+negative control: no legal order for 7 observations
+Model checking completed. No error has been found.
+14029 states generated, 4687 distinct states found, 0 states left on queue.
+Error: Invariant ElectionSafety is violated.
+range [m,n): epoch 1 fenced, epoch 2 activated, three values and two retry receipts preserved
+PostgreSQL 17.11 (Debian 17.11-1.pgdg13+2)
+before decision: SQLSTATE 55P03 while prepared; recovery aborted (100, 50)
+after decision: observed (80, 50); recovery committed (80, 70), no prepared transactions remain
+saga: observed (70, 70); destination failed; repeated compensation restored (80, 70)
+=== RUN   TestReplaceWALAfterDurableSnapshot
+    reclaim_test.go:73: WAL reduced from 13140 to 1311 bytes before next append; term=3 vote=2 suffix=3
+--- PASS: TestReplaceWALAfterDurableSnapshot (0.11s)
+PASS
+ok  	switchyard/metad/internal/wal	0.113s
+=== RUN   TestPartialPartitionKeepsHealthyLeader
+    safeguards_test.go:28: without safeguards: original leader advanced from term 1 to 6
+    safeguards_test.go:42: with PreVote: majority committed in unchanged term 1
+--- PASS: TestPartialPartitionKeepsHealthyLeader (0.00s)
+=== RUN   TestLeaderStepsDownWithoutQuorum
+    safeguards_test.go:59: CheckQuorum stepped down the minority leader within two windows
+--- PASS: TestLeaderStepsDownWithoutQuorum (0.00s)
+=== RUN   TestReturningFollowerDoesNotRaiseTerm
+    safeguards_test.go:77: returning peer recognized the leader in term 1
+--- PASS: TestReturningFollowerDoesNotRaiseTerm (0.00s)
+=== RUN   TestLaggingPeerInstallsSnapshot
+    snapshot_test.go:39: lagging peer 2 installed snapshot at index 9
+--- PASS: TestLaggingPeerInstallsSnapshot (0.00s)
+PASS
+ok  	switchyard/metad/internal/cluster	0.008s

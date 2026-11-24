@@ -1,0 +1,6 @@
+$ time cat big.bin > /dev/null
+
+real	0m0.057s
+user	0m0.004s
+sys	0m0.050s
+[exit 0]

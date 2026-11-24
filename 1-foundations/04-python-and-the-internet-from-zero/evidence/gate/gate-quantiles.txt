@@ -1,0 +1,44 @@
+$ bash gate/run.sh ~/blueprint/internet    # the quantiles version
+== echo/
+PASS  gofmt
+PASS  go vet
+PASS  go test -race
+PASS  the server starts and prints 'listening on 127.0.0.1:41695'
+PASS  100 clients at once get back exactly what they sent (14,009,678 bytes)
+PASS  a line of exactly 65,536 bytes (newline included) comes back whole
+PASS  a longer line gets the error, then the connection closes
+PASS  a quiet client is disconnected after -idle 3s
+PASS  the server is still running afterwards
+== measure/
+PASS  ruff format
+PASS  ruff check
+FAIL  pytest
+      >       assert percentile(values, p) == want
+      E       assert 9.91 == 10
+      E        +  where 9.91 = percentile([3, 1, 4, 10, 5, 9, ...], 99)
+      
+      test_stats.py:30: AssertionError
+      ___________________ test_percentile_is_a_value_that_occurred ___________________
+      
+          def test_percentile_is_a_value_that_occurred():
+      >       assert percentile([1.5, 100.25], 50) == 1.5
+      E       assert 50.875 == 1.5
+      E        +  where 50.875 = percentile([1.5, 100.25], 50)
+      
+      test_stats.py:34: AssertionError
+      =========================== short test summary info ============================
+      FAILED test_stats.py::test_percentile_nearest_rank[10-1] - assert 1.9 == 1
+      FAILED test_stats.py::test_percentile_nearest_rank[50-5] - assert 5.5 == 5
+      FAILED test_stats.py::test_percentile_nearest_rank[90-9] - assert 9.1 == 9
+      FAILED test_stats.py::test_percentile_nearest_rank[99-10] - assert 9.91 == 10
+      FAILED test_stats.py::test_percentile_is_a_value_that_occurred - assert 50.87...
+      5 failed, 17 passed in 0.24s
+PASS  1,000 requests over 10 connections: results.csv has every request
+PASS  the p50 and p99 it prints match the CSV
+PASS  the plot is a PNG image
+PASS  replies that arrive in two pieces are read whole and timed to the end
+PASS  a wrong reply: exit 1 with a message (measure: request 0: sent 16 bytes, got back b'not what you sent\n')
+PASS  nothing listening: exit 1 with a message (measure: [Errno 111] Connect call failed ('127.0.0.1', 40401))
+
+Gate failed: fix each FAIL above and run it again.
+[exit 1]

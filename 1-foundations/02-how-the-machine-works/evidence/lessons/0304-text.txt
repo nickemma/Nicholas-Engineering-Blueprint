@@ -1,0 +1,4 @@
+$ printf A | xxd && printf "Hi\n" | xxd
+00000000: 41                                       A
+00000000: 4869 0a                                  Hi.
+[exit 0]

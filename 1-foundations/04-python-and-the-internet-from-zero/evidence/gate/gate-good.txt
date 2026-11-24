@@ -1,0 +1,24 @@
+$ bash gate/run.sh ~/blueprint/internet    # the good version
+== echo/
+PASS  gofmt
+PASS  go vet
+PASS  go test -race
+PASS  the server starts and prints 'listening on 127.0.0.1:43019'
+PASS  100 clients at once get back exactly what they sent (14,009,678 bytes)
+PASS  a line of exactly 65,536 bytes (newline included) comes back whole
+PASS  a longer line gets the error, then the connection closes
+PASS  a quiet client is disconnected after -idle 3s
+PASS  the server is still running afterwards
+== measure/
+PASS  ruff format
+PASS  ruff check
+PASS  pytest
+PASS  1,000 requests over 10 connections: results.csv has every request
+PASS  the p50 and p99 it prints match the CSV
+PASS  the plot is a PNG image
+PASS  replies that arrive in two pieces are read whole and timed to the end
+PASS  a wrong reply: exit 1 with a message (measure: request 0: sent 16 bytes, got back b'not what you sent\n')
+PASS  nothing listening: exit 1 with a message (measure: [Errno 111] Connect call failed ('127.0.0.1', 48091))
+
+Gate passed: on to the core.
+[exit 0]

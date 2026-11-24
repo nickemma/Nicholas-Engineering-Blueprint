@@ -1,0 +1,4 @@
+$ cd /tmp && echo "7226736c2339719cda28fbf3a54d71aa63bcefe376e98cef00034268dab24840  bad.tar.gz" | sha256sum --check
+bad.tar.gz: FAILED
+sha256sum: WARNING: 1 computed checksum did NOT match
+[exit 1]

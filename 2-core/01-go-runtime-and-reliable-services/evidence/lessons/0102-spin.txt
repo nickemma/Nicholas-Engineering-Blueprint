@@ -1,0 +1,3 @@
+$ go run ./drills/spin
+main woke after 11ms
+[exit 0]

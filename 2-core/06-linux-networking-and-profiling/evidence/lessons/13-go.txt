@@ -1,0 +1,24 @@
+=== RUN   TestFrameMatchesRustFixture
+--- PASS: TestFrameMatchesRustFixture (0.00s)
+=== RUN   TestQueueWaitRespectsCancellation
+--- PASS: TestQueueWaitRespectsCancellation (0.00s)
+=== RUN   TestHTTPChecksSizeAndAcknowledgment
+--- PASS: TestHTTPChecksSizeAndAcknowledgment (0.00s)
+=== RUN   TestChildUsesInboundTrace
+    trace_test.go:35: POST /wire -> rust.exchange shares inbound trace
+--- PASS: TestChildUsesInboundTrace (0.00s)
+=== RUN   TestProfileRejectsPublicBind
+--- PASS: TestProfileRejectsPublicBind (0.00s)
+PASS
+ok  	switchyard/internal/wire	1.058s
+=== RUN   TestLoadConfig
+--- PASS: TestLoadConfig (0.00s)
+=== RUN   TestJobsWaitForAWorker
+--- PASS: TestJobsWaitForAWorker (0.14s)
+=== RUN   TestShutdownIsPrompt
+--- PASS: TestShutdownIsPrompt (0.01s)
+=== RUN   TestRunFailsOnBadConfig
+--- PASS: TestRunFailsOnBadConfig (0.00s)
+PASS
+ok  	switchyard/cmd/switchyard	1.233s
+ok  	switchyard/internal/wire	0.012s

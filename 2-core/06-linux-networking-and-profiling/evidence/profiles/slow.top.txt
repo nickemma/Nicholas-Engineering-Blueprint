@@ -1,0 +1,26 @@
+File: slow
+Build ID: 2253761893182d64ac9781a8f0b2ec787e9b9246
+Type: cpu
+Time: 2026-11-21 02:12:28 PST
+Duration: 2s, Total samples = 860ms (42.91%)
+Showing nodes accounting for 860ms, 100% of 860ms total
+Showing top 18 nodes out of 58
+      flat  flat%   sum%        cum   cum%
+     790ms 91.86% 91.86%      790ms 91.86%  switchyard/internal/wire.checksum (inline)
+      50ms  5.81% 97.67%       50ms  5.81%  internal/runtime/syscall/linux.Syscall6
+      10ms  1.16% 98.84%       10ms  1.16%  net.wrapSyscallError (inline)
+      10ms  1.16%   100%       10ms  1.16%  runtime.(*pageAlloc).update
+         0     0%   100%       20ms  2.33%  bufio.(*Writer).Flush
+         0     0%   100%       30ms  3.49%  internal/poll.(*FD).Write
+         0     0%   100%       10ms  1.16%  internal/poll.(*FD).Writev
+         0     0%   100%       30ms  3.49%  internal/poll.ignoringEINTRIO (inline)
+         0     0%   100%       10ms  1.16%  internal/poll.writev
+         0     0%   100%       10ms  1.16%  internal/runtime/syscall/linux.EpollWait
+         0     0%   100%       10ms  1.16%  io.ReadAll
+         0     0%   100%       10ms  1.16%  log/slog.(*JSONHandler).Handle
+         0     0%   100%       10ms  1.16%  log/slog.(*Logger).Info
+         0     0%   100%       10ms  1.16%  log/slog.(*Logger).log
+         0     0%   100%       10ms  1.16%  log/slog.(*commonHandler).handle
+         0     0%   100%      820ms 95.35%  main.run.Handler.func22
+         0     0%   100%       20ms  2.33%  net.(*Buffers).WriteTo
+         0     0%   100%       20ms  2.33%  net.(*conn).Write

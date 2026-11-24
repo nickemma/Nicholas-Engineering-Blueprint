@@ -1,0 +1,7 @@
+$ WORKERS=4 QUEUE_CAPACITY=20 /tmp/switchyard > /dev/null & p=$!; sleep 0.5; go run ./cmd/loadjobs -rate 6 -for 10s -job 500ms; kill $p
+sent 60 jobs in 10.0 s (6.0/s): 60 accepted, 0 refused with 503
+all done after 10.5 s: 60 jobs finished, 5.71 per second
+time in the system: 0.50 s on average (0.00 s waiting + 0.50 s running)
+Little's law: 5.71/s x 0.00 s waiting = 0.0 jobs waiting on average
+measured:     queue depth averaged 0.0 over 105 samples
+[exit 0]

@@ -1,0 +1,29 @@
+
+running 2 tests
+tenant point reads, binary ranges, deletion, and pins stayed scoped across reopen
+.rotated values and historical reads verified; ciphertext changes, relocation, and unknown key IDs refused
+.
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+
+=== RUN   TestCrossLanguageRootsAndSignedInclusion
+    tree_test.go:73: Rust and Go agreed at sizes 0, 1, 2, 3, 5, and 7; signed inclusion verified for every record
+--- PASS: TestCrossLanguageRootsAndSignedInclusion (0.12s)
+=== RUN   TestWitnessRejectsSignedRewriteAndRollback
+    witness_test.go:86: witness advanced 3 -> 5 after restart; refused signed rollback, same-size conflict, and changed prefix
+--- PASS: TestWitnessRejectsSignedRewriteAndRollback (0.28s)
+PASS
+ok  	switchyard/streams/internal/audit	1.438s
+=== RUN   TestApplyWaitsForDurableAcknowledgement
+    feed_test.go:78: audit record durable before commit boundary; unlisted fields omitted
+--- PASS: TestApplyWaitsForDurableAcknowledgement (0.01s)
+=== RUN   TestKafkaReplayAtDurabilityBoundaries
+=== RUN   TestKafkaReplayAtDurabilityBoundaries/before-append
+    kafka_test.go:114: before-append: durable event IDs [event-1 event-2]; next committed offset 2
+=== RUN   TestKafkaReplayAtDurabilityBoundaries/before-commit
+    kafka_test.go:114: before-commit: durable event IDs [event-1 event-1 event-2]; next committed offset 2
+--- PASS: TestKafkaReplayAtDurabilityBoundaries (24.83s)
+    --- PASS: TestKafkaReplayAtDurabilityBoundaries/before-append (13.25s)
+    --- PASS: TestKafkaReplayAtDurabilityBoundaries/before-commit (11.15s)
+PASS
+ok  	switchyard/streams/internal/auditfeed	25.873s
+negative control: removing the tenant upper bound exposed a second namespace

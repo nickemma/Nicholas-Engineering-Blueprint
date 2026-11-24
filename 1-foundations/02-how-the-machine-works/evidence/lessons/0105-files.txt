@@ -1,0 +1,5 @@
+$ echo "hello" > notes/first.txt && echo "second line" >> notes/first.txt && cat notes/first.txt && echo "replaced" > notes/second.txt && cat notes/second.txt
+hello
+second line
+replaced
+[exit 0]

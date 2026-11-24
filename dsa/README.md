@@ -1,8 +1,14 @@
 # Data structures and algorithms
 
-Coding interviews for every role in [JOURNEY.md](../JOURNEY.md#11-career-map) include this part. This track teaches the problems **by pattern**, so you recognise the shape of a new problem instead of memorising answers. Every pattern links to a real system that uses it, often one you build in the lessons.
+Coding interviews for every role on the [careers page](../career.md) include this part. This track teaches the problems **by pattern**, so you recognise the shape of a new problem instead of memorising answers. Every pattern links to a real system that uses it, often one you build in the lessons.
 
-Start in Phase 0, with three sessions a week of 45–60 minutes each.
+Start alongside Foundations, with three sessions a week of 45–60 minutes each.
+
+## Your first practice session
+
+Use [guide 00](00-complexity/README.md#set-up-the-project) to set up local tests, then start with [Two Sum in Go and Python](01-arrays-hashing/README.md#worked-problem-1-two-sum). Open [LeetCode 1](https://leetcode.com/problems/two-sum/) and spend ten minutes finding an approach before reading the worked example. Trace it on paper, run the local tests, and submit in one language. The lesson shows how to adapt the local function to LeetCode's entry point.
+
+After submission, write down the invariant, time and space costs, and the first test that could have exposed a mistake. Use the linked LeetCode practice problems to solve a fresh prompt without the lesson open. Re-solve Two Sum later from a blank editor.
 
 ## What the interviewer is judging
 
@@ -30,28 +36,29 @@ Each pattern is a guide, built like the lessons. It covers when to recognise the
 
 | # | Pattern | Recognise when | Where real systems use it | Worked | Practice |
 |---|---|---|---|---|---|
-| 00 | [Complexity and Big-O](00-complexity/README.md) | Always | Capacity planning (Phase 5); a measured surprise about caches | 1 | 5 questions |
-| 01 | [Arrays and hashing](01-arrays-hashing/README.md) | "Seen before?", counting, grouping | Idempotency keys (Phases 2–3) | 2 | 6 |
-| 02 | [Two pointers](02-two-pointers/README.md) | Sorted input; pairs; in-place changes | Merging sorted runs in LSM compaction (Phase 3) | 2 | 4 |
-| 03 | [Sliding window](03-sliding-window/README.md) | Longest or shortest contiguous range under a rule | Rate limits (Phase 6); burn-rate windows (Phase 5) | 2 | 5 |
-| 04 | [Stack and monotonic stack](04-stack/README.md) | Matching pairs; "next greater" | The JSON parser Runway uses since Phase 0 | 2 | 4 |
-| 05 | [Binary search](05-binary-search/README.md) | Sorted data, or a yes/no question that flips once | The consistent-hash ring (Phase 4); B-tree pages (Phase 3) | 2 | 5 |
-| 06 | [Linked lists](06-linked-lists/README.md) | Pointer rewiring; O(1) reordering | LRU caches; Redis eviction (Phase 3) | 2 | 4 |
-| 07 | [Trees: DFS and BFS](07-trees/README.md) | Hierarchies; levels; paths | B-tree indexes (Phase 3); the Merkle tree (Phase 6); boosted trees (Phase 7) | 2 | 6 |
-| 08 | [Heaps and priority queues](08-heaps/README.md) | "Top *k*", "next smallest", merge *k* lists | Go's timers (Phase 1); priority lanes (Phase 7) | 2 | 5 |
-| 09 | [Graphs: BFS, DFS, topological sort](09-graphs/README.md) | Dependencies; reachability; ordering | `go build`'s package order; Kubernetes garbage collection (Phase 5) | 2 | 6 |
-| 10 | [Union-find](10-union-find/README.md) | Groups that merge | Who can reach whom in a partition (Phase 4) | 1 | 3 |
-| 11 | [Shortest paths (Dijkstra)](11-shortest-paths/README.md) | Weighted routes | Link-state routing under Phases 2 and 5 | 1 | 3 |
-| 12 | [Intervals](12-intervals/README.md) | Overlaps; merging ranges | Lock leases (Phase 4); scoring alerts against incidents (Phase 7) | 1 | 4 |
-| 13 | [Backtracking](13-backtracking/README.md) | "All combinations or permutations" | TLC exploring a TLA+ model (Phase 4) | 2 | 4 |
-| 14 | [Dynamic programming, 1D](14-dp-1d/README.md) | Best answer built from smaller answers | PostgreSQL's join-order search (Phase 3) | 2 | 5 |
+| 00 | [Complexity and Big-O](00-complexity/README.md) | Always | Capacity planning (Core 08); a measured surprise about caches | 1 | 5 questions |
+| 01 | [Arrays and hashing](01-arrays-hashing/README.md) | "Seen before?", counting, grouping | Idempotency keys (Cores 01 and 03) | 2 | 6 |
+| 02 | [Two pointers](02-two-pointers/README.md) | Sorted input; pairs; in-place changes | Merging sorted runs in LSM compaction (storage track) | 2 | 4 |
+| 03 | [Sliding window](03-sliding-window/README.md) | Longest or shortest contiguous range under a rule | Rate limits (Tenancy and abuse control); burn-rate windows (Kubernetes and delivery) | 2 | 5 |
+| 04 | [Stack and monotonic stack](04-stack/README.md) | Matching pairs; "next greater" | The JSON decoder Switchyard uses from Core 01 on | 2 | 4 |
+| 05 | [Binary search](05-binary-search/README.md) | Sorted data, or a yes/no question that flips once | The consistent-hash ring (Core 07); B-tree pages (Postgres in depth) | 2 | 5 |
+| 06 | [Linked lists](06-linked-lists/README.md) | Pointer rewiring; O(1) reordering | LRU caches; Redis eviction (Caching) | 2 | 4 |
+| 07 | [Trees: DFS and BFS](07-trees/README.md) | Hierarchies; levels; paths | B-tree indexes (Postgres in depth); the Merkle tree (Integrity and encryption); boosted trees (an AI track deep dive) | 2 | 6 |
+| 08 | [Heaps and priority queues](08-heaps/README.md) | "Top *k*", "next smallest", merge *k* lists | Go's timers (Core 01); priority lanes (ML for infrastructure) | 2 | 5 |
+| 09 | [Graphs: BFS, DFS, topological sort](09-graphs/README.md) | Dependencies; reachability; ordering | `go build`'s package order; Kubernetes garbage collection (Kubernetes and delivery) | 2 | 6 |
+| 10 | [Union-find](10-union-find/README.md) | Groups that merge | Who can reach whom in a partition (Core 07) | 1 | 3 |
+| 11 | [Shortest paths (Dijkstra)](11-shortest-paths/README.md) | Weighted routes | Link-state routing under Core 06 and Networking in depth | 1 | 3 |
+| 12 | [Intervals](12-intervals/README.md) | Overlaps; merging ranges | Lock leases (Core 07); scoring alerts against incidents (an AI track deep dive) | 1 | 4 |
+| 13 | [Backtracking](13-backtracking/README.md) | "All combinations or permutations" | TLC exploring a TLA+ model (Consensus in depth) | 2 | 4 |
+| 14 | [Dynamic programming, 1D](14-dp-1d/README.md) | Best answer built from smaller answers | PostgreSQL's join-order search (Postgres in depth) | 2 | 5 |
 | 15 | [Dynamic programming, 2D](15-dp-2d/README.md) | Two sequences; grids | `diff` and `git diff`; edit distance | 2 | 5 |
-| 16 | [Tries](16-tries/README.md) | Prefix lookups | Go's router (Phase 0); longest-prefix IP routing | 1 | 3 |
-| 17 | [Greedy](17-greedy/README.md) | A locally best choice that's provably safe | The Kubernetes scheduler (Phase 5) | 2 | 3 |
-| 18 | [Bit manipulation](18-bit-manipulation/README.md) | Flags; parity; sets of small integers | The CRC-32C (Rust Bridge); subnet masks | 2 | 2 |
-| 19 | [Design problems](19-design/README.md) | "Implement X with these operations" | Runway's token bucket (Phase 6) and hash ring (Phase 4), rebuilt | 2 | 3 |
+| 16 | [Tries](16-tries/README.md) | Prefix lookups | Go's router (Core 01); longest-prefix IP routing | 1 | 3 |
+| 17 | [Greedy](17-greedy/README.md) | A locally best choice that's provably safe | The Kubernetes scheduler (Kubernetes and delivery) | 2 | 3 |
+| 18 | [Bit manipulation](18-bit-manipulation/README.md) | Flags; parity; sets of small integers | The CRC-32C (Core 04); subnet masks | 2 | 2 |
+| 19 | [Design problems](19-design/README.md) | "Implement X with these operations" | Switchyard's token bucket (Tenancy and abuse control) and hash ring (Core 07), rebuilt | 2 | 3 |
+| 20 | [Systems data structures](20-systems-structures/README.md) | Fixed memory and approximate membership | The ring buffer and Bloom filter | 2 | — |
 
-That's **114 problems**: 34 worked and 80 to practise, all free on LeetCode. Add problems from the same patterns until you reach **150+** over the whole program; the NeetCode 150 and Blind 75 lists are good sources.
+There are **36 worked examples** and **80 practice problems**. Add problems from the same patterns until you reach **150+** over the whole program; the NeetCode 150 and Blind 75 lists are good sources.
 
 ## Your own repository
 
@@ -70,9 +77,9 @@ dsa/
   ...
 ~~~
 
-Put your practice solutions in the same folders, with tests, and the CI from Phase 0 can run them all. Each problem file starts with a short statement in your own words and a link to the original. Don't copy problem text from the site.
+Put your practice solutions in the same folders, with tests, and the CI you set up in Core 01 can run them all. Each problem file starts with a short statement in your own words and a link to the original. Don't copy problem text from the site.
 
-The worked problems are checked like the lessons: `scripts/check_guides.py` rebuilds every guide's code from the guide itself and runs its Go and Python tests, in CI.
+The worked problems are checked like the lessons: `scripts/replay_lessons.py` rebuilds every guide's code from the guide itself and runs its Go and Python tests, in CI.
 
 ## Spaced review
 
@@ -84,4 +91,4 @@ Solving a problem once isn't remembering it. Re-solve it from a blank file on a 
 
 ## Practising like the real thing
 
-From Phase 2 on, do one **timed mock** every two weeks: 45 minutes, a problem you haven't seen, talking out loud the whole time. Ask a peer to interview you if you can, or record yourself. Score yourself against the four dimensions above.
+From Core 01's second half on, do one **timed mock** every two weeks: 45 minutes, a problem you haven't seen, talking out loud the whole time. Ask a peer to interview you if you can, or record yourself. Score yourself against the four dimensions above. Then [sort your earliest miss by type](../system-design/interview-rehearsal.md#sort-each-miss) and let the type decide what you practise next. When interviews are booked, add [company-targeted practice](../system-design/interview-rehearsal.md#practising-for-a-specific-company).

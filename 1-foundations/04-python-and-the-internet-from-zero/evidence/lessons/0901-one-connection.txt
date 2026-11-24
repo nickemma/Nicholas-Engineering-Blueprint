@@ -1,0 +1,10 @@
+$ /tmp/echo 2>/dev/null > /dev/null & sleep 0.5; uv run measure.py; kill %1
+Result(request=0, connection=0, size=16, latency_ms=0.421)
+Result(request=1, connection=0, size=256, latency_ms=0.345)
+Result(request=2, connection=0, size=4096, latency_ms=0.322)
+Result(request=3, connection=0, size=16384, latency_ms=0.477)
+Result(request=4, connection=0, size=16, latency_ms=0.353)
+Result(request=5, connection=0, size=256, latency_ms=0.379)
+Result(request=6, connection=0, size=4096, latency_ms=0.399)
+Result(request=7, connection=0, size=16384, latency_ms=0.407)
+[exit 0]

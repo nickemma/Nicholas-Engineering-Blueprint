@@ -1,0 +1,4 @@
+{"path":"range","operations":75000,"hits":37500,"elapsed_ns":5136314509,"samples":0}
+{"path":"point","operations":75000,"hits":37500,"elapsed_ns":3087455463,"samples":0}
+{"path":"point","operations":75000,"hits":37500,"elapsed_ns":2669512362,"samples":0}
+{"path":"range","operations":75000,"hits":37500,"elapsed_ns":4931108076,"samples":0}

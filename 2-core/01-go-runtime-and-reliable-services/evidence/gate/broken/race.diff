@@ -1,0 +1,10 @@
+--- a/internal/coord/coord.go
++++ b/internal/coord/coord.go
+@@ -274,7 +274,5 @@
+ }
+ 
+ func (c *Coordinator) Stats() Stats {
+-	c.mu.Lock()
+-	defer c.mu.Unlock()
+ 	return Stats{Workers: len(c.workers), Leases: len(c.leases), HandedBack: c.handedBack}
+ }

@@ -1,0 +1,18 @@
+$ go build -o /tmp/switchyard ./cmd/switchyard && { /tmp/switchyard & sleep 0.5; curl -si -X POST http://127.0.0.1:8080/jobs -H "Content-Type: application/json" -d "{\"description\":\"resize images\",\"duration_ms\":300}"; echo; time curl -s -X POST http://127.0.0.1:8080/jobs/1/run; curl -s -w "  [%{http_code}]\n" -X POST http://127.0.0.1:8080/jobs/1/run; }
+2026/11/20 02:43:21 listening on http://127.0.0.1:8080
+HTTP/1.1 201 Created
+Content-Type: application/json
+Location: /jobs/1
+Date: Fri, 20 Nov 2026 02:43:21 GMT
+Content-Length: 166
+
+{"id":1,"state":"queued","description":"resize images","duration_ms":300,"created_at":"2026-11-20T02:43:21.506866148Z","updated_at":"2026-11-20T02:43:21.506866148Z"}
+
+{"id":1,"state":"completed","description":"resize images","duration_ms":300,"created_at":"2026-11-20T02:43:21.506866148Z","updated_at":"2026-11-20T02:43:21.81498033Z"}
+
+real	0m0.309s
+user	0m0.006s
+sys	0m0.000s
+{"error":"invalid state transition: completed to running"}
+  [409]
+[exit 0]

@@ -5,10 +5,11 @@ import path from "node:path";
 export const REPO = "https://github.com/nickemma/Nicholas-Engineering-Blueprint";
 const RAW = "https://raw.githubusercontent.com/nickemma/Nicholas-Engineering-Blueprint/main";
 
-// The only Markdown the site publishes. Everything else, such as notes/ and
-// plan.md, stays out, whatever is added to the repository later.
-const PUBLISHED = /^(JOURNEY\.md|(lessons|math|dsa|system-design|capstones|open-source)\/.*\.md)$/;
-const UNPUBLISHED = /(^|\/)(_[^/]*|practice)(\/|$)/;
+// The only Markdown the site publishes. Everything else, such as career.md, stays
+// out, whatever is added to the repository later. evidence/ folders (the raw runs
+// behind each module's outputs) stay on GitHub: learners don't need them.
+const PUBLISHED = /^(JOURNEY\.md|(1-foundations|2-core|3-tracks|math|dsa|system-design|ownership)\/.*\.md)$/;
+const UNPUBLISHED = /(^|\/)(_[^/]*|practice|evidence)(\/|$)/;
 
 export function isPublished(file: string): boolean {
   return PUBLISHED.test(file) && !UNPUBLISHED.test(file);

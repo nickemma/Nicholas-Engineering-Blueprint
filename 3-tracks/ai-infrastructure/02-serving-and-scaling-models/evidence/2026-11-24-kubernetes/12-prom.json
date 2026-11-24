@@ -1,0 +1,1 @@
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{"__name__":"llamacpp:requests_deferred","instance":"10.244.1.14:8080","job":"pods","namespace":"switchyard","pod":"llm-7c859d6f69-pxp2g"},"value":[1795513576.531,"0"]}]}}

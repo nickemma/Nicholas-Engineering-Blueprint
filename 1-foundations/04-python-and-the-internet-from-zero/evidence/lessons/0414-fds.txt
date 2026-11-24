@@ -1,0 +1,4 @@
+$ go build -o /tmp/echo . && { /tmp/echo 2>/dev/null > /dev/null & p=$!; sleep 0.5; for i in 1 2 3; do printf "hi\n" | nc -N -w 1 127.0.0.1 9000 > /dev/null; done; sleep 0.3; ss -tn state close-wait; ls /proc/$p/fd | wc -l; kill $p; }
+Recv-Q Send-Q Local Address:Port Peer Address:PortProcess
+7
+[exit 0]

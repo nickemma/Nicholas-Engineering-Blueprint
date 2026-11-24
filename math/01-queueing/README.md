@@ -1,8 +1,8 @@
 # 01. Probability and queueing
 
-Everything that waits is a queue: requests at a server, jobs in RabbitMQ, packets at a router, threads at a lock, GPUs at a scheduler. This guide gives you the small amount of probability that explains them, and shows why a system at 90% utilisation can feel broken when one at 70% feels fine. You check the answer three ways: a formula, a simulation, and your own Runway.
+Everything that waits is a queue: requests at a server, jobs in RabbitMQ, packets at a router, threads at a lock, GPUs at a scheduler. This guide gives you the small amount of probability that explains them, and shows why a system at 90% utilisation can feel broken when one at 70% feels fine. You check the answer three ways: a formula, a simulation, and your own Switchyard.
 
-**Real systems:** [Phase 2](../../lessons/02-connected-services/README.md) introduced Little's law; the [Performance Bridge](../../lessons/perf-bridge/README.md) found a service collapsing at its knee; the [Networking Bridge](../../lessons/network-bridge/README.md) measured a queue at a router. This is the theory behind all three, and behind every "keep utilisation under 70%" rule you'll hear.
+**Real systems:** [Core 01](../../2-core/01-go-runtime-and-reliable-services/lessons/13-worker-pools-and-backpressure.md) checks Little's law against a live queue; [Core 06](../../2-core/06-linux-networking-and-profiling/README.md) finds a service collapsing at its knee; the [deep-queue experiment](../../3-tracks/cloud-and-network/01-networking-in-depth/lessons/04-measure-a-deep-queue-under-load.md) measured a queue at a router. This is the theory behind all three, and behind every "keep utilisation under 70%" rule you'll hear.
 
 ## Set up the project
 
@@ -218,10 +218,10 @@ The tests pit one against the other, a million customers at a time:
 
 <!-- file: queueing/load.py -->
 ~~~python
-"""Send jobs to a running Runway at Poisson-random times.
+"""Send jobs to a running Switchyard at Poisson-random times.
 
 The arrival times are decided before the first request goes out, so a slow
-response can't delay the next one: an open loop, as in the Python Bridge.
+response can't delay the next one: an open loop, as in core 02.
 """
 
 import argparse
@@ -300,7 +300,7 @@ if __name__ == "__main__":
     main()
 ~~~
 
-`load.py` comes first because the tests use it. It's what you'll point at Runway below: it decides every arrival time up front, so a slow response can't hold the next request back. That's the **open loop** from the [Python Bridge](../../lessons/python-bridge/README.md). A closed loop would quietly slow down exactly when the system is struggling, and hide the queue you're trying to measure.
+`load.py` comes first because the tests use it. It's what you'll point at Switchyard below: it decides every arrival time up front, so a slow response can't hold the next request back. That's the **open loop** from [core 02](../../2-core/02-python-runtime-and-honest-measurement/README.md). A closed loop would quietly slow down exactly when the system is struggling, and hide the queue you're trying to measure.
 
 <!-- file: queueing/test_models.py -->
 ~~~python
@@ -439,15 +439,15 @@ The formula and the simulator agree closely up to 90%. At 95% and 99% the simula
 - **From 80% to 90%, it doubles again,** from 250 ms to 500, and p99 goes from 1.2 to 2.3 seconds.
 - **From 95% to 99%, it goes up five times.** The last few percent of capacity are ruinously expensive.
 
-That's the **knee** you found in the Performance Bridge. It isn't a defect in the code, it's arithmetic. It's why capacity plans aim for 60–70% utilisation, and why an autoscaler has to act before a system looks busy. It's also why a small slowdown near the knee causes a large outage: a service at 90% that gets 5% slower isn't 5% worse. It's twice as bad.
+That's the **knee** you found in Core 06. It isn't a defect in the code, it's arithmetic. It's why capacity plans aim for 60–70% utilisation, and why an autoscaler has to act before a system looks busy. It's also why a small slowdown near the knee causes a large outage: a service at 90% that gets 5% slower isn't 5% worse. It's twice as bad.
 
-## Testing it on Runway
+## Testing it on Switchyard
 
-Formulas and simulators can agree with each other and both be wrong about your system. So point this at the real thing: your Phase 5 Runway, with `WORKERS=1`, so that one consumer takes jobs from RabbitMQ one at a time. That's one server, with a queue in front of it.
+Formulas and simulators can agree with each other and both be wrong about your system. So point this at the real thing: one Switchyard worker, taking jobs one at a time from a queue. That's one server, with a queue in front of it.
 
-**This part needs your running Runway, so CI doesn't run it.** The numbers below were captured by hand, on one laptop.
+**This part was measured by hand, so CI doesn't run it.** The numbers below come from an earlier version of Switchyard, whose API queued jobs in RabbitMQ and recorded each state change in a `job_events` table; the commands are the record of that run. To repeat it on yours, run [Core 03](../../2-core/03-docker-and-postgres/README.md)'s stack with one worker, send jobs with `kload` at each utilisation, and read each job's queued, started and finished times from your own schema. The method, and the clock trap below, are the same.
 
-Start RabbitMQ and PostgreSQL with Phase 5's Compose file, then run the API and worker with one slot and a large queue, so that the queue is never full:
+Start RabbitMQ and PostgreSQL with that unit's Compose file, then run the API and worker with one slot and a large queue, so that the queue is never full:
 
 ~~~bash
 export AMQP_URL=amqp://guest:guest@localhost:5672/
@@ -477,10 +477,10 @@ Two lessons before you've run the experiment. **About 23 ms of every job is over
 
 Two kinds of job with nearly the same mean, at five utilisations, in shuffled order, three times over. Each job's description records its run. Set `S_EXP` and `S_FIXED` to your own measurements; the defaults are this laptop's, read before the problem described below was found, and `report.py`'s `cv2` values are too.
 
-<!-- file: experiments/runway_queue.sh -->
+<!-- file: experiments/queue_experiment.sh -->
 ~~~bash
 #!/bin/bash
-# Load one Runway worker at five utilisations, with jobs of two shapes, in
+# Load one Switchyard worker at five utilisations, with jobs of two shapes, in
 # shuffled order. Service times are measured first (S_EXP and S_FIXED, in
 # seconds). Each job's description records its kind, utilisation and run.
 set -eu
@@ -498,13 +498,13 @@ for run in $(seq 1 "${REPEATS:-3}"); do
 done
 ~~~
 
-<!-- run: chmod +x experiments/runway_queue.sh && bash -n experiments/runway_queue.sh -->
+<!-- run: chmod +x experiments/queue_experiment.sh && bash -n experiments/queue_experiment.sh -->
 
 It takes about 55 minutes. Keep the machine awake and otherwise idle. Then export every state change, in the order PostgreSQL stored them:
 
 ~~~bash
-chmod +x experiments/runway_queue.sh
-./experiments/runway_queue.sh
+chmod +x experiments/queue_experiment.sh
+./experiments/queue_experiment.sh
 docker compose exec -T postgres psql -U runway -At -F' ' -c \
   "select e.id, j.description, e.job_id, e.state, extract(epoch from e.at), j.duration_ms
    from job_events e join jobs j on j.id = e.job_id order by e.id" > results/events.txt
@@ -531,13 +531,13 @@ step at 42.0 s: realtime jumped -1.614s vs monotonic
 60 s: monotonic 60.171 realtime 57.003 raw 57.268
 ~~~
 
-The laptop had slept earlier, and after waking, the virtual machine's clock ran about 5% fast, while something stepped the wall clock back every half-minute to keep it right. The culprit, found later, was two time services working against each other: `chrony` speeding the clock towards the Windows host's time, and `systemd-timesyncd` stepping it back to NTP's. Real machines do milder versions of this all the time, through NTP corrections. **Never work out a duration by subtracting two wall-clock timestamps** without knowing that. Inside one process, Go's `time.Since` uses a monotonic clock for exactly this reason. Across machines, you need to think about it far harder (Phase 4).
+The laptop had slept earlier, and after waking, the virtual machine's clock ran about 5% fast, while something stepped the wall clock back every half-minute to keep it right. The culprit, found later, was two time services working against each other: `chrony` speeding the clock towards the Windows host's time, and `systemd-timesyncd` stepping it back to NTP's. Real machines do milder versions of this all the time, through NTP corrections. **Never work out a duration by subtracting two wall-clock timestamps** without knowing that. Inside one process, Go's `time.Since` uses a monotonic clock for exactly this reason. Across machines, you need to think about it far harder ([Core 07](../../2-core/07-distributed-systems-fundamentals/lessons/01-what-a-node-can-know.md)).
 
 The data was still usable. PostgreSQL's `id` gives the true order of events, so a timestamp that falls well below the latest one means the clock moved, and the step can be undone. After the repair, there isn't one negative time among 25,440 jobs, and the arrival rate lands on what was asked: 12.60 a second against 12.61. If your own machine's clock is healthy, it finds no steps and does nothing.
 
 <!-- file: queueing/report.py -->
 ~~~python
-"""Turn Runway's job_events into a table of measured queues.
+"""Turn Switchyard's job_events into a table of measured queues.
 
 Read lines of "id description job state epoch-seconds duration-ms", in id
 order, as exported by the psql command in the guide.
@@ -690,7 +690,7 @@ from queueing.simulate import simulate
 
 <!-- run: uv run ruff format . && uv run ruff check . && uv run pytest -q queueing -->
 
-### What Runway does
+### What Switchyard does
 
 ~~~bash
 uv run python -m queueing.report results/events.txt
@@ -726,7 +726,7 @@ Asking for a utilisation of 0.9 gave anything from 0.89 to 1.06, because *S* its
 ## What to do with this
 
 - **Keep headroom.** Waiting scales with 1/(1 − ρ). Decide your target from your latency objective, not from wanting to use what you've paid for.
-- **Reduce variance, not just the mean.** Separate long jobs from short ones. [Phase 7, step 9](../../lessons/07-utility-evaluation/README.md)'s short lane is exactly this: it stops a few long jobs setting everyone's queue time.
+- **Reduce variance, not just the mean.** Separate long jobs from short ones. [ML for infrastructure, lesson 07](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/07-test-scheduling-utility-and-input-drift.md) orders ready jobs by predicted size for exactly this reason: a few long jobs stop setting everyone's queue time.
 - **Watch utilisation of the bottleneck.** It's the only ρ that matters.
 - **Use Little's law as a sanity check** on any dashboard. If *L*, λ and *W* don't multiply, one of the three is measured wrongly.
 - **Never estimate from the average when the system is near the knee.** A small change in ρ makes a large change in latency.
@@ -739,7 +739,7 @@ Solve these alone, and check with the simulator or a calculator. There are no so
 2. A single-threaded server takes 4 ms per request. At what arrival rate does the mean wait reach 40 ms, for exponential service, and for fixed service?
 3. Extend `simulate` to *c* servers sharing one queue. Compare one server at speed 2 with two servers at speed 1, at the same ρ. Which is better, and why does the answer change as ρ falls?
 4. Add **hedged requests** to the simulator: send a copy to a second server if the first hasn't answered by the p95. What does it do to p99, and to utilisation?
-5. Using your own measured *S* and cv², what's the highest ρ that keeps Runway's mean queueing time under 100 ms? Test it.
+5. Using your own measured *S* and cv², what's the highest ρ that keeps Switchyard's mean queueing time under 100 ms? Test it.
 6. Your service has a retry policy of three attempts. At ρ = 0.9, 10% of requests time out. What's the effective ρ? What does that tell you about retry storms?
 
 ## Read

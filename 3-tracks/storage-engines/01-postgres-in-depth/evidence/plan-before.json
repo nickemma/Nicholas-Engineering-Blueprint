@@ -1,0 +1,97 @@
+[
+  {
+    "Plan": {
+      "Node Type": "Limit",
+      "Parallel Aware": false,
+      "Async Capable": false,
+      "Startup Cost": 1662.12,
+      "Total Cost": 1662.16,
+      "Plan Rows": 16,
+      "Plan Width": 16,
+      "Actual Rows": 16,
+      "Actual Loops": 1,
+      "Shared Hit Blocks": 910,
+      "Shared Read Blocks": 0,
+      "Shared Dirtied Blocks": 0,
+      "Shared Written Blocks": 0,
+      "Local Hit Blocks": 0,
+      "Local Read Blocks": 0,
+      "Local Dirtied Blocks": 0,
+      "Local Written Blocks": 0,
+      "Temp Read Blocks": 0,
+      "Temp Written Blocks": 0,
+      "Plans": [
+        {
+          "Node Type": "Sort",
+          "Parent Relationship": "Outer",
+          "Parallel Aware": false,
+          "Async Capable": false,
+          "Startup Cost": 1662.12,
+          "Total Cost": 1662.34,
+          "Plan Rows": 85,
+          "Plan Width": 16,
+          "Actual Rows": 16,
+          "Actual Loops": 1,
+          "Sort Key": ["run_at", "id"],
+          "Sort Method": "top-N heapsort",
+          "Sort Space Used": 25,
+          "Sort Space Type": "Memory",
+          "Shared Hit Blocks": 910,
+          "Shared Read Blocks": 0,
+          "Shared Dirtied Blocks": 0,
+          "Shared Written Blocks": 0,
+          "Local Hit Blocks": 0,
+          "Local Read Blocks": 0,
+          "Local Dirtied Blocks": 0,
+          "Local Written Blocks": 0,
+          "Temp Read Blocks": 0,
+          "Temp Written Blocks": 0,
+          "Plans": [
+            {
+              "Node Type": "Seq Scan",
+              "Parent Relationship": "Outer",
+              "Parallel Aware": false,
+              "Async Capable": false,
+              "Relation Name": "job_listing",
+              "Alias": "job_listing",
+              "Startup Cost": 0.00,
+              "Total Cost": 1660.00,
+              "Plan Rows": 85,
+              "Plan Width": 16,
+              "Actual Rows": 100,
+              "Actual Loops": 1,
+              "Filter": "((run_at <= '2026-02-01 00:00:00+00'::timestamp with time zone) AND (status = 'queued'::text))",
+              "Rows Removed by Filter": 49900,
+              "Shared Hit Blocks": 910,
+              "Shared Read Blocks": 0,
+              "Shared Dirtied Blocks": 0,
+              "Shared Written Blocks": 0,
+              "Local Hit Blocks": 0,
+              "Local Read Blocks": 0,
+              "Local Dirtied Blocks": 0,
+              "Local Written Blocks": 0,
+              "Temp Read Blocks": 0,
+              "Temp Written Blocks": 0
+            }
+          ]
+        }
+      ]
+    },
+    "Planning": {
+      "Shared Hit Blocks": 0,
+      "Shared Read Blocks": 0,
+      "Shared Dirtied Blocks": 0,
+      "Shared Written Blocks": 0,
+      "Local Hit Blocks": 0,
+      "Local Read Blocks": 0,
+      "Local Dirtied Blocks": 0,
+      "Local Written Blocks": 0,
+      "Temp Read Blocks": 0,
+      "Temp Written Blocks": 0
+    },
+    "Planning Time": 0.066,
+    "Triggers": [
+    ],
+    "Execution Time": 3.837
+  }
+]

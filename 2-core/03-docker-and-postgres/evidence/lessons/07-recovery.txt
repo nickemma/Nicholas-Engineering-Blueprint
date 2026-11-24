@@ -1,0 +1,7 @@
+=== RUN   TestRecoverInterrupted
+    recovery_test.go:34: job is queued with 0 effects
+    recovery_test.go:35: job is completed with 1 effects
+    recovery_test.go:36: restart advanced the fence and left the terminal job alone
+--- PASS: TestRecoverInterrupted (0.08s)
+PASS
+ok  	switchyard/internal/pgstore	1.114s

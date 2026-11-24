@@ -1,0 +1,6 @@
+$ uv run python drills/await.py
+task() returned coroutine; nothing has run yet
+send(None)      -> the task yields 'waiting for a socket'
+send('data')    -> the task yields 'waiting for a timer'
+send('tick')    -> StopIteration: the task returned "done with 'data' and 'tick'"
+[exit 0]

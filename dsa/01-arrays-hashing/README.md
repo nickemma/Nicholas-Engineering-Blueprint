@@ -11,11 +11,11 @@ A hash map answers "have I seen this before?" in O(1) on average. Most problems 
 - which items belong together (the same letters, the same key);
 - for two values that combine to something ("find a pair that sums to...").
 
-**Real systems:** [Phase 2's idempotency keys](../../lessons/02-connected-services/TEACHING.md#step-4-idempotency-end-to-end) are this pattern. "Have I processed this key before?" is a lookup in a map (later, in [PostgreSQL](../../lessons/03-durable-auditable-data/TEACHING.md#step-5-idempotency-keys-in-postgresql)). So is grouping by a key: Runway's cache groups jobs by tenant.
+**Real systems:** [Core 01's idempotency keys](../../2-core/01-go-runtime-and-reliable-services/lessons/14-timeouts-retries-and-idempotency.md) are this pattern. "Have I processed this key before?" is a lookup in a map (later, in [PostgreSQL](../../2-core/03-docker-and-postgres/lessons/06-a-retried-submission-survives-a-restart.md)). So is grouping by a key: Switchyard's cache groups jobs by tenant.
 
 ## Worked problem 1: Two Sum
 
-[LeetCode 1](https://leetcode.com/problems/two-sum/). Given a list of integers and a target, return the positions of the two numbers that add up to the target. Use each position at most once. Return nothing if no pair exists.
+[LeetCode 1](https://leetcode.com/problems/two-sum/). Given a list of integers and a target, return the positions of the two numbers that add up to the target. Use each position at most once. LeetCode guarantees one valid pair. The local implementation also tests inputs without a pair.
 
 | Input | Target | Output |
 |---|---|---|
@@ -130,6 +130,12 @@ uv run pytest -q arrays
 ~~~
 
 **Complexity:** O(*n*) time, O(*n*) space for the map.
+
+**Trace the duplicate case.** At index 0 for `[3, 3]` with target 6, look up 3 in the empty map, then store `3 → 0`. At index 1, the lookup finds the earlier position. Return `[0, 1]`. Before each lookup, the map contains only positions already visited.
+
+### Submit on LeetCode
+
+Choose one language in the problem editor and keep the entry point it provides. In Go, paste the local function without the package declaration and rename `TwoSum` to `twoSum`. In Python, put the local function's body inside `Solution.twoSum(self, nums, target)`. Keep the local test files in your practice workspace. Run the editor's examples, then submit. If the judge rejects a result, reproduce that input in a local test before changing your approach.
 
 ## Worked problem 2: Group Anagrams
 

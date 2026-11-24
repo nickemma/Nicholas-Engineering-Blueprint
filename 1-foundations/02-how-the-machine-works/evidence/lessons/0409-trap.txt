@@ -1,0 +1,5 @@
+$ ./catch.sh & p=$!; sleep 0.5; kill -TERM $p; wait $p; echo "exit status: $?"
+pid 4796, waiting
+got TERM, cleaning up
+exit status: 0
+[exit 0]

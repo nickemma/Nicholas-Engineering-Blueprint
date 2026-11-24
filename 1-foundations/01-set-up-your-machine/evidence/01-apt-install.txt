@@ -1,0 +1,4 @@
+$ sudo apt-get update -qq && sudo apt-get install -y -qq build-essential curl git unzip >/dev/null && echo installed
+debconf: delaying package configuration, since apt-utils is not installed
+installed
+[exit 0]

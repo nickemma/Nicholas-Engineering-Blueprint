@@ -1,6 +1,6 @@
 # Design: an authorization service for sharing
 
-**Track:** security · **Built in:** [Phase 6](../../lessons/06-safe-shared-queries/README.md) (authorization, tenants, audit), [capstone 8](../../capstones/08-consistent-authorization.md) · **Time:** 45 minutes
+**Track:** security · **Built in:** [Tenancy and abuse control](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md) (authorization, tenants), [Integrity and encryption](../../3-tracks/storage-engines/04-integrity-and-encryption/README.md) (audit) · **Time:** 45 minutes
 
 This is a worked reference. Do the design yourself first, with a timer, then read this and note what you missed.
 
@@ -96,7 +96,7 @@ flowchart LR
 
 - If the service can't answer, the answer is **no**. That makes its availability the product's availability, so run it in every region and zone.
 - Products cache **positive** answers briefly only where staleness is acceptable (`minimize_latency`), and never for protected content.
-- **Every decision is logged:** who, what, which snapshot, the answer. That's for audits and for debugging "why could Bob see this?" (Phase 6's audit log).
+- **Every decision is logged:** who, what, which snapshot, the answer. That's for audits and for debugging "why could Bob see this?" (a tamper-evident log, as in [Integrity and encryption](../../3-tracks/storage-engines/04-integrity-and-encryption/README.md)).
 
 ## 7. Trade-offs
 
@@ -127,13 +127,9 @@ flowchart LR
 
 ## 10. Where you've built this
 
-- [Phase 6](../../lessons/06-safe-shared-queries/README.md):
-  - a policy decision point behind every handler;
-  - tenant isolation down to row-level security;
-  - fail-closed checks;
-  - a tamper-evident audit log.
-- [Phase 4](../../lessons/04-replicated-state/README.md): replication and consistency models.
-- [Capstone 8](../../capstones/08-consistent-authorization.md) measures the consistency trade-off.
+- [Tenancy and abuse control](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md): an explicit policy for every route, and tenant isolation down to row-level security.
+- [Integrity and encryption](../../3-tracks/storage-engines/04-integrity-and-encryption/README.md): a tamper-evident audit log.
+- [Core 07](../../2-core/07-distributed-systems-fundamentals/README.md) and [Consensus in depth](../../3-tracks/storage-engines/02-consensus-in-depth/README.md): replication and consistency models.
 
 ## 11. What an interviewer will push on
 

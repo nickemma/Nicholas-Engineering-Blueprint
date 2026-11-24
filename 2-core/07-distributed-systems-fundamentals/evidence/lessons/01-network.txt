@@ -1,0 +1,10 @@
+=== RUN   TestOneWayLink
+--- PASS: TestOneWayLink (0.00s)
+=== RUN   TestSeedReplays
+--- PASS: TestSeedReplays (0.00s)
+=== RUN   TestSilenceLooksTheSame
+    network_test.go:69: arrivals when paused: [1 2 7 8 9]; when crashed: [1 2]
+    network_test.go:70: suspected when paused: [5 6]; when crashed: [5 6 7 8 9]
+--- PASS: TestSilenceLooksTheSame (0.00s)
+PASS
+ok  	switchyard/metad/internal/simnet	1.038s

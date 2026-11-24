@@ -1,0 +1,12 @@
+$ git commit -am "Add --help" && git switch main && git merge usage && git log --oneline --graph
+[usage de4bee1] Add --help
+ 1 file changed, 5 insertions(+)
+Switched to branch 'main'
+Updating 0402975..de4bee1
+Fast-forward
+ monitor.sh | 5 +++++
+ 1 file changed, 5 insertions(+)
+* de4bee1 Add --help
+* 0402975 Say which systems the monitor supports
+* 831b3c6 Add the system monitor
+[exit 0]

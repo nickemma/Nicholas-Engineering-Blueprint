@@ -29,7 +29,7 @@ They're equivalent in power. **In practice you use a library or service** (etcd,
 - **Losing the majority:** the system stops accepting writes. That's correct, but it's an outage.
 - **Partial partitions:** a node that can reach some peers but not the leader keeps starting elections. PreVote and CheckQuorum fix it.
 - **Slow disks:** `fsync` latency is commit latency.
-- **Using it for everything:** consensus is for small, critical metadata. Bulk data goes elsewhere, and the consensus log just points at it (see [capstone 6](../../capstones/06-checkpoint-store.md)).
+- **Using it for everything:** consensus is for small, critical metadata. Bulk data goes elsewhere, and the consensus log just points at it.
 - **FLP:** no deterministic algorithm can guarantee agreement in a fully asynchronous system with even one crash. Real systems use timeouts, and accept that liveness depends on them.
 
 ## In an interview
@@ -38,8 +38,10 @@ Don't design consensus; **use** it, and say for what: *"leader election and the 
 
 ## Where you built it
 
-[Phase 4](../../lessons/04-replicated-state/README.md), steps 1–9:
-- your own Raft on a deterministic simulated network: elections, log replication, persistence and snapshots;
+[Core 07](../../2-core/07-distributed-systems-fundamentals/README.md): your own Raft on a deterministic simulated network, with elections, log replication and persistence.
+
+[Consensus in depth](../../3-tracks/storage-engines/02-consensus-in-depth/README.md):
+- snapshots;
 - PreVote and CheckQuorum;
 - linearizability checks;
 - a TLA+ model of elections.

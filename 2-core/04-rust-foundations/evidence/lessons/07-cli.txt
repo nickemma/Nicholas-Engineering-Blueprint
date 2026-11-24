@@ -1,0 +1,5 @@
+appended at byte 0
+appended at byte 22
+0: job queued
+1: job completed
+2 records, all checksums valid

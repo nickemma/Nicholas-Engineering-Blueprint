@@ -1,0 +1,7 @@
+$ uv run python drills/errors.py
+"""The first Python program: print, variables, a list and a loop."""
+caught: [Errno 2] No such file or directory: '/nope'
+port 9000
+bad: port 'http' is not a number
+bad: port 70000 is out of range 1-65535
+[exit 0]

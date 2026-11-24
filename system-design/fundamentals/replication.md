@@ -23,7 +23,7 @@ Replication keeps copies of the same data on several machines. That buys three t
 - **Replication lag:** a user writes, then reads from a follower and doesn't see their own write. Read your own writes from the leader, or wait for the follower to catch up.
 - **Split brain:** two nodes both think they're the leader. Use consensus, and **fencing tokens** for anything they write outside the cluster.
 - **Failover that loses data:** promoting an async follower drops whatever it hadn't received.
-- **Partial partitions:** A reaches B and C, but B and C can't reach each other. Leaders can flap (Phase 4, step 6).
+- **Partial partitions:** A reaches B and C, but B and C can't reach each other. Leaders can flap ([Consensus in depth, lesson 04](../../3-tracks/storage-engines/02-consensus-in-depth/lessons/04-protect-a-healthy-majority.md)).
 
 ## In an interview
 
@@ -31,10 +31,10 @@ Say which model, synchronous or not, what a reader can see (link to [Consistency
 
 ## Where you built it
 
-- [Phase 4](../../lessons/04-replicated-state/README.md):
-  - your own Raft, with leader election, log replication, persistence and snapshots;
+- [Core 07](../../2-core/07-distributed-systems-fundamentals/README.md): your own Raft, with leader election, log replication and persistence.
+- [Consensus in depth](../../3-tracks/storage-engines/02-consensus-in-depth/README.md):
+  - snapshots;
   - PreVote and CheckQuorum against partial partitions;
   - linearizability checked with Porcupine;
   - a TLA+ model.
-- [Phase 3](../../lessons/03-durable-auditable-data/README.md): backup and restore.
-- [KESTREL](../../capstones/01-kestrel.md) studies what happens when connectivity is partial and intermittent.
+- [Postgres in depth](../../3-tracks/storage-engines/01-postgres-in-depth/README.md): backup and restore.

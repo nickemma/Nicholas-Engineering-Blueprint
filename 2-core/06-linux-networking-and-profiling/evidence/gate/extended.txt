@@ -1,0 +1,205 @@
+
+running 2 tests
+..
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 0.00s
+
+ok  	switchyard/internal/wire	1.048s
+ok  	switchyard/cmd/switchyard	1.222s
+ok  	switchyard/internal/wire	(cached)
+tcp: split frames, corrupt header refusal, HTTP bounds, and span ancestry passed
+unix: split frames, corrupt header refusal, HTTP bounds, and span ancestry passed
+tcp: split frames, corrupt header refusal, HTTP bounds, and span ancestry passed
+unix: split frames, corrupt header refusal, HTTP bounds, and span ancestry passed
+CPU 0, 4 ms busy / 4 ms sleep, 95/s, 4 s, 64 KiB
+open loop: 190 requests at 95/s over 2 s
+answers: 200 x190
+latency (2xx): p50 11.68 ms, p99 38.50 ms, max 41.09 ms
+kload itself: send lag p99 1.96 ms, max 1.96 ms; CPU 0.12 s in 2.00 s (6%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.json
+open loop: 380 requests at 95/s over 4 s
+answers: 200 x380
+latency (2xx): p50 13.41 ms, p99 32.44 ms, max 34.64 ms
+kload itself: send lag p99 1.87 ms, max 2.09 ms; CPU 0.23 s in 4.00 s (6%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/slow-profile.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/slow-profile.json
+File: slow
+Build ID: 2253761893182d64ac9781a8f0b2ec787e9b9246
+Type: cpu
+Time: 2026-11-21 02:12:28 PST
+Duration: 2s, Total samples = 860ms (42.91%)
+Showing nodes accounting for 860ms, 100% of 860ms total
+Showing top 18 nodes out of 58
+      flat  flat%   sum%        cum   cum%
+     790ms 91.86% 91.86%      790ms 91.86%  switchyard/internal/wire.checksum (inline)
+      50ms  5.81% 97.67%       50ms  5.81%  internal/runtime/syscall/linux.Syscall6
+      10ms  1.16% 98.84%       10ms  1.16%  net.wrapSyscallError (inline)
+      10ms  1.16%   100%       10ms  1.16%  runtime.(*pageAlloc).update
+         0     0%   100%       20ms  2.33%  bufio.(*Writer).Flush
+         0     0%   100%       30ms  3.49%  internal/poll.(*FD).Write
+         0     0%   100%       10ms  1.16%  internal/poll.(*FD).Writev
+         0     0%   100%       30ms  3.49%  internal/poll.ignoringEINTRIO (inline)
+         0     0%   100%       10ms  1.16%  internal/poll.writev
+         0     0%   100%       10ms  1.16%  internal/runtime/syscall/linux.EpollWait
+         0     0%   100%       10ms  1.16%  io.ReadAll
+         0     0%   100%       10ms  1.16%  log/slog.(*JSONHandler).Handle
+         0     0%   100%       10ms  1.16%  log/slog.(*Logger).Info
+         0     0%   100%       10ms  1.16%  log/slog.(*Logger).log
+         0     0%   100%       10ms  1.16%  log/slog.(*commonHandler).handle
+         0     0%   100%      820ms 95.35%  main.run.Handler.func22
+         0     0%   100%       20ms  2.33%  net.(*Buffers).WriteTo
+         0     0%   100%       20ms  2.33%  net.(*conn).Write
+open loop: 190 requests at 95/s over 2 s
+answers: 200 x190
+latency (2xx): p50 4.42 ms, p99 8.78 ms, max 10.18 ms
+kload itself: send lag p99 1.66 ms, max 1.67 ms; CPU 0.12 s in 2.00 s (6%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.json
+open loop: 380 requests at 95/s over 4 s
+answers: 200 x380
+latency (2xx): p50 4.57 ms, p99 8.90 ms, max 11.07 ms
+kload itself: send lag p99 1.58 ms, max 1.91 ms; CPU 0.26 s in 4.00 s (6%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/fast-profile.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/fast-profile.json
+File: fast
+Build ID: f220df4640c3a6f23205265550f551a5c81ea0e8
+Type: cpu
+Time: 2026-11-21 02:12:40 PST
+Duration: 2s, Total samples = 160ms ( 8.00%)
+Showing nodes accounting for 160ms, 100% of 160ms total
+Showing top 18 nodes out of 97
+      flat  flat%   sum%        cum   cum%
+      80ms 50.00% 50.00%       80ms 50.00%  internal/runtime/syscall/linux.Syscall6
+      10ms  6.25% 56.25%       10ms  6.25%  bufio.(*Writer).Write
+      10ms  6.25% 62.50%       10ms  6.25%  log/slog.appendEscapedJSONString
+      10ms  6.25% 68.75%       10ms  6.25%  runtime.(*pageAlloc).find
+      10ms  6.25% 75.00%       10ms  6.25%  runtime.memmove
+      10ms  6.25% 81.25%       20ms 12.50%  runtime.pcvalue
+      10ms  6.25% 87.50%       10ms  6.25%  runtime.scanblock
+      10ms  6.25% 93.75%       10ms  6.25%  runtime.spanClass.sizeclass
+      10ms  6.25%   100%       10ms  6.25%  runtime.step
+         0     0%   100%       10ms  6.25%  bufio.(*Reader).Peek
+         0     0%   100%       10ms  6.25%  bufio.(*Reader).Read
+         0     0%   100%       10ms  6.25%  bufio.(*Reader).fill
+         0     0%   100%       10ms  6.25%  bufio.(*Writer).Flush
+         0     0%   100%       10ms  6.25%  fmt.Fprintf
+         0     0%   100%       10ms  6.25%  internal/poll.(*FD).Read
+         0     0%   100%       10ms  6.25%  internal/poll.(*FD).Write
+         0     0%   100%       50ms 31.25%  internal/poll.(*FD).Writev
+         0     0%   100%       20ms 12.50%  internal/poll.ignoringEINTRIO (inline)
+pair 1: fast
+open loop: 190 requests at 95/s over 2 s
+answers: 200 x190
+latency (2xx): p50 4.32 ms, p99 9.36 ms, max 12.67 ms
+kload itself: send lag p99 1.54 ms, max 1.61 ms; CPU 0.12 s in 2.00 s (6%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.json
+open loop: 380 requests at 95/s over 4 s
+answers: 200 x380
+latency (2xx): p50 4.30 ms, p99 8.76 ms, max 9.53 ms
+kload itself: send lag p99 1.66 ms, max 1.80 ms; CPU 0.22 s in 4.00 s (5%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/fast/run-1.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/fast/run-1.json
+pair 1: slow
+open loop: 190 requests at 95/s over 2 s
+answers: 200 x190
+latency (2xx): p50 11.53 ms, p99 24.54 ms, max 25.30 ms
+kload itself: send lag p99 2.00 ms, max 2.02 ms; CPU 0.11 s in 2.00 s (5%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.json
+open loop: 380 requests at 95/s over 4 s
+answers: 200 x380
+latency (2xx): p50 11.71 ms, p99 22.79 ms, max 26.50 ms
+kload itself: send lag p99 2.20 ms, max 2.98 ms; CPU 0.22 s in 4.00 s (6%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/slow/run-1.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/slow/run-1.json
+pair 2: slow
+open loop: 190 requests at 95/s over 2 s
+answers: 200 x190
+latency (2xx): p50 11.72 ms, p99 23.58 ms, max 25.44 ms
+kload itself: send lag p99 1.81 ms, max 2.21 ms; CPU 0.11 s in 2.00 s (5%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.json
+open loop: 380 requests at 95/s over 4 s
+answers: 200 x380
+latency (2xx): p50 11.69 ms, p99 28.83 ms, max 32.12 ms
+kload itself: send lag p99 1.95 ms, max 2.23 ms; CPU 0.22 s in 4.00 s (6%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/slow/run-2.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/slow/run-2.json
+pair 2: fast
+open loop: 190 requests at 95/s over 2 s
+answers: 200 x190
+latency (2xx): p50 4.44 ms, p99 8.85 ms, max 11.83 ms
+kload itself: send lag p99 1.66 ms, max 1.91 ms; CPU 0.11 s in 2.00 s (6%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.json
+open loop: 380 requests at 95/s over 4 s
+answers: 200 x380
+latency (2xx): p50 4.34 ms, p99 8.48 ms, max 9.08 ms
+kload itself: send lag p99 1.42 ms, max 1.75 ms; CPU 0.23 s in 4.00 s (6%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/fast/run-2.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/fast/run-2.json
+pair 3: slow
+open loop: 190 requests at 95/s over 2 s
+answers: 200 x190
+latency (2xx): p50 11.61 ms, p99 32.72 ms, max 32.85 ms
+kload itself: send lag p99 1.74 ms, max 1.78 ms; CPU 0.11 s in 2.00 s (5%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.json
+open loop: 380 requests at 95/s over 4 s
+answers: 200 x380
+latency (2xx): p50 11.55 ms, p99 24.75 ms, max 33.49 ms
+kload itself: send lag p99 2.08 ms, max 2.29 ms; CPU 0.22 s in 4.01 s (5%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/slow/run-3.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/slow/run-3.json
+pair 3: fast
+open loop: 190 requests at 95/s over 2 s
+answers: 200 x190
+latency (2xx): p50 4.49 ms, p99 9.02 ms, max 9.69 ms
+kload itself: send lag p99 1.47 ms, max 2.07 ms; CPU 0.12 s in 2.00 s (6%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.json
+open loop: 380 requests at 95/s over 4 s
+answers: 200 x380
+latency (2xx): p50 4.35 ms, p99 9.10 ms, max 10.09 ms
+kload itself: send lag p99 1.50 ms, max 1.64 ms; CPU 0.22 s in 4.00 s (6%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/fast/run-3.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/fast/run-3.json
+pair 4: slow
+open loop: 190 requests at 95/s over 2 s
+answers: 200 x190
+latency (2xx): p50 11.39 ms, p99 29.87 ms, max 38.72 ms
+kload itself: send lag p99 1.87 ms, max 2.27 ms; CPU 0.12 s in 2.00 s (6%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.json
+open loop: 380 requests at 95/s over 4 s
+answers: 200 x380
+latency (2xx): p50 11.55 ms, p99 24.85 ms, max 31.85 ms
+kload itself: send lag p99 2.02 ms, max 2.39 ms; CPU 0.23 s in 4.01 s (6%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/slow/run-4.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/slow/run-4.json
+pair 4: fast
+open loop: 190 requests at 95/s over 2 s
+answers: 200 x190
+latency (2xx): p50 4.31 ms, p99 10.94 ms, max 19.27 ms
+kload itself: send lag p99 1.85 ms, max 1.94 ms; CPU 0.11 s in 2.00 s (6%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.json
+open loop: 380 requests at 95/s over 4 s
+answers: 200 x380
+latency (2xx): p50 4.35 ms, p99 8.82 ms, max 11.66 ms
+kload itself: send lag p99 1.43 ms, max 2.07 ms; CPU 0.22 s in 4.00 s (6%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/fast/run-4.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/fast/run-4.json
+pair 5: fast
+open loop: 190 requests at 95/s over 2 s
+answers: 200 x190
+latency (2xx): p50 4.50 ms, p99 38.20 ms, max 41.70 ms
+kload itself: send lag p99 1.51 ms, max 1.69 ms; CPU 0.13 s in 2.00 s (6%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.json
+open loop: 380 requests at 95/s over 4 s
+answers: 200 x380
+latency (2xx): p50 4.55 ms, p99 9.06 ms, max 14.02 ms
+kload itself: send lag p99 1.52 ms, max 1.54 ms; CPU 0.27 s in 4.00 s (7%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/fast/run-5.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/fast/run-5.json
+pair 5: slow
+open loop: 190 requests at 95/s over 2 s
+answers: 200 x190
+latency (2xx): p50 12.05 ms, p99 33.66 ms, max 36.77 ms
+kload itself: send lag p99 2.28 ms, max 2.32 ms; CPU 0.12 s in 2.00 s (6%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/warmup.json
+open loop: 380 requests at 95/s over 4 s
+answers: 200 x380
+latency (2xx): p50 11.31 ms, p99 22.08 ms, max 22.59 ms
+kload itself: send lag p99 2.04 ms, max 2.58 ms; CPU 0.22 s in 4.00 s (5%)
+wrote /tmp/tmp.rjyi0qfQLj/wire-profile/slow/run-5.csv and /tmp/tmp.rjyi0qfQLj/wire-profile/slow/run-5.json
+competitor used 3558 CPU ticks
+qdisc netem 8006: root refcnt 17 limit 1000 delay 1ms loss 0.05%
+ Sent 1511162 bytes 20821 pkt (dropped 8, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+p50 A (/tmp/tmp.rjyi0qfQLj/wire-profile/slow, 5 runs): 11.71 11.69 11.55 11.55 11.31 ms
+p50 B (/tmp/tmp.rjyi0qfQLj/wire-profile/fast, 5 runs): 4.29 4.34 4.35 4.35 4.55 ms
+p50 B - A: -7.19 ms, 95% CI [-7.32, -7.03] ms: B is faster
+p99 A (/tmp/tmp.rjyi0qfQLj/wire-profile/slow, 5 runs): 22.79 28.83 24.75 24.85 22.09 ms
+p99 B (/tmp/tmp.rjyi0qfQLj/wire-profile/fast, 5 runs): 8.76 8.48 9.10 8.82 9.06 ms
+p99 B - A: -15.81 ms, 95% CI [-17.97, -13.97] ms: B is faster

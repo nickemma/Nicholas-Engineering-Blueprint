@@ -1,0 +1,2 @@
+job state: completed
+effect count: 1

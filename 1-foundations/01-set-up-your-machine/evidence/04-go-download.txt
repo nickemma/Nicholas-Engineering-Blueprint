@@ -1,0 +1,3 @@
+$ curl -fsSLO https://go.dev/dl/go1.27.4.linux-amd64.tar.gz && ls -l go1.27.4.linux-amd64.tar.gz
+-rw-rw-r-- 1 ada ada 70680823 Nov 18 16:20 go1.27.4.linux-amd64.tar.gz
+[exit 0]

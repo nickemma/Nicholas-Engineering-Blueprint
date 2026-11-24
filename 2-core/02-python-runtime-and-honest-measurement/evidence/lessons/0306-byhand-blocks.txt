@@ -1,0 +1,4 @@
+$ uv run python drills/byhand.py | tail -2
+ 0.80 s  c got back b'c 2\n'
+ 0.90 s  all tasks finished, in one thread
+[exit 0]

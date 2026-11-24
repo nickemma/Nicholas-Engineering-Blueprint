@@ -1,0 +1,47 @@
+    Checking switchyard-edge v0.1.0 (/tmp/blueprint-cn03/work)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.89s
+   Compiling switchyard-edge v0.1.0 (/tmp/blueprint-cn03/work)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.01s
+     Running unittests src/lib.rs (target/debug/deps/switchyard_edge-73cdee4798a77eab)
+
+running 5 tests
+test breaker::tests::a_healthy_response_resets_the_failure_count ... ok
+test admin::tests::generations_and_digest ... ok
+test breaker::tests::cancelled_probe_releases_recovery_after_cooldown ... ok
+test breaker::tests::admits_one_probe_reopens_and_recovers ... ok
+test tcp::tests::relays_bytes_after_client_half_close ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/switchyard_edge-28731d2fe5a2013a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests switchyard_edge
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.09s
+=== RUN   TestOpenBao
+    bao_test.go:21: run the isolated OpenBao profile
+--- SKIP: TestOpenBao (0.00s)
+=== RUN   TestRoutes
+    cluster_test.go:189: unhealthy candidate rejected, old request drained, new route served, retry acknowledged, rollback applied
+--- PASS: TestRoutes (0.05s)
+=== RUN   TestManagement
+2026/11/23 01:39:57 http: TLS handshake error from 127.0.0.1:56768: unexpected peer identity
+    management_test.go:125: unhealthy candidate rejected, old request drained, new route served, retry acknowledged, rollback applied
+    management_test.go:126: wrong-role peer left generation unchanged
+    management_test.go:168: fresh TLS handshakes observed serial pairs 3/2, 3/5, 6/5; generation 3 read back
+--- PASS: TestManagement (0.27s)
+=== RUN   TestEvents
+    webhook_test.go:61: signed event stored once; invalid, expired, conflicting, unregistered, and redirected delivery refused
+--- PASS: TestEvents (0.01s)
+PASS
+ok  	switchyard/edge/control	1.365s
+    cluster_test.go:189: expected unchanged generation 1, got {Result:duplicate Snapshot:{Generation:1 Order:[1 0] Digest:b0e4f9bb7b55e4b181760ae93c958c14b451a7556206dfa952d81f0f2165a9da}}, <nil>
+proxy control plane gate passed

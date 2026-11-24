@@ -1,0 +1,13 @@
+$ uv run python -c "from pathlib import Path; Path(\"/nope\").read_text()"
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    from pathlib import Path; Path("/nope").read_text()
+                              ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/ada/.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ada/.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/nope'
+[exit 1]

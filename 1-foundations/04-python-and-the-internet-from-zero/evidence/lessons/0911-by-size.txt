@@ -1,0 +1,20 @@
+$ for c in 1 100; do echo "connections: $c"; uv run python -c "
+from pathlib import Path
+from results import read_csv
+from stats import percentile
+results = read_csv(Path(\"c$c.csv\"))
+for size in sorted({r.size for r in results}):
+    ms = [r.latency_ms for r in results if r.size == size]
+    print(f\"{size:>6} bytes: p50 {percentile(ms, 50):.3f} ms, p99 {percentile(ms, 99):.3f} ms\")
+"; done
+connections: 1
+    16 bytes: p50 0.343 ms, p99 0.557 ms
+   256 bytes: p50 0.348 ms, p99 0.515 ms
+  4096 bytes: p50 0.364 ms, p99 0.640 ms
+ 16384 bytes: p50 0.384 ms, p99 0.627 ms
+connections: 100
+    16 bytes: p50 11.645 ms, p99 20.254 ms
+   256 bytes: p50 11.684 ms, p99 20.891 ms
+  4096 bytes: p50 11.637 ms, p99 20.962 ms
+ 16384 bytes: p50 11.648 ms, p99 20.996 ms
+[exit 0]

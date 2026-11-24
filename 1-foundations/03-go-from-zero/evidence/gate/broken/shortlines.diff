@@ -1,0 +1,11 @@
+diff --color -ruN final/cmd/loganalyse/main.go broken/shortlines/cmd/loganalyse/main.go
+--- final/cmd/loganalyse/main.go	2026-11-18 22:25:31.400307366 -0800
++++ broken/shortlines/cmd/loganalyse/main.go	2026-11-18 22:29:23.074462056 -0800
+@@ -61,7 +61,6 @@
+ 	}
+ 
+ 	scanner := bufio.NewScanner(f)
+-	scanner.Buffer(make([]byte, 64*1024), 1024*1024) // allow lines up to 1 MiB
+ 	n := 0
+ 	for scanner.Scan() {
+ 		n++

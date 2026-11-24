@@ -1,0 +1,6 @@
+$ mkdir echo && cd echo && go mod init echo && cat go.mod
+go: creating new go.mod: module echo
+module echo
+
+go 1.27.4
+[exit 0]

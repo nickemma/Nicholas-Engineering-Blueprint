@@ -23,10 +23,10 @@ test("private files and templates are never published", () => {
   for (const file of ["career.md", "plan.md", "README.md", "notes/failures.md", "notes/learned/00-a.md"]) {
     assert.equal(isPublished(file), false, file);
   }
-  for (const file of ["lessons/_TEMPLATE.md", "system-design/_template.md", "lessons/00-a/practice/x.md"]) {
+  for (const file of ["lessons/_TEMPLATE.md", "system-design/_template.md", "lessons/00-a/practice/x.md", "2-core/02-a/evidence/README.md"]) {
     assert.equal(isPublished(file), false, file);
   }
-  for (const file of files) assert.equal(isPublished(file), true, file);
+  for (const file of files) assert.equal(isPublished(file), !file.startsWith("lessons/"), file);
 });
 
 test("files map to urls", () => {
@@ -34,7 +34,7 @@ test("files map to urls", () => {
   assert.equal(urlOf("lessons/00-a/README.md"), "/lessons/00-a/");
   assert.equal(urlOf("lessons/00-a/TEACHING.md"), "/lessons/00-a/guide/");
   assert.equal(urlOf("lessons/00-a/exercises.md"), "/lessons/00-a/exercises/");
-  assert.equal(urlOf("capstones/01-kestrel.md"), "/capstones/01-kestrel/");
+  assert.equal(urlOf("2-core/02-a/lessons/01-b.md"), "/2-core/02-a/lessons/01-b/");
 });
 
 test("links between published files stay on the site", () => {
@@ -58,7 +58,7 @@ test("anchors find the page of a split guide", () => {
 
 test("everything else goes to GitHub, and external links are left alone", () => {
   const repo = "https://github.com/nickemma/Nicholas-Engineering-Blueprint";
-  assert.equal(resolveHref("scripts/check_guides.py", "JOURNEY.md", index), `${repo}/blob/main/scripts/check_guides.py`);
+  assert.equal(resolveHref("scripts/replay_lessons.py", "JOURNEY.md", index), `${repo}/blob/main/scripts/replay_lessons.py`);
   assert.equal(resolveHref("notes/", "JOURNEY.md", index), `${repo}/tree/main/notes`);
   assert.equal(resolveHref("https://go.dev/", "JOURNEY.md", index), "https://go.dev/");
   assert.equal(resolveHref("mailto:a@b.c", "JOURNEY.md", index), "mailto:a@b.c");
@@ -73,10 +73,14 @@ test("images load from the repository", () => {
 
 test("the real route parses", () => {
   const stops = parseJourney(fs.readFileSync("../JOURNEY.md", "utf8"));
-  assert.equal(stops.length, 15);
-  assert.equal(stops[0].url, "/lessons/00-request-service/");
-  assert.equal(stops.filter((stop) => stop.bridge).length, 4);
-  assert.equal(stops.at(-1)!.url, "/capstones/");
-  assert.equal(totalWeeks(stops), 94);
-  assert.equal(new Set(stops.map((stop) => stop.id)).size, 15);
+  assert.equal(stops.length, 32);
+  assert.equal(stops[0].url, "/1-foundations/01-set-up-your-machine/");
+  assert.equal(stops.filter((stop) => stop.stage === "Foundations").length, 4);
+  assert.equal(stops.filter((stop) => stop.stage === "The core").length, 8);
+  assert.equal(stops.filter((stop) => stop.bridge).length, 6);
+  assert.equal(stops.filter((stop) => stop.stage === "Storage engines").length, 5);
+  assert.equal(stops.at(-1)!.url, "/3-tracks/cloud-and-network/04-capstone-programmable-edge-proxy/");
+  const early = stops.filter((stop) => stop.stage === "Foundations" || stop.stage === "The core");
+  assert.equal(totalWeeks(early), 43);
+  assert.equal(new Set(stops.map((stop) => stop.id)).size, 32);
 });

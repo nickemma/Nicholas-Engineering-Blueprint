@@ -1,0 +1,44 @@
+$ uv run python drills/bytecode.py
+== the bytecode of total()
+  6           RESUME                   0
+
+  7           LOAD_SMALL_INT           0
+              STORE_FAST               1 (t)
+
+  8           LOAD_FAST_BORROW         0 (numbers)
+              GET_ITER
+      L1:     FOR_ITER                11 (to L2)
+              STORE_FAST               2 (n)
+
+  9           LOAD_FAST_BORROW_LOAD_FAST_BORROW 18 (t, n)
+              BINARY_OP               13 (+=)
+              STORE_FAST               1 (t)
+              JUMP_BACKWARD           13 (to L1)
+
+  8   L2:     END_FOR
+              POP_ITER
+
+ 10           LOAD_FAST_BORROW         1 (t)
+              RETURN_VALUE
+== after 100 calls, specialised for ints and lists
+  6           RESUME_CHECK             0
+
+  7           LOAD_SMALL_INT           0
+              STORE_FAST               1 (t)
+
+  8           LOAD_FAST_BORROW         0 (numbers)
+              GET_ITER
+      L1:     FOR_ITER_LIST           11 (to L2)
+              STORE_FAST               2 (n)
+
+  9           LOAD_FAST_BORROW_LOAD_FAST_BORROW 18 (t, n)
+              BINARY_OP_ADD_INT       13 (+=)
+              STORE_FAST               1 (t)
+              JUMP_BACKWARD_NO_JIT    13 (to L1)
+
+  8   L2:     END_FOR
+              POP_ITER
+
+ 10           LOAD_FAST_BORROW         1 (t)
+              RETURN_VALUE
+[exit 0]

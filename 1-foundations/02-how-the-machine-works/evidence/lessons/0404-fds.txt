@@ -1,0 +1,7 @@
+$ script -qc "bash --norc -i -c \"ls -l /proc/\\\$\\\$/fd; true\"" /dev/null | tr -d "\r"
+total 0
+lrwx------ 1 ada ada 64 Nov 18 16:47 0 -> /dev/pts/0
+lrwx------ 1 ada ada 64 Nov 18 16:47 1 -> /dev/pts/0
+lrwx------ 1 ada ada 64 Nov 18 16:47 2 -> /dev/pts/0
+lrwx------ 1 ada ada 64 Nov 18 16:47 255 -> /dev/pts/0
+[exit 0]

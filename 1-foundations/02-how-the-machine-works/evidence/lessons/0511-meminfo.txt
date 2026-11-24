@@ -1,0 +1,5 @@
+$ grep -E "^(MemTotal|MemFree|MemAvailable):" /proc/meminfo
+MemTotal:        7776128 kB
+MemFree:         5695244 kB
+MemAvailable:    6060388 kB
+[exit 0]

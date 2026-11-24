@@ -1,0 +1,16 @@
+$ /tmp/switchyard 2>/dev/null & sleep 0.5; J="Content-Type: application/json"; U=http://127.0.0.1:8080; curl -s -o /dev/null -X POST $U/jobs -H "$J" -d "{\"description\":\"one\"}"; curl -s -w "  [%{http_code}]\n" -X POST $U/jobs -H "$J" -d "{}"; curl -s -w "  [%{http_code}]\n" -X POST $U/jobs -H "$J" -d "{\"description\":\"x\",\"priority\":1}"; curl -s -w "  [%{http_code}]\n" -X POST $U/jobs -d "{\"description\":\"x\"}"; curl -s -w "  [%{http_code}]\n" -X POST $U/jobs -H "$J" -d "{\"description\":\"$(printf "a%.0s" {1..2000})\"}"; curl -s -w "  [%{http_code}]\n" $U/jobs/99; curl -s -w "  [%{http_code}]\n" $U/jobs/abc; curl -si -X DELETE $U/jobs/1 | head -2
+{"error":"description must be between 1 and 200 characters"}
+  [400]
+{"error":"unknown field \"priority\""}
+  [400]
+{"error":"Content-Type must be application/json"}
+  [415]
+{"error":"request body must not exceed 1024 bytes"}
+  [413]
+{"error":"job not found"}
+  [404]
+{"error":"job id must be a positive integer"}
+  [400]
+HTTP/1.1 405 Method Not Allowed
+Allow: GET, HEAD
+[exit 0]

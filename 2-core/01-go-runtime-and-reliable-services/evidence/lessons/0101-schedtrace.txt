@@ -1,0 +1,8 @@
+$ go build -o sched ./drills/sched && GODEBUG=schedtrace=1000 ./sched; rm sched
+SCHED 0ms: gomaxprocs=16 idleprocs=13 threads=4 spinningthreads=1 needspinning=0 idlethreads=0 runqueue=0 [ 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ] schedticks=[ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ]
+CPUs: 16 GOMAXPROCS: 16
+goroutines: 10001
+SCHED 1002ms: gomaxprocs=16 idleprocs=16 threads=18 spinningthreads=0 needspinning=0 idlethreads=16 runqueue=0 [ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ] schedticks=[ 1332 107 116 81 87 101 77 91 139 138 174 188 2088 2762 2691 535 ]
+SCHED 2007ms: gomaxprocs=16 idleprocs=14 threads=18 spinningthreads=1 needspinning=0 idlethreads=14 runqueue=129 [ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 179 0 ] schedticks=[ 1332 107 116 81 87 519 77 91 139 138 174 722 2088 2762 3660 1415 ]
+goroutines after: 1
+[exit 0]

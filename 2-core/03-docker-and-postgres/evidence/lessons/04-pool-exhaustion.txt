@@ -1,0 +1,6 @@
+=== RUN   TestPoolExhaustion
+    pool_test.go:57: HTTP 503 after 51ms with 1 cancelled acquisition(s)
+    pool_test.go:67: HTTP 201 after the connection was returned
+--- PASS: TestPoolExhaustion (0.09s)
+PASS
+ok  	switchyard/internal/pgstore	1.116s

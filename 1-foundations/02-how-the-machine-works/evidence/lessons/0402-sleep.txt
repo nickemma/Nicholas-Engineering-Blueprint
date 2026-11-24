@@ -1,0 +1,6 @@
+$ echo "this shell: $$"; sleep 300 & echo "started: $!"; ps -o pid,ppid,stat,etime,command -p $!; kill $!
+this shell: 4757
+started: 4759
+    PID    PPID STAT     ELAPSED COMMAND
+   4759    4757 S          00:00 sleep 300
+[exit 0]

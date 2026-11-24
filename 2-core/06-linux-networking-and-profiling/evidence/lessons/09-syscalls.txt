@@ -1,0 +1,2 @@
+msync(0x7d9ef7000000, 8388608, MS_SYNC) = 0
+fsync(3)                                = 0

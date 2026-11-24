@@ -1,0 +1,11 @@
+--- a/cmd/switchyard/main.go
++++ b/cmd/switchyard/main.go
+@@ -186,7 +186,7 @@
+ 	background.Add(2)
+ 	go func() {
+ 		defer background.Done()
+-		coordinator.Run(loops, cfg.LeaseTTL/6)
++		<-loops.Done() // the reconcile loop never runs
+ 	}()
+ 	go func() {
+ 		defer background.Done()

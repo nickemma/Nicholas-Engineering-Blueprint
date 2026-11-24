@@ -1,0 +1,18 @@
+$ gofmt -l . && go vet ./... && go test -race -v ./... 2>&1 | grep -E "^(=== RUN|--- |ok|FAIL|PASS)"
+=== RUN   TestEcho
+=== RUN   TestEcho/one_line
+=== RUN   TestEcho/several_lines
+=== RUN   TestEcho/windows_line_ending
+=== RUN   TestEcho/empty_line
+=== RUN   TestEcho/last_line_without_newline
+=== RUN   TestEcho/longest_line_allowed
+--- PASS: TestEcho (0.02s)
+=== RUN   TestLineTooLong
+--- PASS: TestLineTooLong (0.00s)
+=== RUN   TestIdleConnectionIsClosed
+--- PASS: TestIdleConnectionIsClosed (0.10s)
+=== RUN   TestManyClientsAtOnce
+--- PASS: TestManyClientsAtOnce (0.07s)
+PASS
+ok  	echo	1.216s
+[exit 0]

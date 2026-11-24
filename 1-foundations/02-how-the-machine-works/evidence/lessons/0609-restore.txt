@@ -1,0 +1,10 @@
+$ git status --short && git restore monitor.sh && git status --short && echo "clean again"
+ M monitor.sh
+?? catch.sh
+?? hello.sh
+?? notes/
+?? catch.sh
+?? hello.sh
+?? notes/
+clean again
+[exit 0]

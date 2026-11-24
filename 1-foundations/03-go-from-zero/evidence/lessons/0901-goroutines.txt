@@ -1,0 +1,6 @@
+$ go run ./drills/goroutines
+results: [0 10 20 30 40]
+buffered: 2 of 2
+first second
+1 4 9 16 25 
+[exit 0]

@@ -1,0 +1,57 @@
+$ bash gate/run.sh ~/your-repo    # the allfiles version
+== tally/
+PASS  gofmt
+PASS  go vet
+PASS  go test -race
+PASS  a log with 14 kinds of malformed line, a 200 KB line, \r\n and no final newline
+PASS  an empty input
+PASS  5,000 lines
+PASS  -path /api on the log with traps
+PASS  -path /api/jobs on 5,000 lines
+PASS  tally -nope: exit 2 with a message
+PASS  tally -path: exit 2 with a message
+PASS  tally extra-argument: exit 2 with a message
+PASS  a million lines counted correctly
+PASS  at most 64 MiB of memory for a 62 MiB log (it used 34 MiB)
+== report/
+PASS  ruff format
+PASS  ruff check
+FAIL  pytest, without tally built
+      capsys = <_pytest.capture.CaptureFixture object at 0x79fcbb4b3390>
+      
+          def test_whole_run(tmp_path, capsys):
+              (tmp_path / "a.log").write_text("x\n")
+              (tmp_path / "b.log").write_text("y\n")
+              tally = fake_tally(tmp_path, f"print({FAKE!r})")
+              assert (
+                  main([str(tmp_path), "--tally", tally, "--png", str(tmp_path / "c.png")]) == 0
+              )
+              rows = capsys.readouterr().out.splitlines()
+      >       assert [r.split()[0] for r in rows] == ["file", "a.log", "b.log"]
+      E       AssertionError: assert ['file', 'a.l...ake_tally.py'] == ['file', 'a.log', 'b.log']
+      E         
+      E         Left contains one more item: 'fake_tally.py'
+      E         Use -v to get more diff
+      
+      test_report.py:49: AssertionError
+      =========================== short test summary info ============================
+      FAILED test_report.py::test_whole_run - AssertionError: assert ['file', 'a.l....
+      1 failed, 3 passed in 2.00s
+FAIL  report.py on three logs: the table
+      want:
+      file lines malformed p50_ms p99_ms
+      empty.log 0 0 - -
+      random.log 5000 0 999 1980
+      traps.log 302 28 940 1951
+      got:
+      file lines malformed p50_ms p99_ms
+      answers.json 0 1 - -
+      empty.log 0 0 - -
+      notes.txt 0 0 - -
+      random.log 5000 0 999 1980
+      traps.log 302 28 940 1951
+PASS  report.py: the chart is a PNG image
+PASS  report.py when tally fails: exit 1 with a message (report: answers.json: tally exited 1: tally: something went wrong)
+
+Gate failed: fix each FAIL above and run it again, or take the Foundations module that covers it.
+[exit 1]

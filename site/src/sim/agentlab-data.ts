@@ -1,4 +1,4 @@
-// Generated from lessons/09-secure-ai-layer/evidence (steps 6 and 7) by the
+// Generated from 3-tracks/ai-infrastructure/04-securing-the-ai-layer/evidence (steps 6 and 7) by the
 // author's capture tooling. Recorded runs: do not edit by hand.
 import type { Case } from "./agentlab.ts";
 

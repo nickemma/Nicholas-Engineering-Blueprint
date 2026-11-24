@@ -1,0 +1,72 @@
+[
+  {
+    "Plan": {
+      "Node Type": "Limit",
+      "Parallel Aware": false,
+      "Async Capable": false,
+      "Startup Cost": 0.14,
+      "Total Cost": 28.55,
+      "Plan Rows": 16,
+      "Plan Width": 16,
+      "Actual Rows": 16,
+      "Actual Loops": 1,
+      "Shared Hit Blocks": 16,
+      "Shared Read Blocks": 1,
+      "Shared Dirtied Blocks": 0,
+      "Shared Written Blocks": 0,
+      "Local Hit Blocks": 0,
+      "Local Read Blocks": 0,
+      "Local Dirtied Blocks": 0,
+      "Local Written Blocks": 0,
+      "Temp Read Blocks": 0,
+      "Temp Written Blocks": 0,
+      "Plans": [
+        {
+          "Node Type": "Index Only Scan",
+          "Parent Relationship": "Outer",
+          "Parallel Aware": false,
+          "Async Capable": false,
+          "Scan Direction": "Forward",
+          "Index Name": "job_listing_ready",
+          "Relation Name": "job_listing",
+          "Alias": "job_listing",
+          "Startup Cost": 0.14,
+          "Total Cost": 195.44,
+          "Plan Rows": 110,
+          "Plan Width": 16,
+          "Actual Rows": 16,
+          "Actual Loops": 1,
+          "Index Cond": "(run_at <= '2026-02-01 00:00:00+00'::timestamp with time zone)",
+          "Rows Removed by Index Recheck": 0,
+          "Heap Fetches": 16,
+          "Shared Hit Blocks": 16,
+          "Shared Read Blocks": 1,
+          "Shared Dirtied Blocks": 0,
+          "Shared Written Blocks": 0,
+          "Local Hit Blocks": 0,
+          "Local Read Blocks": 0,
+          "Local Dirtied Blocks": 0,
+          "Local Written Blocks": 0,
+          "Temp Read Blocks": 0,
+          "Temp Written Blocks": 0
+        }
+      ]
+    },
+    "Planning": {
+      "Shared Hit Blocks": 32,
+      "Shared Read Blocks": 1,
+      "Shared Dirtied Blocks": 0,
+      "Shared Written Blocks": 0,
+      "Local Hit Blocks": 0,
+      "Local Read Blocks": 0,
+      "Local Dirtied Blocks": 0,
+      "Local Written Blocks": 0,
+      "Temp Read Blocks": 0,
+      "Temp Written Blocks": 0
+    },
+    "Planning Time": 0.310,
+    "Triggers": [
+    ],
+    "Execution Time": 0.177
+  }
+]

@@ -1,0 +1,8 @@
+$ uv run pytest -q
+   Building kload @ file:///home/ada/blueprint/kload
+      Built kload @ file:///home/ada/blueprint/kload
+Uninstalled 1 package in 0.65ms
+Installed 8 packages in 7ms
+..........................                                               [100%]
+26 passed in 0.27s
+[exit 0]

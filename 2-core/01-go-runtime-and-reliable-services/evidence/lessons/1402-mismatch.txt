@@ -1,0 +1,9 @@
+$ (lesson 14 step 4)
+HTTP/1.1 422 Unprocessable Entity
+Content-Type: application/json
+Content-Length: 69
+
+{"error":"Idempotency-Key was already used for a different request"}
+
+idempotency_keys 1
+[exit 0]

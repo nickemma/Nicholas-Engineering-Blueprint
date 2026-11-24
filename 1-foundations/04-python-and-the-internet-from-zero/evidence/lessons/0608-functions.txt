@@ -1,0 +1,5 @@
+$ uv run python drills/functions.py
+Hello, Ada!
+Hi, Ada!
+11 250
+[exit 0]

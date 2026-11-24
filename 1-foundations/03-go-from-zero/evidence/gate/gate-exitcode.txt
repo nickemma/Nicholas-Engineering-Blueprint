@@ -1,0 +1,15 @@
+$ bash gate/run.sh ~/blueprint/gofromzero   # exitcode
+FAIL  tasks done 9
+      want exit 1 and:
+      
+      got exit 0 and:
+      
+      stderr: tasks: no task 9
+PASS  loganalyse: bad lines reported, a 100 KB line read, ties broken by line, same answer with 1, 7 and the default number of workers
+PASS  loganalyse: a million lines counted correctly
+PASS  loganalyse: at most 64 MiB of memory for a 62 MiB log (it used 11 MiB)
+PASS  gofmt: every file formatted
+PASS  go vet: no problems
+PASS  go test -race: all tests pass, no data races
+Gate failed: fix the FAIL lines above and run it again.
+[exit 1]

@@ -1,0 +1,5 @@
+appended at byte 0
+appended at byte 22
+recovered: removed 23 torn bytes
+1 records, all checksums valid
+0: job queued

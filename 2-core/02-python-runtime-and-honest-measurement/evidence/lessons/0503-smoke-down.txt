@@ -1,0 +1,4 @@
+$ uv run kload smoke; echo "exit $?"
+kload: [Errno 111] Connection refused
+exit 1
+[exit 0]

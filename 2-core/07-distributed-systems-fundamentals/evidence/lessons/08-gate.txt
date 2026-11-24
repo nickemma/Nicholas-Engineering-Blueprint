@@ -1,0 +1,9 @@
+isolation: local append completed, but the client timed out without success
+SIGKILL: interrupted append left a 12-byte header and no client success
+partition: the connected pair elected a higher-term leader and committed a write
+heal: trimmed the torn header, preserved the prefix, and agreed on elections and applied entries
+client reads: both acknowledged writes survived and the interrupted key is absent
+disk: all three peer logs passed the Rust integrity check
+corruption: startup refused a complete damaged frame and preserved its bytes
+FAIL isolated leader acknowledged after local append
+negative control: caught acknowledgment before quorum commit

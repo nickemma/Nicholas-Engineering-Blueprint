@@ -1,0 +1,5 @@
+$ go build -o slurp ./cmd/slurp && /usr/bin/time -f "%M KB max, %e s" ./slurp big.log; rm -f slurp
+lines: 1000000
+malformed: 199
+258492 KB max, 1.12 s
+[exit 0]

@@ -61,7 +61,7 @@ function walk(dir: string, found: string[] = []): string[] {
 }
 
 function files(): string[] {
-  const dirs = ["lessons", "math", "dsa", "system-design", "capstones", "open-source"];
+  const dirs = ["1-foundations", "2-core", "3-tracks", "math", "dsa", "system-design", "ownership"];
   return ["JOURNEY.md", ...dirs.flatMap((dir) => walk(dir))].sort();
 }
 
@@ -159,16 +159,21 @@ export function allPages(): Map<string, Page> {
   return cached;
 }
 
+// A module in the new layout: the first numbered folder under 1-foundations/,
+// 2-core/ or 3-tracks/, e.g. 2-core/02-python-runtime-and-honest-measurement/.
+const MODULE = /^((?:1-foundations|2-core|3-tracks)\/(?:[^/]+\/)*?\d{2}-[^/]+\/)/;
+const SHARED_UNIT = /^(3-tracks\/shared-units\/[^/]+\/)/;
+
 // Only published documents become lesson tabs.
 export function tabsOf(file: string): { label: string; url: string }[] {
-  const match = file.match(/^lessons\/[^/]+\//);
+  const match = file.match(MODULE) ?? file.match(SHARED_UNIT);
   if (!match) return [];
   const pages = allPages();
   const tabs = [
     ["Syllabus", "README.md"],
-    ["Guide", "TEACHING.md"],
     ["Exercises", "exercises.md"],
-    ["Answers", "learned.md"],
+    ["Self-check", "self-check.md"],
+    ["Gate", "gate/README.md"],
   ];
   return tabs
     .map(([label, name]) => ({ label, url: urlOf(match[0] + name) }))

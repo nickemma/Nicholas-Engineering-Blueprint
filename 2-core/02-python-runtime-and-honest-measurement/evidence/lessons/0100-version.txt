@@ -1,0 +1,8 @@
+$ uv run python --version
+Using CPython 3.14.7
+Creating virtual environment at: .venv
+   Building kload @ file:///home/ada/blueprint/kload
+      Built kload @ file:///home/ada/blueprint/kload
+Installed 1 package in 3ms
+Python 3.14.7
+[exit 0]

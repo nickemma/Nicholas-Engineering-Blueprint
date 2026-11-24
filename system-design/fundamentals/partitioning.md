@@ -32,9 +32,11 @@ Partitioning (sharding) splits data across machines when one machine can't hold 
 
 Name the partition key and why, the scheme, how a hot key is handled, and what happens to queries that don't have the key. Do the arithmetic: how many partitions, and how much data each.
 
+Work through a skewed workload and a live move in the [sharding drill](sharding.md).
+
 ## Where you built it
 
-- [Phase 4, step 11](../../lessons/04-replicated-state/TEACHING.md#step-11-consistent-hashing-and-a-cache-spread-over-several-servers): consistent hashing with virtual nodes, rebalancing measured.
-- [Phase 4, step 12](../../lessons/04-replicated-state/TEACHING.md#step-12-transactions-across-shards): transactions across shards.
-- [Phase 6](../../lessons/06-safe-shared-queries/README.md): the tenant as the natural key for isolation.
+- [Core 07, lesson 10](../../2-core/07-distributed-systems-fundamentals/lessons/10-move-fewer-keys-with-consistent-hashing.md): consistent hashing with virtual nodes, rebalancing measured.
+- [Consensus in depth, lesson 08](../../3-tracks/storage-engines/02-consensus-in-depth/lessons/08-recover-a-cross-shard-transfer.md): transactions across shards.
+- [Tenancy and abuse control](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md): the tenant as the natural key for isolation, down to PostgreSQL row-level security.
 - [DSA guide 19](../../dsa/19-design/README.md): the hash ring, rebuilt from scratch.

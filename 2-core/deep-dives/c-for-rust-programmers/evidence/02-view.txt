@@ -1,0 +1,4 @@
+cc -Iinclude -O2 -std=c17 -Wall -Wextra -Wpedantic -Werror -MMD -MP -c "tests/view_test.c" -o "build/view_test.o"
+cc  build/view_test.o build/byte_view.o  -o "build/view_test"
+"build/view_test"
+view bounds: empty, embedded zero, and rejected range checked

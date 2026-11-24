@@ -1,0 +1,14 @@
+--- a/internal/jobs/job.go
++++ b/internal/jobs/job.go
+@@ -80,8 +80,9 @@
+ // worker picks it up. A running job goes back to queued when its worker
+ // vanishes, and either can be cancelled.
+ var allowed = map[State][]State{
+-	StateQueued:  {StateRunning, StateFailed, StateCancelled},
+-	StateRunning: {StateCompleted, StateFailed, StateQueued, StateCancelled},
++	StateQueued:    {StateRunning, StateFailed, StateCancelled},
++	StateRunning:   {StateCompleted, StateFailed, StateQueued, StateCancelled},
++	StateCancelled: {StateCompleted},
+ }
+ 
+ // Final reports whether the job has reached a state it never leaves.

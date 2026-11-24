@@ -1,0 +1,11 @@
+$ uv run python drills/values.py
+3.5 3 1
+18446744073709551616
+0.30000000000000004
+<class 'int'> <class 'float'> <class 'str'> <class 'bool'>
+4 5
+CAFÉ c é af
+43 421
+False False False True
+True
+[exit 0]

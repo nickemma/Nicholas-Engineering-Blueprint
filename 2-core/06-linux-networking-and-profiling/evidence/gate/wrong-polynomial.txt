@@ -1,0 +1,5 @@
+--- FAIL: TestFrameMatchesRustFixture (0.00s)
+    client_test.go:16: header = 03000000f8e0d8fb6fa38b07
+FAIL
+FAIL	switchyard/internal/wire	0.013s
+FAIL

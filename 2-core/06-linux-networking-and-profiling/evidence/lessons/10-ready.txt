@@ -1,0 +1,2 @@
+ready fd; read b'job'
+100 Mbit/s * 40 ms / 8 = 500000 bytes

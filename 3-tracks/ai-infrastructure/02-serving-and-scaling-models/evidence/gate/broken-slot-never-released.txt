@@ -1,0 +1,125 @@
+$ bash gate/run.sh .
+== serve: format, lint, tests
+26 files already formatted
+All checks passed!
+..............                                                           [100%]
+14 passed in 2.12s
+== gateway: format, vet, race tests
+--- FAIL: TestAuthAndTokenReservations (30.01s)
+    gateway_test.go:40: 504
+--- FAIL: TestDisconnectCancelsUpstreamAndReleasesSlot (0.00s)
+    gateway_test.go:76: capacity leaked
+panic: test timed out after 1m0s
+	running tests:
+		TestSharedReservationAcrossGatewaysAndFailClosed (30s)
+
+goroutine 37 [running]:
+testing.(*M).startAlarm.func1()
+	~/.local/go/src/testing/testing.go:2802 +0x605
+created by time.goFunc
+	~/.local/go/src/time/sleep.go:215 +0x45
+
+goroutine 1 [chan receive]:
+testing.(*T).Run(0xc000208248, {0xa36319, 0x30}, 0xa43290)
+	~/.local/go/src/testing/testing.go:2109 +0xb3e
+testing.runTests.func1(0xc000208248)
+	~/.local/go/src/testing/testing.go:2585 +0x85
+testing.tRunner(0xc000208248, 0xc000227ad0)
+	~/.local/go/src/testing/testing.go:2036 +0x21d
+testing.runTests({0xa2557d, 0x10}, {0xa3001b, 0x23}, 0xc000016108, {0xd9fb00, 0x4, 0x4}, {0xc2b973ab4bd88ef6, 0xdf859c12b, ...})
+	~/.local/go/src/testing/testing.go:2583 +0x9ea
+testing.(*M).Run(0xc0000dc320)
+	~/.local/go/src/testing/testing.go:2443 +0xf4c
+main.main()
+	_testmain.go:52 +0x165
+
+goroutine 62 [select]:
+inferencegateway/internal/inference.(*Gateway).ServeHTTP(0xc000190b40, {0xa4c998, 0xc000288440}, 0xc0002a28c0)
+	~/lab/gateway/internal/inference/gateway.go:132 +0x91b
+inferencegateway/internal/inference.call(0xc000190b40, 0x1)
+	~/lab/gateway/internal/inference/gateway_test.go:24 +0x2ea
+inferencegateway/internal/inference.TestSharedReservationAcrossGatewaysAndFailClosed(0xc0001da6c8)
+	~/lab/gateway/internal/inference/reservation_test.go:39 +0xb52
+testing.tRunner(0xc0001da6c8, 0xa43290)
+	~/.local/go/src/testing/testing.go:2036 +0x21d
+created by testing.(*T).Run in goroutine 1
+	~/.local/go/src/testing/testing.go:2101 +0xb13
+
+goroutine 26 [IO wait]:
+internal/poll.runtime_pollWait(0x75a737dd9e00, 0x72)
+	~/.local/go/src/runtime/netpoll.go:351 +0x85
+internal/poll.(*pollDesc).wait(0xc000156120, 0x72, 0x0)
+	~/.local/go/src/internal/poll/fd_poll_runtime.go:84 +0xb1
+internal/poll.(*pollDesc).waitRead(...)
+	~/.local/go/src/internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc000156100, {0xc000166000, 0x1000, 0x1000})
+	~/.local/go/src/internal/poll/fd_unix.go:165 +0x499
+net.(*netFD).Read(0xc000156100, {0xc000166000, 0x1000, 0x1000})
+	~/.local/go/src/net/fd_posix.go:68 +0x4b
+net.(*conn).Read(0xc000102040, {0xc000166000, 0x1000, 0x1000})
+	~/.local/go/src/net/net.go:196 +0xad
+net/http.(*connReader).Read(0xc000116400, {0xc000166000, 0x1000, 0x1000})
+	~/.local/go/src/net/http/server.go:812 +0x288
+bufio.(*Reader).fill(0xc0001581e0)
+	~/.local/go/src/bufio/bufio.go:113 +0x2a4
+bufio.(*Reader).Peek(0xc0001581e0, 0x4)
+	~/.local/go/src/bufio/bufio.go:152 +0xb0
+net/http.(*conn).serve(0xc000144630, {0xa4d2a8, 0xc00011aa20})
+	~/.local/go/src/net/http/server.go:2103 +0x10bb
+created by net/http.(*Server).Serve in goroutine 63
+	~/.local/go/src/net/http/server.go:3462 +0x88a
+
+goroutine 63 [IO wait]:
+internal/poll.runtime_pollWait(0x75a737dda000, 0x72)
+	~/.local/go/src/runtime/netpoll.go:351 +0x85
+internal/poll.(*pollDesc).wait(0xc0001d62a0, 0x72, 0x0)
+	~/.local/go/src/internal/poll/fd_poll_runtime.go:84 +0xb1
+internal/poll.(*pollDesc).waitRead(...)
+	~/.local/go/src/internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Accept(0xc0001d6280)
+	~/.local/go/src/internal/poll/fd_unix.go:613 +0x4ea
+net.(*netFD).accept(0xc0001d6280)
+	~/.local/go/src/net/fd_unix.go:150 +0x45
+net.(*TCPListener).accept(0xc0001a4500)
+	~/.local/go/src/net/tcpsock_posix.go:159 +0x4e
+net.(*TCPListener).Accept(0xc0001a4500)
+	~/.local/go/src/net/tcpsock.go:387 +0x65
+net/http.(*Server).Serve(0xc0001e4200, {0xa4ccf0, 0xc0001a4500})
+	~/.local/go/src/net/http/server.go:3432 +0x610
+net/http/httptest.(*Server).goServe.func1()
+	~/.local/go/src/net/http/httptest/server.go:341 +0xb3
+created by net/http/httptest.(*Server).goServe in goroutine 62
+	~/.local/go/src/net/http/httptest/server.go:339 +0xa5
+
+goroutine 65 [IO wait]:
+internal/poll.runtime_pollWait(0x75a737dd9c00, 0x72)
+	~/.local/go/src/runtime/netpoll.go:351 +0x85
+internal/poll.(*pollDesc).wait(0xc0001d6320, 0x72, 0x0)
+	~/.local/go/src/internal/poll/fd_poll_runtime.go:84 +0xb1
+internal/poll.(*pollDesc).waitRead(...)
+	~/.local/go/src/internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc0001d6300, {0xc0001f9000, 0x1000, 0x1000})
+	~/.local/go/src/internal/poll/fd_unix.go:165 +0x499
+net.(*netFD).Read(0xc0001d6300, {0xc0001f9000, 0x1000, 0x1000})
+	~/.local/go/src/net/fd_posix.go:68 +0x4b
+net.(*conn).Read(0xc0001a2060, {0xc0001f9000, 0x1000, 0x1000})
+	~/.local/go/src/net/net.go:196 +0xad
+net/http.(*persistConn).Read(0xc00019b540, {0xc0001f9000, 0x1000, 0x1000})
+	~/.local/go/src/net/http/transport.go:2174 +0x233
+bufio.(*Reader).fill(0xc0001b6300)
+	~/.local/go/src/bufio/bufio.go:113 +0x2a4
+bufio.(*Reader).Peek(0xc0001b6300, 0x1)
+	~/.local/go/src/bufio/bufio.go:152 +0xb0
+net/http.(*persistConn).readLoop(0xc00019b540)
+	~/.local/go/src/net/http/transport.go:2330 +0x31b
+created by net/http.(*Transport).dialConn in goroutine 64
+	~/.local/go/src/net/http/transport.go:1994 +0x2fb1
+
+goroutine 82 [select]:
+net/http.(*persistConn).writeLoop(0xc00019b540)
+	~/.local/go/src/net/http/transport.go:2652 +0x1b5
+created by net/http.(*Transport).dialConn in goroutine 64
+	~/.local/go/src/net/http/transport.go:1995 +0x303d
+FAIL	inferencegateway/internal/inference	60.054s
+FAIL
+[exit 1]

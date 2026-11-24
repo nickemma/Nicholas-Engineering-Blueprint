@@ -1,0 +1,8 @@
+$ bash /gate/run.sh ~/blueprint/day1
+PASS  Go is installed (go1.27.4)
+PASS  Git identity is set (Ada Lovelace <ada@example.com>)
+PASS  Your code lives inside Linux (/home/ada/blueprint/day1)
+FAIL  Your program reports this machine
+      expected a line containing 'OS: linux | Arch: amd64 | CPUs: 16', got: Blueprint ready! OS: linux | Arch: amd64 | CPUs: 17
+Gate failed: fix the FAIL lines above and run it again.
+[exit 1]

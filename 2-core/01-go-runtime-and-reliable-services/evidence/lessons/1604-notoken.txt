@@ -1,0 +1,7 @@
+$ go test ./internal/coord
+--- FAIL: TestExpiredLeaseIsHandedToAnotherWorker (0.00s)
+    coord_test.go:142: stale Complete error = <nil>, want ErrLeaseLost
+FAIL
+FAIL	switchyard/internal/coord	0.047s
+FAIL
+[exit 1]

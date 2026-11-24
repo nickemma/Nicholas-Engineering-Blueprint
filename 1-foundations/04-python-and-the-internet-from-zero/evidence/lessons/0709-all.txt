@@ -1,0 +1,6 @@
+$ uv run ruff format --check . && uv run ruff check . && uv run pytest -q
+10 files already formatted
+All checks passed!
+.........                                                                [100%]
+9 passed in 0.04s
+[exit 0]

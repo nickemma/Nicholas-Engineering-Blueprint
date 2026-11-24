@@ -1,0 +1,2 @@
+view bounds: empty, embedded zero, and rejected range checked
+failed growth kept the original bytes and ownership; retry succeeded

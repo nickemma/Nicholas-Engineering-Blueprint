@@ -13,8 +13,8 @@ import Lab from "../../layouts/Lab.astro";
   </ul>
   <h2>Go deeper</h2>
   <ul>
-    <li><a href="/lessons/rust-bridge/guide/step-5-a-log-file-that-survives-crashes/">The Rust Bridge, step 5</a>: build this log, with the same format and the same recovery rules.</li>
-    <li><a href="/lessons/03-durable-auditable-data/">Phase 3</a>: what PostgreSQL does about the same problem.</li>
+    <li><a href="/2-core/04-rust-foundations/lessons/08-recover-a-torn-tail-and-refuse-corruption/">The Rust Bridge, step 5</a>: build this log, with the same format and the same recovery rules.</li>
+    <li><a href="/2-core/03-docker-and-postgres/">Phase 3</a>: what PostgreSQL does about the same problem.</li>
   </ul>
   <p class="note">The format, checksum and recovery here follow the guide's Rust code. The crash is simulated, and simple: unsynced bytes reach the disk in order. A real disk can reorder writes and lose more than this, and a checksum can't tell you about a whole record that vanished from the end.</p>
 </Lab>

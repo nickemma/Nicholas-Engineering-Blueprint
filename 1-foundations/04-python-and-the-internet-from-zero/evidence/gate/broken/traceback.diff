@@ -1,0 +1,16 @@
+diff --color -ruN -x .venv -x __pycache__ -x .pytest_cache -x .ruff_cache -x uv.lock -x '*.csv' -x '*.png' -x drills -x hello.py -x .python-version final/measure/measure.py broken/traceback/measure/measure.py
+--- final/measure/measure.py
++++ broken/traceback/measure/measure.py
+@@ -88,11 +88,7 @@
+         parser.error("--requests and --connections must be at least 1")
+ 
+     began = time.perf_counter()
+-    try:
+-        results = asyncio.run(run(args.host, args.port, args.requests, args.connections))
+-    except (OSError, ValueError) as err:
+-        print(f"measure: {err}", file=sys.stderr)
+-        return 1
++    results = asyncio.run(run(args.host, args.port, args.requests, args.connections))
+     took = time.perf_counter() - began
+ 
+     latencies = [r.latency_ms for r in results]

@@ -1,0 +1,9 @@
+=== RUN   TestCompletionRollsBack
+    completion_test.go:69: job is running with 0 effects
+    completion_test.go:77: job is completed with 1 effects
+--- PASS: TestCompletionRollsBack (0.08s)
+=== RUN   TestCompletionRacesCancellation
+    completion_test.go:101: job is completed with 1 effects
+--- PASS: TestCompletionRacesCancellation (0.06s)
+PASS
+ok  	switchyard/internal/pgstore	1.179s

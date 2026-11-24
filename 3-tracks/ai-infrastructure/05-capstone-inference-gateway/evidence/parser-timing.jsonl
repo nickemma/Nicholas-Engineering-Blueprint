@@ -1,0 +1,4 @@
+{"chunk_bytes":137,"cpu_samples":0,"elapsed_ms":3864.419828,"streams":50000,"updates_per_stream":16,"variant":"eager"}
+{"chunk_bytes":137,"cpu_samples":0,"elapsed_ms":1174.272591,"streams":50000,"updates_per_stream":16,"variant":"typed"}
+{"chunk_bytes":137,"cpu_samples":0,"elapsed_ms":1057.378328,"streams":50000,"updates_per_stream":16,"variant":"typed"}
+{"chunk_bytes":137,"cpu_samples":0,"elapsed_ms":4041.899863,"streams":50000,"updates_per_stream":16,"variant":"eager"}

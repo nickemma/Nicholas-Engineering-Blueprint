@@ -1,0 +1,12 @@
+$ uv run pytest -q
+   Building kload @ file:///home/ada/blueprint/kload
+      Built kload @ file:///home/ada/blueprint/kload
+Downloading ruff (10.2MiB)
+Downloading pygments (1.2MiB)
+ Downloaded pygments
+ Downloaded ruff
+Uninstalled 1 package in 0.75ms
+Installed 7 packages in 19ms
+...............                                                          [100%]
+15 passed in 0.02s
+[exit 0]

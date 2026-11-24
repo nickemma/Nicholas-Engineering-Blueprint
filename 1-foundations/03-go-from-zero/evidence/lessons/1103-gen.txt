@@ -1,0 +1,6 @@
+$ awk -v n=1000000 -f gen.awk > big.log && ls -l big.log && wc -l < big.log && head -2 big.log
+-rw-rw-r-- 1 ada ada 65114546 Nov 19 07:28 big.log
+1000000
+{"ts":"2026-11-18T09:00:00Z","status":200,"path":"/p1","ms":37}
+{"ts":"2026-11-18T09:00:00Z","status":200,"path":"/p2","ms":74}
+[exit 0]

@@ -1,0 +1,14 @@
+$ uv run pytest -v
+============================= test session starts ==============================
+platform linux -- Python 3.14.7, pytest-9.2.0, pluggy-1.7.0 -- /home/ada/blueprint/internet/measure/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/ada/blueprint/internet/measure
+configfile: pyproject.toml
+collecting ... collected 3 items
+
+test_stats.py::test_summarize PASSED                                     [ 33%]
+test_stats.py::test_one_value PASSED                                     [ 66%]
+test_stats.py::test_empty_list_is_an_error PASSED                        [100%]
+
+============================== 3 passed in 0.10s ===============================
+[exit 0]

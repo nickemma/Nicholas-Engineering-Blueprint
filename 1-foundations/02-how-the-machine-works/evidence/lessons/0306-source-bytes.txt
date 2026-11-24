@@ -1,0 +1,5 @@
+$ xxd ~/blueprint/day1/main.go | head -3
+00000000: 7061 636b 6167 6520 6d61 696e 0a0a 696d  package main..im
+00000010: 706f 7274 2028 0a09 2266 6d74 220a 0922  port (.."fmt".."
+00000020: 7275 6e74 696d 6522 0a29 0a0a 6675 6e63  runtime".)..func
+[exit 0]

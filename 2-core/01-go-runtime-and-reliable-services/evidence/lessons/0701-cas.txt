@@ -1,0 +1,4 @@
+$ go test -race -v -run Concurrent ./internal/jobs 2>&1 | grep -E "^(--- |ok|FAIL)"
+--- PASS: TestConcurrentRunStartsJobOnce (0.02s)
+ok  	switchyard/internal/jobs	1.034s
+[exit 0]

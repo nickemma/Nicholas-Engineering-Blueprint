@@ -15,7 +15,7 @@ Two ways to convince yourself (and an interviewer):
 - intervals sorted by end (guide 12's practice);
 - "can you reach...", running best values, scheduling.
 
-**Real systems:** the Kubernetes scheduler, which places every Pod in [Phase 5](../../lessons/05-constrained-operations/TEACHING.md#step-5-all-of-runway-on-kubernetes), is greedy. It filters the nodes that fit, scores them, and binds the Pod to the best one. It never moves Pods it has already placed, which is why a cluster can end up fragmented and why tools such as the descheduler exist. Capstone [brief 5](../../capstones/05-gpu-scheduler.md) is about exactly this limit, for GPUs. Huffman coding (compression) and Dijkstra (guide 11) are greedy too.
+**Real systems:** the Kubernetes scheduler, which places every Pod in [Kubernetes and delivery](../../3-tracks/shared-units/kubernetes-and-delivery/lessons/03-deploy-the-jobs-path-with-persistent-storage.md), is greedy. It filters the nodes that fit, scores them, and binds the Pod to the best one. It never moves Pods it has already placed, which is why a cluster can end up fragmented and why tools such as the descheduler exist. Huffman coding (compression) and Dijkstra (guide 11) are greedy too.
 
 ## Worked problem 1: Jump Game
 

@@ -1,0 +1,7 @@
+$ go test -bench . -benchmem ./drills/escape | grep Benchmark
+BenchmarkSum-16                	1000000000	         0.5888 ns/op	       0 B/op	       0 allocs/op
+BenchmarkNewPoint-16           	79805106	        14.95 ns/op	      16 B/op	       1 allocs/op
+BenchmarkNewPointInlined-16    	1000000000	         0.7606 ns/op	       0 B/op	       0 allocs/op
+BenchmarkNewPointKept-16       	76830589	        15.28 ns/op	      16 B/op	       1 allocs/op
+BenchmarkBig-16                	    6811	    250104 ns/op	 1048588 B/op	       1 allocs/op
+[exit 0]

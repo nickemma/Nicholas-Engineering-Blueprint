@@ -1,0 +1,14 @@
+$ cd ~ && ls && ls -la
+blueprint
+go
+total 40
+drwxr-x--- 5 ada  ada  4096 Nov 18 16:47 .
+drwxr-xr-x 1 root root 4096 Nov 18 16:44 ..
+-rw-r--r-- 1 ada  ada   220 Mar 31  2024 .bash_logout
+-rw-r--r-- 1 ada  ada  3771 Mar 31  2024 .bashrc
+drwxrwxr-x 3 ada  ada  4096 Nov 18 16:47 .config
+-rw-rw-r-- 1 ada  ada    82 Nov 18 16:47 .gitconfig
+-rw-r--r-- 1 ada  ada   856 Nov 18 16:47 .profile
+drwxrwxr-x 3 ada  ada  4096 Nov 18 16:47 blueprint
+drwxrwxr-x 3 ada  ada  4096 Nov 18 16:47 go
+[exit 0]

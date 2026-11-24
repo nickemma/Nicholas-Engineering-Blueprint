@@ -1,0 +1,6 @@
+$ git diff --stat && ./monitor.sh --help; echo "exit status: $?"
+ monitor.sh | 5 +++++
+ 1 file changed, 5 insertions(+)
+usage: monitor.sh [PATH]   print load, memory use, and disk use under PATH (default /)
+exit status: 0
+[exit 0]

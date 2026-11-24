@@ -1,0 +1,5 @@
+$ uv run python hello.py
+Hello, Ada!
+5 requests
+slow: 250 ms
+[exit 0]

@@ -1,0 +1,1 @@
+error[E0277]: `Rc<i32>` cannot be sent between threads safely

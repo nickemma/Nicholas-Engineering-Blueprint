@@ -15,6 +15,9 @@ const tabs = tabsOf(page.file);
 const previous = page.siblings[page.index - 1];
 const next = page.siblings[page.index + 1];
 const children = page.file.endsWith("README.md") && !page.file.startsWith("lessons/") ? pagesUnder(page.url) : [];
+const firstLesson = tabs.some((tab) => tab.label === "Syllabus" && tab.url === page.url)
+  ? pagesUnder(`${page.url}lessons/`).sort((left, right) => left.url.localeCompare(right.url))[0]
+  : undefined;
 const title = page.index > 0 ? `${page.title}: ${page.docTitle}` : page.title;
 ---
 <Base title={title}>
@@ -41,6 +44,7 @@ const title = page.index > 0 ? `${page.title}: ${page.docTitle}` : page.title;
       )}
       {page.index > 0 && <p class="eyebrow"><a href={page.siblings[0].url}>{page.docTitle}</a></p>}
       <h1>{page.title}</h1>
+      {firstLesson && <p><a class="button quiet" href={firstLesson.url}>Start the lessons</a></p>}
       <Fragment set:html={page.html} />
       {children.length > 0 && !page.html.includes("<table") && (
         <ul class="children">

@@ -1,0 +1,11 @@
+$ gofmt -l . && go vet ./... && go test -race -cover ./...
+	switchyard/cmd/switchyard		coverage: 0.0% of statements
+ok  	switchyard/drills/byhand	1.124s	coverage: 55.0% of statements
+ok  	switchyard/drills/escape	1.088s	coverage: 0.0% of statements [no tests to run]
+	switchyard/drills/gc		coverage: 0.0% of statements
+	switchyard/drills/sched		coverage: 0.0% of statements
+	switchyard/drills/spin		coverage: 0.0% of statements
+	switchyard/drills/stacks		coverage: 0.0% of statements
+	switchyard/drills/stdhttp		coverage: 0.0% of statements
+ok  	switchyard/internal/httpapi	1.031s	coverage: 93.8% of statements
+[exit 0]

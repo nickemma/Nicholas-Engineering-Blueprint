@@ -1,0 +1,16 @@
+$ printf "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: 16\r\n\r\n{\"status\":\"ok\"}\n" | nc -l 127.0.0.1 8080 > /dev/null & sleep 0.3; curl -sv http://127.0.0.1:8080/health
+*   Trying 127.0.0.1:8080...
+* Connected to 127.0.0.1 (127.0.0.1) port 8080
+> GET /health HTTP/1.1
+> Host: 127.0.0.1:8080
+> User-Agent: curl/8.5.0
+> Accept: */*
+> 
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Content-Length: 16
+< 
+{ [16 bytes data]
+* Connection #0 to host 127.0.0.1 left intact
+{"status":"ok"}
+[exit 0]

@@ -1,0 +1,20 @@
+$ go test -v ./tasks
+=== RUN   TestAddNumbersFromTheHighestID
+=== RUN   TestAddNumbersFromTheHighestID/empty_list
+=== RUN   TestAddNumbersFromTheHighestID/one_task
+=== RUN   TestAddNumbersFromTheHighestID/a_gap_after_deletion
+--- PASS: TestAddNumbersFromTheHighestID (0.00s)
+    --- PASS: TestAddNumbersFromTheHighestID/empty_list (0.00s)
+    --- PASS: TestAddNumbersFromTheHighestID/one_task (0.00s)
+    --- PASS: TestAddNumbersFromTheHighestID/a_gap_after_deletion (0.00s)
+=== RUN   TestCompleteMarksTheTask
+--- PASS: TestCompleteMarksTheTask (0.00s)
+=== RUN   TestCompleteUnknownID
+--- PASS: TestCompleteUnknownID (0.00s)
+=== RUN   TestSaveThenLoad
+--- PASS: TestSaveThenLoad (0.00s)
+=== RUN   TestLoadMissingFileIsEmpty
+--- PASS: TestLoadMissingFileIsEmpty (0.00s)
+PASS
+ok  	gofromzero/tasks	0.006s
+[exit 0]
