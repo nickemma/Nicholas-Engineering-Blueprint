@@ -91,4 +91,4 @@ Solving a problem once isn't remembering it. Re-solve it from a blank file on a 
 
 ## Practising like the real thing
 
-From Core 01's second half on, do one **timed mock** every two weeks: 45 minutes, a problem you haven't seen, talking out loud the whole time. Ask a peer to interview you if you can, or record yourself. Score yourself against the four dimensions above.
+From Core 01's second half on, do one **timed mock** every two weeks: 45 minutes, a problem you haven't seen, talking out loud the whole time. Ask a peer to interview you if you can, or record yourself. Score yourself against the four dimensions above. Then [sort your earliest miss by type](../system-design/interview-rehearsal.md#sort-each-miss) and let the type decide what you practise next. When interviews are booked, add [company-targeted practice](../system-design/interview-rehearsal.md#practising-for-a-specific-company).

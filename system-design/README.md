@@ -54,7 +54,7 @@ Every design in this folder starts with a **"The crux"** section, written before
 2. the success metrics, offline and online;
 3. the data and labels.
 
-The deep dives then cover features, the model (baseline first), evaluation, serving, monitoring and feedback loops. Use [_template-ml.md](_template-ml.md).
+The deep dives then cover features, the model (baseline first), evaluation, serving, monitoring and feedback loops. Use [_template-ml.md](_template-ml.md) and the [ML design fundamentals](ml-system-design/fundamentals.md).
 
 ## Tracks
 
@@ -68,13 +68,13 @@ Each track has **at least one worked reference design**: a full write-up, crux f
 | [Cloud and infrastructure](cloud-infra/README.md) | Cloud, infrastructure, DevOps, SRE | [Metrics and alerting](cloud-infra/metrics-alerting.md), [Programmable edge proxy](cloud-infra/programmable-edge-proxy.md) | Multi-region web service; object storage (like S3); DNS; CI/CD | Core 08; Kubernetes and delivery; AWS and Terraform |
 | [Distributed systems](distributed-systems/README.md) | Distributed systems, storage, SRE | [Key-value store](distributed-systems/key-value-store.md) | Lock service; Kafka-style log; job scheduler; unique IDs; distributed cache; rate limiter | Cores 01, 03 and 07; Consensus in depth |
 | [Platform](platform/README.md) | Platform, developer infrastructure, DevOps | [Deployment orchestrator](platform/deployment-orchestrator.md) | Internal developer platform; feature flags; configuration management; multi-tenant Kubernetes; service mesh control plane | Kubernetes and delivery |
-| [ML system design](ml-system-design/README.md) | Applied ML, ML engineer | [Fraud detection](ml-system-design/fraud-detection.md) | Recommendations; search ranking; ads click-through; content moderation; feed ranking | ML for infrastructure |
+| [ML system design](ml-system-design/README.md) | Applied ML, ML engineer | [Fraud detection](ml-system-design/fraud-detection.md), [Recommendations](ml-system-design/recommendation.md), [Search ranking](ml-system-design/search-ranking.md), [Harmful content](ml-system-design/harmful-content.md), [Support assistant (RAG)](ml-system-design/rag-support-assistant.md) | Ads click-through; feed ranking; search suggestions as you type; delivery time estimates; people you may know | ML for infrastructure; Securing the AI layer |
 | [AI infrastructure](ai-infrastructure/README.md) | AI infrastructure, inference, ML platform, MLOps | [LLM inference gateway](ai-infrastructure/llm-inference-gateway.md) | GPU cluster scheduler; distributed training platform; model-serving platform; feature store; RAG and vector search; model monitoring | The AI infrastructure track |
 | [Security](security/README.md) | Infrastructure security, platform, SRE | [Authorization service](security/authorization-service.md) | Secrets distribution; tamper-evident audit log; certificates for a fleet; tenant isolation; API abuse protection | Core 08; Tenancy and abuse control |
 | [Data infrastructure](data-infrastructure/README.md) | Data infrastructure, data platform | [Event pipeline](data-infrastructure/event-pipeline.md) | Stream processor; change data capture; data lake with compaction; time-series database; batch orchestration | Event streams; Postgres in depth; ML for infrastructure |
 | [Classic warm-ups](classic/README.md) | Generalist loops | [URL shortener](classic/url-shortener.md) | Chat; news feed; ride matching; ticket booking | Cores 01 and 03; Caching |
 
-That's 14 fundamentals pages, 9 worked designs and 40 practice prompts.
+That's 14 fundamentals pages plus the [ML design fundamentals](ml-system-design/fundamentals.md), 13 worked designs and 40 practice prompts.
 
 ## Folder layout
 
