@@ -194,16 +194,30 @@ impl Drop for Permit {
     }
 }
 
+/// Takes a connection slot if fewer than `CONNECTIONS` are in use. The
+/// compare-and-swap retries when another thread changed the count first, so
+/// two connections can't both take the last slot.
+fn try_admit(active: &AtomicUsize) -> bool {
+    let mut current = active.load(Ordering::Relaxed);
+    while current < CONNECTIONS {
+        match active.compare_exchange_weak(
+            current,
+            current + 1,
+            Ordering::Relaxed,
+            Ordering::Relaxed,
+        ) {
+            Ok(_) => return true,
+            Err(actual) => current = actual,
+        }
+    }
+    false
+}
+
 fn run<S: Stream>(incoming: impl Iterator<Item = io::Result<S>>) -> io::Result<()> {
     let active = Arc::new(AtomicUsize::new(0));
     for result in incoming {
         let mut stream = result?;
-        if active
-            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |n| {
-                (n < CONNECTIONS).then_some(n + 1)
-            })
-            .is_err()
-        {
+        if !try_admit(&active) {
             continue;
         }
         let permit = Permit(Arc::clone(&active));

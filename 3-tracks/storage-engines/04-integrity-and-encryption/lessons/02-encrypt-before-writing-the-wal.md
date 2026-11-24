@@ -450,7 +450,7 @@ impl Keyring {
                 return Err(invalid("invalid key ID or AES-256 key length"));
             }
             let mut key = [0_u8; 32];
-            for (dest, pair) in key.iter_mut().zip(raw.as_bytes().chunks_exact(2)) {
+            for (dest, pair) in key.iter_mut().zip(raw.as_bytes().as_chunks::<2>().0) {
                 *dest = u8::from_str_radix(std::str::from_utf8(pair).unwrap(), 16).unwrap();
             }
             if keys.insert(id, Aes256Gcm::new(&key.into())).is_some() {
