@@ -1,0 +1,7 @@
+$ /home/ada/blueprint/switchyard/bin/switchyard > /dev/null 2>&1 & sleep 0.5; uv run kload load --rate 200 --duration 5 --out results/health.csv
+open loop: 1000 requests at 200/s over 5 s
+answers: 200 x1000
+latency (2xx): p50 1.27 ms, p99 2.46 ms, max 12.24 ms
+kload itself: send lag p99 1.33 ms, max 11.35 ms; CPU 0.42 s in 5.00 s (8%)
+wrote results/health.csv and results/health.json
+[exit 0]

@@ -1,6 +1,6 @@
 # Design: a deployment orchestrator with progressive rollouts
 
-**Track:** platform · **Built in:** [Phase 5](../../lessons/05-constrained-operations/README.md) (Helm, canaries, CI/CD by digest, a controller), [Phase 7, step 1](../../lessons/07-utility-evaluation/TEACHING.md#step-1-experiments-done-right) (telling a change from noise) · **Time:** 45 minutes
+**Track:** platform · **Built in:** [Phase 5](../../2-core/08-shipping-safely/README.md) (Helm, canaries, CI/CD by digest, a controller), [Phase 7, step 1](../../2-core/02-python-runtime-and-honest-measurement/lessons/08-repeat-runs-and-confidence-intervals.md) (telling a change from noise) · **Time:** 45 minutes
 
 This is a worked reference. Do the design yourself first, with a timer, then read this and note what you missed.
 
@@ -123,14 +123,14 @@ The agents hold the last desired state and keep it. A release mid-ramp **pauses*
 
 ## 10. Where you've built this
 
-- [Phase 5](../../lessons/05-constrained-operations/README.md):
+- [Phase 5](../../2-core/08-shipping-safely/README.md):
   - Helm with hooks and safe rollouts;
   - a canary;
   - CI/CD that builds once and deploys by digest;
   - a reconciliation controller with least-privilege RBAC;
   - SLOs and burn-rate alerts.
-- [Phase 3](../../lessons/03-durable-auditable-data/README.md): migrations.
-- [Phase 7, step 1](../../lessons/07-utility-evaluation/TEACHING.md#step-1-experiments-done-right): A/A noise, interleaving, intervals and margins: the statistics this design depends on.
+- [Phase 3](../../2-core/03-docker-and-postgres/README.md): migrations.
+- [Phase 7, step 1](../../2-core/02-python-runtime-and-honest-measurement/lessons/08-repeat-runs-and-confidence-intervals.md): A/A noise, interleaving, intervals and margins: the statistics this design depends on.
 
 ## 11. What an interviewer will push on
 

@@ -1,0 +1,21 @@
+=== RUN   TestLabReadinessAndReleaseCounters
+    main_test.go:47: failed readiness stayed live; stable and canary request outcomes were counted separately
+--- PASS: TestLabReadinessAndReleaseCounters (0.00s)
+PASS
+ok  	switchyard/delivery/cmd/frontend	1.053s
+=== RUN   TestVerifiedIdentityAndTarget
+    main_test.go:52: only the verified sender and expected destination reached the local relay
+--- PASS: TestVerifiedIdentityAndTarget (0.00s)
+PASS
+ok  	switchyard/delivery/cmd/peer-bridge	1.041s
+?   	switchyard/delivery/cmd/scale-worker	[no test files]
+=== RUN   TestPolicy
+    policy_test.go:22: bounded recommendations, stabilized scale-down, and refused invalid readings
+--- PASS: TestPolicy (0.00s)
+PASS
+ok  	switchyard/delivery/internal/scaling	1.034s
+=== RUN   TestTraceContinuesAcrossHop
+    trace_test.go:19: frontend span kept the edge trace ID and used the edge span as its parent
+--- PASS: TestTraceContinuesAcrossHop (0.00s)
+PASS
+ok  	switchyard/delivery/internal/telemetry	1.039s

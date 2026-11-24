@@ -1,0 +1,46 @@
+$ bash gate/run.sh ~/blueprint/internet    # the serial version
+== echo/
+PASS  gofmt
+PASS  go vet
+FAIL  go test -race
+          main_test.go:135: client 35 line 0: got 0 bytes (read tcp 127.0.0.1:56814->127.0.0.1:41717: i/o timeout), want 1
+          main_test.go:135: client 40 line 0: got 0 bytes (read tcp 127.0.0.1:56982->127.0.0.1:41717: i/o timeout), want 1
+          main_test.go:135: client 15 line 0: got 0 bytes (read tcp 127.0.0.1:56822->127.0.0.1:41717: i/o timeout), want 1
+          main_test.go:135: client 23 line 0: got 0 bytes (read tcp 127.0.0.1:57052->127.0.0.1:41717: i/o timeout), want 1
+          main_test.go:135: client 39 line 0: got 0 bytes (read tcp 127.0.0.1:56918->127.0.0.1:41717: i/o timeout), want 1
+          main_test.go:135: client 12 line 0: got 0 bytes (read tcp 127.0.0.1:56884->127.0.0.1:41717: i/o timeout), want 1
+          main_test.go:135: client 33 line 0: got 0 bytes (read tcp 127.0.0.1:56770->127.0.0.1:41717: i/o timeout), want 1
+          main_test.go:135: client 8 line 0: got 0 bytes (read tcp 127.0.0.1:56768->127.0.0.1:41717: i/o timeout), want 1
+          main_test.go:135: client 6 line 0: got 0 bytes (read tcp 127.0.0.1:56734->127.0.0.1:41717: i/o timeout), want 1
+          main_test.go:135: client 31 line 0: got 0 bytes (read tcp 127.0.0.1:56766->127.0.0.1:41717: i/o timeout), want 1
+          main_test.go:135: client 20 line 0: got 0 bytes (read tcp 127.0.0.1:56844->127.0.0.1:41717: i/o timeout), want 1
+          main_test.go:135: client 7 line 0: got 0 bytes (read tcp 127.0.0.1:56784->127.0.0.1:41717: i/o timeout), want 1
+          main_test.go:135: client 22 line 0: got 0 bytes (read tcp 127.0.0.1:56806->127.0.0.1:41717: i/o timeout), want 1
+          main_test.go:135: client 18 line 0: got 0 bytes (read tcp 127.0.0.1:56736->127.0.0.1:41717: i/o timeout), want 1
+          main_test.go:135: client 21 line 0: got 0 bytes (read tcp 127.0.0.1:56690->127.0.0.1:41717: i/o timeout), want 1
+          main_test.go:135: client 44 line 0: got 0 bytes (read tcp 127.0.0.1:57044->127.0.0.1:41717: i/o timeout), want 1
+          main_test.go:135: client 32 line 0: got 0 bytes (read tcp 127.0.0.1:56712->127.0.0.1:41717: i/o timeout), want 1
+      FAIL
+      FAIL	echo	2.155s
+      FAIL
+PASS  the server starts and prints 'listening on 127.0.0.1:43731'
+FAIL  100 clients at once get back exactly what they sent
+      not finished after 2.5 s, while one quiet client was connected:
+      does one connection hold up the others?
+PASS  a line of exactly 65,536 bytes (newline included) comes back whole
+PASS  a longer line gets the error, then the connection closes
+PASS  a quiet client is disconnected after -idle 3s
+PASS  the server is still running afterwards
+== measure/
+PASS  ruff format
+PASS  ruff check
+PASS  pytest
+PASS  1,000 requests over 10 connections: results.csv has every request
+PASS  the p50 and p99 it prints match the CSV
+PASS  the plot is a PNG image
+PASS  replies that arrive in two pieces are read whole and timed to the end
+PASS  a wrong reply: exit 1 with a message (measure: request 0: sent 16 bytes, got back b'not what you sent\n')
+PASS  nothing listening: exit 1 with a message (measure: [Errno 111] Connect call failed ('127.0.0.1', 44445))
+
+Gate failed: fix each FAIL above and run it again.
+[exit 1]

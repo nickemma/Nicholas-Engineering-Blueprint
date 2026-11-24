@@ -1,0 +1,11 @@
+$ (l16)
+{"id":3,"state":"cancelled","description":"render","duration_ms":5000,"created_at":"2026-11-20T05:23:06.678626959Z","updated_at":"2026-11-20T05:23:07.194080709Z"}
+{"level":"INFO","msg":"job started","worker":"d-4","job_id":3,"token":5}
+{"level":"INFO","msg":"job stopped","worker":"d-4","job_id":3,"token":5,"reason":"the control plane said stop"}
+{"job_id":3,"effects":0}
+effects_applied_total 2
+go_goroutines 20
+jobs_handed_back_total 2
+leases 0
+workers 2
+[exit 0]

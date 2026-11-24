@@ -1,0 +1,7 @@
+$ bash /gate/run.sh ~/blueprint/day1
+PASS  Go is installed (go1.27.4)
+PASS  Git identity is set (Ada Lovelace <ada@example.com>)
+PASS  Your code lives inside Linux (/home/ada/blueprint/day1)
+PASS  Your program reports this machine: OS: linux | Arch: amd64 | CPUs: 16
+Gate passed: your machine is ready for Foundations 02.
+[exit 0]

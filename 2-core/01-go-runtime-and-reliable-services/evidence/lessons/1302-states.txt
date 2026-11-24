@@ -1,0 +1,7 @@
+$ (lesson 13 step 6)
+{"id":1,"state":"running","description":"slow","duration_ms":1000,"created_at":"2026-11-20T04:32:03.800773748Z","updated_at":"2026-11-20T04:32:03.801068552Z"}
+{"id":2,"state":"queued","description":"slow","duration_ms":1000,"created_at":"2026-11-20T04:32:03.811043085Z","updated_at":"2026-11-20T04:32:03.811043085Z"}
+{"id":3,"state":"queued","description":"slow","duration_ms":1000,"created_at":"2026-11-20T04:32:03.820005253Z","updated_at":"2026-11-20T04:32:03.820005253Z"}
+{"id":4,"state":"failed","description":"slow","duration_ms":1000,"failure_reason":"not dispatched: queue is full","created_at":"2026-11-20T04:32:03.827551184Z","updated_at":"2026-11-20T04:32:03.827552466Z"}
+{"id":5,"state":"failed","description":"slow","duration_ms":1000,"failure_reason":"not dispatched: queue is full","created_at":"2026-11-20T04:32:03.835536459Z","updated_at":"2026-11-20T04:32:03.835537651Z"}
+[exit 0]

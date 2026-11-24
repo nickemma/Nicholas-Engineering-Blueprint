@@ -1,0 +1,4 @@
+$ /tmp/switchyard 2>/dev/null & sleep 0.5; curl -s -o /dev/null -X POST http://127.0.0.1:8080/jobs -H "Content-Type: application/json" -d "{\"description\":\"one\"}"; kill %1; sleep 0.3; /tmp/switchyard 2>/dev/null & sleep 0.5; curl -s -w "  [%{http_code}]\n" http://127.0.0.1:8080/jobs/1
+{"error":"job not found"}
+  [404]
+[exit 0]

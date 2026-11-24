@@ -1,0 +1,18 @@
+$ uv run pytest -q && uv run kload --help
+   Building kload @ file:///home/ada/blueprint/kload
+      Built kload @ file:///home/ada/blueprint/kload
+Uninstalled 1 package in 0.65ms
+Installed 1 package in 3ms
+.................                                                        [100%]
+17 passed in 0.04s
+usage: kload [-h] {summarize} ...
+
+The kload command line.
+
+positional arguments:
+  {summarize}
+    summarize  summarize the numbers in a file
+
+options:
+  -h, --help   show this help message and exit
+[exit 0]

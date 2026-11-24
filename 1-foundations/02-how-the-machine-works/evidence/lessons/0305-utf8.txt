@@ -1,0 +1,5 @@
+$ printf "é" | xxd && printf "café" | wc -c && printf "café" | wc -m
+00000000: c3a9                                     ..
+5
+4
+[exit 0]

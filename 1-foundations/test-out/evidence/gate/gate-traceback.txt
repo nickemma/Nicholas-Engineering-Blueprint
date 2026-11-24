@@ -1,0 +1,51 @@
+$ bash gate/run.sh ~/your-repo    # the traceback version
+== tally/
+PASS  gofmt
+PASS  go vet
+PASS  go test -race
+PASS  a log with 14 kinds of malformed line, a 200 KB line, \r\n and no final newline
+PASS  an empty input
+PASS  5,000 lines
+PASS  -path /api on the log with traps
+PASS  -path /api/jobs on 5,000 lines
+PASS  tally -nope: exit 2 with a message
+PASS  tally -path: exit 2 with a message
+PASS  tally extra-argument: exit 2 with a message
+PASS  a million lines counted correctly
+PASS  at most 64 MiB of memory for a 62 MiB log (it used 34 MiB)
+== report/
+PASS  ruff format
+PASS  ruff check
+FAIL  pytest, without tally built
+      report.py:57: in main
+          (log.name, run_tally(args.tally, log))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+      _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+      
+      tally = '/tmp/pytest-of-ada/pytest-6/test_failing_tally_is_one_line0/fake_tally.py'
+      log = PosixPath('/tmp/pytest-of-ada/pytest-6/test_failing_tally_is_one_line0/a.log')
+      
+          def run_tally(tally: str, log: Path) -> dict:
+              with log.open("rb") as f:
+                  done = subprocess.run([tally], stdin=f, capture_output=True, check=False)
+              if done.returncode != 0:
+                  err = done.stderr.decode().strip()
+      >           raise RuntimeError(f"{log.name}: tally exited {done.returncode}: {err}")
+      E           RuntimeError: a.log: tally exited 3:
+      
+      report.py:15: RuntimeError
+      =========================== short test summary info ============================
+      FAILED test_report.py::test_failing_tally_is_one_line - RuntimeError: a.log: ...
+      1 failed, 3 passed in 1.91s
+PASS  report.py on three logs: the table
+PASS  report.py: the chart is a PNG image
+FAIL  report.py when tally fails: exit 1 with a one-line message, not a traceback
+      exit 1
+          (log.name, run_tally(args.tally, log))
+                     ~~~~~~~~~^^^^^^^^^^^^^^^^^
+        File "/home/ada/g/traceback/report/report.py", line 15, in run_tally
+          raise RuntimeError(f"{log.name}: tally exited {done.returncode}: {err}")
+      RuntimeError: empty.log: tally exited 1: tally: something went wrong
+
+Gate failed: fix each FAIL above and run it again, or take the Foundations module that covers it.
+[exit 1]

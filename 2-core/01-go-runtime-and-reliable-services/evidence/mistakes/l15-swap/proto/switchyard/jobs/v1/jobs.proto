@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package switchyard.jobs.v1;
+
+option go_package = "switchyard/internal/grpcapi/jobsv1";
+
+// Jobs creates and reads jobs. It offers the same use cases as the HTTP API.
+service Jobs {
+  rpc CreateJob(CreateJobRequest) returns (Job);
+  rpc GetJob(GetJobRequest) returns (Job);
+}
+
+message CreateJobRequest {
+  string description = 2;
+  int64 duration_ms = 1;
+}
+
+message GetJobRequest {
+  int64 id = 1;
+}
+
+enum State {
+  STATE_UNSPECIFIED = 0;
+  STATE_QUEUED = 1;
+  STATE_RUNNING = 2;
+  STATE_COMPLETED = 3;
+  STATE_FAILED = 4;
+}
+
+message Job {
+  int64 id = 1;
+  State state = 2;
+  string description = 3;
+  int64 duration_ms = 4;
+  string failure_reason = 5;
+  int64 created_at_unix_ms = 6;
+  int64 updated_at_unix_ms = 7;
+}

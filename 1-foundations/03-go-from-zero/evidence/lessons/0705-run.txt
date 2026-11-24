@@ -1,0 +1,10 @@
+$ go test -v -run TestTop ./wordcount
+=== RUN   TestTop
+--- PASS: TestTop (0.00s)
+=== RUN   TestTopBreaksTiesAlphabetically
+--- PASS: TestTopBreaksTiesAlphabetically (0.00s)
+=== RUN   TestTopAsksForMoreThanThereAre
+--- PASS: TestTopAsksForMoreThanThereAre (0.00s)
+PASS
+ok  	gofromzero/wordcount	0.004s
+[exit 0]

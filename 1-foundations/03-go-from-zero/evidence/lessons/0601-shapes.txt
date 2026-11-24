@@ -1,0 +1,6 @@
+$ go run ./drills/shapes
+3x4 rectangle: 12.00
+{1}: 3.14
+total: 15.14
+the report has 3 lines, error: <nil>
+[exit 0]

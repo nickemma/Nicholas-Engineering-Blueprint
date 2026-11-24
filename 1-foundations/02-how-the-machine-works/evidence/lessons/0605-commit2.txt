@@ -1,0 +1,6 @@
+$ git commit -am "Say which systems the monitor supports" && git log --oneline
+[main 0402975] Say which systems the monitor supports
+ 1 file changed, 1 insertion(+)
+0402975 Say which systems the monitor supports
+831b3c6 Add the system monitor
+[exit 0]

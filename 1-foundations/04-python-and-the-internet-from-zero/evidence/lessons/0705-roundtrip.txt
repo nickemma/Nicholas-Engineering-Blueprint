@@ -1,0 +1,4 @@
+$ uv run python -c "from pathlib import Path; from results import Result, write_csv, read_csv; write_csv(Path(\"try.csv\"), [Result(0, 0, 16, 0.4567)]); print(repr(Path(\"try.csv\").read_bytes())); print(read_csv(Path(\"try.csv\")))" && rm try.csv
+b'request,connection,bytes,latency_ms\r\n0,0,16,0.457\r\n'
+[Result(request=0, connection=0, size=16, latency_ms=0.457)]
+[exit 0]

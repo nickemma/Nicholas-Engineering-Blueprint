@@ -11,7 +11,7 @@ A stack is last in, first out. It remembers what's still **open**, so the most r
 - evaluating an expression;
 - the **next** or **previous** greater or smaller element, spans, or how long until something bigger arrives.
 
-**Real systems:** every parser keeps a stack of what's open. Go's `encoding/json`, which Runway has used since [Phase 0](../../lessons/00-request-service/README.md), scans JSON with a stack of open objects and arrays, and that's how it knows a `]` can't close a `{`. Your program's call stack is the same structure; a stack trace is it, printed.
+**Real systems:** every parser keeps a stack of what's open. Go's `encoding/json`, which Switchyard has used since [core 01, lesson 03](../../2-core/01-go-runtime-and-reliable-services/lessons/03-an-http-service-with-a-contract.md), scans JSON with a stack of open objects and arrays, and that's how it knows a `]` can't close a `{`. Your program's call stack is the same structure; a stack trace is it, printed.
 
 ## Worked problem 1: Valid Parentheses
 

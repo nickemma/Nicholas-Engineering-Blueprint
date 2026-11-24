@@ -1,0 +1,6 @@
+$ uv run python drills/blocked.py
+await asyncio.sleep(0.2)                   worst wake-up lateness    1.4 ms
+time.sleep(0.2) inside a coroutine         worst wake-up lateness  200.7 ms
+counting to 10 million                     worst wake-up lateness  235.7 ms
+await asyncio.to_thread(time.sleep, 0.2)   worst wake-up lateness    1.1 ms
+[exit 0]

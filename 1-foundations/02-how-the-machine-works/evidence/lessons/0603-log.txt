@@ -1,0 +1,3 @@
+$ git log --oneline
+831b3c6 Add the system monitor
+[exit 0]

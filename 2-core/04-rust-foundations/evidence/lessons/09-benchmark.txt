@@ -1,0 +1,15 @@
+filesystem: ext2/ext3
+rustc 1.94.1 (e408947bf 2026-03-25)
+250 records per run, 256 payload bytes per record
+run 1, sync every  1: 774.729 ms
+run 1, sync every 25: 32.931 ms
+run 2, sync every 25: 33.809 ms
+run 2, sync every  1: 811.879 ms
+run 3, sync every  1: 910.443 ms
+run 3, sync every 25: 41.664 ms
+run 4, sync every 25: 47.496 ms
+run 4, sync every  1: 997.718 ms
+run 5, sync every  1: 1008.073 ms
+run 5, sync every 25: 41.646 ms
+median, sync each: 910.443 ms
+median, groups of 25: 41.646 ms

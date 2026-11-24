@@ -1,0 +1,4 @@
+$ go run ./drills/flow
+# gofromzero/drills/flow
+drills/flow/main.go:28:2: declared and not used: unused
+[exit 1]

@@ -1,0 +1,4 @@
+$ uv run python drills/blocked.py --debug 2>&1 | grep -o "Executing <Task.*took [0-9.]* seconds" | sed "s/coro=.* took/... took/"
+Executing <Task pending name='Task-1' ... took 0.201 seconds
+Executing <Task pending name='Task-1' ... took 0.257 seconds
+[exit 0]

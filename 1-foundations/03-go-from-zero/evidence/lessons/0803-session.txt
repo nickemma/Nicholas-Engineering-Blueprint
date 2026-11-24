@@ -1,0 +1,20 @@
+$ ./tasks list && ./tasks add "write the gate" && ./tasks add "test it both ways" && ./tasks done 1 && ./tasks list && cat tasks.json
+no tasks
+added 1: write the gate
+added 2: test it both ways
+done 1: write the gate
+1 [x] write the gate
+2 [ ] test it both ways
+[
+  {
+    "id": 1,
+    "title": "write the gate",
+    "done": true
+  },
+  {
+    "id": 2,
+    "title": "test it both ways",
+    "done": false
+  }
+]
+[exit 0]

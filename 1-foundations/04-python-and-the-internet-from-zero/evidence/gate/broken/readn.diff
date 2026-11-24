@@ -1,0 +1,12 @@
+diff --color -ruN -x .venv -x __pycache__ -x .pytest_cache -x .ruff_cache -x uv.lock -x '*.csv' -x '*.png' -x drills -x hello.py -x .python-version final/measure/measure.py broken/readn/measure/measure.py
+--- final/measure/measure.py
++++ broken/readn/measure/measure.py
+@@ -29,7 +29,7 @@
+             start = time.perf_counter()
+             writer.write(line)
+             await writer.drain()
+-            reply = await reader.readline()
++            reply = await reader.read(65536)
+             latency_ms = round((time.perf_counter() - start) * 1000, 3)
+             if reply != line:
+                 raise ValueError(

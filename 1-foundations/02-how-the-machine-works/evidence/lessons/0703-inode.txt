@@ -1,0 +1,9 @@
+$ cd logs && { ../writer.sh app.log & sleep 0.3; }; p=$(cat app.log.pid); ls -i app.log; ls -l /proc/$p/fd/3; mv app.log app.log.1; ls -i app.log.1; ls -l /proc/$p/fd/3; kill -HUP $p; sleep 0.2; ls -i app.log app.log.1; ls -l /proc/$p/fd/3; kill -TERM $p; wait; rm -f app.log*
+34461331 app.log
+l-wx------ 1 ada ada 64 Nov 19 06:11 /proc/245/fd/3 -> /home/ada/blueprint/machine/logs/app.log
+34461331 app.log.1
+l-wx------ 1 ada ada 64 Nov 19 06:11 /proc/245/fd/3 -> /home/ada/blueprint/machine/logs/app.log.1
+34461332 app.log
+34461331 app.log.1
+l-wx------ 1 ada ada 64 Nov 19 06:11 /proc/245/fd/3 -> /home/ada/blueprint/machine/logs/app.log
+[exit 0]

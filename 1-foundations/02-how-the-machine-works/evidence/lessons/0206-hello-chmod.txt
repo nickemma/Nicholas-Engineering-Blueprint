@@ -1,0 +1,4 @@
+$ chmod +x hello.sh && ls -l hello.sh && ./hello.sh
+-rwxrwxr-x 1 ada ada 47 Nov 18 16:47 hello.sh
+Hello from a script
+[exit 0]

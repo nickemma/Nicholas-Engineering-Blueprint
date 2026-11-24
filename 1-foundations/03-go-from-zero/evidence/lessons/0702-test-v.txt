@@ -1,0 +1,24 @@
+$ go test -v ./wordcount
+=== RUN   TestCount
+=== RUN   TestCount/one_word
+=== RUN   TestCount/repeated
+=== RUN   TestCount/case_is_ignored
+=== RUN   TestCount/punctuation_is_ignored
+=== RUN   TestCount/absent
+=== RUN   TestCount/empty_text
+--- PASS: TestCount (0.00s)
+    --- PASS: TestCount/one_word (0.00s)
+    --- PASS: TestCount/repeated (0.00s)
+    --- PASS: TestCount/case_is_ignored (0.00s)
+    --- PASS: TestCount/punctuation_is_ignored (0.00s)
+    --- PASS: TestCount/absent (0.00s)
+    --- PASS: TestCount/empty_text (0.00s)
+=== RUN   TestTop
+--- PASS: TestTop (0.00s)
+=== RUN   TestTopBreaksTiesAlphabetically
+--- PASS: TestTopBreaksTiesAlphabetically (0.00s)
+=== RUN   TestTopAsksForMoreThanThereAre
+--- PASS: TestTopAsksForMoreThanThereAre (0.00s)
+PASS
+ok  	gofromzero/wordcount	0.004s
+[exit 0]

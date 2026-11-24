@@ -1,0 +1,103 @@
+[
+  {
+    "Input": {
+      "Op": "put",
+      "Key": "job",
+      "Value": "queued",
+      "Expect": ""
+    },
+    "Call": 106609880850807,
+    "Client": 0,
+    "Return": 106609892823558,
+    "Result": {
+      "found": true,
+      "value": "queued"
+    }
+  },
+  {
+    "Input": {
+      "Op": "cas",
+      "Key": "job",
+      "Value": "running",
+      "Expect": "queued"
+    },
+    "Call": 106609892831343,
+    "Client": 1,
+    "Return": 106609905016384,
+    "Result": {
+      "swapped": true,
+      "found": true,
+      "value": "running"
+    }
+  },
+  {
+    "Input": {
+      "Op": "get",
+      "Key": "job",
+      "Value": "",
+      "Expect": ""
+    },
+    "Call": 106609905352871,
+    "Client": 2,
+    "Return": 106609917272773,
+    "Result": {
+      "found": true,
+      "value": "running"
+    }
+  },
+  {
+    "Input": {
+      "Op": "put",
+      "Key": "job",
+      "Value": "done",
+      "Expect": ""
+    },
+    "Call": 106609906214657,
+    "Client": 3,
+    "Return": 106609921552192,
+    "Result": {
+      "found": true,
+      "value": "done"
+    }
+  },
+  {
+    "Input": {
+      "Op": "put",
+      "Key": "job",
+      "Value": "indeterminate",
+      "Expect": ""
+    },
+    "Call": 106610080074912,
+    "Client": 4
+  },
+  {
+    "Input": {
+      "Op": "put",
+      "Key": "job",
+      "Value": "failover",
+      "Expect": ""
+    },
+    "Call": 106610574432503,
+    "Client": 5,
+    "Return": 106610606722337,
+    "Result": {
+      "found": true,
+      "value": "failover"
+    }
+  },
+  {
+    "Input": {
+      "Op": "get",
+      "Key": "job",
+      "Value": "",
+      "Expect": ""
+    },
+    "Call": 106610606729370,
+    "Client": 6,
+    "Return": 106610628559561,
+    "Result": {
+      "found": true,
+      "value": "queued"
+    }
+  }
+]

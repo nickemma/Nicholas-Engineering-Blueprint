@@ -1,0 +1,3 @@
+$ go test ./wordcount
+ok  	gofromzero/wordcount	0.003s
+[exit 0]

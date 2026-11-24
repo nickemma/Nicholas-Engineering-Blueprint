@@ -1,0 +1,4 @@
+$ command -v uv && uv --version
+/home/ada/.local/bin/uv
+uv 0.12.7 (x86_64-unknown-linux-gnu)
+[exit 0]

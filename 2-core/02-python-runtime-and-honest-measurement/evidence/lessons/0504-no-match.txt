@@ -1,0 +1,6 @@
+$ uv run pytest -q tests/test_client.py 2>&1 | tail -4
+../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/json/decoder.py:363: JSONDecodeError
+=========================== short test summary info ============================
+FAILED tests/test_client.py::test_a_plain_text_error_is_still_an_api_error - ...
+1 failed, 8 passed in 0.16s
+[exit 0]

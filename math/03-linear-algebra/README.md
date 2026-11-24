@@ -4,7 +4,7 @@
 
 A neural network is mostly matrix multiplication, so the cost of AI infrastructure is mostly the cost of matrix multiplication. This guide teaches just enough linear algebra to read that sentence closely, and one idea that explains why GPUs exist: **arithmetic intensity**. You measure it on your own CPU, and find the same arithmetic running 20 times faster or slower, depending only on how it reaches memory.
 
-**Real systems:** this is the prerequisite for [Phase 8](../../lessons/08-ai-infrastructure/README.md)'s CUDA and matrix-multiply steps. [DSA guide 00](../../dsa/00-complexity/README.md) and the [Performance Bridge](../../lessons/perf-bridge/README.md) showed that cache misses can beat Big-O. Here's the formal version of that.
+**Real systems:** this is the prerequisite for [Phase 8](../../3-tracks/ai-infrastructure/02-serving-and-scaling-models/README.md)'s CUDA and matrix-multiply steps. [DSA guide 00](../../dsa/00-complexity/README.md) and the [Performance Bridge](../../2-core/06-linux-networking-and-profiling/README.md) showed that cache misses can beat Big-O. Here's the formal version of that.
 
 ## Set up
 
@@ -431,7 +431,7 @@ A layer of 4,096 by 4,096 has about 16.8 million weights: 67 MB at 4 bytes each.
 Two consequences for Phase 8:
 
 - **Precision is a trade.** Halving a number's size from 4 bytes to 2 doubles the intensity, and halves the memory. Numbers lose accuracy, and a lot of inference engineering lives in that trade-off.
-- **Bandwidth is the wall.** Once the arithmetic is under its roof, a GPU's memory and, in a cluster, its network set the limit. That's the [Networking Bridge](../../lessons/network-bridge/README.md)'s bandwidth-delay product again, between machines.
+- **Bandwidth is the wall.** Once the arithmetic is under its roof, a GPU's memory and, in a cluster, its network set the limit. That's the [network calibration lesson](../../3-tracks/cloud-and-network/01-networking-in-depth/lessons/01-calibrate-a-network-you-can-break.md)'s bandwidth-delay product again, between machines.
 
 ## What to do with this
 

@@ -1,0 +1,18 @@
+$ printf "GET / HTTP/1.1\r\nHost: example.com\r\nConnection: close\r\n\r\n" | nc example.com 80 | head -16 | cut -c1-72
+HTTP/1.1 200 OK
+Date: Thu, 19 Nov 2026 08:58:16 GMT
+Content-Type: text/html; charset=utf-8
+Transfer-Encoding: chunked
+Connection: close
+Server: cloudflare
+Last-Modified: Wed, 18 Nov 2026 17:47:37 GMT
+Allow: GET, HEAD
+Accept-Ranges: bytes
+Age: 3
+cf-cache-status: HIT
+CF-RAY: a5ce031e6ab6d179-AMS
+alt-svc: h3=":443"; ma=86400
+
+241
+<!doctype html><html lang=en><head><meta charset=utf-8><link rel=icon hr
+[exit 0]

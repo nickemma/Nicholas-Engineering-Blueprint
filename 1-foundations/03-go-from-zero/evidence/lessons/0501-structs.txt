@@ -1,0 +1,7 @@
+$ go run ./drills/structs
+{ID:1 Title:learn structs Done:false}
+learn structs / a copy
+changed through a pointer
+after FinishCopy: 1 [ ] changed through a pointer
+after Finish:     1 [x] changed through a pointer
+[exit 0]

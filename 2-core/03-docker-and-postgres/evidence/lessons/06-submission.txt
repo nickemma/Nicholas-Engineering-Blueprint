@@ -1,0 +1,7 @@
+=== RUN   TestDurableSubmission
+    submission_test.go:65: two concurrent submissions created one job
+    submission_test.go:79: a new pool replayed the original queued response after cancellation
+    submission_test.go:102: a rejected key rolled back its job insert
+--- PASS: TestDurableSubmission (0.12s)
+PASS
+ok  	switchyard/internal/pgstore	1.155s

@@ -1,0 +1,39 @@
+$ bash gate/run.sh ~/your-repo    # the floats version
+== tally/
+PASS  gofmt
+PASS  go vet
+PASS  go test -race
+FAIL  a log with 14 kinds of malformed line, a 200 KB line, \r\n and no final newline
+      want {"lines": 302, "malformed": 28, "p50_ms": 940, "p99_ms": 1951, "status": {"200": 101, "201": 39, "204": 25, "301": 29, "404": 50, "500": 37, "503": 21}}
+      got  {"lines": 304, "malformed": 26, "p50_ms": 934, "p99_ms": 1951, "status": {"200": 103, "201": 39, "204": 25, "301": 29, "404": 50, "500": 37, "503": 21}}
+PASS  an empty input
+PASS  5,000 lines
+FAIL  -path /api on the log with traps
+      want {"lines": 171, "malformed": 28, "p50_ms": 923, "p99_ms": 1945, "status": {"200": 53, "201": 26, "204": 16, "301": 19, "404": 26, "500": 18, "503": 13}}
+      got  {"lines": 173, "malformed": 26, "p50_ms": 919, "p99_ms": 1945, "status": {"200": 55, "201": 26, "204": 16, "301": 19, "404": 26, "500": 18, "503": 13}}
+PASS  -path /api/jobs on 5,000 lines
+PASS  tally -nope: exit 2 with a message
+PASS  tally -path: exit 2 with a message
+PASS  tally extra-argument: exit 2 with a message
+PASS  a million lines counted correctly
+PASS  at most 64 MiB of memory for a 62 MiB log (it used 28 MiB)
+== report/
+PASS  ruff format
+PASS  ruff check
+PASS  pytest, without tally built
+FAIL  report.py on three logs: the table
+      want:
+      file lines malformed p50_ms p99_ms
+      empty.log 0 0 - -
+      random.log 5000 0 999 1980
+      traps.log 302 28 940 1951
+      got:
+      file lines malformed p50_ms p99_ms
+      empty.log 0 0 - -
+      random.log 5000 0 999 1980
+      traps.log 304 26 934 1951
+PASS  report.py: the chart is a PNG image
+PASS  report.py when tally fails: exit 1 with a message (report: empty.log: tally exited 1: tally: something went wrong)
+
+Gate failed: fix each FAIL above and run it again, or take the Foundations module that covers it.
+[exit 1]

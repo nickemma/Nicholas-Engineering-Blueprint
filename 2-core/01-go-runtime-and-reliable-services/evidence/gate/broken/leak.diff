@@ -1,0 +1,10 @@
+--- a/internal/coord/coord.go
++++ b/internal/coord/coord.go
+@@ -132,6 +132,7 @@
+ 	}
+ 	timer := time.NewTimer(wait)
+ 	defer timer.Stop()
++	go func() { <-c.stop }() // waits for shutdown: one more goroutine per Lease call
+ 	for {
+ 		id, ok := c.takeHandedBack()
+ 		if !ok {

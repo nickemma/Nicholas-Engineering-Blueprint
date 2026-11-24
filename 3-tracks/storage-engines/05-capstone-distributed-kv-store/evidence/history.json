@@ -1,0 +1,70 @@
+[
+  {
+    "Input": {
+      "Op": "put",
+      "Key": "job",
+      "Value": "value-private-before-failover"
+    },
+    "Call": 109529279072044,
+    "Client": 0,
+    "Return": 109529318457171,
+    "Result": {
+      "found": true,
+      "value": "value-private-before-failover"
+    }
+  },
+  {
+    "Input": {
+      "Op": "put",
+      "Key": "job",
+      "Value": "value-private-after-lost-reply"
+    },
+    "Call": 109529723877965,
+    "Client": 0,
+    "Return": 109530314046910,
+    "Result": {
+      "found": true,
+      "value": "value-private-after-lost-reply"
+    }
+  },
+  {
+    "Input": {
+      "Op": "get",
+      "Key": "job",
+      "Value": ""
+    },
+    "Call": 109530314056658,
+    "Client": 0,
+    "Return": 109530367362369,
+    "Result": {
+      "found": true,
+      "value": "value-private-after-lost-reply"
+    }
+  },
+  {
+    "Input": {
+      "Op": "delete",
+      "Key": "job",
+      "Value": ""
+    },
+    "Call": 109531359486040,
+    "Client": 0,
+    "Return": 109531452733002,
+    "Result": {
+      "found": false
+    }
+  },
+  {
+    "Input": {
+      "Op": "get",
+      "Key": "job",
+      "Value": ""
+    },
+    "Call": 109531452748171,
+    "Client": 0,
+    "Return": 109531531056458,
+    "Result": {
+      "found": false
+    }
+  }
+]

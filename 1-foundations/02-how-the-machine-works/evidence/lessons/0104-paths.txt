@@ -1,0 +1,6 @@
+$ cd notes && pwd && cd .. && pwd && cd /tmp && pwd && cd ~/blueprint/machine && pwd
+/home/ada/blueprint/machine/notes
+/home/ada/blueprint/machine
+/tmp
+/home/ada/blueprint/machine
+[exit 0]

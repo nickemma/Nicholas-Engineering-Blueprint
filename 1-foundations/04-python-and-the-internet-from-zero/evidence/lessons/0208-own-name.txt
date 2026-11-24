@@ -1,0 +1,11 @@
+$ echo "127.0.0.1 blueprint.test" | sudo tee -a /etc/hosts && getent hosts blueprint.test && dig +short blueprint.test; echo "dig printed nothing: exit $?"; ping -c 1 blueprint.test
+127.0.0.1 blueprint.test
+127.0.0.1       blueprint.test
+dig printed nothing: exit 0
+PING blueprint.test (127.0.0.1) 56(84) bytes of data.
+64 bytes from localhost (127.0.0.1): icmp_seq=1 ttl=64 time=0.238 ms
+
+--- blueprint.test ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.238/0.238/0.238/0.000 ms
+[exit 0]

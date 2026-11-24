@@ -41,7 +41,7 @@ The useful consequences:
 
 ## How it goes wrong
 
-- **Averages hide the tail.** p99 is what users feel on a page that makes 100 calls (the Python Bridge).
+- **Averages hide the tail.** p99 is what users feel on a page that makes 100 calls (core 02).
 - **Fan-out multiplies the tail.** A request that waits for 50 backends waits for the slowest. With each backend at a 1% chance of being slow, the request is slow 1 − 0.99⁵⁰ ≈ 40% of the time (Dean and Barroso, *The Tail at Scale*).
 - **Queueing.** Near saturation, latency grows without bound long before throughput stops rising: Little's law and the knee you measured.
 
@@ -51,7 +51,7 @@ Build a **latency budget**: list the steps on the request path, give each a numb
 
 ## Where you built it
 
-- **The tail:** the [Python Bridge](../../lessons/python-bridge/README.md) measured percentiles and coordinated omission.
-- **Little's law:** [Phase 2](../../lessons/02-connected-services/README.md) sized a worker pool with it.
-- **The cost of a hop:** [Phase 6](../../lessons/06-safe-shared-queries/README.md) measured what a TLS sidecar adds, and found it was the extra hops, not the encryption.
-- **A whole request path:** [Phase 7](../../lessons/07-utility-evaluation/README.md) broke a prediction's cost into its pieces.
+- **The tail:** [core 02](../../2-core/02-python-runtime-and-honest-measurement/README.md) measured percentiles and coordinated omission.
+- **Little's law:** [Phase 2](../../3-tracks/shared-units/messaging-and-resilience/README.md) sized a worker pool with it.
+- **The cost of a hop:** [Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md) measured what a TLS sidecar adds, and found it was the extra hops, not the encryption.
+- **A whole request path:** [Phase 7](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md) broke a prediction's cost into its pieces.

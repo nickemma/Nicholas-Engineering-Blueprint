@@ -1,136 +1,83 @@
 ---
-import fs from "node:fs";
-import path from "node:path";
-import JourneyMap from "../islands/JourneyMap.tsx";
-import QueueLab from "../islands/QueueLab.tsx";
 import Base from "../layouts/Base.astro";
-import { ROOT } from "../lib/content.ts";
-import { parseJourney, totalWeeks } from "../lib/journey.ts";
-import { LABS } from "../lib/labs.ts";
-
-const stops = parseJourney(fs.readFileSync(path.join(ROOT, "JOURNEY.md"), "utf8"));
-const weeks = totalWeeks(stops);
-const firstStop = stops[0];
-const firstResponse = 'GET /health\n\nHTTP/1.1 200 OK\nContent-Type: application/json\n\n{"status":"ok"}';
-const milestones = [
-  { id: "00-request-service", phase: 0, title: "A web service you can test", outcome: "Handle HTTP requests, validate input, and keep your checks running in CI." },
-  { id: "01-reliable-service", phase: 1, title: "A background jobs API", outcome: "Handle overlapping requests, set deadlines, and shut down without abandoning work." },
-  { id: "02-connected-services", phase: 2, title: "Workers that share the work", outcome: "Move jobs onto a queue, connect separate processes, and test what happens when a worker fails." },
-  { id: "03-durable-auditable-data", phase: 3, title: "Data that survives a restart", outcome: "Store jobs durably, publish events through an outbox, and keep a record of what happened." },
-  { id: "04-replicated-state", phase: 4, title: "A replicated store", outcome: "Replicate state with Raft, shard work, and test behaviour through node failures and network partitions." },
-  { id: "05-constrained-operations", phase: 5, title: "A platform you can operate", outcome: "Deploy Runway, see inside it with logs and metrics, and practise recovering from failures." },
-  { id: "06-safe-shared-queries", phase: 6, title: "Enforced access for each tenant", outcome: "Authenticate users, isolate each customer’s data, protect service connections, and audit actions." },
-  { id: "07-utility-evaluation", phase: 7, title: "ML you can evaluate honestly", outcome: "Collect job events, compare models against simple baselines, and measure whether they actually help." },
-  { id: "08-ai-infrastructure", phase: 8, title: "Infrastructure for serving and training models", outcome: "Build a model gateway, run distributed training, and compare latency, quality and cost." },
-  { id: "09-secure-ai-layer", phase: 9, title: "An AI assistant with enforced permissions", outcome: "Connect retrieval and tools, attack the assistant, and test controls that hold outside the model." },
-  { id: "capstones", phase: null, title: "A research project you can defend", outcome: "Choose a question, build a baseline, run experiments, and present your results and their limits." },
-].map((milestone) => {
-  const stop = stops.find((entry) => entry.id === milestone.id);
-  if (!stop) throw new Error(`Missing milestone in JOURNEY.md: ${milestone.id}`);
-  return { ...milestone, url: stop.url, label: milestone.phase === null ? "Your research capstone" : `After Phase ${milestone.phase}` };
-});
 const tracks = [
-  ["DSA", "/dsa/", "Twenty algorithm patterns in Go and Python, each tied to a real system. Start it alongside Phase 0."],
-  ["System design", "/system-design/", "A rubric, an interview script and worked designs by track. Add it at Phase 2."],
-  ["Maths", "/math/", "Queueing, proofs and linear algebra, each checked against something you can run."],
-  ["Capstones", "/capstones/", "Twelve research projects for the end of the road. Browse them early."],
+  { title: "AI infrastructure", slug: "ai-infrastructure", build: "An inference gateway", text: "Stream model responses, manage admission, and measure latency and throughput." },
+  { title: "Storage engines", slug: "storage-engines", build: "A distributed key-value store", text: "Build an LSM-tree engine and prove recovery after crashes and partitions." },
+  { title: "Cloud & network", slug: "cloud-and-network", build: "A programmable edge proxy", text: "Route traffic through a Rust proxy and reload it without dropping active requests." },
 ];
 ---
 <Base title="The Blueprint">
-  <section class="hero home-hero" aria-labelledby="home-heading">
-    <div>
-      <p class="eyebrow">Built, broken and secured, one phase at a time</p>
-      <h1 id="home-heading">From first request to secure distributed systems.</h1>
-      <p class="lede">Build and test a small Go web service. Grow it into <strong>Runway</strong>, a background-work platform with durable data and replication. Deploy and monitor it, secure tenants and data, use ML to improve it, and build infrastructure to train and serve AI models. Then attack and secure an AI assistant, and finish with your own research capstone.</p>
-      <p class="cta">
-        <a class="button" href="/lessons/00-request-service/guide/">Build your first service</a>
-        <a class="button quiet" href="#try-it">Try a lab first</a>
-      </p>
-      <p class="entry-note">No Go experience assumed. Follow the phases in order and use what you build along the way.</p>
-      <a class="route-shortcut" href="#full-route">Explore the full route</a>
-    </div>
-    <aside class="first-build" aria-labelledby="first-build-heading">
-      <p class="eyebrow">Phase 0 · about {firstStop.weeks} weeks for the phase</p>
-      <h2 id="first-build-heading">Your first working service</h2>
-      <p>A response you’ll make yourself:</p>
-      <pre aria-label="Example response from the Phase 0 health endpoint"><code>{firstResponse}</code></pre>
-      <dl class="build-cycle">
-        <div><dt>Build</dt><dd>Make <code>/health</code> return JSON.</dd></div>
-        <div><dt>Break</dt><dd>Send a POST where only GET should work.</dd></div>
-        <div><dt>Fix</dt><dd>Return 405 and keep a test that checks it.</dd></div>
-      </dl>
-      <a href="/lessons/00-request-service/guide/step-4-give-the-response-a-contract/">See the lesson behind this example →</a>
-    </aside>
-  </section>
+  <div class="home">
+    <section class="home-intro" aria-labelledby="home-heading">
+      <div class="home-copy">
+        <p class="home-kicker">Systems engineering curriculum</p>
+        <h1 id="home-heading">Build the systems<br />behind the service.</h1>
+        <p class="home-lede">Start with a Go service. Build a Rust data plane, connect them over Linux sockets, then ship a system you can test and explain.</p>
+        <div class="home-actions">
+          <a class="home-primary" href="/1-foundations/01-set-up-your-machine/">Start Foundations</a>
+          <a href="/journey/">Explore the curriculum</a>
+        </div>
+        <p class="home-entry">Already code? <a href="/1-foundations/test-out/">Take the test-out</a>.</p>
+      </div>
 
-  <section class="band home-demo" id="try-it" aria-labelledby="try-it-heading">
-    <p class="eyebrow">Try it in your browser · no setup</p>
-    <h2 id="try-it-heading">What happens when your service gets busy?</h2>
-    <p>Drag the load from 70% towards 95%. Watch how much longer jobs wait, then lower it again. This is the kind of behaviour you’ll build, break and explain.</p>
-    <QueueLab client:visible />
-    <p class="hint">A one-server simulation, with time measured in average job lengths. It illustrates queueing behaviour; it doesn’t predict your service’s performance.</p>
-    <p><a href="/labs/queue/">Explore the full queueing lab →</a> · <a href="/labs/">Browse all labs</a></p>
-  </section>
+      <figure class="switchyard">
+        <figcaption><strong>Switchyard</strong><span>Core project</span></figcaption>
+        <div class="switchyard-flow">
+          <div class="switchyard-node">
+            <span class="node-language">GO</span>
+            <strong>Control plane</strong>
+            <span>HTTP, jobs, Raft</span>
+          </div>
+          <div class="switchyard-wire"><span>TCP / Unix socket</span></div>
+          <div class="switchyard-node data-node">
+            <span class="node-language">RUST</span>
+            <strong>Data plane</strong>
+            <span>Frames, buffers, durable log</span>
+          </div>
+        </div>
+        <div class="switchyard-foot"><span>Runs on Linux</span><a href="/2-core/01-go-runtime-and-reliable-services/">View the first module</a></div>
+      </figure>
+    </section>
 
-  <section class="band" aria-labelledby="milestones-heading">
-    <h2 id="milestones-heading">Useful systems along the way</h2>
-    <p>Each milestone gives you something you can run, test and explain. You can pause there, put those skills to use, and return for the next phase.</p>
-    <ul class="cards milestones">
-      {milestones.slice(0, 4).map((milestone) => (
-        <li><a href={milestone.url}>
-          <small>{milestone.label}</small>
-          <h3>{milestone.title}</h3>
-          <p>{milestone.outcome}</p>
-        </a></li>
-      ))}
-    </ul>
-    <details class="route-details later-milestones">
-      <summary>See what you build in distributed systems, infrastructure, security and AI</summary>
-      <ul class="cards milestones">
-        {milestones.slice(4).map((milestone) => (
-          <li><a href={milestone.url}>
-            <small>{milestone.label}</small>
-            <h3>{milestone.title}</h3>
-            <p>{milestone.outcome}</p>
-          </a></li>
+    <section class="home-section" aria-labelledby="route-heading" id="full-route">
+      <header class="home-section-heading">
+        <h2 id="route-heading">The learning path</h2>
+        <a href="/journey/">Full roadmap</a>
+      </header>
+      <ol class="home-path">
+        <li><a href="/1-foundations/01-set-up-your-machine/"><strong>Foundations</strong><span>Go, Python, Linux, and networking from the beginning.</span></a></li>
+        <li><a href="/2-core/01-go-runtime-and-reliable-services/"><strong>Core</strong><span>Build and test Switchyard across eight modules.</span></a></li>
+        <li><a href="#tracks"><strong>Specialize</strong><span>Pick a track and ship a benchmarked capstone.</span></a></li>
+      </ol>
+    </section>
+
+    <section class="home-section" aria-labelledby="tracks-heading" id="tracks">
+      <header class="home-section-heading">
+        <h2 id="tracks-heading">Choose your track</h2>
+      </header>
+      <ul class="home-tracks">
+        {tracks.map((track) => (
+          <li>
+            <a href={`/3-tracks/${track.slug}/`}>
+              <span>{track.title}</span>
+              <h3>{track.build}</h3>
+              <p>{track.text}</p>
+            </a>
+          </li>
         ))}
       </ul>
-    </details>
-  </section>
+    </section>
 
-  <section class="band" aria-labelledby="practice-heading">
-    <h2 id="practice-heading">How you learn</h2>
-    <p>Build the phase, complete one independent exercise, explain it, and test it. Each phase includes a guide, an exercise with acceptance checks, and questions to help you explain what you built.</p>
-  </section>
-
-  <section class="band" id="full-route" aria-labelledby="route-heading">
-    <h2 id="route-heading">How far you take it</h2>
-    <p>The later phases add durable storage, replication, security, model serving and an AI assistant you attack and secure. A research capstone brings it together.</p>
-    <details class="route-details">
-      <summary>Explore all {stops.length} stops</summary>
-      <p>The complete path is about {weeks} weeks at 12–15 hours a week, including the bridges and capstone. That’s the full journey; each earlier milestone has its own finished system.</p>
-      <p>Tick off each stop as you finish it. Your progress stays in this browser.</p>
-      <JourneyMap client:visible stops={stops} />
-      <p><a href="/journey/">Read the full roadmap, prerequisites and evidence →</a></p>
-    </details>
-  </section>
-
-  <section class="band">
-    <h2>Alongside the route</h2>
-    <ul class="cards">
-      {tracks.map(([title, url, text]) => (
-        <li><a href={url}><h3>{title}</h3><p>{text}</p></a></li>
-      ))}
-    </ul>
-  </section>
-
-  <section class="band">
-    <h2>Labs</h2>
-    <p>Ideas from the route that are easier to feel than to read about, one for each discipline.</p>
-    <ul class="cards two">
-      {LABS.map((lab) => (
-        <li><a href={lab.url}><small>{lab.area}</small><h3>{lab.title}</h3><p>{lab.blurb}</p></a></li>
-      ))}
-    </ul>
-  </section>
+    <section class="home-section home-practice" id="try-it" aria-labelledby="practice-heading">
+      <div>
+        <h2 id="practice-heading">Put a system under load.</h2>
+        <p>Change the arrival rate in the queue simulator and see what happens to wait time.</p>
+      </div>
+      <div class="home-actions">
+        <a class="home-primary" href="/labs/queue/">Try the queue lab</a>
+        <a href="/labs/">Browse all labs</a>
+        <a href="/system-design/interview-rehearsal/">Interview rehearsal</a>
+      </div>
+    </section>
+  </div>
 </Base>

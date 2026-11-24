@@ -1,0 +1,40 @@
+$ bash gate/run.sh ~/blueprint/gofromzero   # race
+PASS  tasks: add, list, done, -file, and exit codes 1 and 2, across separate runs
+PASS  loganalyse: bad lines reported, a 100 KB line read, ties broken by line, same answer with 1, 7 and the default number of workers
+PASS  loganalyse: a million lines counted correctly
+PASS  loganalyse: at most 64 MiB of memory for a 62 MiB log (it used 11 MiB)
+PASS  gofmt: every file formatted
+PASS  go vet: no problems
+FAIL  go test -race: all tests pass, no data races
+      WARNING: DATA RACE
+      Write at 0x00c000018238 by goroutine 10:
+        gofromzero/wordcount.TestCountConcurrently.func1()
+            /home/ada/g/race/wordcount/race_test.go:15 +0xdd
+      
+      Previous write at 0x00c000018238 by goroutine 12:
+        gofromzero/wordcount.TestCountConcurrently.func1()
+            /home/ada/g/race/wordcount/race_test.go:15 +0xdd
+      
+      Goroutine 10 (running) created at:
+        gofromzero/wordcount.TestCountConcurrently()
+            /home/ada/g/race/wordcount/race_test.go:13 +0x84
+        testing.tRunner()
+            /usr/local/go/src/testing/testing.go:2195 +0x21c
+        testing.(*T).Run.gowrap1()
+            /usr/local/go/src/testing/testing.go:2260 +0x38
+      
+      Goroutine 12 (finished) created at:
+        gofromzero/wordcount.TestCountConcurrently()
+            /home/ada/g/race/wordcount/race_test.go:13 +0x84
+        testing.tRunner()
+            /usr/local/go/src/testing/testing.go:2195 +0x21c
+        testing.(*T).Run.gowrap1()
+            /usr/local/go/src/testing/testing.go:2260 +0x38
+      ==================
+      --- FAIL: TestCountConcurrently (0.00s)
+          testing.go:1867: race detected during execution of test
+      FAIL
+      FAIL	gofromzero/wordcount	0.022s
+      FAIL
+Gate failed: fix the FAIL lines above and run it again.
+[exit 1]

@@ -1,0 +1,7 @@
+$ uv run python drills/waits.py
+/home/ada/blueprint/internet/measure/drills/waits.py:23: RuntimeWarning: coroutine 'fetch' was never awaited
+  names = asyncio.run(job())
+RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+one_by_one: [<coroutine object fetch at 0x74449e810e10>, <coroutine object fetch at 0x74449e435220>, <coroutine object fetch at 0x74449e435630>] in 0.00 s
+all_at_once: ['a', 'b', 'c'] in 0.54 s
+[exit 0]

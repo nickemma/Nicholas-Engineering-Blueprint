@@ -1,0 +1,26 @@
+$ bash gate/run.sh ~/your-repo    # the slurp version
+== tally/
+PASS  gofmt
+PASS  go vet
+PASS  go test -race
+PASS  a log with 14 kinds of malformed line, a 200 KB line, \r\n and no final newline
+PASS  an empty input
+PASS  5,000 lines
+PASS  -path /api on the log with traps
+PASS  -path /api/jobs on 5,000 lines
+PASS  tally -nope: exit 2 with a message
+PASS  tally -path: exit 2 with a message
+PASS  tally extra-argument: exit 2 with a message
+PASS  a million lines counted correctly
+FAIL  at most 64 MiB of memory for a 62 MiB log
+      it used 258248 KiB: read standard input line by line instead of all at once
+== report/
+PASS  ruff format
+PASS  ruff check
+PASS  pytest, without tally built
+PASS  report.py on three logs: the table
+PASS  report.py: the chart is a PNG image
+PASS  report.py when tally fails: exit 1 with a message (report: empty.log: tally exited 1: tally: something went wrong)
+
+Gate failed: fix each FAIL above and run it again, or take the Foundations module that covers it.
+[exit 1]

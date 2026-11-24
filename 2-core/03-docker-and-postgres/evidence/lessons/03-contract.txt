@@ -1,0 +1,8 @@
+=== RUN   TestRepositoryContract
+--- PASS: TestRepositoryContract (0.00s)
+PASS
+ok  	switchyard/internal/memstore	1.026s
+=== RUN   TestRepositoryContract
+--- PASS: TestRepositoryContract (0.06s)
+PASS
+ok  	switchyard/internal/pgstore	1.094s

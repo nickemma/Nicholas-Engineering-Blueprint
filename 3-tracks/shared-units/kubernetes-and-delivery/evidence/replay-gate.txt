@@ -1,0 +1,13 @@
+ok  	switchyard/delivery/cmd/frontend	1.063s
+ok  	switchyard/delivery/cmd/peer-bridge	1.081s
+?   	switchyard/delivery/cmd/scale-worker	[no test files]
+ok  	switchyard/delivery/internal/scaling	1.056s
+ok  	switchyard/delivery/internal/telemetry	1.056s
+==> Linting chart
+[INFO] Chart.yaml: icon is recommended
+
+1 chart(s) linted, 0 chart(s) failed
+chart rendered durable storage, peer discovery, observability, and scoped worker scaling
+promotion check kept stable unchanged when candidate readiness failed
+FAIL unready candidate changed stable
+negative control: caught a promotion script that bypassed readiness

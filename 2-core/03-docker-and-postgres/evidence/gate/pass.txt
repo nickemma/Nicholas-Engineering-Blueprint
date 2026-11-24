@@ -1,0 +1,170 @@
+ Image c03-gate-1000-1519052-switchyard:lab Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 535B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 162B done
+#2 DONE 0.1s
+
+#3 [internal] load .dockerignore
+#3 transferring context:
+#3 transferring context: 113B done
+#3 DONE 0.1s
+
+#4 [internal] load build context
+#4 transferring context: 41.26MB 0.4s done
+#4 DONE 0.4s
+
+#5 [1/2] COPY bin/linux/switchyard /switchyard
+#5 DONE 0.1s
+
+#6 [2/2] COPY bin/linux/worker /worker
+#6 DONE 1.4s
+
+#7 exporting to image
+#7 exporting layers
+#7 exporting layers 1.3s done
+#7 exporting manifest sha256:d4b876ca2226bf65470bc44ed75caff07c6b374e0bbafb06b034c682fd62a880 0.0s done
+#7 exporting config sha256:a54ecc2a2dd074e09652f8f366fcbd78f96ccb37f4e65cee7b4383b756818c41 0.0s done
+#7 exporting attestation manifest sha256:33d78d0e7f4dc3623c89fb02956c1f3076a8964b245552a8123198d4dc9cf868 0.0s done
+#7 exporting manifest list sha256:a9c4ded5c9654f21c4109dbe64525f014ea53362ff373a7b4d87047a8fe52a34 0.0s done
+#7 naming to docker.io/library/c03-gate-1000-1519052-switchyard:lab
+#7 naming to docker.io/library/c03-gate-1000-1519052-switchyard:lab done
+#7 unpacking to docker.io/library/c03-gate-1000-1519052-switchyard:lab
+#7 unpacking to docker.io/library/c03-gate-1000-1519052-switchyard:lab 0.3s done
+#7 DONE 1.8s
+
+#8 resolving provenance for metadata file
+#8 DONE 0.0s
+ Image c03-gate-1000-1519052-switchyard:lab Built 
+ Network c03-gate-1000-1519052_default Creating 
+ Network c03-gate-1000-1519052_default Created 
+ Volume c03-gate-1000-1519052_pgdata Creating 
+ Volume c03-gate-1000-1519052_pgdata Created 
+ Container c03-gate-1000-1519052-postgres-1 Creating 
+ Container c03-gate-1000-1519052-postgres-1 Created 
+ Container c03-gate-1000-1519052-postgres-1 Starting 
+ Container c03-gate-1000-1519052-postgres-1 Started 
+ Container c03-gate-1000-1519052-postgres-1 Waiting 
+ Container c03-gate-1000-1519052-postgres-1 Healthy 
+CREATE DATABASE
+BEGIN
+SET
+ pg_advisory_xact_lock 
+-----------------------
+ 
+(1 row)
+
+CREATE TABLE
+CREATE TABLE
+INSERT 0 1
+CREATE INDEX
+INSERT 0 1
+CREATE TABLE
+INSERT 0 1
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+INSERT 0 1
+CREATE SEQUENCE
+INSERT 0 1
+COMMIT
+?   	switchyard/cmd/jobsctl	[no test files]
+?   	switchyard/cmd/leaseprobe	[no test files]
+?   	switchyard/cmd/loadjobs	[no test files]
+ok  	switchyard/cmd/switchyard	1.242s
+ok  	switchyard/cmd/worker	3.685s
+ok  	switchyard/drills/byhand	1.058s
+ok  	switchyard/drills/escape	1.055s [no tests to run]
+?   	switchyard/drills/gc	[no test files]
+?   	switchyard/drills/sched	[no test files]
+?   	switchyard/drills/spin	[no test files]
+?   	switchyard/drills/stacks	[no test files]
+?   	switchyard/drills/stdhttp	[no test files]
+ok  	switchyard/internal/chaos	1.082s
+ok  	switchyard/internal/coord	1.084s
+ok  	switchyard/internal/grpcapi	1.306s
+?   	switchyard/internal/grpcapi/jobsv1	[no test files]
+?   	switchyard/internal/grpcapi/workersv1	[no test files]
+ok  	switchyard/internal/httpapi	1.134s
+ok  	switchyard/internal/idempotency	1.111s
+ok  	switchyard/internal/jobs	1.107s
+ok  	switchyard/internal/ledger	1.098s
+ok  	switchyard/internal/memstore	1.061s
+ok  	switchyard/internal/pgstore	1.490s
+ok  	switchyard/internal/queue	1.064s
+?   	switchyard/internal/repotest	[no test files]
+ok  	switchyard/internal/retry	1.069s
+repository contracts, exhausted pool, transactional rollback, and recovery checks passed
+ Container c03-gate-1000-1519052-postgres-1 Running 
+ Container c03-gate-1000-1519052-migrate-1 Creating 
+ Container c03-gate-1000-1519052-migrate-1 Created 
+ Container c03-gate-1000-1519052-api-1 Creating 
+ Container c03-gate-1000-1519052-api-1 Created 
+ Container c03-gate-1000-1519052-postgres-1 Waiting 
+ Container c03-gate-1000-1519052-postgres-1 Healthy 
+ Container c03-gate-1000-1519052-migrate-1 Starting 
+ Container c03-gate-1000-1519052-migrate-1 Started 
+ Container c03-gate-1000-1519052-migrate-1 Waiting 
+ Container c03-gate-1000-1519052-migrate-1 Exited 
+ Container c03-gate-1000-1519052-api-1 Starting 
+ Container c03-gate-1000-1519052-api-1 Started 
+ Container c03-gate-1000-1519052-api-1 Killing 
+ Container c03-gate-1000-1519052-api-1 Killed 
+ Container c03-gate-1000-1519052-postgres-1 Waiting 
+ Container c03-gate-1000-1519052-postgres-1 Healthy 
+ Container c03-gate-1000-1519052-migrate-1 Starting 
+ Container c03-gate-1000-1519052-migrate-1 Started 
+ Container c03-gate-1000-1519052-migrate-1 Waiting 
+ Container c03-gate-1000-1519052-migrate-1 Exited 
+ Container c03-gate-1000-1519052-api-1 Starting 
+ Container c03-gate-1000-1519052-api-1 Started 
+ Container c03-gate-1000-1519052-api-1 Stopping 
+ Container c03-gate-1000-1519052-api-1 Stopped 
+ Container c03-gate-1000-1519052-postgres-1 Stopping 
+ Container c03-gate-1000-1519052-postgres-1 Stopped 
+ Container c03-gate-1000-1519052-postgres-1 Removing 
+ Container c03-gate-1000-1519052-postgres-1 Removed 
+ Container c03-gate-1000-1519052-postgres-1 Creating 
+ Container c03-gate-1000-1519052-postgres-1 Created 
+ Container c03-gate-1000-1519052-postgres-1 Starting 
+ Container c03-gate-1000-1519052-postgres-1 Started 
+ Container c03-gate-1000-1519052-postgres-1 Waiting 
+ Container c03-gate-1000-1519052-postgres-1 Healthy 
+ Container c03-gate-1000-1519052-postgres-1 Waiting 
+ Container c03-gate-1000-1519052-postgres-1 Healthy 
+ Container c03-gate-1000-1519052-migrate-1 Starting 
+ Container c03-gate-1000-1519052-migrate-1 Started 
+ Container c03-gate-1000-1519052-migrate-1 Waiting 
+ Container c03-gate-1000-1519052-migrate-1 Exited 
+ Container c03-gate-1000-1519052-api-1 Starting 
+ Container c03-gate-1000-1519052-api-1 Started 
+ Container c03-gate-1000-1519052-worker-1 Creating 
+ Container c03-gate-1000-1519052-worker-1 Created 
+ Container c03-gate-1000-1519052-worker-1 Starting 
+ Container c03-gate-1000-1519052-worker-1 Started 
+same key and original 201 survived SIGKILL; changed payload returned 422
+job 1 recovered; token 2 refused; token 4 recorded one effect
+a replacement PostgreSQL container kept the job, effect, and retry record
+the Compose worker completed a new job
+ Container c03-gate-1000-1519052-worker-1 Stopping 
+ Container c03-gate-1000-1519052-api-1 Stopping 
+ Container c03-gate-1000-1519052-worker-1 Stopped 
+ Container c03-gate-1000-1519052-worker-1 Removing 
+ Container c03-gate-1000-1519052-worker-1 Removed 
+ Container c03-gate-1000-1519052-api-1 Stopped 
+ Container c03-gate-1000-1519052-api-1 Removing 
+ Container c03-gate-1000-1519052-api-1 Removed 
+ Container c03-gate-1000-1519052-migrate-1 Stopping 
+ Container c03-gate-1000-1519052-migrate-1 Stopped 
+ Container c03-gate-1000-1519052-migrate-1 Removing 
+ Container c03-gate-1000-1519052-migrate-1 Removed 
+ Container c03-gate-1000-1519052-postgres-1 Stopping 
+ Container c03-gate-1000-1519052-postgres-1 Stopped 
+ Container c03-gate-1000-1519052-postgres-1 Removing 
+ Container c03-gate-1000-1519052-postgres-1 Removed 
+ Network c03-gate-1000-1519052_default Removing 
+ Volume c03-gate-1000-1519052_pgdata Removing 
+ Volume c03-gate-1000-1519052_pgdata Removed 
+ Network c03-gate-1000-1519052_default Removed 

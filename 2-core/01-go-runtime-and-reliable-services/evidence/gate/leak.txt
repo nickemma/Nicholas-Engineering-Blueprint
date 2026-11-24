@@ -1,0 +1,21 @@
+$ bash gate/run.sh ~/blueprint/switchyard   # leak
+PASS  gofmt -l . lists nothing
+PASS  go vet ./...
+PASS  go test -race ./...
+sending 10,000 state changes from 32 clients while workers are killed; this takes a minute or two
+sent 10000 state changes in 1.7 s: 7072 creates, 1620 repeated with the same key, 1308 cancels (1034 accepted)
+settled after 22.6 s: 7072 jobs: 6038 completed, 1034 cancelled, 0 failed
+PASS  every request got an expected answer
+PASS  a repeated request with the same key returned the same job
+PASS  every job reached a final state (none lost, none stuck)
+PASS  every job cancelled with 200 ended cancelled, never completed
+PASS  every completed job has exactly one effect; every other job, none
+      workers killed with SIGKILL: 15; one paused past its lease
+      jobs handed back by the reconcile loop: 10
+FAIL  goroutines came back to the baseline
+      before the load: 36; 15 s after it: 6173. Something starts goroutines that never end.
+PASS  SIGTERM stopped the control plane and every worker within the grace period (2 s)
+PASS  the race detector reported nothing
+
+gate failed
+[exit 1]

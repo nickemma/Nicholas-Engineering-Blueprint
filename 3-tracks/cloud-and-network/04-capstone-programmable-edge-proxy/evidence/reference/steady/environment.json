@@ -1,0 +1,20 @@
+{
+  "envoy_image": "envoyproxy/envoy@sha256:36a2dc72f4b0b2639af3dfeaf92dced4063058f200664c6c4f5d443f5d9ea51d",
+  "envoy_version": "envoy  version: 4be7862a2a6d9a7867f576385d545bb0b47b9181/1.38.5/Clean/RELEASE/BoringSSL",
+  "rust": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "go": "go version go1.26.6 linux/amd64",
+  "kernel": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "available_cpus": 16,
+  "workers_per_process": 2,
+  "warmup_requests_per_trial": 32,
+  "payload_bytes": 4096,
+  "rss_scope": "Rust proxy process from driver launch through sample collection",
+  "rss_sampling_ms": 25,
+  "rates": [
+    200,
+    2500
+  ],
+  "trials": 3,
+  "seconds": 2,
+  "path": "/a/obj/4096/1"
+}

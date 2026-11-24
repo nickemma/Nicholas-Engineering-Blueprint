@@ -1,0 +1,22 @@
+$ go test -v ./logs
+=== RUN   TestParse
+=== RUN   TestParse/a_good_line
+=== RUN   TestParse/zero_ms_is_fine
+=== RUN   TestParse/not_JSON
+=== RUN   TestParse/no_status
+=== RUN   TestParse/status_out_of_range
+=== RUN   TestParse/no_ms
+=== RUN   TestParse/negative_ms
+--- PASS: TestParse (0.00s)
+    --- PASS: TestParse/a_good_line (0.00s)
+    --- PASS: TestParse/zero_ms_is_fine (0.00s)
+    --- PASS: TestParse/not_JSON (0.00s)
+    --- PASS: TestParse/no_status (0.00s)
+    --- PASS: TestParse/status_out_of_range (0.00s)
+    --- PASS: TestParse/no_ms (0.00s)
+    --- PASS: TestParse/negative_ms (0.00s)
+=== RUN   TestMergeGivesTheSameAnswerInAnyOrder
+--- PASS: TestMergeGivesTheSameAnswerInAnyOrder (0.00s)
+PASS
+ok  	gofromzero/logs	0.004s
+[exit 0]

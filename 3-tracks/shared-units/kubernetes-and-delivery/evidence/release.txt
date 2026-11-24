@@ -1,0 +1,2 @@
+signature and SPDX attestation verified for localhost:15119/delivery@sha256:72dc541fe52351fd9505087868392183148dd35c3b8fd9a09f34492beedb6a99
+signature and SPDX attestation verified for localhost:15119/delivery@sha256:5a4afe166043304f73f746e7e8974bcea6a54b4cdbceba2d43ff35b9faaec963

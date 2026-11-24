@@ -1,0 +1,3 @@
+$ ls -l notes/first.txt
+-rw-rw-r-- 1 ada ada 18 Nov 18 16:47 notes/first.txt
+[exit 0]

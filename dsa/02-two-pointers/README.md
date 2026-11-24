@@ -11,7 +11,7 @@ Two indexes walk through a sequence, usually from both ends towards the middle, 
 - you compare the two **ends** of something (a palindrome, the widest container);
 - you must change an array **in place** (remove duplicates, merge).
 
-**Real systems:** merging two sorted runs with one pointer each is how LSM-tree storage engines compact their files, which [Phase 3](../../lessons/03-durable-auditable-data/README.md) compares with B-trees. Merge-sort's merge step and the "merge sorted arrays" practice problem below are the same move.
+**Real systems:** merging two sorted runs with one pointer each is how LSM-tree storage engines compact their files, which [Phase 3](../../2-core/03-docker-and-postgres/README.md) compares with B-trees. Merge-sort's merge step and the "merge sorted arrays" practice problem below are the same move.
 
 ## Worked problem 1: Valid Palindrome
 

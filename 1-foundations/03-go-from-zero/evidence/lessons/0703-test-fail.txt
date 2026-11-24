@@ -1,0 +1,8 @@
+$ go test ./wordcount
+--- FAIL: TestCount (0.00s)
+    --- FAIL: TestCount/case_is_ignored (0.00s)
+        wordcount_test.go:26: Count("Cat cat CAT")["cat"] = 1, want 3
+FAIL
+FAIL	gofromzero/wordcount	0.004s
+FAIL
+[exit 1]

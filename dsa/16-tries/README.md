@@ -11,7 +11,7 @@ A trie (said "try", from re**trie**val) stores strings character by character do
 - the **longest prefix** that matches (routing tables).
 
 **Real systems:**
-- **Go's HTTP router.** It matches a request's path against its patterns segment by segment through a tree, which is how the `/greet` route found its handler in [Phase 0](../../lessons/00-request-service/TEACHING.md#step-5-a-router-a-greeting-and-input-validation).
+- **Go's HTTP router.** It matches a request's path against its patterns segment by segment through a tree, which is how the `/greet` route found its handler in [core 01, lesson 03](../../2-core/01-go-runtime-and-reliable-services/lessons/03-an-http-service-with-a-contract.md#step-2-the-routes).
 - **IP routing.** Every router does **longest-prefix match** on addresses, usually with a compressed trie: `10.0.0.0/8` and `10.1.0.0/16` share a path, and the deeper match wins.
 - **Key-value stores** use prefix trees for range scans, and Ethereum's state is a Merkle-Patricia trie.
 

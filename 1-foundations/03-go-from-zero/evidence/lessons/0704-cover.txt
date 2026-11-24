@@ -1,0 +1,3 @@
+$ go test -cover ./wordcount
+ok  	gofromzero/wordcount	0.004s	coverage: 100.0% of statements
+[exit 0]

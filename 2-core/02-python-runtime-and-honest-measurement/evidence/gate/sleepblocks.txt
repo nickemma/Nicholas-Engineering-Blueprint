@@ -1,0 +1,37 @@
+$ bash gate/run.sh ~/blueprint/kload   # sleepblocks
+PASS  ruff format
+PASS  ruff check
+FAIL  pytest
+      =========================== short test summary info ============================
+      FAILED tests/test_cli.py::test_load_writes_results_and_settings - assert 3 == 0
+      FAILED tests/test_cli.py::test_settings_rerun_the_same_experiment - Assertion...
+      FAILED tests/test_load.py::test_open_loop_sends_rate_times_duration_requests_on_schedule
+      3 failed, 63 passed in 14.67s
+FAIL  200 requests a second for 5 s against a 5 ms server
+      kload exited with 3, want 0:
+            open loop: 1000 requests at 200/s over 5 s
+            answers: 201 x1000
+            latency (2xx): p50 2637.20 ms, p99 5050.13 ms, max 5100.18 ms
+            kload itself: send lag p99 4951.02 ms, max 4999.38 ms; CPU 0.22 s in 5.17 s (4%)
+            wrote /tmp/tmp.Gm0AJKlKxH/accuracy.csv and /tmp/tmp.Gm0AJKlKxH/accuracy.json
+            kload fell behind its schedule: send lag p99 4951.0 ms is over --max-lag-ms 10. These latencies include time spent waiting inside kload: don't trust them.
+FAIL  the server freezes for 1 s: open loop
+      kload exited with 3, want 0:
+            open loop: 500 requests at 100/s over 5 s
+            answers: 201 x500
+            latency (2xx): p50 2605.89 ms, p99 5054.62 ms, max 5104.78 ms
+            kload itself: send lag p99 4941.88 ms, max 4990.87 ms; CPU 0.18 s in 5.13 s (3%)
+            wrote /tmp/tmp.Gm0AJKlKxH/freeze-open.csv and /tmp/tmp.Gm0AJKlKxH/freeze-open.json
+            kload fell behind its schedule: send lag p99 4941.9 ms is over --max-lag-ms 10. These latencies include time spent waiting inside kload: don't trust them.
+PASS  the server freezes for 1 s: closed loop
+      1 of 500 requests took 500 ms or more
+PASS  at 20,000 requests a second, kload says it fell behind and exits 3
+      kload fell behind its schedule: send lag p99 3545.0 ms is over --max-lag-ms 10. These latencies include time spent waiting inside kload: don't trust them.
+      the server saw 40000 requests spread over 3.29 s, not 2 s
+PASS  kload compare: two sets of runs from the same server
+      p99 B - A: +0.01 ms, 95% CI [-0.16, +0.18] ms: no difference shown: the interval includes 0
+PASS  kload compare: B is 2 ms slower in every run
+      p99 B - A: +2.00 ms, 95% CI [+1.84, +2.17] ms: B is slower
+
+gate failed
+[exit 1]

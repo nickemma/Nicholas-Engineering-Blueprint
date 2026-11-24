@@ -1,0 +1,55 @@
+CPU 0, 4 ms busy / 4 ms sleep, 95/s, 3 s, 64 KiB
+pair 1: fast
+open loop: 190 requests at 95/s over 2 s
+answers: 200 x190
+latency (2xx): p50 4.56 ms, p99 11.38 ms, max 14.04 ms
+kload itself: send lag p99 1.81 ms, max 2.02 ms; CPU 0.12 s in 2.00 s (6%)
+wrote /tmp/tmp.6ZJjIc45X1/results/warmup.csv and /tmp/tmp.6ZJjIc45X1/results/warmup.json
+open loop: 285 requests at 95/s over 3 s
+answers: 200 x285
+latency (2xx): p50 4.59 ms, p99 9.03 ms, max 19.27 ms
+kload itself: send lag p99 1.45 ms, max 1.46 ms; CPU 0.21 s in 3.00 s (7%)
+wrote /tmp/tmp.6ZJjIc45X1/results/fast/run-1.csv and /tmp/tmp.6ZJjIc45X1/results/fast/run-1.json
+pair 1: slow
+open loop: 190 requests at 95/s over 2 s
+answers: 200 x190
+latency (2xx): p50 15.95 ms, p99 38.87 ms, max 42.37 ms
+kload itself: send lag p99 1.98 ms, max 2.45 ms; CPU 0.14 s in 2.00 s (7%)
+wrote /tmp/tmp.6ZJjIc45X1/results/warmup.csv and /tmp/tmp.6ZJjIc45X1/results/warmup.json
+open loop: 285 requests at 95/s over 3 s
+answers: 200 x285
+latency (2xx): p50 11.87 ms, p99 32.00 ms, max 35.19 ms
+kload itself: send lag p99 1.87 ms, max 2.14 ms; CPU 0.20 s in 3.00 s (7%)
+wrote /tmp/tmp.6ZJjIc45X1/results/slow/run-1.csv and /tmp/tmp.6ZJjIc45X1/results/slow/run-1.json
+pair 2: slow
+open loop: 190 requests at 95/s over 2 s
+answers: 200 x190
+latency (2xx): p50 12.09 ms, p99 27.35 ms, max 27.91 ms
+kload itself: send lag p99 2.18 ms, max 2.21 ms; CPU 0.13 s in 2.00 s (7%)
+wrote /tmp/tmp.6ZJjIc45X1/results/warmup.csv and /tmp/tmp.6ZJjIc45X1/results/warmup.json
+open loop: 285 requests at 95/s over 3 s
+answers: 200 x285
+latency (2xx): p50 12.83 ms, p99 32.37 ms, max 34.40 ms
+kload itself: send lag p99 2.23 ms, max 2.45 ms; CPU 0.20 s in 3.01 s (7%)
+wrote /tmp/tmp.6ZJjIc45X1/results/slow/run-2.csv and /tmp/tmp.6ZJjIc45X1/results/slow/run-2.json
+pair 2: fast
+open loop: 190 requests at 95/s over 2 s
+answers: 200 x190
+latency (2xx): p50 4.58 ms, p99 9.05 ms, max 10.98 ms
+kload itself: send lag p99 1.62 ms, max 1.80 ms; CPU 0.13 s in 2.00 s (7%)
+wrote /tmp/tmp.6ZJjIc45X1/results/warmup.csv and /tmp/tmp.6ZJjIc45X1/results/warmup.json
+open loop: 285 requests at 95/s over 3 s
+answers: 200 x285
+latency (2xx): p50 4.66 ms, p99 12.05 ms, max 16.33 ms
+kload itself: send lag p99 1.60 ms, max 1.82 ms; CPU 0.22 s in 3.00 s (7%)
+wrote /tmp/tmp.6ZJjIc45X1/results/fast/run-2.csv and /tmp/tmp.6ZJjIc45X1/results/fast/run-2.json
+competitor used 931 CPU ticks
+qdisc netem 8005: root refcnt 17 limit 1000 delay 1ms loss 0.05%
+ Sent 421030 bytes 5803 pkt (dropped 5, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+p50 A (/tmp/tmp.6ZJjIc45X1/results/slow, 2 runs): 11.87 12.83 ms
+p50 B (/tmp/tmp.6ZJjIc45X1/results/fast, 2 runs): 4.59 4.66 ms
+p50 B - A: -7.73 ms, 95% CI [-8.24, -7.21] ms: B is faster
+p99 A (/tmp/tmp.6ZJjIc45X1/results/slow, 2 runs): 32.00 32.37 ms
+p99 B (/tmp/tmp.6ZJjIc45X1/results/fast, 2 runs): 9.03 12.05 ms
+p99 B - A: -21.64 ms, 95% CI [-23.33, -19.95] ms: B is faster

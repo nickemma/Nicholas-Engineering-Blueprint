@@ -1,0 +1,67 @@
+?   	switchyard/metad/cmd/metad	[no test files]
+=== RUN   TestPartitionElectsHigherTerm
+    election_test.go:27: term 1 elected peer 2; partition elected peer 1 in term 2
+--- PASS: TestPartitionElectsHigherTerm (0.00s)
+=== RUN   TestSplitVoteRetries
+    election_test.go:50: three self-votes in term 1; peer 2 won term 2 after healing
+--- PASS: TestSplitVoteRetries (0.00s)
+=== RUN   TestElectionStorm
+    election_test.go:67: checked election safety across 100 seeds
+--- PASS: TestElectionStorm (0.44s)
+=== RUN   TestConflictingSuffix
+    replication_test.go:49: peer 1 replaced peer 2's uncommitted suffix in term 2; shared prefix retained
+--- PASS: TestConflictingSuffix (0.01s)
+=== RUN   TestMinorityCannotCommit
+    replication_test.go:70: isolated peer 2 kept its applied index at 1
+--- PASS: TestMinorityCannotCommit (0.00s)
+=== RUN   TestCrashRecoveryStorm
+    restart_test.go:41: 100 seeds preserved election and state machine safety across 1,200 peer restarts
+--- PASS: TestCrashRecoveryStorm (0.73s)
+PASS
+ok  	switchyard/metad/internal/cluster	2.227s
+=== RUN   TestPausedWorkerIsFenced
+    lease_test.go:51: grants 2, 4, 6; resource refused resumed worker A after B wrote
+--- PASS: TestPausedWorkerIsFenced (0.00s)
+=== RUN   TestRenewAndClockSkew
+    lease_test.go:70: renewal kept the same token; wrong owner and deadline-equal renewal were refused
+--- PASS: TestRenewAndClockSkew (0.00s)
+=== RUN   TestClientCannotSupplyLeaseTime
+--- PASS: TestClientCannotSupplyLeaseTime (0.00s)
+PASS
+ok  	switchyard/metad/internal/metad	1.042s
+=== RUN   TestFigureEight
+    commit_test.go:23: three copies of index 2 from term 2 leave commit at index 1
+    commit_test.go:30: three copies of index 3 from term 4 commit indexes 2 and 3 in order
+--- PASS: TestFigureEight (0.00s)
+=== RUN   TestVoteChecksLastTermBeforeLength
+--- PASS: TestVoteChecksLastTermBeforeLength (0.00s)
+=== RUN   TestStaleRejectionKeepsFollowerProgress
+--- PASS: TestStaleRejectionKeepsFollowerProgress (0.00s)
+=== RUN   TestCrashAroundVote
+    stable_test.go:43: save before send: restarted voter refuses the second candidate
+    stable_test.go:44: send without save: both candidates can count peer 2 in term 7
+--- PASS: TestCrashAroundVote (0.00s)
+=== RUN   TestStableReplacementIsAtomic
+--- PASS: TestStableReplacementIsAtomic (0.00s)
+=== RUN   TestRestartRebuildsApplicationAfterAck
+    stable_test.go:93: a follower that crashed after acknowledgment rebuilt application from the durable entry
+--- PASS: TestRestartRebuildsApplicationAfterAck (0.00s)
+PASS
+ok  	switchyard/metad/internal/raft	1.041s
+=== RUN   TestOneWayLink
+--- PASS: TestOneWayLink (0.00s)
+=== RUN   TestSeedReplays
+--- PASS: TestSeedReplays (0.00s)
+=== RUN   TestSilenceLooksTheSame
+    network_test.go:58: arrivals when paused: [1 2 7 8 9]; when crashed: [1 2]
+    network_test.go:59: at tick 5 both have been silent for three ticks
+--- PASS: TestSilenceLooksTheSame (0.00s)
+PASS
+ok  	switchyard/metad/internal/simnet	1.039s
+=== RUN   TestKlogRoundTrip
+    wal_test.go:66: replayed a replacement, then trimmed 15 torn bytes and recovered the previous suffix
+Error: Corrupt { offset: 0, cause: PayloadChecksum }
+    wal_test.go:84: refused a complete damaged frame and preserved its bytes
+--- PASS: TestKlogRoundTrip (0.05s)
+PASS
+ok  	switchyard/metad/internal/wal	1.091s

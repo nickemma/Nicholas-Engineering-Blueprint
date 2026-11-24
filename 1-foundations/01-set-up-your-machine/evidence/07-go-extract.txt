@@ -1,0 +1,4 @@
+$ sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.27.4.linux-amd64.tar.gz && rm go1.27.4.linux-amd64.tar.gz && ls /usr/local/go/bin
+go
+gofmt
+[exit 0]

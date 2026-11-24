@@ -1,0 +1,17 @@
+$ for w in 1 2 4 8 16; do for k in 1 2 3; do /usr/bin/time -f "workers $w: %e s" ./loganalyse -workers $w big.log >/dev/null; done; done
+workers 1: 0.93 s
+workers 1: 0.95 s
+workers 1: 0.94 s
+workers 2: 0.63 s
+workers 2: 0.63 s
+workers 2: 0.64 s
+workers 4: 0.54 s
+workers 4: 0.56 s
+workers 4: 0.56 s
+workers 8: 0.63 s
+workers 8: 0.66 s
+workers 8: 0.66 s
+workers 16: 0.71 s
+workers 16: 0.77 s
+workers 16: 0.73 s
+[exit 0]

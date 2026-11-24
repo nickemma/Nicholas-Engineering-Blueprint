@@ -1,0 +1,23 @@
+$ QUEUE_CAPACITY=50 /home/ada/blueprint/switchyard/bin/switchyard > /dev/null 2>&1 & sleep 0.5; WORKER_NAME=a /home/ada/blueprint/switchyard/bin/worker > /dev/null 2>&1 & WORKER_NAME=b /home/ada/blueprint/switchyard/bin/worker > /dev/null 2>&1 & sleep 1; for r in 20 100; do uv run kload load --method POST --path /jobs --body "{\"description\":\"kload\",\"duration_ms\":50}" --rate $r --duration 10 --out results/jobs$r.csv; done; uv run kload analyze results/jobs100.csv | tail -11
+open loop: 200 requests at 20/s over 10 s
+answers: 201 x200
+latency (2xx): p50 1.72 ms, p99 3.08 ms, max 11.36 ms
+kload itself: send lag p99 1.56 ms, max 1.77 ms; CPU 0.14 s in 9.95 s (1%)
+wrote results/jobs20.csv and results/jobs20.json
+open loop: 1000 requests at 100/s over 10 s
+answers: 201 x437, 503 x563
+latency (2xx): p50 1.83 ms, p99 3.14 ms, max 3.21 ms
+kload itself: send lag p99 2.38 ms, max 5.56 ms; CPU 0.45 s in 9.99 s (5%)
+wrote results/jobs100.csv and results/jobs100.json
+second                                  
+0            100      11     1.7     2.8
+1            100      61     1.8     3.1
+2            100      62     1.9     3.4
+3            100      61     1.9     3.1
+4            100      61     1.8     3.1
+5            100      62     1.9     3.2
+6            100      61     1.8     3.3
+7            100      61     1.8     3.0
+8            100      62     1.9     3.1
+9            100      61     1.7     3.2
+[exit 0]

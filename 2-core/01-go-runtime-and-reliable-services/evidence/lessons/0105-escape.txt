@@ -1,0 +1,6 @@
+$ go build -gcflags=-m ./drills/escape 2>&1 | grep -v "can inline"
+# switchyard/drills/escape
+drills/escape/escape.go:16:2: moved to heap: p
+drills/escape/escape.go:22:2: moved to heap: p
+drills/escape/escape.go:28:13: make([]byte, 1048576) escapes to heap
+[exit 0]

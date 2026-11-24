@@ -14,8 +14,8 @@ import Lab from "../../layouts/Lab.astro";
   </ul>
   <h2>Go deeper</h2>
   <ul>
-    <li><a href="/lessons/09-secure-ai-layer/guide/step-6-direct-prompt-injection/">Phase 9, step 6: direct prompt injection</a>, and the harness that recorded these runs.</li>
-    <li><a href="/lessons/09-secure-ai-layer/guide/step-7-indirect-injection-and-approval-for-side-effects/">Phase 9, step 7: indirect injection</a>, with approvals bound to the exact call.</li>
+    <li><a href="/3-tracks/ai-infrastructure/04-securing-the-ai-layer/lessons/06-direct-prompt-injection/">Phase 9, step 6: direct prompt injection</a>, and the harness that recorded these runs.</li>
+    <li><a href="/3-tracks/ai-infrastructure/04-securing-the-ai-layer/lessons/07-indirect-injection-and-approval-for-side-effects/">Phase 9, step 7: indirect injection</a>, with approvals bound to the exact call.</li>
   </ul>
   <p class="note">Nothing here runs a model: the calls are recordings, one run per attack at temperature 0, so each attack would get the same reply again. The platform's response is computed from the recorded call with the tool server's rules. In the real runs, a refused call's result went back to the model, which could change its next step; the lab shows only the first harmful call. A different model, prompt or wording can behave completely differently.</p>
 </Lab>

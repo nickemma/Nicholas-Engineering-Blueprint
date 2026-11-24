@@ -1,0 +1,4 @@
+$ uv run pytest -q test_stats.py
+............                                                             [100%]
+12 passed in 0.02s
+[exit 0]

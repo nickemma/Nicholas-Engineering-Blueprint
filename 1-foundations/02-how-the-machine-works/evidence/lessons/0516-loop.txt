@@ -1,0 +1,5 @@
+$ for i in 1 2 3; do ./monitor.sh; sleep 1; done
+load1=0.81 mem_used_pct=22 disk_used_pct=21
+load1=0.75 mem_used_pct=22 disk_used_pct=21
+load1=0.75 mem_used_pct=21 disk_used_pct=21
+[exit 0]

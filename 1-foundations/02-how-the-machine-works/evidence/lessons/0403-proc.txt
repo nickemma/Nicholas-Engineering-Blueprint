@@ -1,0 +1,20 @@
+$ sleep 300 & p=$!; ls /proc/$p | head -12; echo "---"; tr "\0" " " < /proc/$p/cmdline; echo; grep -E "^(Name|State|PPid|VmRSS)" /proc/$p/status; kill $p
+arch_status
+attr
+auxv
+cgroup
+clear_refs
+cmdline
+comm
+coredump_filter
+cpuset
+cwd
+environ
+exe
+---
+sleep 300 
+Name:	sleep
+State:	S (sleeping)
+PPid:	4761
+VmRSS:	    1988 kB
+[exit 0]

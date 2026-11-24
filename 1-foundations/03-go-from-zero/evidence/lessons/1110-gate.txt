@@ -1,0 +1,10 @@
+$ rm -f loganalyse big.log && bash /gate/run.sh ~/blueprint/gofromzero
+PASS  tasks: add, list, done, -file, and exit codes 1 and 2, across separate runs
+PASS  loganalyse: bad lines reported, a 100 KB line read, ties broken by line, same answer with 1, 7 and the default number of workers
+PASS  loganalyse: a million lines counted correctly
+PASS  loganalyse: at most 64 MiB of memory for a 62 MiB log (it used 11 MiB)
+PASS  gofmt: every file formatted
+PASS  go vet: no problems
+PASS  go test -race: all tests pass, no data races
+Gate passed: on to Foundations 04.
+[exit 0]

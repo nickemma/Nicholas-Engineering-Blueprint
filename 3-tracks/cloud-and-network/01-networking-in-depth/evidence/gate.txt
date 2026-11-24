@@ -1,0 +1,295 @@
+?   	switchyard/netlab/cmd/netlab	[no test files]
+=== RUN   TestCachePreventsASecondOriginRequest
+    edge_test.go:75: warm cache hit kept origin count at 3 and matched the direct hash
+--- PASS: TestCachePreventsASecondOriginRequest (0.07s)
+PASS
+ok  	switchyard/netlab/edge	1.106s
+=== RUN   TestByteBudgetAndWindowCeiling
+    budget_test.go:20: a 20 Mbit/s, 40 ms link needs 100000 bytes in flight; a 16000-byte window bounds it to 3.2 Mbit/s
+--- PASS: TestByteBudgetAndWindowCeiling (0.00s)
+=== RUN   TestRenoEstimateRatios
+    loss_test.go:19: Reno estimate at 1448-byte MSS, 40 ms RTT, and 1% loss: 3.55 Mbit/s
+--- PASS: TestRenoEstimateRatios (0.00s)
+PASS
+ok  	switchyard/netlab/link	1.029s
+=== RUN   TestOrderedDeliveryControl
+    delivery_test.go:14: delivery model: independent B finishes at tick 3; shared byte order delays it to tick 8
+--- PASS: TestOrderedDeliveryControl (0.00s)
+=== RUN   TestProtocolsReturnIdenticalVerifiedObjects
+    page_test.go:53: verified TLS and negotiated HTTP/2 and HTTP/3; all eight content hashes agreed
+--- PASS: TestProtocolsReturnIdenticalVerifiedObjects (0.05s)
+PASS
+ok  	switchyard/netlab/page	1.083s
+=== RUN   TestDirectedPartitionAndHeal
+    model_test.go:23: the worker received the request during the partition; only healing restored the reply
+--- PASS: TestDirectedPartitionAndHeal (0.00s)
+PASS
+ok  	switchyard/netlab/partition	1.030s
+=== RUN   TestWithdrawalMovesTheService
+    model_test.go:32: withdrawal selected [1 2] after 6 rounds, including the confirming round; trace [[1 3 4] [1 3 4] [1 2] [1 2] [1 2] [1 2]]
+--- PASS: TestWithdrawalMovesTheService (0.00s)
+PASS
+ok  	switchyard/netlab/route	1.031s
+negative control: warm request reached origin
+negative control: asymmetric link was misclassified
+{
+  "transport": {
+    "baseline": {
+      "mbit_s": 18.921,
+      "retransmits": 0,
+      "controller": "cubic"
+    },
+    "short": {
+      "mbit_s": 18.855,
+      "retransmits": 0,
+      "controller": "cubic"
+    },
+    "small_window": {
+      "mbit_s": 4.624,
+      "retransmits": 0,
+      "controller": "cubic"
+    },
+    "loss": [
+      {
+        "mbit_s": 4.623,
+        "retransmits": 6,
+        "controller": "cubic"
+      },
+      {
+        "mbit_s": 4.11,
+        "retransmits": 7,
+        "controller": "cubic"
+      },
+      {
+        "mbit_s": 4.62,
+        "retransmits": 9,
+        "controller": "cubic"
+      }
+    ],
+    "controllers": {
+      "reno": [
+        {
+          "mbit_s": 7.191,
+          "retransmits": 6,
+          "controller": "reno"
+        },
+        {
+          "mbit_s": 20.299,
+          "retransmits": 2,
+          "controller": "reno"
+        }
+      ],
+      "cubic": [
+        {
+          "mbit_s": 10.788,
+          "retransmits": 3,
+          "controller": "cubic"
+        },
+        {
+          "mbit_s": 12.843,
+          "retransmits": 7,
+          "controller": "cubic"
+        }
+      ]
+    },
+    "unavailable": [
+      "bbr"
+    ],
+    "sharing": [
+      {
+        "mbit_s": 3.065,
+        "retransmits": 0,
+        "controller": "cubic"
+      },
+      {
+        "mbit_s": 15.527,
+        "retransmits": 0,
+        "controller": "reno"
+      }
+    ],
+    "failed_control_attempts": []
+  },
+  "queues": {
+    "calibration_rtt_ms": 40.4,
+    "measurements": {
+      "deep": [
+        {
+          "idle_ms": 40.3,
+          "loaded_ms": 122.5,
+          "qdisc_drops": 0,
+          "mbit_s": 18.922,
+          "retransmits": 0,
+          "controller": "cubic"
+        },
+        {
+          "idle_ms": 40.3,
+          "loaded_ms": 121.5,
+          "qdisc_drops": 0,
+          "mbit_s": 18.936,
+          "retransmits": 0,
+          "controller": "cubic"
+        },
+        {
+          "idle_ms": 40.2,
+          "loaded_ms": 121.0,
+          "qdisc_drops": 0,
+          "mbit_s": 18.926,
+          "retransmits": 0,
+          "controller": "cubic"
+        }
+      ],
+      "managed": [
+        {
+          "idle_ms": 40.6,
+          "loaded_ms": 40.5,
+          "qdisc_drops": 4,
+          "mbit_s": 18.49,
+          "retransmits": 2,
+          "controller": "cubic"
+        },
+        {
+          "idle_ms": 40.5,
+          "loaded_ms": 40.45,
+          "qdisc_drops": 4,
+          "mbit_s": 18.489,
+          "retransmits": 2,
+          "controller": "cubic"
+        },
+        {
+          "idle_ms": 40.3,
+          "loaded_ms": 40.55,
+          "qdisc_drops": 4,
+          "mbit_s": 18.487,
+          "retransmits": 2,
+          "controller": "cubic"
+        }
+      ]
+    },
+    "loaded_rtt_median_ms": {
+      "deep": 121.5,
+      "managed": 40.5
+    }
+  },
+  "http": [
+    {
+      "loss_pct": 0,
+      "trial": 1,
+      "mode": "cold",
+      "total_ms": {
+        "h2": 247.42,
+        "h3": 130.62
+      }
+    },
+    {
+      "loss_pct": 0,
+      "trial": 1,
+      "mode": "warm",
+      "total_ms": {
+        "h2": 90.17,
+        "h3": 83.72
+      }
+    },
+    {
+      "loss_pct": 0,
+      "trial": 2,
+      "mode": "cold",
+      "total_ms": {
+        "h2": 207.0,
+        "h3": 128.74
+      }
+    },
+    {
+      "loss_pct": 0,
+      "trial": 2,
+      "mode": "warm",
+      "total_ms": {
+        "h2": 89.88,
+        "h3": 82.94
+      }
+    },
+    {
+      "loss_pct": 0,
+      "trial": 3,
+      "mode": "cold",
+      "total_ms": {
+        "h2": 205.93,
+        "h3": 129.42
+      }
+    },
+    {
+      "loss_pct": 0,
+      "trial": 3,
+      "mode": "warm",
+      "total_ms": {
+        "h2": 89.83,
+        "h3": 83.49
+      }
+    },
+    {
+      "loss_pct": 1,
+      "trial": 1,
+      "mode": "cold",
+      "total_ms": {
+        "h2": 207.02,
+        "h3": 129.49
+      }
+    },
+    {
+      "loss_pct": 1,
+      "trial": 1,
+      "mode": "warm",
+      "total_ms": {
+        "h2": 122.18,
+        "h3": 83.69
+      }
+    },
+    {
+      "loss_pct": 1,
+      "trial": 2,
+      "mode": "cold",
+      "total_ms": {
+        "h2": 206.03,
+        "h3": 131.67
+      }
+    },
+    {
+      "loss_pct": 1,
+      "trial": 2,
+      "mode": "warm",
+      "total_ms": {
+        "h2": 89.18,
+        "h3": 83.33
+      }
+    },
+    {
+      "loss_pct": 1,
+      "trial": 3,
+      "mode": "cold",
+      "total_ms": {
+        "h2": 206.41,
+        "h3": 130.42
+      }
+    },
+    {
+      "loss_pct": 1,
+      "trial": 3,
+      "mode": "warm",
+      "total_ms": {
+        "h2": 89.53,
+        "h3": 83.0
+      }
+    }
+  ],
+  "edge": {
+    "direct": 91.99,
+    "proxy": 95.3,
+    "cache-prime": 95.14,
+    "cache-hit": 52.26
+  },
+  "origin_count": 327,
+  "partition": {
+    "before": "status=200 elapsed_ms=85",
+    "during": "status=502 elapsed_ms=8066",
+    "after": "status=200 elapsed_ms=6501"
+  }
+}

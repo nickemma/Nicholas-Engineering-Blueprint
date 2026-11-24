@@ -26,7 +26,7 @@ For platform and developer-infrastructure roles. A platform is a product whose u
 - Measures of success: lead time, deployment frequency, change failure rate.
 </details>
 
-**Built in:** [Phase 5](../../lessons/05-constrained-operations/README.md) (Helm, CI/CD, a controller).
+**Built in:** [Phase 5](../../2-core/08-shipping-safely/README.md) (Helm, CI/CD, a controller).
 
 ## 2. A feature-flag service
 
@@ -44,7 +44,7 @@ Flags evaluated in every request of 500 services: 5 million evaluations a second
 - Experiments on top: exposure logging.
 </details>
 
-**Built in:** [Phase 6](../../lessons/06-safe-shared-queries/README.md)'s exercise (flagpole: multi-tenant feature flags), [Phase 7](../../lessons/07-utility-evaluation/README.md) (experiments).
+**Built in:** [Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md)'s exercise (flagpole: multi-tenant feature flags), [Phase 7](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md) (experiments).
 
 ## 3. Configuration management
 
@@ -62,7 +62,7 @@ Runtime configuration for 1,000 services in 3 regions: validated, versioned, rol
 - Secrets through a secrets manager, referenced (not embedded) by configuration.
 </details>
 
-**Built in:** [Phase 1, step 5](../../lessons/01-reliable-service/TEACHING.md#step-5-the-composition-root-and-configuration), [Phase 5](../../lessons/05-constrained-operations/README.md) (Helm values), [Phase 6, step 9](../../lessons/06-safe-shared-queries/TEACHING.md#step-9-secrets).
+**Built in:** [Phase 1, step 5](../../2-core/01-go-runtime-and-reliable-services/lessons/09-wiring-and-configuration.md), [Phase 5](../../2-core/08-shipping-safely/README.md) (Helm values), [Phase 6, step 9](../../2-core/08-shipping-safely/lessons/04-limit-what-the-gateway-can-read-and-record.md).
 
 ## 4. Multi-tenant Kubernetes
 
@@ -80,7 +80,7 @@ One large Kubernetes platform shared by 100 teams: fair resources, isolation bet
 - When to give a team its own cluster instead (the hard multi-tenancy limit).
 </details>
 
-**Built in:** [Phase 5](../../lessons/05-constrained-operations/README.md) (Kubernetes, RBAC), [Phase 6](../../lessons/06-safe-shared-queries/README.md) (NetworkPolicies, Pod Security, tenant isolation).
+**Built in:** [Phase 5](../../2-core/08-shipping-safely/README.md) (Kubernetes, RBAC), [Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md) (NetworkPolicies, Pod Security, tenant isolation).
 
 ## 5. A service mesh control plane
 
@@ -98,4 +98,4 @@ mTLS, retries, timeouts and traffic shifting for 2,000 services, configured cent
 - Retries in the mesh multiplied by retries in the application: retry budgets.
 </details>
 
-**Built in:** [Phase 6, steps 7–8](../../lessons/06-safe-shared-queries/TEACHING.md#step-7-tls-and-your-own-certificate-authority) (your own CA, mTLS, rotation, a sidecar and its measured cost).
+**Built in:** [Phase 6, steps 7–8](../../2-core/08-shipping-safely/lessons/03-issue-certificates-and-require-mtls.md) (your own CA, mTLS, rotation, a sidecar and its measured cost).

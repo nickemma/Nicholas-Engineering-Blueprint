@@ -1,0 +1,17 @@
+$ go build -o /tmp/switchyard ./cmd/switchyard && { /tmp/switchyard & sleep 0.5; for u in /health "/greet?name=Ada" "/greet?name=%20" "/greet?name=$(printf "a%.0s" {1..41})" /nope; do curl -s -w "  [%{http_code}]\n" "http://127.0.0.1:8080$u"; done; curl -si -X POST http://127.0.0.1:8080/health | head -4; kill %1; }
+2026/11/20 02:30:40 listening on http://127.0.0.1:8080
+{"status":"ok"}
+  [200]
+{"greeting":"Hello, Ada!"}
+  [200]
+{"error":"name must be 1 to 40 characters"}
+  [400]
+{"error":"name must be 1 to 40 characters"}
+  [400]
+404 page not found
+  [404]
+HTTP/1.1 405 Method Not Allowed
+Allow: GET, HEAD
+Content-Type: text/plain; charset=utf-8
+X-Content-Type-Options: nosniff
+[exit 0]

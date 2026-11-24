@@ -1,0 +1,37 @@
+?   	switchyard/caching/cmd/jobs	[no test files]
+=== RUN   TestLive
+    live_test.go:22: the live gate provisions Redis and PostgreSQL
+--- SKIP: TestLive (0.00s)
+=== RUN   TestColdBurst
+    repository_test.go:83: cold burst: 32 concurrent misses, 1 origin read
+--- PASS: TestColdBurst (0.00s)
+=== RUN   TestCancelledWaiter
+    repository_test.go:122: cancelling the first caller preserved the shared fill
+--- PASS: TestCancelledWaiter (0.00s)
+PASS
+ok  	switchyard/caching/internal/cache	1.035s
+?   	switchyard/caching/internal/jobs	[no test files]
+=== RUN   TestLive
+=== RUN   TestLive/warm_and_invalidate
+    live_test.go:70: cold read and warm read: one PostgreSQL read total
+    live_test.go:80: write invalidation: revision 2 loaded from PostgreSQL
+=== RUN   TestLive/expiry
+    live_test.go:121: expiration: the stored copy expired and the next read loaded revision 2
+=== RUN   TestLive/concurrent_misses
+    live_test.go:149: live cold burst: 32 readers, one PostgreSQL read
+=== RUN   TestLive/redis_paused
+    live_test.go:180: Redis paused for 2s: fallback read and committed write in 511ms
+--- PASS: TestLive (1.16s)
+    --- PASS: TestLive/warm_and_invalidate (0.03s)
+    --- PASS: TestLive/expiry (0.52s)
+    --- PASS: TestLive/concurrent_misses (0.04s)
+    --- PASS: TestLive/redis_paused (0.52s)
+PASS
+ok  	switchyard/caching/internal/cache	2.191s
+=== RUN   TestColdBurst
+    repository_test.go:81: stampede: origin reads = 32, want 1
+--- FAIL: TestColdBurst (0.01s)
+FAIL
+FAIL	switchyard/caching/internal/cache	0.034s
+FAIL
+negative control: removing singleflight restored the stampede

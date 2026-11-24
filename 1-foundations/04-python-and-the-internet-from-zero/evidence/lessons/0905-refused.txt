@@ -1,0 +1,4 @@
+$ uv run measure.py --port 9000; echo "exit $?"
+measure: [Errno 111] Connect call failed ('127.0.0.1', 9000)
+exit 1
+[exit 0]

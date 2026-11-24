@@ -1,0 +1,11 @@
+--- a/src/kload/load.py
++++ b/src/kload/load.py
+@@ -86,7 +86,7 @@
+     for i in range(round(rate * duration_s)):
+         due = start + i / rate
+         if (delay := due - clock()) > 0:
+-            await asyncio.sleep(delay)
++            time.sleep(delay)  # blocks the loop while waiting for the next request
+         tasks.append(asyncio.create_task(one(i, due)))
+     return list(await asyncio.gather(*tasks))
+ 

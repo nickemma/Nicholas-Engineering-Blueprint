@@ -1,0 +1,5 @@
+$ uv run python drills/trickle.py & sleep 2; uv run python drills/halves.py; kill %1
+read(100):   b'a reply that com'
+readline():  b'es in two pieces\n'
+readline():  b'a reply that comes in two pieces\n'
+[exit 0]

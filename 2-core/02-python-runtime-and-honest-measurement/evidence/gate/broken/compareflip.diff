@@ -1,0 +1,11 @@
+--- a/src/kload/cli.py
++++ b/src/kload/cli.py
+@@ -167,7 +167,7 @@
+         for name, folder, values in (("A", args.a, a), ("B", args.b, b)):
+             runs = " ".join(f"{v:.2f}" for v in values)
+             print(f"p{p} {name} ({folder}, {len(values)} runs): {runs} ms")
+-        d = bootstrap(a, b)
++        d = bootstrap(b, a)
+         verdict = (
+             f"B is {'slower' if d.diff > 0 else 'faster'}"
+             if d.shown

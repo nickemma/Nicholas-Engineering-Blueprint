@@ -1,0 +1,6 @@
+=== RUN   TestRepositoryContract
+    store_test.go:31: update pair: got <nil> and <nil>, want one success and one conflict
+--- FAIL: TestRepositoryContract (0.06s)
+FAIL
+FAIL	switchyard/internal/pgstore	0.085s
+FAIL

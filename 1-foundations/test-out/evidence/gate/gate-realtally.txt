@@ -1,0 +1,45 @@
+$ bash gate/run.sh ~/your-repo    # the realtally version
+== tally/
+PASS  gofmt
+PASS  go vet
+PASS  go test -race
+PASS  a log with 14 kinds of malformed line, a 200 KB line, \r\n and no final newline
+PASS  an empty input
+PASS  5,000 lines
+PASS  -path /api on the log with traps
+PASS  -path /api/jobs on 5,000 lines
+PASS  tally -nope: exit 2 with a message
+PASS  tally -path: exit 2 with a message
+PASS  tally extra-argument: exit 2 with a message
+PASS  a million lines counted correctly
+PASS  at most 64 MiB of memory for a 62 MiB log (it used 37 MiB)
+== report/
+PASS  ruff format
+PASS  ruff check
+FAIL  pytest, without tally built
+                      errno_num = int(hex_errno, 16)
+                      if err_msg == "noexec:chdir":
+                          err_msg = ""
+                          # The error must be from chdir(cwd).
+                          err_filename = cwd
+                      elif err_msg == "noexec":
+                          err_msg = ""
+                          err_filename = None
+                      else:
+                          err_filename = orig_executable
+                      if errno_num != 0:
+                          err_msg = os.strerror(errno_num)
+                      if err_filename is not None:
+      >                   raise child_exception_type(errno_num, err_msg, err_filename)
+      E                   FileNotFoundError: [Errno 2] No such file or directory: 'tally'
+      
+      ../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:1990: FileNotFoundError
+      =========================== short test summary info ============================
+      FAILED test_report.py::test_real_tally - FileNotFoundError: [Errno 2] No such...
+      1 failed, 4 passed in 2.05s
+PASS  report.py on three logs: the table
+PASS  report.py: the chart is a PNG image
+PASS  report.py when tally fails: exit 1 with a message (report: empty.log: tally exited 1: tally: something went wrong)
+
+Gate failed: fix each FAIL above and run it again, or take the Foundations module that covers it.
+[exit 1]

@@ -1,0 +1,9 @@
+$ go build -o /tmp/switchyard ./cmd/switchyard && { REQUEST_TIMEOUT=1s /tmp/switchyard > /tmp/switchyard.log & sleep 0.5; U=http://127.0.0.1:8080; J="Content-Type: application/json"; curl -s -o /dev/null -X POST $U/jobs -H "$J" -d "{\"description\":\"quick\",\"duration_ms\":300}"; curl -s -o /dev/null -X POST $U/jobs -H "$J" -d "{\"description\":\"slow\",\"duration_ms\":3000}"; curl -s -o /dev/null $U/jobs/1; curl -s -o /dev/null $U/jobs/abc; curl -s -o /dev/null $U/jobs/99; curl -s -o /dev/null -X POST $U/jobs/1/run; curl -s -o /dev/null -X POST $U/jobs/1/run; curl -s -o /dev/null -X POST $U/jobs/2/run; curl -s $U/metrics | grep "^http_requests_total"; }
+http_requests_total{code="200",method="GET",route="GET /jobs/{id}"} 1
+http_requests_total{code="200",method="POST",route="POST /jobs/{id}/run"} 1
+http_requests_total{code="201",method="POST",route="POST /jobs"} 2
+http_requests_total{code="400",method="GET",route="GET /jobs/{id}"} 1
+http_requests_total{code="404",method="GET",route="GET /jobs/{id}"} 1
+http_requests_total{code="409",method="POST",route="POST /jobs/{id}/run"} 1
+http_requests_total{code="504",method="POST",route="POST /jobs/{id}/run"} 1
+[exit 0]

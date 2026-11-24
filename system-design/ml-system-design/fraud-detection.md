@@ -1,6 +1,6 @@
 # ML design: payment fraud detection
 
-**Track:** ml-system-design · **Built in:** [Phase 7](../../lessons/07-utility-evaluation/README.md) (time splits, leakage, gradient-boosted trees, serving with a fallback, drift, a shadow) · **Time:** 45 minutes
+**Track:** ml-system-design · **Built in:** [Phase 7](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md) (time splits, leakage, gradient-boosted trees, serving with a fallback, drift, a shadow) · **Time:** 45 minutes
 
 This is a worked reference. Do the design yourself first, with a timer, then read this and note what you missed.
 
@@ -114,7 +114,7 @@ flowchart LR
 
 ## 9. Where you've built this
 
-[Phase 7](../../lessons/07-utility-evaluation/README.md):
+[Phase 7](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md):
 - **The data:** a time-split dataset with leakage caught; baselines first; gradient-boosted trees with bootstrap comparisons.
 - **Serving:** behind the Go API with a timeout, a breaker and a fallback, and a parity test that found a real train/serve leak.
 - **Operations:** MLflow and a gate beyond noise; drift metrics; a shadow deployment.

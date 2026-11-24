@@ -1,0 +1,3 @@
+$ ls /usr/bin | wc -l
+543
+[exit 0]

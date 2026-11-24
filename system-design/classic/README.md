@@ -27,7 +27,7 @@ One-to-one and group chat (groups up to 500), 50 million daily users, messages d
 - Failure: a gateway dies, so its clients reconnect elsewhere and resync.
 </details>
 
-**Built in:** [Phase 2](../../lessons/02-connected-services/README.md) (messaging, ordering, idempotency), [Phase 4](../../lessons/04-replicated-state/README.md) (partitioning).
+**Built in:** [Phase 2](../../3-tracks/shared-units/messaging-and-resilience/README.md) (messaging, ordering, idempotency), [Phase 4](../../2-core/07-distributed-systems-fundamentals/README.md) (partitioning).
 
 ## 2. A news feed
 
@@ -45,7 +45,7 @@ Users follow others; the home feed shows recent posts from people they follow, r
 - Failure: the fan-out queue lags, so feeds are late but correct; deleted posts are filtered at read time.
 </details>
 
-**Built in:** [Phase 2](../../lessons/02-connected-services/README.md) (queues), [Phase 3](../../lessons/03-durable-auditable-data/README.md) (caching), [DSA guide 08](../../dsa/08-heaps/README.md) (merge *k* sorted lists).
+**Built in:** [Phase 2](../../3-tracks/shared-units/messaging-and-resilience/README.md) (queues), [Phase 3](../../2-core/03-docker-and-postgres/README.md) (caching), [DSA guide 08](../../dsa/08-heaps/README.md) (merge *k* sorted lists).
 
 ## 3. Ride matching
 
@@ -64,7 +64,7 @@ Match riders with nearby drivers in under 2 seconds. 5 million rides a day in 50
 - Surge pricing and dispatch optimisation as extensions.
 </details>
 
-**Built in:** [Phase 4](../../lessons/04-replicated-state/README.md) (leases, fencing, partitioning), [Phase 1](../../lessons/01-reliable-service/README.md) (compare-and-swap).
+**Built in:** [Phase 4](../../2-core/07-distributed-systems-fundamentals/README.md) (leases, fencing, partitioning), [Phase 1](../../2-core/01-go-runtime-and-reliable-services/README.md) (compare-and-swap).
 
 ## 4. Ticket booking
 
@@ -83,4 +83,4 @@ Sell 50,000 seats for a concert that goes on sale at 10:00, when 2 million peopl
 - Failure: payment succeeds after the hold expired. Decide what happens: refund, or honour it if the seat is still free.
 </details>
 
-**Built in:** [Phase 3](../../lessons/03-durable-auditable-data/README.md) (transactions, `SKIP LOCKED`), [Phase 6](../../lessons/06-safe-shared-queries/README.md) (rate limiting), [Phase 2](../../lessons/02-connected-services/README.md) (idempotency).
+**Built in:** [Phase 3](../../2-core/03-docker-and-postgres/README.md) (transactions, `SKIP LOCKED`), [Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md) (rate limiting), [Phase 2](../../3-tracks/shared-units/messaging-and-resilience/README.md) (idempotency).

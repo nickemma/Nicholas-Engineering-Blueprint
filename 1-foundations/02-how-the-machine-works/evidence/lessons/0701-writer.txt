@@ -1,0 +1,7 @@
+$ mkdir -p logs && cd logs && { ../writer.sh app.log & sleep 0.5; kill -TERM "$(cat app.log.pid)"; wait; } && wc -l app.log && head -3 app.log && cat app.log.last && rm app.log*
+17890 app.log
+line 1
+line 2
+line 3
+17889
+[exit 0]

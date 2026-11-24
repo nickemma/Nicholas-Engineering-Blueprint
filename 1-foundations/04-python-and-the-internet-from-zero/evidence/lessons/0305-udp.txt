@@ -1,0 +1,6 @@
+$ sudo tcpdump -i lo -n -l "udp port 9002" 2>/dev/null > /tmp/td.txt & sleep 1; nc -u -l 127.0.0.1 9002 > /tmp/u.txt & sleep 0.3; printf "one datagram\n" | nc -u -w1 127.0.0.1 9002; sleep 0.3; sudo pkill tcpdump; sleep 0.3; cat /tmp/td.txt; echo "--- the listener got:"; cat /tmp/u.txt
+08:57:19.560907 IP 127.0.0.1.56727 > 127.0.0.1.9002: UDP, length 13
+
+--- the listener got:
+one datagram
+[exit 0]

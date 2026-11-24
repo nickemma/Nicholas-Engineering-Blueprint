@@ -1,0 +1,13 @@
+?   	switchyard/streams/cmd/streams	[no test files]
+=== RUN   TestDecodeChecksKeyAndVersion
+--- PASS: TestDecodeChecksKeyAndVersion (0.00s)
+PASS
+ok  	switchyard/streams/internal/event	1.019s
+?   	switchyard/streams/internal/store	[no test files]
+?   	switchyard/streams/internal/stream	[no test files]
+writer: rejected the outbox insert and rolled back job history
+relay: resent event-1 in partition 1 at offsets 0 and 1
+projector: reread the uncommitted offset and suppressed both duplicates
+offsets: resumed at new records (1, 2) and (0, 0); live model {'job-a': 2, 'job-b': 1}
+replay: a fresh group rebuilt {'job-a': 2, 'job-b': 1} from four Kafka records
+negative control: the same replay invariant rejected the duplicate count {'job-a': 3, 'job-b': 1}

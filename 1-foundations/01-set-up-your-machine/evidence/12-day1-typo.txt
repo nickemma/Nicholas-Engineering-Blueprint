@@ -1,0 +1,4 @@
+$ cd ~/blueprint/day1 && go run .
+# blueprint/day1
+./main.go:9:6: undefined: fmt.PrintF (but have Printf)
+[exit 1]

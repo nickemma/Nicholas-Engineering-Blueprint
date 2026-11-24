@@ -1,0 +1,3 @@
+$ go test -bench NewPoint -benchtime 100000x -trace trace.out ./drills/escape > /dev/null && ls -l trace.out && timeout 5 go tool trace trace.out; rm -f trace.out
+-rw-r--r-- 1 ada ada 13970 Nov 20 02:26 trace.out
+[exit 0]

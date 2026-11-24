@@ -1,0 +1,8 @@
+$ /tmp/byhand > /dev/null 2>&1 & sleep 0.5; head -c 2000000 /dev/zero | curl -si --data-binary @- http://127.0.0.1:8080/upload
+HTTP/1.1 413 Content Too Large
+Content-Type: text/plain
+Content-Length: 33
+Connection: close
+
+too large: body of 2000000 bytes
+[exit 0]

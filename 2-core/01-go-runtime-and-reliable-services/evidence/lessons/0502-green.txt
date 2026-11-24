@@ -1,0 +1,27 @@
+$ go test -v ./internal/jobs 2>&1 | grep -E "^(--- |ok|FAIL)|->"
+--- PASS: TestNewDescription (0.00s)
+--- PASS: TestNewJobIsQueued (0.00s)
+--- PASS: TestNewJobRejectsBadDuration (0.00s)
+=== RUN   TestTransitions/queued->running
+=== RUN   TestTransitions/queued->completed
+=== RUN   TestTransitions/queued->failed
+=== RUN   TestTransitions/running->completed
+=== RUN   TestTransitions/running->failed
+=== RUN   TestTransitions/running->queued
+=== RUN   TestTransitions/completed->running
+=== RUN   TestTransitions/completed->failed
+=== RUN   TestTransitions/failed->running
+--- PASS: TestTransitions (0.00s)
+    --- PASS: TestTransitions/queued->running (0.00s)
+    --- PASS: TestTransitions/queued->completed (0.00s)
+    --- PASS: TestTransitions/queued->failed (0.00s)
+    --- PASS: TestTransitions/running->completed (0.00s)
+    --- PASS: TestTransitions/running->failed (0.00s)
+    --- PASS: TestTransitions/running->queued (0.00s)
+    --- PASS: TestTransitions/completed->running (0.00s)
+    --- PASS: TestTransitions/completed->failed (0.00s)
+    --- PASS: TestTransitions/failed->running (0.00s)
+--- PASS: TestLifecycle (0.00s)
+--- PASS: TestFailRecordsReason (0.00s)
+ok  	switchyard/internal/jobs	0.006s
+[exit 0]

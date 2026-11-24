@@ -1,0 +1,4 @@
+$ awk "/^MemTotal:/ {t=\$2} /^MemFree:/ {f=\$2} /^MemAvailable:/ {a=\$2} END {printf \"used, counting MemFree: %d%%\nused, counting MemAvailable: %d%%\n\", (t-f)*100/t, (t-a)*100/t}" /proc/meminfo
+used, counting MemFree: 26%
+used, counting MemAvailable: 22%
+[exit 0]

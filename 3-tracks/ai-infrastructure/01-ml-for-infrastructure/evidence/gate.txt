@@ -1,0 +1,18 @@
+Resolved 14 packages in 1ms
+Checked 13 packages in 0.42ms
+test_conflicting_event_cannot_publish_snapshot (test_lab.Lab.test_conflicting_event_cannot_publish_snapshot) ... ok
+test_pipeline_and_cutoffs (test_lab.Lab.test_pipeline_and_cutoffs) ... pipeline: 20 Parquet shards, 1 duplicate, 2 quarantined, private canary absent
+time split: 640 train / 256 validation / 384 holdout; 1 late label excluded
+ok
+test_train_serve_promote_and_rollback (test_lab.Lab.test_train_serve_promote_and_rollback) ... holdout MAE ms: median=175.07; size-only=67.42; PyTorch=8.30; selected_epoch=200
+negative control: promotion refused the baseline-quality artifact; pointer unchanged
+schedule mean wait ms: FIFO=6751.3; predicted-first=4852.4; p95=14899 → 13491
+drift: stable=False; shifted=True; shifted outside-range share=1.00
+loopback API: offline predictions matched; label rejected; rollback restored baseline
+registry: fixed-seed repeat matched; rollback restored predictions; changed weights refused
+ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 2.604s
+
+OK

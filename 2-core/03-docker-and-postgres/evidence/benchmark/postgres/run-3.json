@@ -1,0 +1,13 @@
+{
+  "body": "{\"description\":\"benchmark\",\"duration_ms\":5}",
+  "duration": 3.0,
+  "max_in_flight": 500,
+  "max_lag_ms": 10.0,
+  "method": "POST",
+  "mode": "open",
+  "out": "/tmp/blueprint-c03-author/08/c03-bench.jeZHRn/postgres/run-3.csv",
+  "path": "/jobs",
+  "rate": 40.0,
+  "timeout": 10.0,
+  "url": "http://127.0.0.1:32798"
+}

@@ -1,0 +1,8 @@
+$ uv run python drills/switch.py && uv run --no-project --python 3.14t drills/switch.py
+GIL enabled, switch interval 5 ms
+alone                              median  0.10 ms late, worst  0.27 ms
+while another thread computes      median  5.22 ms late, worst  5.35 ms
+GIL disabled, switch interval 5 ms
+alone                              median  0.10 ms late, worst  0.29 ms
+while another thread computes      median  0.09 ms late, worst  0.14 ms
+[exit 0]

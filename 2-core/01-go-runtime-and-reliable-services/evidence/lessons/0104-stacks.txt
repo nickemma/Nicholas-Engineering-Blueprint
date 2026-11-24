@@ -1,0 +1,4 @@
+$ go run ./drills/stacks
+one goroutine 10,000 calls deep: 16 MiB of stack
+100000 parked goroutines: about 2054 bytes of stack each
+[exit 0]

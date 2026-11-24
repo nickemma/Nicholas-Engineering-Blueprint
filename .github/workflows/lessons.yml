@@ -118,7 +118,20 @@ jobs:
           docker exec ${{ job.services.postgres.id }} psql -U runway -c "ALTER SYSTEM SET max_prepared_transactions = 10"
           docker restart ${{ job.services.postgres.id }}
           until docker exec ${{ job.services.postgres.id }} pg_isready -U runway; do sleep 1; done
-      - name: Install the protobuf compiler
-        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+      - name: Install the protobuf compiler and PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler postgresql-client
       - name: Rebuild every lesson guide and run its checks
-        run: bash scripts/test_all.sh
+        env:
+          SWITCHYARD_REPLAY_COMPOSE: '1'
+          SWITCHYARD_C05_INTEGRATIONS: '1'
+          SWITCHYARD_DELIVERY_PROMTOOL: '1'
+          SWITCHYARD_MESSAGING_LIVE: '1'
+          SWITCHYARD_STREAMS_LIVE: '1'
+          SWITCHYARD_CACHING_LIVE: '1'
+          SWITCHYARD_TENANCY_LIVE: '1'
+          SWITCHYARD_ML_LIVE: '1'
+          SWITCHYARD_GATEWAY_LIVE: '1'
+          SWITCHYARD_CAPSTONE_LIVE: '1'
+          SWITCHYARD_PG_DEPTH_LIVE: '1'
+          SWITCHYARD_CONSENSUS_PG_LIVE: '1'
+        run: bash scripts/check_all.sh

@@ -1,0 +1,12 @@
+$ ls -a ~ && echo "$HOME"
+.
+..
+.bash_logout
+.bashrc
+.config
+.gitconfig
+.profile
+blueprint
+go
+/home/ada
+[exit 0]

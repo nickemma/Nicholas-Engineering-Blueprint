@@ -1,0 +1,12 @@
+$ uv run kload analyze results/freeze-open.csv | head -10
+{
+  "requests": 1600,
+  "error_rate": 0.0,
+  "rate_per_s": 200.1,
+  "p50_ms": 1.29,
+  "p99_ms": 926.36,
+  "max_ms": 1004.41,
+  "mean_ms": 68.2,
+  "lag_p99_ms": 1.24
+}
+[exit 0]

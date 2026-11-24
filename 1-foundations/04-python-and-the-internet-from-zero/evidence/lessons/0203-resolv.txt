@@ -1,0 +1,3 @@
+$ grep -v "^#" /etc/resolv.conf | grep .
+nameserver 10.255.255.254
+[exit 0]

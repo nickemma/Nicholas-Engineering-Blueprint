@@ -1,0 +1,20 @@
+$ git init -q && git add . && git commit -q -m "Switchyard: an HTTP service with a contract, tests and CI" && git log --stat --oneline
+5acd580 Switchyard: an HTTP service with a contract, tests and CI
+ .github/workflows/test.yml       |  17 +++++++
+ cmd/switchyard/main.go           |  20 ++++++++
+ drills/byhand/main.go            |  70 ++++++++++++++++++++++++++
+ drills/byhand/request.go         | 104 +++++++++++++++++++++++++++++++++++++++
+ drills/byhand/request_test.go    |  58 ++++++++++++++++++++++
+ drills/escape/escape.go          |  30 +++++++++++
+ drills/escape/escape_test.go     |  35 +++++++++++++
+ drills/gc/main.go                |  28 +++++++++++
+ drills/sched/main.go             |  25 ++++++++++
+ drills/spin/main.go              |  21 ++++++++
+ drills/stacks/main.go            |  49 ++++++++++++++++++
+ drills/stdhttp/main.go           |  38 ++++++++++++++
+ go.mod                           |   3 ++
+ internal/httpapi/handler.go      |  44 +++++++++++++++++
+ internal/httpapi/handler_test.go |  80 ++++++++++++++++++++++++++++++
+ internal/httpapi/json.go         |  25 ++++++++++
+ 16 files changed, 647 insertions(+)
+[exit 0]

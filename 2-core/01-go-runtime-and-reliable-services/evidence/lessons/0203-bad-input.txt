@@ -1,0 +1,10 @@
+$ /tmp/byhand > /dev/null 2>&1 & sleep 0.5; curl -s -d hello http://127.0.0.1:8080/jobs; printf "GARBAGE\r\n\r\n" | nc -N 127.0.0.1 8080; curl -si -H "Transfer-Encoding: chunked" -d x http://127.0.0.1:8080/ | head -1
+request 1 on this connection: POST /jobs, 5 bytes of body
+HTTP/1.1 400 Bad Request
+Content-Type: text/plain
+Content-Length: 36
+Connection: close
+
+bad request: request line "GARBAGE"
+HTTP/1.1 501 Not Implemented
+[exit 0]

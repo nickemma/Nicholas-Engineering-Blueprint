@@ -1,0 +1,44 @@
+$ dig +trace +nodnssec @1.1.1.1 example.com
+
+; <<>> DiG 9.18.39-0ubuntu0.24.04.9-Ubuntu <<>> +trace +nodnssec @1.1.1.1 example.com
+; (1 server found)
+;; global options: +cmd
+.			508842	IN	NS	a.root-servers.net.
+.			508842	IN	NS	b.root-servers.net.
+.			508842	IN	NS	c.root-servers.net.
+.			508842	IN	NS	d.root-servers.net.
+.			508842	IN	NS	e.root-servers.net.
+.			508842	IN	NS	f.root-servers.net.
+.			508842	IN	NS	g.root-servers.net.
+.			508842	IN	NS	h.root-servers.net.
+.			508842	IN	NS	i.root-servers.net.
+.			508842	IN	NS	j.root-servers.net.
+.			508842	IN	NS	k.root-servers.net.
+.			508842	IN	NS	l.root-servers.net.
+.			508842	IN	NS	m.root-servers.net.
+;; Received 239 bytes from 1.1.1.1#53(1.1.1.1) in 175 ms
+
+com.			172800	IN	NS	l.gtld-servers.net.
+com.			172800	IN	NS	c.gtld-servers.net.
+com.			172800	IN	NS	m.gtld-servers.net.
+com.			172800	IN	NS	i.gtld-servers.net.
+com.			172800	IN	NS	d.gtld-servers.net.
+com.			172800	IN	NS	g.gtld-servers.net.
+com.			172800	IN	NS	j.gtld-servers.net.
+com.			172800	IN	NS	e.gtld-servers.net.
+com.			172800	IN	NS	h.gtld-servers.net.
+com.			172800	IN	NS	k.gtld-servers.net.
+com.			172800	IN	NS	a.gtld-servers.net.
+com.			172800	IN	NS	b.gtld-servers.net.
+com.			172800	IN	NS	f.gtld-servers.net.
+;; Received 864 bytes from 192.33.4.12#53(c.root-servers.net) in 395 ms
+
+example.com.		172800	IN	NS	hera.ns.cloudflare.com.
+example.com.		172800	IN	NS	elliott.ns.cloudflare.com.
+;; Received 359 bytes from 192.31.80.30#53(d.gtld-servers.net) in 235 ms
+
+example.com.		300	IN	A	104.20.23.154
+example.com.		300	IN	A	172.66.147.243
+;; Received 72 bytes from 173.245.58.162#53(hera.ns.cloudflare.com) in 271 ms
+
+[exit 0]

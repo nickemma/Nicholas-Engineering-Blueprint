@@ -1,0 +1,35 @@
+$ bash gate/run.sh ~/blueprint/switchyard   # race
+PASS  gofmt -l . lists nothing
+PASS  go vet ./...
+PASS  go test -race ./...
+sending 10,000 state changes from 32 clients while workers are killed; this takes a minute or two
+sent 10000 state changes in 1.7 s: 7093 creates, 1658 repeated with the same key, 1249 cancels (983 accepted)
+settled after 21.9 s: 7093 jobs: 6110 completed, 983 cancelled, 0 failed
+PASS  every request got an expected answer
+PASS  a repeated request with the same key returned the same job
+PASS  every job reached a final state (none lost, none stuck)
+PASS  every job cancelled with 200 ended cancelled, never completed
+PASS  every completed job has exactly one effect; every other job, none
+      workers killed with SIGKILL: 16; one paused past its lease
+      jobs handed back by the reconcile loop: 10
+PASS  goroutines came back to the baseline (28 before, 28 after)
+FAIL  SIGTERM stops everything within the grace period
+      control plane exit status 66 after 2 s (grace 5 s)
+FAIL  the race detector reported nothing
+      in control-plane.log:
+      WARNING: DATA RACE
+      Read at 0x00c000266900 by goroutine 77:
+        switchyard/internal/coord.(*Coordinator).Stats()
+            /tmp/gate-race/internal/coord/coord.go:277 +0x51
+        main.run.func4()
+            /tmp/gate-race/cmd/switchyard/main.go:154 +0x12
+        github.com/prometheus/client_golang/prometheus.(*valueFunc).Write()
+            /root/go/pkg/mod/github.com/prometheus/client_golang@v1.24.1/prometheus/value.go:95 +0x52
+        github.com/prometheus/client_golang/prometheus.processMetric()
+            /root/go/pkg/mod/github.com/prometheus/client_golang@v1.24.1/prometheus/registry.go:677 +0x115
+        github.com/prometheus/client_golang/prometheus.(*Registry).Gather()
+            /root/go/pkg/mod/github.com/prometheus/client_golang@v1.24.1/prometheus/registry.go:525 +0xe29
+        github.com/prometheus/client_golang/prometheus.(*noTransactionGatherer).Gather()
+
+gate failed
+[exit 1]

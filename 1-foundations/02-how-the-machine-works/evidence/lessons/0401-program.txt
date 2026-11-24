@@ -1,0 +1,4 @@
+$ cd ~/blueprint/day1 && ls -l day1 && ./day1
+-rwxrwxr-x 1 ada ada 2359414 Nov 18 16:47 day1
+Blueprint ready! OS: linux | Arch: amd64 | CPUs: 16
+[exit 0]

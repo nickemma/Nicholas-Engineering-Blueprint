@@ -14,10 +14,10 @@ A tree is nodes with children and no cycles. Almost every tree problem is one of
 - the answer depends on **levels**, or the **nearest** something: use BFS.
 
 **Real systems:**
-- [Phase 3's B-tree indexes](../../lessons/03-durable-auditable-data/TEACHING.md#step-8-background-jobs) are trees whose nodes are disk pages.
-- Go's HTTP router, from [Phase 0](../../lessons/00-request-service/TEACHING.md#step-5-a-router-a-greeting-and-input-validation), keeps its routes in a tree.
-- [Phase 7's gradient-boosted trees](../../lessons/07-utility-evaluation/TEACHING.md#step-6-gradient-boosted-trees-honestly-compared) make a prediction by walking from the root to a leaf.
-- [Phase 6's audit log](../../lessons/06-safe-shared-queries/TEACHING.md#step-10-a-tamper-evident-audit-log) is a Merkle tree, whose root hash covers every leaf.
+- [Phase 3's B-tree indexes](../../3-tracks/storage-engines/01-postgres-in-depth/lessons/04-claim-and-recover-background-jobs.md) are trees whose nodes are disk pages.
+- Go's HTTP router, from [core 01, lesson 03](../../2-core/01-go-runtime-and-reliable-services/lessons/03-an-http-service-with-a-contract.md#step-2-the-routes), keeps its routes in a tree.
+- [Phase 7's gradient-boosted trees](../../3-tracks/ai-infrastructure/deep-dives/gradient-boosted-trees.md) make a prediction by walking from the root to a leaf.
+- [Phase 6's audit log](../../3-tracks/storage-engines/04-integrity-and-encryption/lessons/04-check-a-signed-merkle-root.md) is a Merkle tree, whose root hash covers every leaf.
 
 ## Worked problem 1: Maximum Depth of Binary Tree
 

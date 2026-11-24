@@ -1,0 +1,4 @@
+$ for mode in "" "-safe"; do /tmp/stdhttp $mode 2> /dev/null & p=$!; sleep 0.5; s=$(date +%s%N); printf "GET / HTTP/1.1\r\nHost: x\r\n" | timeout 6 nc 127.0.0.1 8081; echo "stdhttp $mode: the connection lasted $(( ($(date +%s%N) - s) / 1000000 )) ms"; kill $p; wait $p 2> /dev/null; done
+stdhttp : the connection lasted 6007 ms
+stdhttp -safe: the connection lasted 2007 ms
+[exit 143]

@@ -1,0 +1,21 @@
+$ uv run python drills/objects.py
+== names are references
+a = [1, 2, 3], b = [1, 2, 3], same object: True, id(a) == id(b): True
+c = [1, 2, 3], c == a: True, c is a: False
+== everything is an object
+                     0       int   28 bytes
+                     1       int   28 bytes
+            1073741824       int   32 bytes
+  18446744073709551616       int   36 bytes
+                   1.5     float   24 bytes
+                  True      bool   28 bytes
+                    ''       str   41 bytes
+                   'a'       str   42 bytes
+                  None  NoneType   16 bytes
+a list of 1,000 items: 8056 bytes (8 bytes per item: a pointer)
+== a million integers
+list(range(1_000_000)) holds 40.0 MB (40 bytes each)
+== small integers are shared
+256 is 256: True
+257 is 257: False  (compare numbers with ==, never with is)
+[exit 0]

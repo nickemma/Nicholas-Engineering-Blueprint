@@ -1,0 +1,6 @@
+$ mkdir -p ~/blueprint/gofromzero && cd ~/blueprint/gofromzero && go mod init gofromzero && cat go.mod
+go: creating new go.mod: module gofromzero
+module gofromzero
+
+go 1.27.4
+[exit 0]

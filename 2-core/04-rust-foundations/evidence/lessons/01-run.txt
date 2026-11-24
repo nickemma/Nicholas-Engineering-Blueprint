@@ -1,0 +1,2 @@
+5 requests, 1 slow
+mean: 60.4 ms

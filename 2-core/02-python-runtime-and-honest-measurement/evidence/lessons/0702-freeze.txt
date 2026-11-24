@@ -1,0 +1,12 @@
+$ /home/ada/blueprint/switchyard/bin/switchyard > /dev/null 2>&1 & sleep 0.5; for mode in open closed; do (sleep 3; kill -STOP $(pgrep -x switchyard); sleep 1; kill -CONT $(pgrep -x switchyard)) & freezer=$!; uv run kload load --rate 200 --duration 8 --mode $mode --out results/freeze-$mode.csv; wait $freezer; done
+open loop: 1600 requests at 200/s over 8 s
+answers: 200 x1600
+latency (2xx): p50 1.29 ms, p99 926.36 ms, max 1004.41 ms
+kload itself: send lag p99 1.24 ms, max 2.53 ms; CPU 0.64 s in 8.01 s (8%)
+wrote results/freeze-open.csv and results/freeze-open.json
+closed loop: 1600 requests at up to 200/s, one at a time, in 8.00 s (latency timed from sending: a stall is hidden)
+answers: 200 x1600
+latency (2xx): p50 0.48 ms, p99 0.81 ms, max 1002.95 ms
+kload itself: send lag p99 924.95 ms, max 999.09 ms; CPU 0.52 s in 8.00 s (7%)
+wrote results/freeze-closed.csv and results/freeze-closed.json
+[exit 0]

@@ -1,0 +1,8 @@
+$ (lesson 13 step 6)
+job 1: 201 retry-after=
+job 2: 201 retry-after=
+job 3: 201 retry-after=
+job 4: 503 retry-after=1
+job 5: 503 retry-after=1
+jobs_queue_depth 2
+[exit 0]

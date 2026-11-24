@@ -1,0 +1,23 @@
+$ /home/ada/blueprint/switchyard/bin/switchyard > /dev/null 2>&1 & sleep 0.5; for r in 1000 4000 20000; do uv run kload load --rate $r --duration 2 --out results/rate$r.csv; echo "exit $?"; done
+open loop: 2000 requests at 1000/s over 2 s
+answers: 200 x2000
+latency (2xx): p50 0.92 ms, p99 6.79 ms, max 19.81 ms
+kload itself: send lag p99 1.18 ms, max 9.77 ms; CPU 0.48 s in 2.00 s (24%)
+wrote results/rate1000.csv and results/rate1000.json
+exit 0
+kload used 81% of a CPU: close to its limit, so replies may have waited for it to read them. Lower the rate, or split it across processes.
+open loop: 8000 requests at 4000/s over 2 s
+answers: 200 x8000
+latency (2xx): p50 0.60 ms, p99 2.08 ms, max 10.64 ms
+kload itself: send lag p99 1.07 ms, max 6.42 ms; CPU 1.62 s in 2.01 s (81%)
+wrote results/rate4000.csv and results/rate4000.json
+exit 0
+kload used 100% of a CPU: close to its limit, so replies may have waited for it to read them. Lower the rate, or split it across processes.
+kload fell behind its schedule: send lag p99 1974.5 ms is over --max-lag-ms 10. These latencies include time spent waiting inside kload: don't trust them.
+open loop: 40000 requests at 20000/s over 2 s
+answers: 200 x40000
+latency (2xx): p50 1430.37 ms, p99 1997.69 ms, max 2003.93 ms
+kload itself: send lag p99 1974.50 ms, max 1983.25 ms; CPU 4.02 s in 4.03 s (100%)
+wrote results/rate20000.csv and results/rate20000.json
+exit 3
+[exit 0]

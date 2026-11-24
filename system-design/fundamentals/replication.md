@@ -31,10 +31,9 @@ Say which model, synchronous or not, what a reader can see (link to [Consistency
 
 ## Where you built it
 
-- [Phase 4](../../lessons/04-replicated-state/README.md):
+- [Phase 4](../../2-core/07-distributed-systems-fundamentals/README.md):
   - your own Raft, with leader election, log replication, persistence and snapshots;
   - PreVote and CheckQuorum against partial partitions;
   - linearizability checked with Porcupine;
   - a TLA+ model.
-- [Phase 3](../../lessons/03-durable-auditable-data/README.md): backup and restore.
-- [KESTREL](../../capstones/01-kestrel.md) studies what happens when connectivity is partial and intermittent.
+- [Phase 3](../../2-core/03-docker-and-postgres/README.md): backup and restore.

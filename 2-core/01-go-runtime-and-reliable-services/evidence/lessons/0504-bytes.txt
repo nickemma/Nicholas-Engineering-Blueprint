@@ -1,0 +1,8 @@
+$ go test ./internal/jobs
+--- FAIL: TestNewDescription (0.00s)
+    --- FAIL: TestNewDescription/counts_characters,_not_bytes (0.00s)
+        job_test.go:31: error = description must be between 1 and 200 characters, want <nil>
+FAIL
+FAIL	switchyard/internal/jobs	0.004s
+FAIL
+[exit 1]

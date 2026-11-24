@@ -1,6 +1,6 @@
 # Design: a metrics and alerting system
 
-**Track:** cloud-infra · **Built in:** [Phase 5](../../lessons/05-constrained-operations/README.md) (Prometheus, SLOs, burn-rate alerts), [Phase 7](../../lessons/07-utility-evaluation/README.md) (anomaly detection) · **Time:** 45 minutes
+**Track:** cloud-infra · **Built in:** [Phase 5](../../2-core/08-shipping-safely/README.md) (Prometheus, SLOs, burn-rate alerts), [Phase 7](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md) (anomaly detection) · **Time:** 45 minutes
 
 This is a worked reference. Do the design yourself first, with a timer, then read this and note what you missed.
 
@@ -147,11 +147,11 @@ One deployment that adds `user_id` as a label creates millions of series and exh
 
 ## 10. Where you've built this
 
-- [Phase 5](../../lessons/05-constrained-operations/README.md):
-  - Prometheus on Kubernetes, scraping Runway;
+- [Phase 5](../../2-core/08-shipping-safely/README.md):
+  - Prometheus on Kubernetes, scraping Switchyard;
   - SLOs with multi-window burn-rate alerts, unit-tested with `promtool`;
   - a game day.
-- [Phase 7, step 12](../../lessons/07-utility-evaluation/TEACHING.md#step-12-finding-incidents-nobody-wrote-a-rule-for): detectors scored against injected incidents and against the burn-rate alerts.
+- [Phase 7, step 12](../../3-tracks/ai-infrastructure/deep-dives/aiops.md): detectors scored against injected incidents and against the burn-rate alerts.
 
 ## 11. What an interviewer will push on
 

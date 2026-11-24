@@ -7,8 +7,8 @@ A window is a contiguous range `[left, right]` of the input. Move `right` forwar
 **Recognise it when** the problem asks for the **longest**, **shortest** or **best** **contiguous** range (a substring, a subarray, a time span) that satisfies a rule, or for something about **every** window of a fixed size.
 
 **Real systems:**
-- [Phase 6's rate limiter](../../lessons/06-safe-shared-queries/TEACHING.md#step-5-rate-limiting) answers "how many requests in the last second?";
-- [Phase 5's burn-rate alerts](../../lessons/05-constrained-operations/TEACHING.md#step-10-prometheus-slos-and-burn-rate-alerts) answer "what fraction of requests failed in the last hour?".
+- [Phase 6's rate limiter](../../3-tracks/shared-units/tenancy-and-abuse-control/lessons/05-authorize-routes-and-budget-each-tenant.md) answers "how many requests in the last second?";
+- [Phase 5's burn-rate alerts](../../3-tracks/shared-units/kubernetes-and-delivery/lessons/08-alert-on-budget-burn.md) answer "what fraction of requests failed in the last hour?".
 
 Both are windows over time. Worked problem 2 is the first of these.
 

@@ -1,0 +1,5 @@
+$ nc -l 127.0.0.1 9000 > /dev/null & sleep 0.3; sleep 2 | nc -N 127.0.0.1 9000 & sleep 0.5; ss -tn state established "( sport = :9000 or dport = :9000 )"; wait
+Recv-Q Send-Q Local Address:Port  Peer Address:Port Process
+0      0          127.0.0.1:9000     127.0.0.1:41854       
+0      0          127.0.0.1:41854    127.0.0.1:9000        
+[exit 0]

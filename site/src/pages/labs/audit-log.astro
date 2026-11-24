@@ -14,7 +14,7 @@ import Lab from "../../layouts/Lab.astro";
   </ul>
   <h2>Go deeper</h2>
   <ul>
-    <li><a href="/lessons/06-safe-shared-queries/guide/step-10-a-tamper-evident-audit-log/">Phase 6, step 10: a tamper-evident audit log</a>, with signed checkpoints and consistency proofs.</li>
+    <li><a href="/3-tracks/storage-engines/04-integrity-and-encryption/lessons/04-check-a-signed-merkle-root/">Phase 6, step 10: a tamper-evident audit log</a>, with signed checkpoints and consistency proofs.</li>
   </ul>
   <p class="note">The tree and its proofs follow RFC 9162, and are tested against Certificate Transparency's published vectors. The witness here simply recomputes the old root from the records. A real witness never sees them: it checks a consistency proof, and signatures carry its promise. None of this stops an attacker changing what's logged from now on.</p>
 </Lab>

@@ -1,0 +1,5 @@
+$ dig nosuch.invalid | grep -E "status|ANSWER:"; getent hosts nosuch.invalid; echo "getent exit: $?"
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 3413
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
+getent exit: 2
+[exit 0]

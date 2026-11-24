@@ -1,0 +1,45 @@
+$ bash gate/run.sh ~/blueprint/internet    # the readn version
+== echo/
+PASS  gofmt
+PASS  go vet
+PASS  go test -race
+PASS  the server starts and prints 'listening on 127.0.0.1:36823'
+PASS  100 clients at once get back exactly what they sent (14,009,678 bytes)
+PASS  a line of exactly 65,536 bytes (newline included) comes back whole
+PASS  a longer line gets the error, then the connection closes
+PASS  a quiet client is disconnected after -idle 3s
+PASS  the server is still running afterwards
+== measure/
+PASS  ruff format
+PASS  ruff check
+FAIL  pytest
+              reader, writer = await asyncio.open_connection(host, port)
+              results = []
+              try:
+                  for request in requests:
+                      line = payload(request)
+                      start = time.perf_counter()
+                      writer.write(line)
+                      await writer.drain()
+                      reply = await reader.read(65536)
+                      latency_ms = round((time.perf_counter() - start) * 1000, 3)
+                      if reply != line:
+      >                   raise ValueError(
+                              f"request {request}: sent {len(line)} bytes, got back {reply[:20]!r}"
+                          )
+      E                   ValueError: request 0: sent 16 bytes, got back b'0 xxxxxx'
+      
+      measure.py:35: ValueError
+      =========================== short test summary info ============================
+      FAILED test_measure.py::test_reply_in_two_pieces_is_timed_to_the_end - ValueE...
+      1 failed, 21 passed in 0.24s
+PASS  1,000 requests over 10 connections: results.csv has every request
+PASS  the p50 and p99 it prints match the CSV
+PASS  the plot is a PNG image
+FAIL  replies that arrive in two pieces are read whole
+      exit 1: measure: request 0: sent 16 bytes, got back b'0 xxxxxx'
+PASS  a wrong reply: exit 1 with a message (measure: request 0: sent 16 bytes, got back b'not what you sent\n')
+PASS  nothing listening: exit 1 with a message (measure: [Errno 111] Connect call failed ('127.0.0.1', 42339))
+
+Gate failed: fix each FAIL above and run it again.
+[exit 1]

@@ -1,0 +1,5 @@
+$ GODEBUG=gctrace=1 ./gcdrill 2>&1 | head -3; rm gcdrill
+gc 1 @0.000s 11%: 0.39+0.30+0.065 ms clock, 6.3+0.067/0.41/0+1.0 ms cpu, 4->4->4 MB, 4 MB goal, 0 MB stacks, 0 MB globals, 16 P
+gc 2 @0.002s 10%: 0.18+0.32+0.005 ms clock, 2.8+0/0.71/0.065+0.095 ms cpu, 9->9->9 MB, 9 MB goal, 0 MB stacks, 0 MB globals, 16 P
+gc 3 @0.003s 10%: 0.11+0.30+0.074 ms clock, 1.7+0/0.16/0.023+1.1 ms cpu, 19->19->19 MB, 19 MB goal, 0 MB stacks, 0 MB globals, 16 P
+[exit 0]

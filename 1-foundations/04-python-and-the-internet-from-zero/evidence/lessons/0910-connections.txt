@@ -1,0 +1,20 @@
+$ /tmp/echo 2>/dev/null > /dev/null & sleep 0.5; for c in 1 10 100; do uv run measure.py --port 9000 --connections $c --csv c$c.csv --plot c$c.png; echo; done; kill %1
+1000 requests over 1 connection in 0.388 s
+p50 0.362 ms
+p99 0.598 ms
+max 0.974 ms
+wrote c1.csv and c1.png
+
+1000 requests over 10 connections in 0.141 s
+p50 1.296 ms
+p99 1.923 ms
+max 2.059 ms
+wrote c10.csv and c10.png
+
+1000 requests over 100 connections in 0.159 s
+p50 11.661 ms
+p99 20.891 ms
+max 21.224 ms
+wrote c100.csv and c100.png
+
+[exit 0]

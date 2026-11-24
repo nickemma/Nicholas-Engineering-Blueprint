@@ -1,0 +1,3 @@
+$ shellcheck monitor.sh && echo "no warnings"
+no warnings
+[exit 0]

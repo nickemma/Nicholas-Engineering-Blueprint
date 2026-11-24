@@ -1,0 +1,9 @@
+$ go build -o /tmp/switchyard ./cmd/switchyard && { /tmp/switchyard > /tmp/switchyard.log & p=$!; sleep 0.5; curl -s -o /dev/null -X POST http://127.0.0.1:8080/jobs -H "Content-Type: application/json" -d "{\"description\":\"slow\",\"duration_ms\":1500}"; curl -s -X POST http://127.0.0.1:8080/jobs/1/run & sleep 0.3; kill -TERM $p; wait; echo; cat /tmp/switchyard.log; }
+{"id":1,"state":"completed","description":"slow","duration_ms":1500,"created_at":"2026-11-20T04:14:38.228680602Z","updated_at":"2026-11-20T04:14:39.741943533Z"}
+
+{"time":"2026-11-20T04:14:37.728522497Z","level":"INFO","msg":"listening","addr":"127.0.0.1:8080"}
+{"time":"2026-11-20T04:14:38.228872326Z","level":"INFO","msg":"request","method":"POST","route":"POST /jobs","status":201,"duration_ms":0}
+{"time":"2026-11-20T04:14:38.534385936Z","level":"INFO","msg":"shutting down","grace":"10s"}
+{"time":"2026-11-20T04:14:39.742261296Z","level":"INFO","msg":"request","method":"POST","route":"POST /jobs/{id}/run","status":200,"duration_ms":1500}
+{"time":"2026-11-20T04:14:40.103927832Z","level":"INFO","msg":"stopped"}
+[exit 0]

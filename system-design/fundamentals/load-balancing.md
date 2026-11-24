@@ -2,6 +2,10 @@
 
 A load balancer spreads requests over several servers, so capacity grows by adding servers and one server's death doesn't take the service down. It also hides the servers behind one address.
 
+## Vertical and horizontal scaling
+
+Vertical scaling gives an instance more CPU, memory, or I/O capacity. Horizontal scaling adds instances. Check which resource saturates first. Adding API replicas can help a CPU-bound stateless API, while a saturated shared database can cap throughput for every replica. Multiply only capacity you have measured under the target workload. If a replica handles 100 requests/s within the latency target, 250 requests/s with one replica lost calls for at least four total under an even load and with enough shared capacity. [Capacity planning practice](../../math/04-capacity-planning/README.md)
+
 ## The options
 
 | Choice | Options | Trade-off |
@@ -30,9 +34,9 @@ Say which layer, which algorithm and why, how health is checked, and how the bal
 
 ## Where you built it
 
-[Phase 5, step 4](../../lessons/05-constrained-operations/TEACHING.md#step-4-services-dns-and-load-balancing):
+[Phase 5, step 4](../../3-tracks/shared-units/kubernetes-and-delivery/lessons/02-reach-a-service-by-name.md):
 - Kubernetes Services and kube-proxy (L4);
 - DNS;
 - a layer-7 balancer of your own, with readiness.
 
-[Phase 6](../../lessons/06-safe-shared-queries/README.md) found that busy HTTP/2 connections never moved, and fixed it by limiting connection age.
+[Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md) found that busy HTTP/2 connections never moved, and fixed it by limiting connection age.

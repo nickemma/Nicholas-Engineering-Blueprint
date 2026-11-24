@@ -1,0 +1,4 @@
+$ echo "my secret" > secret.txt && chmod 600 secret.txt && ls -l secret.txt && chmod 644 secret.txt && ls -l secret.txt && chmod 600 secret.txt
+-rw------- 1 ada ada 10 Nov 18 16:47 secret.txt
+-rw-r--r-- 1 ada ada 10 Nov 18 16:47 secret.txt
+[exit 0]

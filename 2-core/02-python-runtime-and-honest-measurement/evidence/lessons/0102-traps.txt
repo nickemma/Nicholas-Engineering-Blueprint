@@ -1,0 +1,9 @@
+$ uv run python drills/traps.py
+== a grid made by multiplying a list
+[[0] * 3] * 3 after rows[0][0] = 1: [[1, 0, 0], [1, 0, 0], [1, 0, 0]]
+a comprehension, after the same change: [[1, 0, 0], [0, 0, 0], [0, 0, 0]]
+== a mutable default argument
+add('a') = ['a'], then add('b') = ['a', 'b']
+the default is one list, made once: (['a', 'b'],)
+add_fixed('a') = ['a'], then add_fixed('b') = ['b']
+[exit 0]

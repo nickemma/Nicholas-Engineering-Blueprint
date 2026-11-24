@@ -1,0 +1,28 @@
+?   	switchyard/metad/cmd/check-history	[no test files]
+?   	switchyard/metad/cmd/hashdemo	[no test files]
+?   	switchyard/metad/cmd/metad	[no test files]
+ok  	switchyard/metad/internal/cluster	1.874s
+ok  	switchyard/metad/internal/metad	1.163s
+ok  	switchyard/metad/internal/raft	1.029s
+ok  	switchyard/metad/internal/ring	1.115s
+ok  	switchyard/metad/internal/simnet	1.026s
+ok  	switchyard/metad/internal/wal	1.221s
+linearizable (5 observations)
+lost reply recovered; lagging peer rebuilt from snapshot; tenants and deletes survived
+no plaintext canaries in Raft or Rust storage (12 paths inspected)
+minority write received no success (HTTP 409)
+negative control: caught acknowledgment before quorum commit
+{"trial": 1, "path": "range", "workload": "a", "records": 64, "requests": 400, "threads": 2, "errors": 0, "counts": {"READ": 199.0, "UPDATE": 201.0}, "throughput": 42.693990820791974, "read_p95_us": 67000.0, "read_p99_us": 112000.0}
+{"trial": 1, "path": "point", "workload": "a", "records": 64, "requests": 400, "threads": 2, "errors": 0, "counts": {"READ": 209.0, "UPDATE": 191.0}, "throughput": 41.093075816724884, "read_p95_us": 68000.0, "read_p99_us": 123000.0}
+{"trial": 1, "path": "range", "workload": "c", "records": 64, "requests": 400, "threads": 2, "errors": 0, "counts": {"READ": 400.0}, "throughput": 32.26847370119393, "read_p95_us": 128000.0, "read_p99_us": 250000.0}
+{"trial": 1, "path": "point", "workload": "c", "records": 64, "requests": 400, "threads": 2, "errors": 0, "counts": {"READ": 400.0}, "throughput": 52.19206680584551, "read_p95_us": 67000.0, "read_p99_us": 97000.0}
+{"trial": 2, "path": "point", "workload": "a", "records": 64, "requests": 400, "threads": 2, "errors": 0, "counts": {"READ": 200.0, "UPDATE": 200.0}, "throughput": 41.07619634421852, "read_p95_us": 70000.0, "read_p99_us": 109000.0}
+{"trial": 2, "path": "range", "workload": "a", "records": 64, "requests": 400, "threads": 2, "errors": 0, "counts": {"READ": 196.0, "UPDATE": 204.0}, "throughput": 42.99688272600236, "read_p95_us": 63000.0, "read_p99_us": 101000.0}
+{"trial": 2, "path": "point", "workload": "c", "records": 64, "requests": 400, "threads": 2, "errors": 0, "counts": {"READ": 400.0}, "throughput": 51.440329218106996, "read_p95_us": 63000.0, "read_p99_us": 75000.0}
+{"trial": 2, "path": "range", "workload": "c", "records": 64, "requests": 400, "threads": 2, "errors": 0, "counts": {"READ": 400.0}, "throughput": 52.555511759295754, "read_p95_us": 60000.0, "read_p99_us": 74000.0}
+{"path":"range","operations":75000,"hits":37500,"elapsed_ns":5385324128,"samples":729}
+{"path":"point","operations":75000,"hits":37500,"elapsed_ns":2607946304,"samples":342}
+{"path":"range","operations":75000,"hits":37500,"elapsed_ns":5136314509,"samples":0}
+{"path":"point","operations":75000,"hits":37500,"elapsed_ns":3087455463,"samples":0}
+{"path":"point","operations":75000,"hits":37500,"elapsed_ns":2669512362,"samples":0}
+{"path":"range","operations":75000,"hits":37500,"elapsed_ns":4931108076,"samples":0}

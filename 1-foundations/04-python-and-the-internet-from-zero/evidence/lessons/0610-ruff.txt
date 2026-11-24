@@ -1,0 +1,4 @@
+$ uv run ruff format . && uv run ruff check .
+6 files left unchanged
+All checks passed!
+[exit 0]

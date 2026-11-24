@@ -1,6 +1,6 @@
 # Design: an event pipeline from services to a warehouse
 
-**Track:** data-infrastructure · **Built in:** [Phase 3](../../lessons/03-durable-auditable-data/README.md) (outbox, Kafka), [Phase 7, step 3](../../lessons/07-utility-evaluation/TEACHING.md#step-3-a-data-contract-and-an-event-pipeline) (a data contract, Kafka to Parquet, late events) · **Time:** 45 minutes
+**Track:** data-infrastructure · **Built in:** [Phase 3](../../2-core/03-docker-and-postgres/README.md) (outbox, Kafka), [Phase 7, step 3](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/02-build-private-parquet-snapshots.md) (a data contract, Kafka to Parquet, late events) · **Time:** 45 minutes
 
 This is a worked reference. Do the design yourself first, with a timer, then read this and note what you missed.
 
@@ -135,13 +135,13 @@ Each seam, and what makes it safe:
 
 ## 10. Where you've built this
 
-- [Phase 3](../../lessons/03-durable-auditable-data/README.md): the transactional outbox, and Kafka.
-- [Phase 7, step 3](../../lessons/07-utility-evaluation/TEACHING.md#step-3-a-data-contract-and-an-event-pipeline):
+- [Phase 3](../../2-core/03-docker-and-postgres/README.md): the transactional outbox, and Kafka.
+- [Phase 7, step 3](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/02-build-private-parquet-snapshots.md):
   - a versioned data contract;
   - Kafka to Parquet with hourly partitions;
   - offsets committed after the atomic write;
   - deduplication, late events and a rebuild, queried with DuckDB.
-- [Phase 7, step 4](../../lessons/07-utility-evaluation/TEACHING.md#step-4-big-data-honestly): compaction measured.
+- [Phase 7, step 4](../../3-tracks/ai-infrastructure/deep-dives/mapreduce-spark-and-cost.md): compaction measured.
 
 ## 11. What an interviewer will push on
 

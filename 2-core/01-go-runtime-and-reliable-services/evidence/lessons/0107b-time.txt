@@ -1,0 +1,5 @@
+$ for g in 50 400 off; do GOGC=$g /usr/bin/time -f "GOGC=$g: %e s wall, %U s user, %S s sys, %M KB max resident" ./gcdrill > /dev/null; done
+GOGC=50: 0.32 s wall, 0.30 s user, 0.08 s sys, 30712 KB max resident
+GOGC=400: 0.35 s wall, 0.20 s user, 0.16 s sys, 228060 KB max resident
+GOGC=off: 0.02 s wall, 0.01 s user, 0.00 s sys, 7388 KB max resident
+[exit 0]

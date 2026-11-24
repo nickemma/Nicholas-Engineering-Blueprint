@@ -1,0 +1,2 @@
+appended at byte 0
+klog: corrupt record at byte 0: payload checksum mismatch

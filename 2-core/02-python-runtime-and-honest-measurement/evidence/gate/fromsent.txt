@@ -1,0 +1,23 @@
+$ bash gate/run.sh ~/blueprint/kload   # fromsent
+PASS  ruff format
+PASS  ruff check
+FAIL  pytest
+      =========================== short test summary info ============================
+      FAILED tests/test_load.py::test_a_blocking_send_makes_kload_late_and_the_lag_shows_it
+      1 failed, 65 passed in 12.68s
+PASS  200 requests a second for 5 s against a 5 ms server: on schedule, and accurate
+      arrived on schedule: p99 0.94 ms off, worst 0.99 ms
+      p50: kload says 6.06 ms; the server took 5.56 ms
+PASS  the server freezes for 1 s: open loop
+      56 of 500 requests took 500 ms or more
+PASS  the server freezes for 1 s: closed loop
+      1 of 500 requests took 500 ms or more
+FAIL  at 20,000 requests a second, kload says it fell behind and exits 3
+      39499 latencies are shorter than the time the request waited inside kload: request 501 was sent 137.2 ms late but has a latency of 66.0 ms. Time latency from when a request was due, not sent
+PASS  kload compare: two sets of runs from the same server
+      p99 B - A: +0.01 ms, 95% CI [-0.16, +0.18] ms: no difference shown: the interval includes 0
+PASS  kload compare: B is 2 ms slower in every run
+      p99 B - A: +2.00 ms, 95% CI [+1.84, +2.17] ms: B is slower
+
+gate failed
+[exit 1]

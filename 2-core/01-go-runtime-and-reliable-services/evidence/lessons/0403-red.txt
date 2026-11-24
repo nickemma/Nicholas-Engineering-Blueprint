@@ -1,0 +1,8 @@
+$ go test ./internal/httpapi
+--- FAIL: TestRoutes (0.00s)
+    --- FAIL: TestRoutes/health (0.00s)
+        handler_test.go:60: body = {"status":"ok"}, want {"status":"ok","service":"switchyard"}
+FAIL
+FAIL	switchyard/internal/httpapi	0.010s
+FAIL
+[exit 1]

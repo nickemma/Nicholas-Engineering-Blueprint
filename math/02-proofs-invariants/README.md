@@ -4,7 +4,7 @@
 
 Tests show a program works on the cases you tried. A distributed system runs through more cases than you could ever try, and the ones that break it are the rare ones. This guide teaches the mathematics that covers every case: **induction** and **invariants**. It ends with Raft's safety argument, and with a working model checker you've written yourself, so that TLA+ stops being magic.
 
-**Real systems:** [Phase 4](../../lessons/04-replicated-state/README.md) builds Raft, and models elections in [TLA+ in step 9](../../lessons/04-replicated-state/TEACHING.md#step-9-a-tla-model-of-elections). [DSA's binary search](../../dsa/05-binary-search/README.md) relies on a loop invariant. For AI-generated code, this is the sharpest tool you have: asking "what stays true on every step?" finds bugs that a passing test suite won't.
+**Real systems:** [Phase 4](../../2-core/07-distributed-systems-fundamentals/README.md) builds Raft, and models elections in [TLA+ in step 9](../../3-tracks/storage-engines/02-consensus-in-depth/lessons/06-model-election-safety.md). [DSA's binary search](../../dsa/05-binary-search/README.md) relies on a loop invariant. For AI-generated code, this is the sharpest tool you have: asking "what stays true on every step?" finds bugs that a passing test suite won't.
 
 ## Induction
 

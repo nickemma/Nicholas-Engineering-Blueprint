@@ -1,0 +1,29 @@
+$ bash gate/run.sh ~/your-repo    # the shortbuf version
+== tally/
+PASS  gofmt
+PASS  go vet
+PASS  go test -race
+FAIL  a log with 14 kinds of malformed line, a 200 KB line, \r\n and no final newline
+      exit 1: tally: bufio.Scanner: token too long
+PASS  an empty input
+PASS  5,000 lines
+FAIL  -path /api on the log with traps
+      exit 1: tally: bufio.Scanner: token too long
+PASS  -path /api/jobs on 5,000 lines
+PASS  tally -nope: exit 2 with a message
+PASS  tally -path: exit 2 with a message
+PASS  tally extra-argument: exit 2 with a message
+PASS  a million lines counted correctly
+PASS  at most 64 MiB of memory for a 62 MiB log (it used 35 MiB)
+== report/
+PASS  ruff format
+PASS  ruff check
+PASS  pytest, without tally built
+FAIL  report.py on three logs
+      exit 1: report: traps.log: tally exited 1: tally: bufio.Scanner: token too long
+FAIL  report.py: the chart is a PNG image
+      --png /tmp/tmp.6dc9C5i7ym/status.png is missing or isn't a PNG
+PASS  report.py when tally fails: exit 1 with a message (report: empty.log: tally exited 1: tally: something went wrong)
+
+Gate failed: fix each FAIL above and run it again, or take the Foundations module that covers it.
+[exit 1]

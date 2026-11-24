@@ -16,8 +16,8 @@ import Lab from "../../layouts/Lab.astro";
   <p>A client gives up after a second, but the dependency doesn't know that. It still does the work for a request nobody's waiting for, so its capacity goes on answers that go nowhere. Meanwhile the client has sent the same request again. The queue never shrinks, and almost everything it serves arrives too late.</p>
   <h2>Go deeper</h2>
   <ul>
-    <li><a href="/lessons/02-connected-services/guide/step-5-retries-versioning-dead-letters-and-a-circuit-breaker/">Phase 2, step 5: retries, dead letters and a circuit breaker</a>.</li>
-    <li><a href="/lessons/05-constrained-operations/">Phase 5's game day</a>: triggers, amplifiers and backpressure on a real system.</li>
+    <li><a href="/3-tracks/shared-units/messaging-and-resilience/lessons/04-bound-retries-and-route-dead-letters/">Phase 2, step 5: retries, dead letters and a circuit breaker</a>.</li>
+    <li><a href="/2-core/08-shipping-safely/">Phase 5's game day</a>: triggers, amplifiers and backpressure on a real system.</li>
     <li><a href="/labs/queue/">Why queues fall off a cliff</a>: the same maths, without the retries.</li>
   </ul>
   <p class="note">This is a worst case by design. New requests keep arriving at the same rate however badly things are going, retries are capped at three, and the dependency never cancels work or sheds load. Real clients often send less while they wait in backoff, so backoff tends to help more than it does here. Cancelling abandoned work, retry budgets and load shedding at the dependency all help too.</p>

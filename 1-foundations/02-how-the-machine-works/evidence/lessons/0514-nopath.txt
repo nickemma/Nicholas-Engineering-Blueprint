@@ -1,0 +1,4 @@
+$ ./monitor.sh /nope; echo "exit status: $?"
+monitor.sh: no such path: /nope
+exit status: 2
+[exit 0]

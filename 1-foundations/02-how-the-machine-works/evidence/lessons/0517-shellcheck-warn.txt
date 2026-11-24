@@ -1,0 +1,12 @@
+$ shellcheck monitor.sh
+
+In monitor.sh line 40:
+  df -P $path | awk 'NR==2 {sub(/%/, "", $5); print $5}'
+        ^---^ SC2086 (info): Double quote to prevent globbing and word splitting.
+
+Did you mean: 
+  df -P "$path" | awk 'NR==2 {sub(/%/, "", $5); print $5}'
+
+For more information:
+  https://www.shellcheck.net/wiki/SC2086 -- Double quote to prevent globbing ...
+[exit 1]

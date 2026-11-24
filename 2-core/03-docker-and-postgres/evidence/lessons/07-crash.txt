@@ -1,0 +1,5 @@
+before crash: job 1, running, token 2
+after restart: same job 1, token 4
+old report: rpc error: code = FailedPrecondition desc = lease lost: the job is no longer yours
+new report: completion accepted
+{"job_id":1,"effects":1}

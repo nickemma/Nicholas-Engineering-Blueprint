@@ -1,0 +1,4 @@
+POST /jobs: 201 ('persist me')
+db_pool_acquired_connections 0
+db_pool_canceled_acquisitions_total 0
+GET after control-plane restart: 200 (same job)

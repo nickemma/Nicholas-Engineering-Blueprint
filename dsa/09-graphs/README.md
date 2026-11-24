@@ -16,9 +16,9 @@ A graph is nodes and edges, with no promise of a root or of no cycles. Trees wer
 - states and moves between them ("the fewest steps to turn this into that").
 
 **Real systems:**
-- **Go's build orders packages topologically**, and rejects an import cycle with an error. That's Course Schedule below, run on every `go build` since [Phase 0](../../lessons/00-request-service/README.md).
-- **Kubernetes deletes in graph order.** In [Phase 5](../../lessons/05-constrained-operations/README.md), it removes a Deployment's ReplicaSets and Pods by following their owner references.
-- **Raft's partition tests** in [Phase 4](../../lessons/04-replicated-state/TEACHING.md#step-6-partial-partitions-prevote-and-checkquorum) are about which nodes can still reach which: graph connectivity.
+- **Go's build orders packages topologically**, and rejects an import cycle with an error. That's Course Schedule below, run on every `go build` since [core 01](../../2-core/01-go-runtime-and-reliable-services/README.md).
+- **Kubernetes deletes in graph order.** In [Phase 5](../../2-core/08-shipping-safely/README.md), it removes a Deployment's ReplicaSets and Pods by following their owner references.
+- **Raft's partition tests** in [Phase 4](../../3-tracks/storage-engines/02-consensus-in-depth/lessons/04-protect-a-healthy-majority.md) are about which nodes can still reach which: graph connectivity.
 
 ## Worked problem 1: Number of Islands
 

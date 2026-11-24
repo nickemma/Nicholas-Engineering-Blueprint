@@ -1,0 +1,3 @@
+$ go test -run TestProtobufIsSmallerThanJSON -v ./internal/grpcapi | grep bytes
+    server_test.go:105: protobuf: 37 bytes, JSON: 172 bytes
+[exit 0]

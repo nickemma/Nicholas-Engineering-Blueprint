@@ -1,0 +1,30 @@
+$ bash gate/run.sh ~/blueprint/internet    # the noidle version
+== echo/
+PASS  gofmt
+PASS  go vet
+FAIL  go test -race
+      --- FAIL: TestIdleConnectionIsClosed (2.00s)
+          main_test.go:98: got read tcp 127.0.0.1:39668->127.0.0.1:44979: i/o timeout, want the server to close the connection (EOF)
+      FAIL
+      FAIL	echo	2.117s
+      FAIL
+PASS  the server starts and prints 'listening on 127.0.0.1:39489'
+PASS  100 clients at once get back exactly what they sent (14,009,678 bytes)
+PASS  a line of exactly 65,536 bytes (newline included) comes back whole
+PASS  a longer line gets the error, then the connection closes
+FAIL  a quiet client is disconnected after -idle 3s
+      still open after 8 s
+PASS  the server is still running afterwards
+== measure/
+PASS  ruff format
+PASS  ruff check
+PASS  pytest
+PASS  1,000 requests over 10 connections: results.csv has every request
+PASS  the p50 and p99 it prints match the CSV
+PASS  the plot is a PNG image
+PASS  replies that arrive in two pieces are read whole and timed to the end
+PASS  a wrong reply: exit 1 with a message (measure: request 0: sent 16 bytes, got back b'not what you sent\n')
+PASS  nothing listening: exit 1 with a message (measure: [Errno 111] Connect call failed ('127.0.0.1', 49573))
+
+Gate failed: fix each FAIL above and run it again.
+[exit 1]

@@ -1,0 +1,5 @@
+=== RUN   TestOpenBao
+    bao_test.go:116: OpenBao allowed signing path, denied unrelated path, and deliveries used versions 1 then 2
+--- PASS: TestOpenBao (0.04s)
+PASS
+ok  	switchyard/edge/control	0.044s

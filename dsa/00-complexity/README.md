@@ -2,7 +2,7 @@
 
 Every pattern in this track is a way to do less work. This first guide gives you the tool for saying how much less: **Big-O notation**, checked by measurement instead of taken on faith. It also sets up the project that every later pattern adds to.
 
-**Real systems:** capacity planning starts here. In [Phase 5](../../lessons/05-constrained-operations/README.md), you'll ask whether a design survives ten times the load; Big-O tells you which part breaks first.
+**Real systems:** capacity planning starts here. In [Phase 5](../../2-core/08-shipping-safely/README.md), you'll ask whether a design survives ten times the load; Big-O tells you which part breaks first.
 
 ## Set up the project
 
@@ -15,7 +15,7 @@ module dsa
 go 1.26
 ~~~
 
-Create the Python project. `uv python pin` records the Python version, as in the [Python Bridge](../../lessons/python-bridge/README.md).
+Create the Python project. `uv python pin` records the Python version, as in [Foundations 04](../../1-foundations/04-python-and-the-internet-from-zero/lessons/06-python-from-zero-values-collections-and-functions.md).
 
 <!-- run: uv init --bare --name dsa --python 3.12 && uv python pin 3.12 -->
 
@@ -271,7 +271,7 @@ It doesn't. From 64,000 numbers up, the set falls further behind, and it grows *
 
 Big-O counts steps, but it doesn't say that all steps cost the same.
 
-So use Big-O to rule designs out: O(*n*²) at a million is hopeless, whatever the constants. Then measure to choose between the ones that are left. That's the same habit as [Phase 7's](../../lessons/07-utility-evaluation/README.md) experiments, at a smaller scale.
+So use Big-O to rule designs out: O(*n*²) at a million is hopeless, whatever the constants. Then measure to choose between the ones that are left. That's the same habit as [Phase 7's](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md) experiments, at a smaller scale.
 
 ## The same in Python
 

@@ -1,0 +1,5 @@
+$ uv run python drills/objects.py | head -3
+== names are references
+a = [1, 2, 3], b = [1, 2, 3], same object: True, id(a) == id(b): True
+c = [1, 2, 3], c == a: True, c is a: True
+[exit 0]

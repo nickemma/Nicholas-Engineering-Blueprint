@@ -1,0 +1,8 @@
+$ ./tasks done 9; echo "exit status: $?"; ./tasks done abc; echo "exit status: $?"; ./tasks; echo "exit status: $?"
+tasks: no task 9
+exit status: 1
+tasks: "abc" isn't a task number
+exit status: 2
+usage: tasks [-file PATH] add TITLE | list | done ID
+exit status: 2
+[exit 0]

@@ -1,0 +1,6 @@
+$ go run ./drills/errs
+age: 36
+rejected: parsing age "abc": strconv.Atoi: parsing "abc": invalid syntax
+rejected, out of range: age -4: out of range
+rejected, out of range: age 200: out of range
+[exit 0]

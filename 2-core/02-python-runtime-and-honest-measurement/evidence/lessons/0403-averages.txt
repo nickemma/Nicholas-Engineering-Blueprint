@@ -1,0 +1,12 @@
+$ uv run python -c "print(\"\n\".join([\"10\"] * 99 + [\"5000\"]))" > /tmp/one-slow.txt && uv run kload summarize /tmp/one-slow.txt && uv run python -c "print(\"\n\".join([\"10\"] * 98 + [\"5000\"] * 2))" > /tmp/two-slow.txt && uv run kload summarize /tmp/two-slow.txt
+count: 100
+ mean: 59.9
+  p50: 10
+  p99: 10
+  max: 5000
+count: 100
+ mean: 109.8
+  p50: 10
+  p99: 5000
+  max: 5000
+[exit 0]

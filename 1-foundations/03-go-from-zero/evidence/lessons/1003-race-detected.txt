@@ -1,0 +1,51 @@
+$ go run -race ./drills/race
+got: fast server
+timed out after 100ms
+==================
+WARNING: DATA RACE
+Read at 0x00c000210008 by goroutine 20:
+  main.(*Counter).Inc()
+      /home/ada/blueprint/gofromzero/drills/race/main.go:27 +0x87
+  main.main.func1()
+      /home/ada/blueprint/gofromzero/drills/race/main.go:54 +0x82
+
+Previous write at 0x00c000210008 by goroutine 15:
+  main.(*Counter).Inc()
+      /home/ada/blueprint/gofromzero/drills/race/main.go:27 +0xa4
+  main.main.func1()
+      /home/ada/blueprint/gofromzero/drills/race/main.go:54 +0x82
+
+Goroutine 20 (running) created at:
+  main.main()
+      /home/ada/blueprint/gofromzero/drills/race/main.go:52 +0x531
+
+Goroutine 15 (finished) created at:
+  main.main()
+      /home/ada/blueprint/gofromzero/drills/race/main.go:52 +0x531
+==================
+==================
+WARNING: DATA RACE
+Write at 0x00c000210008 by goroutine 13:
+  main.(*Counter).Inc()
+      /home/ada/blueprint/gofromzero/drills/race/main.go:27 +0xa4
+  main.main.func1()
+      /home/ada/blueprint/gofromzero/drills/race/main.go:54 +0x82
+
+Previous write at 0x00c000210008 by goroutine 14:
+  main.(*Counter).Inc()
+      /home/ada/blueprint/gofromzero/drills/race/main.go:27 +0xa4
+  main.main.func1()
+      /home/ada/blueprint/gofromzero/drills/race/main.go:54 +0x82
+
+Goroutine 13 (running) created at:
+  main.main()
+      /home/ada/blueprint/gofromzero/drills/race/main.go:52 +0x531
+
+Goroutine 14 (running) created at:
+  main.main()
+      /home/ada/blueprint/gofromzero/drills/race/main.go:52 +0x531
+==================
+counter: 774
+Found 2 data race(s)
+exit status 66
+[exit 1]

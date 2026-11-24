@@ -1,0 +1,12 @@
+$ uv run python drills/gil.py
+Python 3.14.7, GIL enabled
+== CPU-bound: each task counts to 3 million; perfect scaling keeps the time flat
+1 task: threads 0.11 s   processes 0.25 s
+2 tasks: threads 0.20 s   processes 0.16 s
+4 tasks: threads 0.43 s   processes 0.22 s
+8 tasks: threads 0.85 s   processes 0.36 s
+== I/O-bound: each task sleeps 0.2 s
+ 1 task in threads: 0.20 s
+ 8 tasks in threads: 0.20 s
+64 tasks in threads: 0.22 s
+[exit 0]

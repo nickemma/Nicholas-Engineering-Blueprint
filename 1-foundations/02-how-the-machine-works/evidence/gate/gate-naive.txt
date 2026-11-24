@@ -1,0 +1,11 @@
+$ bash gate/run.sh ~/blueprint/machine   # naive
+PASS  monitor.sh: load 0.64 (system: 0.64)
+PASS  monitor.sh: memory 21% (system: 21%)
+PASS  monitor.sh: disk 21% (system: 21%)
+FAIL  rotate.sh, 10 rotations, keep 20: no line lost or repeated
+      of 159983 lines written: 161 lost, 0 repeated, first kept line 1
+FAIL  rotate.sh, 10 rotations, keep 3
+      copies kept: app.log.1 app.log.2 app.log.3 (want app.log.1 app.log.2.gz app.log.3.gz); lines from 1 to 155677: 95057 lost, 0 repeated
+PASS  shellcheck: no warnings
+Gate failed: fix the FAIL lines above and run it again.
+[exit 1]

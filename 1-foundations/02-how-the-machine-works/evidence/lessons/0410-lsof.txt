@@ -1,0 +1,8 @@
+$ sleep 300 & p=$!; lsof -p $p | head -6; kill $p
+COMMAND  PID USER   FD   TYPE DEVICE SIZE/OFF     NODE NAME
+sleep   4850  ada  cwd    DIR   0,79     4096 34487407 /home/ada/blueprint/machine
+sleep   4850  ada  rtd    DIR   0,79     4096 34461218 /
+sleep   4850  ada  txt    REG   0,79    35336 34458177 /usr/bin/sleep
+sleep   4850  ada  mem    REG   0,79   360460 34461728 /usr/lib/locale/C.utf8/LC_CTYPE
+sleep   4850  ada  mem    REG   0,79       50 34461780 /usr/lib/locale/C.utf8/LC_NUMERIC
+[exit 0]

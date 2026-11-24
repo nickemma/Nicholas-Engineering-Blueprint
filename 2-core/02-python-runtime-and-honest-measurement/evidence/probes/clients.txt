@@ -1,0 +1,8 @@
+$ uv run python clients.py 18081
+client  rate/s   p50 ms   p99 ms  lag p99 ms  CPU per request
+httpx      200     8.10    10.57        1.31    2.24 ms  (5.3 s for a 5 s run)
+httpx      500  4396.76 11061.68       78.86    5.11 ms  (12.8 s for a 5 s run)
+Pool       200     6.72     7.51        1.28    0.30 ms  (5.0 s for a 5 s run)
+Pool       500     6.55     7.48        1.16    0.20 ms  (5.0 s for a 5 s run)
+Pool      2000     6.42     7.42        1.17    0.12 ms  (5.0 s for a 5 s run)
+[exit 0]

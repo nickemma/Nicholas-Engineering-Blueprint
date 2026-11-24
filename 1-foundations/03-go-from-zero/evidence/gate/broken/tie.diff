@@ -1,0 +1,12 @@
+diff --color -ruN final/logs/logs.go broken/tie/logs/logs.go
+--- final/logs/logs.go	2026-11-18 22:25:23.366234565 -0800
++++ broken/tie/logs/logs.go	2026-11-18 22:29:23.075052206 -0800
+@@ -80,7 +80,7 @@
+ // consider keeps the slowest entry; on a tie, the earliest line wins, so the
+ // answer doesn't depend on the order lines were counted in.
+ func (s *Stats) consider(e Entry, n int) {
+-	if s.SlowestLine == 0 || e.MS > s.Slowest.MS || (e.MS == s.Slowest.MS && n < s.SlowestLine) {
++	if s.SlowestLine == 0 || e.MS >= s.Slowest.MS {
+ 		s.Slowest, s.SlowestLine = e, n
+ 	}
+ }

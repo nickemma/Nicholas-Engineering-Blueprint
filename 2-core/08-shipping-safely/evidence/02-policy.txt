@@ -1,0 +1,8 @@
+=== RUN   TestPolicy
+--- PASS: TestPolicy (0.00s)
+=== RUN   TestIdentityRequiresAVerifiedLeaf
+--- PASS: TestIdentityRequiresAVerifiedLeaf (0.00s)
+=== RUN   TestDecode
+--- PASS: TestDecode (0.00s)
+PASS
+ok  	switchyard/metad/internal/edge	1.021s

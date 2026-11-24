@@ -1,0 +1,4 @@
+$ (same server, second block)
+curl exit 28
+{"id":2,"state":"failed","description":"slow","duration_ms":1500,"failure_reason":"cancelled","created_at":"2026-11-20T04:17:08.816393662Z","updated_at":"2026-11-20T04:17:09.329952562Z"}
+[exit 0]

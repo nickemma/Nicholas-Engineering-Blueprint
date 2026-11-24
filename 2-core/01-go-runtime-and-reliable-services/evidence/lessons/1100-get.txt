@@ -1,0 +1,21 @@
+$ go get github.com/prometheus/client_golang@v1.24.1 && go mod tidy
+go: downloading github.com/prometheus/client_golang v1.24.1
+go: added github.com/prometheus/client_golang v1.24.1
+go: downloading github.com/beorn7/perks v1.0.1
+go: downloading github.com/prometheus/client_model v0.6.2
+go: downloading github.com/prometheus/common v0.70.1
+go: downloading github.com/cespare/xxhash/v2 v2.3.0
+go: downloading github.com/prometheus/procfs v0.21.1
+go: downloading golang.org/x/sys v0.47.0
+go: downloading google.golang.org/protobuf v1.36.11
+go: downloading go.uber.org/goleak v1.3.0
+go: downloading github.com/klauspost/compress v1.19.1
+go: downloading github.com/kylelemons/godebug v1.1.0
+go: downloading github.com/google/go-cmp v0.7.0
+go: downloading github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822
+go: downloading go.yaml.in/yaml/v2 v2.4.4
+go: downloading github.com/stretchr/testify v1.11.1
+go: downloading github.com/davecgh/go-spew v1.1.1
+go: downloading gopkg.in/yaml.v3 v3.0.1
+go: downloading github.com/pmezard/go-difflib v1.0.0
+[exit 0]

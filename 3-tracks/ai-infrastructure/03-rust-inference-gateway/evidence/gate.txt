@@ -1,0 +1,79 @@
+    Checking switchyard-inference v0.1.0 (/tmp/sy-rgateway/work)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.10s
+   Compiling switchyard-inference v0.1.0 (/tmp/sy-rgateway/work)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.12s
+     Running unittests src/lib.rs (target/debug/deps/switchyard_inference-bac30d847c57fc0c)
+
+running 4 tests
+quota: weighted spending, exact refill, and tenant buckets are independent
+test sse::tests::dispatches_one_complete_event_and_never_flushes_a_partial_one ... ok
+test quota::tests::weighted_debits_and_fractional_refill ... ok
+framing: split UTF-8, BOM, comments, and mixed line endings preserved data
+test sse::tests::preserves_multiline_data_across_every_byte ... ok
+test sse::tests::rejects_malformed_utf8_and_both_buffer_overflows ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/switchyard_inference-c2b6239f1ff72e3b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/loopback.rs (target/debug/deps/loopback-498c168f8a55a316)
+
+running 3 tests
+test connection_deadline_reclaims_a_pending_body ... ignored, requires loopback sockets
+test drop_releases_capacity_but_keeps_the_token_charge ... ignored, requires loopback sockets
+test streams_then_checks_usage_eof_and_timeout ... ignored, requires loopback sockets
+
+test result: ok. 0 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests switchyard_inference
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+     Running tests/loopback.rs (target/debug/deps/loopback-498c168f8a55a316)
+
+running 3 tests
+cancellation: downstream closed, upstream dropped, slot reused, original reservation retained
+admission: saturated slot returned 503; exhausted tenant returned 429; second tenant completed
+test drop_releases_capacity_but_keeps_the_token_charge ... ok
+streaming: first role data arrived before content; checked usage and terminal frame
+connection deadline: the pending response lost its upstream body and released its slot
+test connection_deadline_reclaims_a_pending_body ... ok
+failure paths: wrong media, premature EOF, mismatched usage, and idle timeout stayed distinct
+test streams_then_checks_usage_eof_and_timeout ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.87s
+
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.10s
+CLI smoke: template, tokenization, content, usage, and terminal event passed
+   Compiling switchyard-inference v0.1.0 (/tmp/tmp.jAwviOdYSP)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.59s
+     Running unittests src/lib.rs (target/debug/deps/switchyard_inference-bac30d847c57fc0c)
+
+running 1 test
+test sse::tests::preserves_multiline_data_across_every_byte ... FAILED
+
+failures:
+
+---- sse::tests::preserves_multiline_data_across_every_byte stdout ----
+
+thread 'sse::tests::preserves_multiline_data_across_every_byte' (2009122) panicked at src/sse.rs:116:9:
+assertion `left == right` failed: joined data must preserve LF
+  left: "café second"
+ right: "café\nsecond"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    sse::tests::preserves_multiline_data_across_every_byte
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--lib`
+negative control: replacing the data-line newline changed the event

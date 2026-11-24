@@ -1,0 +1,26 @@
+diff --color -ruN final/wordcount/race_test.go broken/race/wordcount/race_test.go
+--- final/wordcount/race_test.go	1969-12-31 16:00:00.000000000 -0800
++++ broken/race/wordcount/race_test.go	2026-11-18 22:29:23.075693464 -0800
+@@ -0,0 +1,22 @@
++package wordcount
++
++import (
++	"sync"
++	"testing"
++)
++
++func TestCountConcurrently(t *testing.T) {
++	total := 0
++	var wg sync.WaitGroup
++	for range 4 {
++		wg.Add(1)
++		go func() {
++			defer wg.Done()
++			total += Count("a b c")["a"]
++		}()
++	}
++	wg.Wait()
++	if total == 0 {
++		t.Fatal("nothing counted")
++	}
++}

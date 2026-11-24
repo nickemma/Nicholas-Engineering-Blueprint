@@ -1,0 +1,126 @@
+[
+  {
+    "trial": 1,
+    "path": "range",
+    "workload": "a",
+    "records": 64,
+    "requests": 400,
+    "threads": 2,
+    "errors": 0,
+    "counts": {
+      "READ": 199.0,
+      "UPDATE": 201.0
+    },
+    "throughput": 42.693990820791974,
+    "read_p95_us": 67000.0,
+    "read_p99_us": 112000.0
+  },
+  {
+    "trial": 1,
+    "path": "point",
+    "workload": "a",
+    "records": 64,
+    "requests": 400,
+    "threads": 2,
+    "errors": 0,
+    "counts": {
+      "READ": 209.0,
+      "UPDATE": 191.0
+    },
+    "throughput": 41.093075816724884,
+    "read_p95_us": 68000.0,
+    "read_p99_us": 123000.0
+  },
+  {
+    "trial": 1,
+    "path": "range",
+    "workload": "c",
+    "records": 64,
+    "requests": 400,
+    "threads": 2,
+    "errors": 0,
+    "counts": {
+      "READ": 400.0
+    },
+    "throughput": 32.26847370119393,
+    "read_p95_us": 128000.0,
+    "read_p99_us": 250000.0
+  },
+  {
+    "trial": 1,
+    "path": "point",
+    "workload": "c",
+    "records": 64,
+    "requests": 400,
+    "threads": 2,
+    "errors": 0,
+    "counts": {
+      "READ": 400.0
+    },
+    "throughput": 52.19206680584551,
+    "read_p95_us": 67000.0,
+    "read_p99_us": 97000.0
+  },
+  {
+    "trial": 2,
+    "path": "point",
+    "workload": "a",
+    "records": 64,
+    "requests": 400,
+    "threads": 2,
+    "errors": 0,
+    "counts": {
+      "READ": 200.0,
+      "UPDATE": 200.0
+    },
+    "throughput": 41.07619634421852,
+    "read_p95_us": 70000.0,
+    "read_p99_us": 109000.0
+  },
+  {
+    "trial": 2,
+    "path": "range",
+    "workload": "a",
+    "records": 64,
+    "requests": 400,
+    "threads": 2,
+    "errors": 0,
+    "counts": {
+      "READ": 196.0,
+      "UPDATE": 204.0
+    },
+    "throughput": 42.99688272600236,
+    "read_p95_us": 63000.0,
+    "read_p99_us": 101000.0
+  },
+  {
+    "trial": 2,
+    "path": "point",
+    "workload": "c",
+    "records": 64,
+    "requests": 400,
+    "threads": 2,
+    "errors": 0,
+    "counts": {
+      "READ": 400.0
+    },
+    "throughput": 51.440329218106996,
+    "read_p95_us": 63000.0,
+    "read_p99_us": 75000.0
+  },
+  {
+    "trial": 2,
+    "path": "range",
+    "workload": "c",
+    "records": 64,
+    "requests": 400,
+    "threads": 2,
+    "errors": 0,
+    "counts": {
+      "READ": 400.0
+    },
+    "throughput": 52.555511759295754,
+    "read_p95_us": 60000.0,
+    "read_p99_us": 74000.0
+  }
+]

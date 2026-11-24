@@ -1,0 +1,5 @@
+$ uname -s && uname -m && nproc
+Linux
+x86_64
+16
+[exit 0]

@@ -1,0 +1,3 @@
+$ cd notes/first.txt
+bash: line 1: cd: notes/first.txt: Not a directory
+[exit 1]

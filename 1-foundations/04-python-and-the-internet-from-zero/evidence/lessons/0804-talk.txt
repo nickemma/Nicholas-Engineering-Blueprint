@@ -1,0 +1,5 @@
+$ (cd ../echo && go build -o /tmp/echo .) && { /tmp/echo 2>/dev/null > /dev/null & sleep 0.5; uv run python drills/talk.py; kill %1; }
+['hello', 'is anyone there?']
+100 clients, 1000 replies in 0.143 s
+client 42 line 9
+[exit 0]

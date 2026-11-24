@@ -1,0 +1,6 @@
+$ git commit -qam "Print a debug line" && ./monitor.sh && git log --oneline | head -2
+load1=0.77 mem_used_pct=22 disk_used_pct=21
+debug: done
+dd0c30a Print a debug line
+de4bee1 Add --help
+[exit 0]

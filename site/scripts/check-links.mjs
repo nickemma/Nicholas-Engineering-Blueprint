@@ -30,6 +30,17 @@ for (const file of files) {
   }
 }
 
-console.log(`${files.length} pages, ${checked} internal links`);
+const redirects = JSON.parse(
+  fs.readFileSync(new URL("../src/lib/legacy-lesson-routes.json", import.meta.url), "utf8"),
+);
+for (const [from, to] of Object.entries(redirects)) {
+  const file = path.join(DIST, from, "index.html");
+  const html = fs.existsSync(file) ? fs.readFileSync(file, "utf8") : "";
+  if (!ids.has(to) || !html.includes(`url=${to}`)) {
+    broken.set(`redirect ${from} to ${to}`, [from]);
+  }
+}
+
+console.log(`${files.length} pages, ${checked} internal links, ${Object.keys(redirects).length} redirects`);
 for (const [href, pages] of broken) console.log(`broken: ${href}  (on ${pages[0]}${pages.length > 1 ? ` and ${pages.length - 1} more` : ""})`);
 process.exit(broken.size === 0 ? 0 : 1);

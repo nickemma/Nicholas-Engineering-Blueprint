@@ -1,0 +1,7 @@
+$ go build -o /tmp/switchyard ./cmd/switchyard && { FAIL_RATE=0.5 /tmp/switchyard > /dev/null & p=$!; sleep 0.5; for i in $(seq 20); do curl -s -o /dev/null -X POST http://127.0.0.1:8080/jobs -H "Content-Type: application/json" -d "{\"description\":\"charge\",\"duration_ms\":50}"; done; sleep 3; curl -s http://127.0.0.1:8080/metrics | grep -E "^(job_attempts_total|effects_)"; for i in $(seq 20); do curl -s http://127.0.0.1:8080/jobs/$i; done | grep -o "\"state\":\"[a-z]*\"" | sort | uniq -c; kill $p; }
+effects_applied_total 20
+effects_duplicate_total 15
+job_attempts_total 35
+     16 "state":"completed"
+      4 "state":"failed"
+[exit 0]

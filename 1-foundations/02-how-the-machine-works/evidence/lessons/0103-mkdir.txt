@@ -1,0 +1,4 @@
+$ mkdir -p ~/blueprint/machine/notes && cd ~/blueprint/machine && pwd && ls
+/home/ada/blueprint/machine
+notes
+[exit 0]

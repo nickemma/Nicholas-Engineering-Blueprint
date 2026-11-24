@@ -26,10 +26,10 @@ Three facts solve most interview problems:
 - it involves flags or permissions.
 
 **Real systems:**
-- **Checksums.** The CRC-32C you wrote in the [Rust Bridge](../../lessons/rust-bridge/TEACHING.md#step-4-bytes-and-a-record-format) is nothing but shifts and XORs, one bit at a time.
+- **Checksums.** The CRC-32C you wrote in the [Rust Bridge](../../2-core/04-rust-foundations/lessons/06-bytes-framing-and-checksums.md) is nothing but shifts and XORs, one bit at a time.
 - **Permissions:** Unix file modes (`0644`) are bit flags.
 - **Bloom filters** set and test bits.
-- **Network masks:** a `/24` subnet is `address & 0xFFFFFF00`, which is how [Phase 6](../../lessons/06-safe-shared-queries/README.md)'s privacy step truncates IPv4 addresses to their `/24`.
+- **Network masks:** a `/24` subnet is `address & 0xFFFFFF00`, which is how [Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md)'s privacy step truncates IPv4 addresses to their `/24`.
 
 ## Worked problem 1: Number of 1 Bits
 

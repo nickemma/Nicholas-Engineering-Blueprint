@@ -1,0 +1,3 @@
+$ GOGC=off GOMEMLIMIT=200MiB ./gcdrill
+allocated 1300 MiB in 445ms: 9 collections, heap now 102 MiB, 4.852ms paused in total
+[exit 0]

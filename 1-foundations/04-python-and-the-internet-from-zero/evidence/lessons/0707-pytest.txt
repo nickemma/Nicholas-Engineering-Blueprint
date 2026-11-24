@@ -1,0 +1,17 @@
+$ uv run pytest -v test_results.py
+============================= test session starts ==============================
+platform linux -- Python 3.14.7, pytest-9.2.0, pluggy-1.7.0 -- /home/ada/blueprint/internet/measure/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/ada/blueprint/internet/measure
+configfile: pyproject.toml
+collecting ... collected 6 items
+
+test_results.py::test_round_trip PASSED                                  [ 16%]
+test_results.py::test_file_layout PASSED                                 [ 33%]
+test_results.py::test_missing_header PASSED                              [ 50%]
+test_results.py::test_bad_row_names_its_line[7,2,4096\n-not enough values] PASSED [ 66%]
+test_results.py::test_bad_row_names_its_line[7,2,4096,fast\n-could not convert] PASSED [ 83%]
+test_results.py::test_bad_row_names_its_line[seven,2,4096,1.0\n-invalid literal] PASSED [100%]
+
+============================== 6 passed in 0.05s ===============================
+[exit 0]

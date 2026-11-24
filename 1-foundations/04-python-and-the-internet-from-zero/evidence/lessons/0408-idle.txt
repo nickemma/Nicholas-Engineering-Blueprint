@@ -1,0 +1,6 @@
+$ go build -o /tmp/echo . && { /tmp/echo -idle 2s > /dev/null & sleep 0.5; date +%T; nc 127.0.0.1 9000; date +%T; kill %1; }
+08:57:43
+2026/11/19 08:57:45 127.0.0.1:50112: read tcp 127.0.0.1:9000->127.0.0.1:50112: i/o timeout
+2026/11/19 08:57:45 127.0.0.1:50112: closed after 0 lines, 0 bytes
+08:57:45
+[exit 0]

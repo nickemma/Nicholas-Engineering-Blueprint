@@ -1,0 +1,3 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.07s
+listening 10.200.0.1:8080
+kernel=6.18.58.1-microsoft-standard-WSL2 interface=edge-lab mode=xdpgeneric packets=2..34 origin_requests=1..6

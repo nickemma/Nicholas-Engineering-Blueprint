@@ -1,0 +1,2 @@
+ok   3-tracks/cloud-and-network/03-proxy-control-plane (84 steps)
+     scratch directory kept at /tmp/guide-82n9uhqm

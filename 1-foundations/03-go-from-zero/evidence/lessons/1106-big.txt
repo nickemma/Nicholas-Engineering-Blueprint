@@ -1,0 +1,21 @@
+$ go build -o loganalyse ./cmd/loganalyse && /usr/bin/time -f "%M KB max, %e s" ./loganalyse big.log
+lines: 1000000
+malformed: 199
+status 200: 839832
+status 404: 139972
+status 500: 19997
+slowest: 996 ms /p4 (line 485)
+malformed lines:
+  line 9973: not JSON: invalid character 'o' looking for beginning of value
+  line 10007: no ms
+  line 19946: not JSON: invalid character 'o' looking for beginning of value
+  line 20014: no ms
+  line 29919: not JSON: invalid character 'o' looking for beginning of value
+  line 30021: no ms
+  line 39892: not JSON: invalid character 'o' looking for beginning of value
+  line 40028: no ms
+  line 49865: not JSON: invalid character 'o' looking for beginning of value
+  line 50035: no ms
+  ... and 189 more
+11820 KB max, 0.67 s
+[exit 0]

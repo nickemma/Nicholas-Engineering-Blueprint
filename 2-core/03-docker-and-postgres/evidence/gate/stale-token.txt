@@ -1,0 +1,251 @@
+ Image c03-gate-1000-1537663-switchyard:lab Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 517B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile:
+#2 transferring dockerfile: 162B done
+#2 DONE 0.1s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 113B done
+#3 DONE 0.1s
+
+#4 [internal] load build context
+#4 transferring context: 41.26MB 0.4s done
+#4 DONE 0.5s
+
+#5 [1/2] COPY bin/linux/switchyard /switchyard
+#5 CACHED
+
+#6 [2/2] COPY bin/linux/worker /worker
+#6 CACHED
+
+#7 exporting to image
+#7 exporting layers done
+#7 exporting manifest sha256:cf52f75078b0870b4b36ec1dc475dac9a4d460b3b49b6a031622a2cae19c0900 0.0s done
+#7 exporting config sha256:94dff25a612764bd85973bda0f41f08eb40aa5052267e69cce935cd16abee46d 0.0s done
+#7 exporting attestation manifest sha256:216d3759cfdbefed0d26122b6ae43630612b1a3cdb822f23f1b20ff6b59485b4 0.0s done
+#7 exporting manifest list sha256:de2d48914f5da8e3e9d22a112482558d35d33750d5a5b0c379c3bf3553920b12 0.0s done
+#7 naming to docker.io/library/c03-gate-1000-1537663-switchyard:lab done
+#7 unpacking to docker.io/library/c03-gate-1000-1537663-switchyard:lab 0.0s done
+#7 DONE 0.2s
+
+#8 resolving provenance for metadata file
+#8 DONE 0.0s
+ Image c03-gate-1000-1537663-switchyard:lab Built 
+ Network c03-gate-1000-1537663_default Creating 
+ Network c03-gate-1000-1537663_default Created 
+ Volume c03-gate-1000-1537663_pgdata Creating 
+ Volume c03-gate-1000-1537663_pgdata Created 
+ Container c03-gate-1000-1537663-postgres-1 Creating 
+ Container c03-gate-1000-1537663-postgres-1 Created 
+ Container c03-gate-1000-1537663-postgres-1 Starting 
+ Container c03-gate-1000-1537663-postgres-1 Started 
+ Container c03-gate-1000-1537663-postgres-1 Waiting 
+ Container c03-gate-1000-1537663-postgres-1 Healthy 
+CREATE DATABASE
+BEGIN
+SET
+ pg_advisory_xact_lock 
+-----------------------
+ 
+(1 row)
+
+CREATE TABLE
+CREATE TABLE
+INSERT 0 1
+CREATE INDEX
+INSERT 0 1
+CREATE TABLE
+INSERT 0 1
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+INSERT 0 1
+CREATE SEQUENCE
+INSERT 0 1
+COMMIT
+?   	switchyard/cmd/jobsctl	[no test files]
+?   	switchyard/cmd/leaseprobe	[no test files]
+?   	switchyard/cmd/loadjobs	[no test files]
+ok  	switchyard/cmd/switchyard	1.229s
+ok  	switchyard/cmd/worker	2.425s
+ok  	switchyard/drills/byhand	1.058s
+ok  	switchyard/drills/escape	1.055s [no tests to run]
+?   	switchyard/drills/gc	[no test files]
+?   	switchyard/drills/sched	[no test files]
+?   	switchyard/drills/spin	[no test files]
+?   	switchyard/drills/stacks	[no test files]
+?   	switchyard/drills/stdhttp	[no test files]
+ok  	switchyard/internal/chaos	1.057s
+ok  	switchyard/internal/coord	1.086s
+ok  	switchyard/internal/grpcapi	1.297s
+?   	switchyard/internal/grpcapi/jobsv1	[no test files]
+?   	switchyard/internal/grpcapi/workersv1	[no test files]
+ok  	switchyard/internal/httpapi	1.101s
+ok  	switchyard/internal/idempotency	1.100s
+ok  	switchyard/internal/jobs	1.082s
+ok  	switchyard/internal/ledger	1.051s
+ok  	switchyard/internal/memstore	1.056s
+ok  	switchyard/internal/pgstore	1.532s
+ok  	switchyard/internal/queue	1.055s
+?   	switchyard/internal/repotest	[no test files]
+ok  	switchyard/internal/retry	1.045s
+repository contracts, exhausted pool, transactional rollback, and recovery checks passed
+ Container c03-gate-1000-1537663-postgres-1 Running 
+ Container c03-gate-1000-1537663-migrate-1 Creating 
+ Container c03-gate-1000-1537663-migrate-1 Created 
+ Container c03-gate-1000-1537663-api-1 Creating 
+ Container c03-gate-1000-1537663-api-1 Created 
+ Container c03-gate-1000-1537663-postgres-1 Waiting 
+ Container c03-gate-1000-1537663-postgres-1 Healthy 
+ Container c03-gate-1000-1537663-migrate-1 Starting 
+ Container c03-gate-1000-1537663-migrate-1 Started 
+ Container c03-gate-1000-1537663-migrate-1 Waiting 
+ Container c03-gate-1000-1537663-migrate-1 Exited 
+ Container c03-gate-1000-1537663-api-1 Starting 
+ Container c03-gate-1000-1537663-api-1 Started 
+ Container c03-gate-1000-1537663-api-1 Killing 
+ Container c03-gate-1000-1537663-api-1 Killed 
+ Container c03-gate-1000-1537663-postgres-1 Waiting 
+ Container c03-gate-1000-1537663-postgres-1 Healthy 
+ Container c03-gate-1000-1537663-migrate-1 Starting 
+ Container c03-gate-1000-1537663-migrate-1 Started 
+ Container c03-gate-1000-1537663-migrate-1 Waiting 
+ Container c03-gate-1000-1537663-migrate-1 Exited 
+ Container c03-gate-1000-1537663-api-1 Starting 
+ Container c03-gate-1000-1537663-api-1 Started 
+same key and original 201 survived SIGKILL; changed payload returned 422
+Traceback (most recent call last):
+  File "/home/techieemma/projects/Nicholas-Engineering-Blueprint/2-core/03-docker-and-postgres/gate/verify.py", line 149, in <module>
+    main()
+    ~~~~^^
+  File "/home/techieemma/projects/Nicholas-Engineering-Blueprint/2-core/03-docker-and-postgres/gate/verify.py", line 145, in main
+    Stack(args.project, args.leaseprobe).check()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/techieemma/projects/Nicholas-Engineering-Blueprint/2-core/03-docker-and-postgres/gate/verify.py", line 96, in check
+    raise RuntimeError(f"old completion did not get FailedPrecondition: {obsolete}")
+RuntimeError: old completion did not get FailedPrecondition: CompletedProcess(args=['/tmp/tmp.ljuTXKcbus/leaseprobe', '127.0.0.1:32815', 'complete', '1', '2'], returncode=0, stdout='completion accepted\n', stderr='')
+api-1  | {"time":"2026-11-21T04:45:38.326099963Z","level":"INFO","msg":"recovered interrupted jobs","jobs":0,"epoch":1}
+migrate-1  | BEGIN
+migrate-1  | SET
+migrate-1  |  pg_advisory_xact_lock 
+migrate-1  | -----------------------
+migrate-1  |  
+migrate-1  | (1 row)
+api-1      | {"time":"2026-11-21T04:45:38.331784411Z","level":"INFO","msg":"listening","addr":"[::]:8080","grpc_addr":"[::]:9090","lease_ttl":"2m0s"}
+api-1      | {"time":"2026-11-21T04:45:39.229482903Z","level":"INFO","msg":"request","method":"GET","route":"GET /health","status":200,"duration_ms":0}
+api-1      | {"time":"2026-11-21T04:45:39.251179691Z","level":"INFO","msg":"request","method":"POST","route":"POST /jobs","status":201,"duration_ms":19}
+api-1      | {"time":"2026-11-21T04:45:39.273346741Z","level":"INFO","msg":"request","method":"GET","route":"GET /jobs/{id}","status":200,"duration_ms":0}
+api-1      | {"time":"2026-11-21T04:45:42.217673647Z","level":"INFO","msg":"recovered interrupted jobs","jobs":1,"epoch":3}
+migrate-1  | 
+migrate-1  | CREATE TABLE
+migrate-1  | CREATE TABLE
+migrate-1  | INSERT 0 1
+migrate-1  | CREATE INDEX
+migrate-1  | INSERT 0 1
+migrate-1  | CREATE TABLE
+migrate-1  | INSERT 0 1
+migrate-1  | CREATE TABLE
+migrate-1  | CREATE INDEX
+migrate-1  | CREATE INDEX
+migrate-1  | INSERT 0 1
+migrate-1  | CREATE SEQUENCE
+migrate-1  | INSERT 0 1
+migrate-1  | COMMIT
+migrate-1  | BEGIN
+migrate-1  | SET
+migrate-1  |  pg_advisory_xact_lock 
+migrate-1  | -----------------------
+migrate-1  |  
+migrate-1  | (1 row)
+migrate-1  | 
+migrate-1  | psql:/db/migrate.sql:7: NOTICE:  relation "schema_migrations" already exists, skipping
+migrate-1  | CREATE TABLE
+migrate-1  | COMMIT
+api-1      | {"time":"2026-11-21T04:45:42.223389117Z","level":"INFO","msg":"listening","addr":"[::]:8080","grpc_addr":"[::]:9090","lease_ttl":"2m0s"}
+api-1      | {"time":"2026-11-21T04:45:43.024031314Z","level":"INFO","msg":"request","method":"GET","route":"GET /health","status":200,"duration_ms":0}
+api-1      | {"time":"2026-11-21T04:45:43.030901633Z","level":"INFO","msg":"request","method":"POST","route":"POST /jobs","status":201,"duration_ms":3}
+api-1      | {"time":"2026-11-21T04:45:43.035170797Z","level":"INFO","msg":"request","method":"POST","route":"POST /jobs","status":422,"duration_ms":2}
+api-1      | {"time":"2026-11-21T04:45:43.038040745Z","level":"INFO","msg":"request","method":"GET","route":"GET /jobs/{id}","status":200,"duration_ms":1}
+postgres-1  | The files belonging to this database system will be owned by user "postgres".
+postgres-1  | This user must also own the server process.
+postgres-1  | 
+postgres-1  | The database cluster will be initialized with locale "en_US.utf8".
+postgres-1  | The default database encoding has accordingly been set to "UTF8".
+postgres-1  | The default text search configuration will be set to "english".
+postgres-1  | 
+postgres-1  | Data page checksums are disabled.
+postgres-1  | 
+postgres-1  | fixing permissions on existing directory /var/lib/postgresql/data ... ok
+postgres-1  | creating subdirectories ... ok
+postgres-1  | selecting dynamic shared memory implementation ... posix
+postgres-1  | selecting default "max_connections" ... 100
+postgres-1  | selecting default "shared_buffers" ... 128MB
+postgres-1  | selecting default time zone ... Etc/UTC
+postgres-1  | creating configuration files ... ok
+postgres-1  | running bootstrap script ... ok
+postgres-1  | performing post-bootstrap initialization ... ok
+postgres-1  | initdb: warning: enabling "trust" authentication for local connections
+postgres-1  | initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+postgres-1  | syncing data to disk ... ok
+postgres-1  | 
+postgres-1  | 
+postgres-1  | Success. You can now start the database server using:
+postgres-1  | 
+postgres-1  |     pg_ctl -D /var/lib/postgresql/data -l logfile start
+postgres-1  | 
+postgres-1  | waiting for server to start....2026-11-21 04:45:26.553 UTC [54] LOG:  starting PostgreSQL 17.11 (Debian 17.11-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+postgres-1  | 2026-11-21 04:45:26.558 UTC [54] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+postgres-1  | 2026-11-21 04:45:26.571 UTC [57] LOG:  database system was shut down at 2026-11-21 04:45:26 UTC
+postgres-1  | 2026-11-21 04:45:26.580 UTC [54] LOG:  database system is ready to accept connections
+postgres-1  |  done
+postgres-1  | server started
+postgres-1  | CREATE DATABASE
+postgres-1  | 
+postgres-1  | 
+postgres-1  | /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+postgres-1  | 
+postgres-1  | 2026-11-21 04:45:26.809 UTC [54] LOG:  received fast shutdown request
+postgres-1  | waiting for server to shut down....2026-11-21 04:45:26.813 UTC [54] LOG:  aborting any active transactions
+postgres-1  | 2026-11-21 04:45:26.816 UTC [54] LOG:  background worker "logical replication launcher" (PID 60) exited with exit code 1
+postgres-1  | 2026-11-21 04:45:26.816 UTC [55] LOG:  shutting down
+postgres-1  | 2026-11-21 04:45:26.820 UTC [55] LOG:  checkpoint starting: shutdown immediate
+postgres-1  | 2026-11-21 04:45:26.988 UTC [55] LOG:  checkpoint complete: wrote 925 buffers (5.6%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.040 s, sync=0.108 s, total=0.173 s; sync files=301, longest=0.006 s, average=0.001 s; distance=4256 kB, estimate=4256 kB; lsn=0/19179B0, redo lsn=0/19179B0
+postgres-1  | 2026-11-21 04:45:27.001 UTC [54] LOG:  database system is shut down
+postgres-1  |  done
+postgres-1  | server stopped
+postgres-1  | 
+postgres-1  | PostgreSQL init process complete; ready for start up.
+postgres-1  | 
+postgres-1  | 2026-11-21 04:45:27.054 UTC [1] LOG:  starting PostgreSQL 17.11 (Debian 17.11-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+postgres-1  | 2026-11-21 04:45:27.054 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+postgres-1  | 2026-11-21 04:45:27.054 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+postgres-1  | 2026-11-21 04:45:27.065 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+postgres-1  | 2026-11-21 04:45:27.077 UTC [70] LOG:  database system was shut down at 2026-11-21 04:45:26 UTC
+postgres-1  | 2026-11-21 04:45:27.087 UTC [1] LOG:  database system is ready to accept connections
+postgres-1  | 2026-11-21 04:45:32.146 UTC [117] ERROR:  new row for relation "job_effects" violates check constraint "test_reject_effect_1"
+postgres-1  | 2026-11-21 04:45:32.146 UTC [117] DETAIL:  Failing row contains (1, 2026-11-21 04:45:32.141448+00).
+postgres-1  | 2026-11-21 04:45:32.146 UTC [117] STATEMENT:  INSERT INTO job_effects (job_id, recorded_at) VALUES ($1, $2)
+postgres-1  | 2026-11-21 04:45:32.541 UTC [126] ERROR:  new row for relation "submission_keys" violates check constraint "submission_keys_key_check"
+postgres-1  | 2026-11-21 04:45:32.541 UTC [126] DETAIL:  Failing row contains (xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx..., \x97178ee8c2242a4d929fe554c0a14d037372702ef1f3166eecd5c161930e15..., 8, {"ID": 8, "State": "queued", "Duration": 0, "CreatedAt": "2026-1..., 2026-11-21 05:45:32.44332+00).
+postgres-1  | 2026-11-21 04:45:32.541 UTC [126] STATEMENT:  INSERT INTO submission_keys (key, fingerprint, job_id, response, expires_at)
+postgres-1  | 				VALUES ($1, $2, $3, $4, $5)
+ Container c03-gate-1000-1537663-api-1 Stopping 
+ Container c03-gate-1000-1537663-api-1 Stopped 
+ Container c03-gate-1000-1537663-api-1 Removing 
+ Container c03-gate-1000-1537663-api-1 Removed 
+ Container c03-gate-1000-1537663-migrate-1 Stopping 
+ Container c03-gate-1000-1537663-migrate-1 Stopped 
+ Container c03-gate-1000-1537663-migrate-1 Removing 
+ Container c03-gate-1000-1537663-migrate-1 Removed 
+ Container c03-gate-1000-1537663-postgres-1 Stopping 
+ Container c03-gate-1000-1537663-postgres-1 Stopped 
+ Container c03-gate-1000-1537663-postgres-1 Removing 
+ Container c03-gate-1000-1537663-postgres-1 Removed 
+ Volume c03-gate-1000-1537663_pgdata Removing 
+ Network c03-gate-1000-1537663_default Removing 
+ Volume c03-gate-1000-1537663_pgdata Removed 
+ Network c03-gate-1000-1537663_default Removed 

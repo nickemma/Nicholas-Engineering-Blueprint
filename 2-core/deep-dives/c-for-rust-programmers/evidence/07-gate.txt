@@ -1,0 +1,32 @@
+C tests: ordinary
+view bounds: empty, embedded zero, and rejected range checked
+failed growth kept the original bytes and ownership; retry succeeded
+C tests: asan
+view bounds: empty, embedded zero, and rejected range checked
+failed growth kept the original bytes and ownership; retry succeeded
+C tests: ubsan
+view bounds: empty, embedded zero, and rejected range checked
+failed growth kept the original bytes and ownership; retry succeeded
+
+running 1 test
+.
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+.
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+   Compiling byte-bridge v0.1.0 (/tmp/blueprint-cdeep/work)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.29s
+empty: both callers produced cbf29ce484222325 (0 bytes)
+embedded-zero: both callers produced fb029919a1274bf2 (3 bytes)
+all-bytes: both callers produced 4f33c513c2e95c25 (768 bytes)
+empty: both callers produced cbf29ce484222325 (0 bytes)
+FAIL embedded-zero: Rust calling C=09086407b5a0edaa, C calling Rust=fb029919a1274bf2, expected=fb029919a1274bf2
+negative control: caught a checksum that dropped an embedded zero

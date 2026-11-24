@@ -12,8 +12,8 @@ A heap keeps the smallest (or largest) element at the top. Reading the top is O(
 - a running median.
 
 **Real systems:**
-- Go's runtime keeps every timer in a heap, so the next to fire is always on top. That includes each `context.WithTimeout` deadline from [Phase 1](../../lessons/01-reliable-service/TEACHING.md#step-6-deadlines-and-cancellation).
-- [Phase 7's short-job lanes](../../lessons/07-utility-evaluation/TEACHING.md#step-9-using-the-predictions) order work by predicted size: a priority queue.
+- Go's runtime keeps every timer in a heap, so the next to fire is always on top. That includes each `context.WithTimeout` deadline from [Phase 1](../../2-core/01-go-runtime-and-reliable-services/lessons/10-deadlines-and-cancellation.md).
+- [Phase 7's short-job lanes](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/07-test-scheduling-utility-and-input-drift.md) order work by predicted size: a priority queue.
 - Schedulers, Dijkstra's algorithm (guide 11) and the merge step of LSM compaction are all heaps.
 
 ## Worked problem 1: Kth Largest Element in an Array

@@ -1,0 +1,12 @@
+$ uv run python drills/withasyncio.py
+ 0.00 s  a got back b'a 0\n'
+ 0.00 s  b got back b'b 0\n'
+ 0.00 s  c got back b'c 0\n'
+ 0.10 s  a got back b'a 1\n'
+ 0.10 s  b got back b'b 1\n'
+ 0.10 s  c got back b'c 1\n'
+ 0.20 s  a got back b'a 2\n'
+ 0.20 s  b got back b'b 2\n'
+ 0.20 s  c got back b'c 2\n'
+ 0.30 s  all tasks finished, in one thread
+[exit 0]

@@ -1,0 +1,12 @@
+$ /tmp/echo 2>/dev/null > /dev/null & sleep 0.5; uv run measure.py --port 9000 && head -4 results.csv && wc -l results.csv; kill %1
+1000 requests over 10 connections in 0.139 s
+p50 1.283 ms
+p99 2.043 ms
+max 2.401 ms
+wrote results.csv
+request,connection,bytes,latency_ms
+0,0,16,1.136
+1,1,256,1.337
+2,2,4096,1.114
+1001 results.csv
+[exit 0]

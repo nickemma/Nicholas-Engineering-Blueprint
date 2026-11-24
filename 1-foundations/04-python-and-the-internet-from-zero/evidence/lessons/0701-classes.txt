@@ -1,0 +1,7 @@
+$ uv run python drills/classes.py
+True False
+False
+<__main__.Request object at 0x74000daeb8c0>
+True True
+Timed(number=1, latency_ms=250.0)
+[exit 0]

@@ -1,0 +1,12 @@
+$ /tmp/switchyard > /tmp/switchyard.log & p=$!; sleep 0.5; ps -o pid,stat,nlwp,comm -p $p; ls -l /proc/$p/fd | awk "NR > 1 {print \$9, \$10, \$11}"; grep "open files" /proc/$p/limits
+    PID STAT NLWP COMMAND
+  11612 Sl      8 switchyard
+0 -> /dev/null
+1 -> /tmp/switchyard.log
+2 -> /cap/1203-proc.txt
+3 -> /sys/fs/cgroup/cpu.max
+4 -> socket:[3448848]
+5 -> anon_inode:[eventpoll]
+6 -> anon_inode:[eventfd]
+Max open files            1048575              1048576              files     
+[exit 0]

@@ -1,0 +1,10 @@
+--- a/cmd/switchyard/main.go
++++ b/cmd/switchyard/main.go
+@@ -167,7 +167,6 @@
+ 		httpapi.WithLogger(logger),
+ 		httpapi.WithMetrics(metrics),
+ 		httpapi.WithRequestTimeout(cfg.RequestTimeout),
+-		httpapi.WithIdempotency(keys),
+ 		httpapi.WithEffects(effects),
+ 	)
+ 	server := &http.Server{

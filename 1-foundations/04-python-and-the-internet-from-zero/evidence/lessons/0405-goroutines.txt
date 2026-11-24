@@ -1,0 +1,11 @@
+$ go build -o /tmp/echo . && { /tmp/echo & sleep 0.5; sleep 3 | nc -N 127.0.0.1 9000 & sleep 0.3; date +%T; printf "second\n" | nc -N 127.0.0.1 9000; date +%T; wait $!; kill %1; }
+listening on 127.0.0.1:9000
+2026/11/19 08:57:38 open 127.0.0.1:44192
+08:57:38
+2026/11/19 08:57:38 open 127.0.0.1:44206
+2026/11/19 08:57:38 read 7 bytes
+second
+2026/11/19 08:57:38 closed 127.0.0.1:44206 EOF
+08:57:38
+2026/11/19 08:57:41 closed 127.0.0.1:44192 EOF
+[exit 0]

@@ -11,6 +11,10 @@ A cache keeps the answers to recent or popular questions somewhere faster than t
 | **Invalidation** | A TTL; delete on write; versioned keys; events from the database | TTLs bound staleness, but can't remove it. Deleting on write races with concurrent reads |
 | **Eviction** | LRU, LFU, TTL-only | LRU suits recency; LFU suits stable popularity (DSA guides 06 and 19) |
 
+## CDN and edge caching
+
+A CDN serves eligible responses near clients and reduces trips to the origin. Start with a versioned public asset that can have a long TTL. Walk a cold miss, a warm hit, and an update. For a mutable response, choose a TTL, revalidation or purge policy and explain how long an old answer can persist. Define the cache key for content variants and keep private responses out of a shared cache unless you can enforce their access and isolation rules. Measure edge hit rate and origin request count along with client latency. [Edge caching lab](../../3-tracks/cloud-and-network/01-networking-in-depth/lessons/06-measure-what-an-edge-saves.md)
+
 ## Numbers to know
 
 - A shared cache hit costs a network round trip, about 0.2–1 ms. A database query is more, usually 1–10 ms or worse.
@@ -30,6 +34,6 @@ State the pattern, what's cached, the TTL and how invalidation works, the expect
 
 ## Where you built it
 
-- [Phase 3, step 7](../../lessons/03-durable-auditable-data/TEACHING.md#step-7-redis-cache-aside): cache-aside with Redis, stampede protection (singleflight), and failing open, so a Redis outage only slows things down. [Step 9](../../lessons/03-durable-auditable-data/TEACHING.md#step-9-a-circuit-breaker-around-the-database) puts a breaker on the database, under the cache.
-- [Phase 4, step 11](../../lessons/04-replicated-state/TEACHING.md#step-11-consistent-hashing-and-a-cache-spread-over-several-servers): the cache spread over several servers.
-- [Phase 6](../../lessons/06-safe-shared-queries/README.md): the cache key gained the tenant. A test now proves it's there, after a review found it missing.
+- [Phase 3, step 7](../../3-tracks/shared-units/caching/lessons/02-add-cache-aside.md): cache-aside with Redis, stampede protection (singleflight), and failing open, so a Redis outage only slows things down. [Step 9](../../3-tracks/shared-units/messaging-and-resilience/lessons/05-stop-calling-a-failing-dependency.md) puts a breaker on the database, under the cache.
+- [Phase 4, step 11](../../2-core/07-distributed-systems-fundamentals/lessons/10-move-fewer-keys-with-consistent-hashing.md): the cache spread over several servers.
+- [Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md): the cache key gained the tenant. A test now proves it's there, after a review found it missing.

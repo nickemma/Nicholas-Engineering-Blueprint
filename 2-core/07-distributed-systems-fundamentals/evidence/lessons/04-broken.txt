@@ -1,0 +1,6 @@
+=== RUN   TestFigureEight
+    commit_test.go:21: old term-2 entry applied before a current-term majority: [{Index:2 Entry:{Term:2 Command:{Op:put Key:route Value:old}}}]
+--- FAIL: TestFigureEight (0.00s)
+FAIL
+FAIL	switchyard/metad/internal/raft	0.008s
+FAIL

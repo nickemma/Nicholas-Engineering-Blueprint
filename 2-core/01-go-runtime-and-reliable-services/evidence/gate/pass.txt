@@ -1,0 +1,20 @@
+$ bash gate/run.sh ~/blueprint/switchyard   # pass
+PASS  gofmt -l . lists nothing
+PASS  go vet ./...
+PASS  go test -race ./...
+sending 10,000 state changes from 32 clients while workers are killed; this takes a minute or two
+sent 10000 state changes in 1.8 s: 7064 creates, 1659 repeated with the same key, 1277 cancels (1026 accepted)
+settled after 21.8 s: 7064 jobs: 6038 completed, 1026 cancelled, 0 failed
+PASS  every request got an expected answer
+PASS  a repeated request with the same key returned the same job
+PASS  every job reached a final state (none lost, none stuck)
+PASS  every job cancelled with 200 ended cancelled, never completed
+PASS  every completed job has exactly one effect; every other job, none
+      workers killed with SIGKILL: 15; one paused past its lease
+      jobs handed back by the reconcile loop: 10
+PASS  goroutines came back to the baseline (28 before, 28 after)
+PASS  SIGTERM stopped the control plane and every worker within the grace period (1 s)
+PASS  the race detector reported nothing
+
+gate passed
+[exit 0]

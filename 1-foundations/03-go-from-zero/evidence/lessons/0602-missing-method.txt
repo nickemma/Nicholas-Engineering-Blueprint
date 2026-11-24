@@ -1,0 +1,4 @@
+$ go run ./drills/shapes
+# gofromzero/drills/shapes
+drills/shapes/main.go:51:43: cannot use Triangle{…} (value of struct type Triangle) as Shape value in array or slice literal: Triangle does not implement Shape (missing method Area)
+[exit 1]

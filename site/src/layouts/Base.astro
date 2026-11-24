@@ -1,19 +1,21 @@
 ---
 import "../styles/global.css";
+import { LABS } from "../lib/labs.ts";
 import { REPO } from "../lib/links.ts";
 
 interface Props {
   title: string;
   description?: string;
 }
-const { title, description = "From first request to secure distributed systems: backend, distributed systems, infrastructure and AI infrastructure, built, broken and secured." } = Astro.props;
+const { title, description = "Control planes in Go, data planes in Rust: a path to systems and infrastructure roles in AI infrastructure, storage engines, or cloud and network." } = Astro.props;
 const path = Astro.url.pathname;
+const lab = LABS.find((entry) => entry.url === path);
 const nav = [
   ["Journey", "/journey/"],
+  ["Ownership", "/ownership/"],
   ["DSA", "/dsa/"],
-  ["System design", "/system-design/"],
+  ["Design", "/system-design/"],
   ["Maths", "/math/"],
-  ["Capstones", "/capstones/"],
   ["Labs", "/labs/"],
 ];
 ---
@@ -44,7 +46,8 @@ const nav = [
         <button id="theme" type="button" aria-label="Switch between light and dark">Theme</button>
       </div>
     </header>
-    <main id="main"><slot /></main>
+    <main id="main"><slot />
+      {lab && <section class="band narrow"><p><a href={lab.practice}>Continue to the course exercise or gate</a></p></section>}</main>
     <footer class="foot">
       <p>Guides include replayable code checks and clearly labelled live experiments. <a href={REPO} rel="noreferrer">Read the source</a>.</p>
     </footer>

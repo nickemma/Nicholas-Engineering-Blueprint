@@ -1,0 +1,6 @@
+$ sync && echo 3 | sudo tee /proc/sys/vm/drop_caches >/dev/null && time cat big.bin > /dev/null
+
+real	0m0.360s
+user	0m0.000s
+sys	0m0.281s
+[exit 0]

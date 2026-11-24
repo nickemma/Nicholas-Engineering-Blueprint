@@ -1,0 +1,16 @@
+$ go test ./internal/jobs
+# switchyard/internal/jobs [switchyard/internal/jobs.test]
+internal/jobs/job_test.go:16:11: undefined: Description
+internal/jobs/job_test.go:21:21: undefined: ErrInvalidDescription
+internal/jobs/job_test.go:22:30: undefined: ErrInvalidDescription
+internal/jobs/job_test.go:23:48: undefined: Description
+internal/jobs/job_test.go:24:52: undefined: ErrInvalidDescription
+internal/jobs/job_test.go:25:63: undefined: Description
+internal/jobs/job_test.go:29:16: undefined: NewDescription
+internal/jobs/job_test.go:41:14: undefined: New
+internal/jobs/job_test.go:45:18: undefined: StateQueued
+internal/jobs/job_test.go:46:46: undefined: StateQueued
+internal/jobs/job_test.go:46:46: too many errors
+FAIL	switchyard/internal/jobs [build failed]
+FAIL
+[exit 1]

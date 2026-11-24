@@ -1,0 +1,30 @@
+=== RUN   TestCapstoneSteady
+    reload_test.go:205: 240 scheduled requests passed across 0 update attempts, 81 RSS samples
+--- PASS: TestCapstoneSteady (2.06s)
+PASS
+ok  	switchyard/edge/control	2.065s
+=== RUN   TestCapstoneReload
+    reload_test.go:209: 240 scheduled requests passed across 5 update attempts, 81 RSS samples
+--- PASS: TestCapstoneReload (2.05s)
+PASS
+ok  	switchyard/edge/control	2.063s
+=== RUN   TestCapstoneSteady
+    reload_test.go:205: 240 scheduled requests passed across 0 update attempts, 81 RSS samples
+--- PASS: TestCapstoneSteady (2.05s)
+PASS
+ok  	switchyard/edge/control	2.063s
+=== RUN   TestCapstoneReload
+    reload_test.go:209: 240 scheduled requests passed across 5 update attempts, 81 RSS samples
+--- PASS: TestCapstoneReload (2.05s)
+PASS
+ok  	switchyard/edge/control	2.062s
+=== RUN   TestCapstoneSteady
+    reload_test.go:205: 240 scheduled requests passed across 0 update attempts, 81 RSS samples
+--- PASS: TestCapstoneSteady (2.07s)
+PASS
+ok  	switchyard/edge/control	2.075s
+=== RUN   TestCapstoneReload
+    reload_test.go:209: 240 scheduled requests passed across 5 update attempts, 81 RSS samples
+--- PASS: TestCapstoneReload (2.05s)
+PASS
+ok  	switchyard/edge/control	2.062s

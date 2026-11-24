@@ -1,0 +1,7 @@
+$ ./experiment.sh rotate.sh 1 3
+app.log
+app.log.1
+app.log.last
+app.log.pid
+lines written: 18454, kept from line 1, lost: 0, repeated: 0
+[exit 0]

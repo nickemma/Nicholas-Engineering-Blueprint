@@ -1,0 +1,5 @@
+$ uv run python drills/loop.py && go run drills/loop/main.go
+for loop               333333283333335000000  0.456 s   45.6 ns per item
+sum(generator)         333333283333335000000  0.595 s   59.5 ns per item
+Go for loop            1291890006563070912  0.004 s    0.4 ns per item
+[exit 0]

@@ -1,0 +1,3 @@
+$ /home/ada/blueprint/switchyard/bin/switchyard > /dev/null 2>&1 & sleep 0.5; uv run kload load --rate 1000 --duration 5 --out results/gather.csv | grep itself
+kload itself: send lag p99 1.26 ms, max 17.14 ms; CPU 1.13 s in 5.00 s (23%)
+[exit 0]

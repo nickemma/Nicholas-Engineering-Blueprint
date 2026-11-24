@@ -1,0 +1,19 @@
+$ (lesson 14 step 4)
+HTTP/1.1 201 Created
+Content-Type: application/json
+Location: /jobs/1
+Content-Length: 159
+
+{"id":1,"state":"queued","description":"resize","duration_ms":100,"created_at":"2026-11-20T04:42:39.380510679Z","updated_at":"2026-11-20T04:42:39.380510679Z"}
+
+HTTP/1.1 201 Created
+Content-Type: application/json
+Idempotent-Replayed: true
+Location: /jobs/1
+Content-Length: 159
+
+{"id":1,"state":"queued","description":"resize","duration_ms":100,"created_at":"2026-11-20T04:42:39.380510679Z","updated_at":"2026-11-20T04:42:39.380510679Z"}
+
+{"error":"job not found"}
+  [404]
+[exit 0]

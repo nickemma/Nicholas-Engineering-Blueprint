@@ -1,0 +1,21 @@
+$ bash gate/run.sh ~/blueprint/kload   # pass
+PASS  ruff format
+PASS  ruff check
+PASS  pytest
+PASS  200 requests a second for 5 s against a 5 ms server: on schedule, and accurate
+      arrived on schedule: p99 0.74 ms off, worst 1.32 ms
+      p50: kload says 6.84 ms; the server took 5.54 ms
+PASS  the server freezes for 1 s: open loop
+      52 of 500 requests took 500 ms or more
+PASS  the server freezes for 1 s: closed loop
+      1 of 500 requests took 500 ms or more
+PASS  at 20,000 requests a second, kload says it fell behind and exits 3
+      kload fell behind its schedule: send lag p99 2489.7 ms is over --max-lag-ms 10. These latencies include time spent waiting inside kload: don't trust them.
+      the server saw 40000 requests spread over 4.50 s, not 2 s
+PASS  kload compare: two sets of runs from the same server
+      p99 B - A: +0.01 ms, 95% CI [-0.16, +0.18] ms: no difference shown: the interval includes 0
+PASS  kload compare: B is 2 ms slower in every run
+      p99 B - A: +2.00 ms, 95% CI [+1.84, +2.17] ms: B is slower
+
+gate passed
+[exit 0]

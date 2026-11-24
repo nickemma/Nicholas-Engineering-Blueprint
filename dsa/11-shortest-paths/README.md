@@ -13,7 +13,7 @@ BFS finds the fewest **edges**. When edges have **weights** (milliseconds, kilom
 If weights can be negative, use Bellman-Ford. If every weight is the same, plain BFS is simpler and faster.
 
 **Real systems:**
-- **Link-state routing.** OSPF and IS-IS routers each run Dijkstra over the network map to build their forwarding tables. That's the layer below the networking in [Phase 2](../../lessons/02-connected-services/TEACHING.md#step-7-look-at-the-wire) and [Phase 5](../../lessons/05-constrained-operations/TEACHING.md#step-4-services-dns-and-load-balancing).
+- **Link-state routing.** OSPF and IS-IS routers each run Dijkstra over the network map to build their forwarding tables. That's the layer below the networking in [Phase 2](../../2-core/06-linux-networking-and-profiling/lessons/10-watch-tcp-on-a-lossy-link.md) and [Phase 5](../../3-tracks/shared-units/kubernetes-and-delivery/lessons/02-reach-a-service-by-name.md).
 - **Maps:** route planners start from it.
 
 ## Worked problem: Network Delay Time

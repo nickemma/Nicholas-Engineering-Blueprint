@@ -1,0 +1,14 @@
+$ uv run measure.py --help
+usage: measure.py [-h] [--host HOST] --port PORT [--requests REQUESTS]
+                  [--connections CONNECTIONS] [--csv CSV]
+
+Send requests to a line echo server, time each one, and save the results.
+
+options:
+  -h, --help            show this help message and exit
+  --host HOST
+  --port PORT
+  --requests REQUESTS
+  --connections CONNECTIONS
+  --csv CSV
+[exit 0]

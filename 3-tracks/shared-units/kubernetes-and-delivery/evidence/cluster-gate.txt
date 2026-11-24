@@ -1,0 +1,14 @@
+release: verified signature and SPDX attestation; unsigned digest refused
+identity: both stable Pods reported the verified manifest digest
+Grafana: the provisioned delivery dashboard was readable
+baseline: jobs and metadata clients saw committed state
+controller: durable backlog drove scale-up; RBAC denied Deployment edits
+tracing: Collector received the stable frontend span as a child of the entry span
+canary: candidate was running and unready; promotion stopped and stable served the original job
+alert: canary fired while stable stayed healthy
+rollback: restored the known digest and cleared the canary alert
+durability: replacement voter reused its claim and applied the committed prefix
+Pod Security: rejected a root-user fixture at admission
+entry path allowed
+curl: (28) Connection timed out after 4002 milliseconds
+direct access timed out

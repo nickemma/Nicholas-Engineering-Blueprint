@@ -1,0 +1,11 @@
+$ go build -o lb ./cmd/loganalyse && ./lb big.log | head -6 && ./lb big.log | head -2 && go vet ./... && echo "go vet: no complaints"; rm -f lb
+lines: 1000000
+malformed: 341511
+status 200: 553165
+status 404: 92169
+status 500: 13155
+slowest: 996 ms /p0 (line 1482)
+lines: 1000000
+malformed: 342453
+go vet: no complaints
+[exit 0]

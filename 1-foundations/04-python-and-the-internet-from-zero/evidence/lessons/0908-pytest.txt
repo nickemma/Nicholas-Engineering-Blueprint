@@ -1,0 +1,15 @@
+$ uv run pytest -v test_measure.py
+============================= test session starts ==============================
+platform linux -- Python 3.14.7, pytest-9.2.0, pluggy-1.7.0 -- /home/ada/blueprint/internet/measure/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/ada/blueprint/internet/measure
+configfile: pyproject.toml
+collecting ... collected 4 items
+
+test_measure.py::test_payload PASSED                                     [ 25%]
+test_measure.py::test_every_request_once PASSED                          [ 50%]
+test_measure.py::test_reply_in_two_pieces_is_timed_to_the_end PASSED     [ 75%]
+test_measure.py::test_wrong_reply_is_an_error PASSED                     [100%]
+
+============================== 4 passed in 0.16s ===============================
+[exit 0]

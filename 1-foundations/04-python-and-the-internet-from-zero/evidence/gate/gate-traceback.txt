@@ -1,0 +1,36 @@
+$ bash gate/run.sh ~/blueprint/internet    # the traceback version
+== echo/
+PASS  gofmt
+PASS  go vet
+PASS  go test -race
+PASS  the server starts and prints 'listening on 127.0.0.1:36439'
+PASS  100 clients at once get back exactly what they sent (14,009,678 bytes)
+PASS  a line of exactly 65,536 bytes (newline included) comes back whole
+PASS  a longer line gets the error, then the connection closes
+PASS  a quiet client is disconnected after -idle 3s
+PASS  the server is still running afterwards
+== measure/
+PASS  ruff format
+PASS  ruff check
+PASS  pytest
+PASS  1,000 requests over 10 connections: results.csv has every request
+PASS  the p50 and p99 it prints match the CSV
+PASS  the plot is a PNG image
+PASS  replies that arrive in two pieces are read whole and timed to the end
+FAIL  a wrong reply: exit 1 with a one-line message, not a traceback
+      exit 1
+        File "/home/ada/g/traceback/measure/measure.py", line 35, in connection
+          raise ValueError(
+              f"request {request}: sent {len(line)} bytes, got back {reply[:20]!r}"
+          )
+      ValueError: request 0: sent 16 bytes, got back b'not what you sent\n'
+FAIL  nothing listening: exit 1 with a one-line message, not a traceback
+      exit 1
+          return await fut
+                 ^^^^^^^^^
+        File "/home/ada/.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/asyncio/selector_events.py", line 683, in _sock_connect_cb
+          raise OSError(err, f'Connect call failed {address}')
+      ConnectionRefusedError: [Errno 111] Connect call failed ('127.0.0.1', 36529)
+
+Gate failed: fix each FAIL above and run it again.
+[exit 1]

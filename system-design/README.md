@@ -2,7 +2,7 @@
 
 System-design interviews decide the level you're hired at. This track prepares you for them in the areas this program leads to: **cloud and infrastructure, distributed systems, platform, ML system design, AI infrastructure, security and data infrastructure**, plus the classic warm-ups. Every design links back to code you built in the lessons, so you can say "I've built this part" rather than "I've read about it".
 
-Start in Phase 2, with one session a week.
+Start in Core 03, with one session a week. Take 20 minutes for [Your first system design](classic/first-design.md). It walks one request, one race, and one change in load. Use the [20 building blocks](fundamentals/README.md#20-system-design-building-blocks) to look up the decisions that come up as your design grows.
 
 ## What the interviewer is judging
 
@@ -58,14 +58,14 @@ The deep dives then cover features, the model (baseline first), evaluation, serv
 
 ## Tracks
 
-Start with the [fundamentals](fundamentals/README.md): 13 short pages on the building blocks, each linked to where you built it. Then work through your role's track.
+Use the [fundamentals](fundamentals/README.md) during your weekly practice, then work through the designs for your track.
 
-Each track has **one worked reference design**: a full write-up, crux first, to show what a strong answer looks like. The rest are **practice prompts**, each with requirements, a hidden crux, and a hidden checklist of what a strong answer covers. There are no full answers for them, on purpose: write your own, then score it.
+Each track has **at least one worked reference design**: a full write-up, crux first, to show what a strong answer looks like. The rest are **practice prompts**, each with requirements, a hidden crux, and a hidden checklist of what a strong answer covers. There are no full answers for them, on purpose: write your own, then score it.
 
 | Track | Prepares you for | Worked design | Practice prompts | Built in |
 |---|---|---|---|---|
 | [Fundamentals](fundamentals/README.md) | Every track | — | Estimation; latency numbers; load balancing; caching; queues; replication; partitioning; consistency; consensus; rate limiting; idempotency; storage; observability | Phases 0–7 |
-| [Cloud and infrastructure](cloud-infra/README.md) | Cloud, infrastructure, DevOps, SRE | [Metrics and alerting](cloud-infra/metrics-alerting.md) | Multi-region web service; object storage (like S3); DNS; CI/CD | Phase 5 |
+| [Cloud and infrastructure](cloud-infra/README.md) | Cloud, infrastructure, DevOps, SRE | [Metrics and alerting](cloud-infra/metrics-alerting.md), [Programmable edge proxy](cloud-infra/programmable-edge-proxy.md) | Multi-region web service; object storage (like S3); DNS; CI/CD | Phase 5 |
 | [Distributed systems](distributed-systems/README.md) | Distributed systems, storage, SRE | [Key-value store](distributed-systems/key-value-store.md) | Lock service; Kafka-style log; job scheduler; unique IDs; distributed cache; rate limiter | Phases 2–4 |
 | [Platform](platform/README.md) | Platform, developer infrastructure, DevOps | [Deployment orchestrator](platform/deployment-orchestrator.md) | Internal developer platform; feature flags; configuration management; multi-tenant Kubernetes; service mesh control plane | Phase 5 |
 | [ML system design](ml-system-design/README.md) | Applied ML, ML engineer | [Fraud detection](ml-system-design/fraud-detection.md) | Recommendations; search ranking; ads click-through; content moderation; feed ranking | Phase 7 |
@@ -74,7 +74,7 @@ Each track has **one worked reference design**: a full write-up, crux first, to 
 | [Data infrastructure](data-infrastructure/README.md) | Data infrastructure, data platform | [Event pipeline](data-infrastructure/event-pipeline.md) | Stream processor; change data capture; data lake with compaction; time-series database; batch orchestration | Phases 3, 7 |
 | [Classic warm-ups](classic/README.md) | Generalist loops | [URL shortener](classic/url-shortener.md) | Chat; news feed; ride matching; ticket booking | Phases 1–3 |
 
-That's 13 fundamentals pages, 8 worked designs and 40 practice prompts.
+That's 14 fundamentals pages, 9 worked designs and 40 practice prompts.
 
 ## Folder layout
 
@@ -85,7 +85,7 @@ system-design/
   _template-ml.md         the ML design template
   scorecard.md            self-scoring after each practice session
   fundamentals/           one short page per building block
-  cloud-infra/            README.md (the prompts) + one worked design
+  cloud-infra/            README.md (the prompts) + worked designs
   distributed-systems/
   platform/
   ml-system-design/
@@ -98,6 +98,8 @@ system-design/
 Keep your own write-ups in your own repository, one file per design, from the templates.
 
 ## How to practise
+
+Use the [timed interview rehearsal](interview-rehearsal.md) if your interviews are close and you need to practise decisions under pressure.
 
 1. **Pick a design for your track.** Do the worked one first, without reading it. Set a 45-minute timer. Talk out loud. Draw in [Excalidraw](https://excalidraw.com/) or on paper.
 2. **Write it up** with the template **after** the timer.

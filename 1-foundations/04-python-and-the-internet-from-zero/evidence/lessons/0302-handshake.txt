@@ -1,0 +1,11 @@
+$ sudo tcpdump -i lo -n -l "port 9000" 2>/dev/null > /tmp/td.txt & sleep 1; nc -l 127.0.0.1 9000 > /dev/null & sleep 0.3; printf "hello\n" | nc -N 127.0.0.1 9000; sleep 0.5; sudo pkill tcpdump; sleep 0.3; cat /tmp/td.txt
+08:57:12.805714 IP 127.0.0.1.41840 > 127.0.0.1.9000: Flags [S], seq 3802138859, win 65495, options [mss 65495,sackOK,TS val 245500218 ecr 0,nop,wscale 10], length 0
+08:57:12.805742 IP 127.0.0.1.9000 > 127.0.0.1.41840: Flags [S.], seq 1201692600, ack 3802138860, win 65483, options [mss 65495,sackOK,TS val 350427100 ecr 245500218,nop,wscale 10], length 0
+08:57:12.805767 IP 127.0.0.1.41840 > 127.0.0.1.9000: Flags [.], ack 1, win 64, options [nop,nop,TS val 245500218 ecr 350427100], length 0
+08:57:12.805910 IP 127.0.0.1.41840 > 127.0.0.1.9000: Flags [P.], seq 1:7, ack 1, win 64, options [nop,nop,TS val 245500218 ecr 350427100], length 6
+08:57:12.805922 IP 127.0.0.1.9000 > 127.0.0.1.41840: Flags [.], ack 7, win 64, options [nop,nop,TS val 350427100 ecr 245500218], length 0
+08:57:12.805937 IP 127.0.0.1.41840 > 127.0.0.1.9000: Flags [F.], seq 7, ack 1, win 64, options [nop,nop,TS val 245500218 ecr 350427100], length 0
+08:57:12.805969 IP 127.0.0.1.9000 > 127.0.0.1.41840: Flags [F.], seq 1, ack 8, win 64, options [nop,nop,TS val 350427100 ecr 245500218], length 0
+08:57:12.806084 IP 127.0.0.1.41840 > 127.0.0.1.9000: Flags [.], ack 2, win 64, options [nop,nop,TS val 245500218 ecr 350427100], length 0
+
+[exit 0]

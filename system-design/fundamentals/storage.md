@@ -19,6 +19,10 @@
 
 **Default to PostgreSQL** until a requirement rules it out, and say which requirement did.
 
+## Indexes start with the query
+
+Write the query first. For a tenant's recent jobs filtered by status, try a B-tree on `(tenant_id, status, created_at)` and check whether PostgreSQL uses it to filter and return results in order. Compare `EXPLAIN (ANALYZE, BUFFERS)` on representative data and measure inserts or updates too. An index uses space and adds maintenance to writes. A sequential scan can be cheaper when the query returns much of the table. [Index lab](../../2-core/03-docker-and-postgres/lessons/02-a-schema-you-can-change.md#step-4-add-an-index-for-pending-work)
+
 ## Engines: B-tree or LSM tree
 
 | | **B-tree** (PostgreSQL, MySQL InnoDB) | **LSM tree** (RocksDB, Cassandra, Pebble) |
@@ -39,7 +43,7 @@ Pick the type from the access pattern, and say why: *"Jobs are looked up by ID a
 
 ## Where you built it
 
-- [Rust Bridge](../../lessons/rust-bridge/README.md): an append-only log with checksums that survives torn writes.
-- [Phase 3](../../lessons/03-durable-auditable-data/README.md): PostgreSQL with migrations, indexes and `EXPLAIN ANALYZE`; B-trees against LSM trees; the WAL and `fsync`; backup and restore.
-- [Phase 5](../../lessons/05-constrained-operations/README.md): S3 on AWS.
-- [Phase 7](../../lessons/07-utility-evaluation/README.md): Parquet and DuckDB.
+- [Rust Bridge](../../2-core/04-rust-foundations/README.md): an append-only log with checksums that survives torn writes.
+- [Phase 3](../../2-core/03-docker-and-postgres/README.md): PostgreSQL with migrations, indexes and `EXPLAIN ANALYZE`; B-trees against LSM trees; the WAL and `fsync`; backup and restore.
+- [Phase 5](../../2-core/08-shipping-safely/README.md): S3 on AWS.
+- [Phase 7](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md): Parquet and DuckDB.

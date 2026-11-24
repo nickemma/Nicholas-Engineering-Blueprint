@@ -1,0 +1,41 @@
+$ bash gate/run.sh ~/blueprint/kload   # nokey
+PASS  ruff format
+FAIL  ruff check
+      F841 Local variable `run` is assigned to but never used
+        --> src/kload/cli.py:58:5
+         |
+      56 |     so Switchyard creates one job per request, and a retry wouldn't make two.
+      57 |     """
+      58 |     run = time.time_ns()
+         |     ^^^
+      59 |     content = body.encode()
+      60 |     headers = {"Content-Type": "application/json"} if content else {}
+         |
+      help: Remove assignment to unused variable `run`
+         |
+      57 |     """
+         -     run = time.time_ns()
+      58 +     time.time_ns()
+      59 |     content = body.encode()
+         |
+      note: This is an unsafe fix and may change runtime behavior
+      
+      Found 1 error.
+      1 unsafe fix available with `--fix --unsafe-fixes`.
+PASS  pytest
+FAIL  200 requests a second for 5 s against a 5 ms server: on schedule, and accurate
+      the server saw 0 numbered requests, want 1000: does a POST carry an Idempotency-Key ending in -N, N being the request number?
+PASS  the server freezes for 1 s: open loop
+      51 of 500 requests took 500 ms or more
+PASS  the server freezes for 1 s: closed loop
+      1 of 500 requests took 500 ms or more
+PASS  at 20,000 requests a second, kload says it fell behind and exits 3
+      kload fell behind its schedule: send lag p99 2110.2 ms is over --max-lag-ms 10. These latencies include time spent waiting inside kload: don't trust them.
+      the server saw 40000 requests spread over 4.12 s, not 2 s
+PASS  kload compare: two sets of runs from the same server
+      p99 B - A: +0.01 ms, 95% CI [-0.16, +0.18] ms: no difference shown: the interval includes 0
+PASS  kload compare: B is 2 ms slower in every run
+      p99 B - A: +2.00 ms, 95% CI [+1.84, +2.17] ms: B is slower
+
+gate failed
+[exit 1]

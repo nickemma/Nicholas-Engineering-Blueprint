@@ -1,0 +1,30 @@
+ok  	switchyard/pgdepth/lab	1.025s
+PostgreSQL 17.11 (Debian 17.11-1.pgdg13+2)
+=== RUN   TestLive
+=== RUN   TestLive/isolation
+    isolation_test.go:91: lost update: two READ COMMITTED writes left 1; REPEATABLE READ rejected the stale update with 40001
+    isolation_test.go:105: atomic UPDATE kept both increments
+    isolation_test.go:138: write skew: REPEATABLE READ left zero on-call operators; SERIALIZABLE plus a fresh retry kept one
+=== RUN   TestLive/plan
+    plan_test.go:97: EXPLAIN: Seq Scan → Index Only Scan, shared buffer accesses 910 → 17, same ordered 16 IDs
+=== RUN   TestLive/queue
+    queue_test.go:47: second worker skipped the locked first row and committed an independent claim
+    queue_test.go:66: lease recovery: reaper reclaimed one expired job; stale and repeated completions left the effect count at two
+--- PASS: TestLive (0.18s)
+    --- PASS: TestLive/isolation (0.08s)
+    --- PASS: TestLive/plan (0.07s)
+    --- PASS: TestLive/queue (0.03s)
+PASS
+ok  	switchyard/pgdepth/lab	1.204s
+=== RUN   TestLive
+=== RUN   TestLive/queue
+    queue_test.go:39: claim cannot proceed: SQLSTATE 55P03 (ERROR: canceling statement due to lock timeout (SQLSTATE 55P03))
+--- FAIL: TestLive (0.45s)
+    --- FAIL: TestLive/queue (0.44s)
+FAIL
+FAIL	switchyard/pgdepth/lab	0.464s
+FAIL
+negative control: removing SKIP LOCKED made the second claimant time out
+crash recovery: acknowledged row survived SIGKILL; open transaction absent; ready in 1.97s
+logical restore: snapshot row present, later committed row absent; restore took 0.67s
+PITR: replayed archived WAL to 0/5000260; recovered the pre-delete row, excluded the later write; target ready in 1.73s

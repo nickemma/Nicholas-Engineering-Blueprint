@@ -1,0 +1,5 @@
+$ go run -race ./drills/race
+got: fast server
+timed out after 100ms
+counter: 1000
+[exit 0]

@@ -1,0 +1,7 @@
+$ go build -o /tmp/switchyard ./cmd/switchyard && { WORKERS=1 QUEUE_CAPACITY=2 /tmp/switchyard > /dev/null & p=$!; sleep 0.5; for i in 1 2 3 4 5; do curl -s -o /dev/null -w "job $i: %{http_code} after %{time_total} s\n" -X POST http://127.0.0.1:8080/jobs -H "Content-Type: application/json" -d "{\"description\":\"slow\",\"duration_ms\":1000}"; done; kill $p; }
+job 1: 201 after 0.001592 s
+job 2: 201 after 0.001093 s
+job 3: 201 after 0.000829 s
+job 4: 201 after 0.967855 s
+job 5: 201 after 0.986393 s
+[exit 0]

@@ -1,0 +1,44 @@
+diff --color -ruN final/cmd/loganalyse/main.go broken/slurp/cmd/loganalyse/main.go
+--- final/cmd/loganalyse/main.go	2026-11-18 22:25:31.400307366 -0800
++++ broken/slurp/cmd/loganalyse/main.go	2026-11-18 22:29:23.087170353 -0800
+@@ -4,13 +4,14 @@
+ package main
+ 
+ import (
+-	"bufio"
+ 	"flag"
+ 	"fmt"
++	"io"
+ 	"maps"
+ 	"os"
+ 	"runtime"
+ 	"slices"
++	"strings"
+ 	"sync"
+ 
+ 	"gofromzero/logs"
+@@ -60,18 +61,15 @@
+ 		}(results[w])
+ 	}
+ 
+-	scanner := bufio.NewScanner(f)
+-	scanner.Buffer(make([]byte, 64*1024), 1024*1024) // allow lines up to 1 MiB
+-	n := 0
+-	for scanner.Scan() {
+-		n++
+-		lines <- numbered{n, scanner.Text()} // Text copies the line; the scanner reuses its buffer
++	data, err := io.ReadAll(f)
++	if err != nil {
++		return nil, err
++	}
++	for i, text := range strings.Split(strings.TrimSuffix(string(data), "\n"), "\n") {
++		lines <- numbered{i + 1, text}
+ 	}
+ 	close(lines)
+ 	wg.Wait()
+-	if err := scanner.Err(); err != nil {
+-		return nil, fmt.Errorf("line %d: %w", n+1, err)
+-	}
+ 
+ 	total := logs.NewStats()
+ 	for _, s := range results {

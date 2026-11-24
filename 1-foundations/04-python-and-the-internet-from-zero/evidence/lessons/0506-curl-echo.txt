@@ -1,0 +1,12 @@
+$ go build -o /tmp/echo . && { /tmp/echo 2>/dev/null > /dev/null & sleep 0.5; curl -sv -m 2 http://127.0.0.1:9000/hello; echo "curl exit: $?"; kill %1; }
+*   Trying 127.0.0.1:9000...
+* Connected to 127.0.0.1 (127.0.0.1) port 9000
+> GET /hello HTTP/1.1
+> Host: 127.0.0.1:9000
+> User-Agent: curl/8.5.0
+> Accept: */*
+> 
+* Received HTTP/0.9 when not allowed
+* Closing connection
+curl exit: 1
+[exit 0]

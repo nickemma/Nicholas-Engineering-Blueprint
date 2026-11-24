@@ -1,0 +1,3 @@
+three Unix-socket peers applied the write
+SIGKILL stopped the leader; a higher-term leader read the value
+the restarted peer caught up

@@ -1,0 +1,27 @@
+$ mkdir measure && cd measure && uv init --bare --name measure --python 3.14 && uv python pin 3.14 && uv add --dev pytest ruff && ls -a
+Initialized project `measure`
+Downloading cpython-3.14.7-linux-x86_64-gnu (download) (34.3MiB)
+ Downloaded cpython-3.14.7-linux-x86_64-gnu (download)
+Pinned `.python-version` to `3.14`
+Using CPython 3.14.7
+Creating virtual environment at: .venv
+Resolved 8 packages in 5.36s
+Downloading pygments (1.2MiB)
+Downloading ruff (10.1MiB)
+ Downloaded pygments
+ Downloaded ruff
+Prepared 6 packages in 5.18s
+Installed 6 packages in 33ms
+ + iniconfig==2.3.1
+ + packaging==26.3
+ + pluggy==1.7.0
+ + pygments==2.21.0
+ + pytest==9.2.0
+ + ruff==0.17.5
+.
+..
+.python-version
+.venv
+pyproject.toml
+uv.lock
+[exit 0]

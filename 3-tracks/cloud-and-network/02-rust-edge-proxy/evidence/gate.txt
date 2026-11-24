@@ -1,0 +1,32 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.12s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+     Running unittests src/lib.rs (target/debug/deps/switchyard_edge-c1e74415b71ac42f)
+
+running 4 tests
+test breaker::tests::a_healthy_response_resets_the_failure_count ... ok
+test breaker::tests::admits_one_probe_reopens_and_recovers ... ok
+test breaker::tests::cancelled_probe_releases_recovery_after_cooldown ... ok
+test tcp::tests::relays_bytes_after_client_half_close ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/switchyard_edge-dd1808ac27966771)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests switchyard_edge
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.05s
+routing: HTTP/1.1, exact query and bytes, separate origins, 404 and 413
+pool: 1 upstream socket for 12 serial requests
+capacity: 32 timed out at the stalled origin, excess got 503, other origin got 200, stalled origin recovered
+breaker: open blocked origin work; failed probe reopened; single healthy probe recovered
+AssertionError: pool: 12 sockets for 12 requests
+AssertionError: breaker: open request reached origin (count=4)
+edge proxy gate passed

@@ -1,0 +1,5 @@
+$ cat hello.sh && ls -l hello.sh
+#!/usr/bin/env bash
+echo "Hello from a script"
+-rw-rw-r-- 1 ada ada 47 Nov 18 16:47 hello.sh
+[exit 0]

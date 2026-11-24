@@ -1,0 +1,3 @@
+$ go build -o ~/try/tasks ./cmd/tasks && ls -l ~/try/tasks
+-rwxrwxr-x 1 ada ada 4022520 Nov 19 07:27 /home/ada/try/tasks
+[exit 0]

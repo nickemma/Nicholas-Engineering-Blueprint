@@ -1,0 +1,55 @@
+    Blocking waiting for file lock on package cache
+    Updating crates.io index
+    Blocking waiting for file lock on package cache
+ Downloading crates ...
+  Downloaded rustc-literal-escaper v0.0.7
+  Downloaded getopts v0.2.24
+  Downloaded cfg-if v1.0.4
+  Downloaded adler2 v2.0.1
+  Downloaded foldhash v0.2.0
+  Downloaded rustc-demangle v0.1.27
+  Downloaded addr2line v0.25.1
+  Downloaded miniz_oxide v0.8.9
+  Downloaded memchr v2.7.6
+  Downloaded hashbrown v0.16.1
+  Downloaded gimli v0.32.3
+  Downloaded object v0.37.3
+  Downloaded libc v0.2.178
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling compiler_builtins v0.1.160 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/compiler-builtins/compiler-builtins)
+   Compiling core v0.0.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core)
+   Compiling libc v0.2.178
+   Compiling object v0.37.3
+   Compiling std v0.0.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std)
+   Compiling test v0.0.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/test)
+   Compiling klog v0.1.0 (/tmp/blueprint-c05-author/crate)
+   Compiling rustc-std-workspace-core v1.99.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/rustc-std-workspace-core)
+   Compiling alloc v0.0.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/alloc)
+   Compiling unwind v0.0.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/unwind)
+   Compiling adler2 v2.0.1
+   Compiling memchr v2.7.6
+   Compiling rustc-demangle v0.1.27
+   Compiling rustc-std-workspace-alloc v1.99.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/rustc-std-workspace-alloc)
+   Compiling gimli v0.32.3
+   Compiling miniz_oxide v0.8.9
+   Compiling std_detect v0.1.5 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std_detect)
+   Compiling hashbrown v0.16.1
+   Compiling addr2line v0.25.1
+   Compiling panic_unwind v0.0.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/panic_unwind)
+   Compiling cfg-if v1.0.4
+   Compiling panic_abort v0.0.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/panic_abort)
+   Compiling rustc-literal-escaper v0.0.7
+   Compiling rustc-std-workspace-std v1.99.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/rustc-std-workspace-std)
+   Compiling getopts v0.2.24
+   Compiling proc_macro v0.0.0 (/tmp/blueprint-c05-author/toolchain/rustup/toolchains/nightly-2026-03-25-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/proc_macro)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 16s
+     Running tests/transport.rs (/tmp/blueprint-c05-author/toolchain/target-tsan/x86_64-unknown-linux-gnu/debug/deps/transport-ad0583d9ac9edbab)
+
+running 2 tests
+test rejected_popped_and_unread_values_drop_once ... ok
+transferred 20000 ordered values
+test two_threads_transfer_in_order ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

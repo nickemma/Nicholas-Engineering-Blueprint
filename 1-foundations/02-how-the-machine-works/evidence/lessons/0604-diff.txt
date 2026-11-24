@@ -1,0 +1,14 @@
+$ git diff
+diff --git a/monitor.sh b/monitor.sh
+index eaa6da5..1f3a2ac 100755
+--- a/monitor.sh
++++ b/monitor.sh
+@@ -3,6 +3,7 @@
+ # and the percentage of the disk in use under PATH (default /).
+ #   ./monitor.sh [PATH]
+ #   load1=0.52 mem_used_pct=41 disk_used_pct=63
++# Works on Linux (from /proc) and macOS (from sysctl and vm_stat).
+ set -euo pipefail
+ 
+ path=${1:-/}
+[exit 0]

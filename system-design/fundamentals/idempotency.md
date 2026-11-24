@@ -32,7 +32,7 @@ At every arrow in your diagram that can be retried, say how duplicates are made 
 
 ## Where you built it
 
-- [Phase 2, step 4](../../lessons/02-connected-services/TEACHING.md#step-4-idempotency-end-to-end): idempotency keys end to end; the three sources of duplicates; killing a worker mid-job.
-- [Phase 3, step 5](../../lessons/03-durable-auditable-data/TEACHING.md#step-5-idempotency-keys-in-postgresql): keys and an inbox in PostgreSQL.
-- [Phase 4, step 10](../../lessons/04-replicated-state/TEACHING.md#step-10-locks-with-leases-and-fencing-tokens): fencing tokens.
-- [Phase 6](../../lessons/06-safe-shared-queries/README.md): keys scoped by tenant.
+- [Phase 2, step 4](../../2-core/01-go-runtime-and-reliable-services/lessons/14-timeouts-retries-and-idempotency.md): idempotency keys end to end; the three sources of duplicates; killing a worker mid-job.
+- [Phase 3, step 5](../../2-core/03-docker-and-postgres/lessons/06-a-retried-submission-survives-a-restart.md): keys and an inbox in PostgreSQL.
+- [Phase 4, step 10](../../2-core/07-distributed-systems-fundamentals/lessons/09-fence-a-worker-that-outlives-its-lease.md): fencing tokens.
+- [Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md): keys scoped by tenant.

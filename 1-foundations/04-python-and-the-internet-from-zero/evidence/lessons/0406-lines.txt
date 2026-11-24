@@ -1,0 +1,7 @@
+$ go build -o /tmp/echo . && { /tmp/echo -addr 127.0.0.1:0 > /tmp/echo.out & sleep 0.5; cat /tmp/echo.out; port=$(sed "s/.*://" /tmp/echo.out); printf "one\ntwo\nno newline" | nc -N 127.0.0.1 $port | od -c; sleep 0.3; kill %1; }
+listening on 127.0.0.1:46861
+2026/11/19 08:57:42 127.0.0.1:60630: closed after 3 lines, 18 bytes
+0000000   o   n   e  \n   t   w   o  \n   n   o       n   e   w   l   i
+0000020   n   e
+0000022
+[exit 0]

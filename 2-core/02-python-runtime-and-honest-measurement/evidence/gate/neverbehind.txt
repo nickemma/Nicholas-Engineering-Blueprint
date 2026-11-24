@@ -1,0 +1,51 @@
+$ bash gate/run.sh ~/blueprint/kload   # neverbehind
+PASS  ruff format
+FAIL  ruff check
+      F841 Local variable `fell_behind` is assigned to but never used
+        --> src/kload/cli.py:92:5
+         |
+      90 |     settings = {k: v for k, v in vars(args).items() if k not in ("handler", "settings")}
+      91 |     settings_path = write_results(results, Path(args.out), settings)
+      92 |     fell_behind = report_run(results, args, wall, cpu)
+         |     ^^^^^^^^^^^
+      93 |     print(f"wrote {args.out} and {settings_path}")
+      94 |     if all(r.status == 0 for r in results):
+         |
+      help: Remove assignment to unused variable `fell_behind`
+         |
+      91 |     settings_path = write_results(results, Path(args.out), settings)
+         -     fell_behind = report_run(results, args, wall, cpu)
+      92 +     report_run(results, args, wall, cpu)
+      93 |     print(f"wrote {args.out} and {settings_path}")
+         |
+      note: This is an unsafe fix and may change runtime behavior
+      
+      Found 1 error.
+      1 unsafe fix available with `--fix --unsafe-fixes`.
+FAIL  pytest
+      =========================== short test summary info ============================
+      FAILED tests/test_cli.py::test_a_run_that_falls_behind_exits_3 - AssertionErr...
+      1 failed, 65 passed in 13.51s
+PASS  200 requests a second for 5 s against a 5 ms server: on schedule, and accurate
+      arrived on schedule: p99 0.88 ms off, worst 0.90 ms
+      p50: kload says 6.90 ms; the server took 5.52 ms
+PASS  the server freezes for 1 s: open loop
+      52 of 500 requests took 500 ms or more
+PASS  the server freezes for 1 s: closed loop
+      1 of 500 requests took 500 ms or more
+FAIL  at 20,000 requests a second, kload says it fell behind and exits 3
+      kload exited with 0, want 3:
+            open loop: 40000 requests at 20000/s over 2 s
+            answers: 201 x40000
+            latency (2xx): p50 1478.11 ms, p99 2222.32 ms, max 2231.05 ms
+            kload itself: send lag p99 2195.24 ms, max 2208.71 ms; CPU 4.25 s in 4.25 s (100%)
+            wrote /tmp/tmp.pcAnbdEn7x/behind.csv and /tmp/tmp.pcAnbdEn7x/behind.json
+            kload used 100% of a CPU: close to its limit, so replies may have waited for it to read them. Lower the rate, or split it across processes.
+            kload fell behind its schedule: send lag p99 2195.2 ms is over --max-lag-ms 10. These latencies include time spent waiting inside kload: don't trust them.
+PASS  kload compare: two sets of runs from the same server
+      p99 B - A: +0.01 ms, 95% CI [-0.16, +0.18] ms: no difference shown: the interval includes 0
+PASS  kload compare: B is 2 ms slower in every run
+      p99 B - A: +2.00 ms, 95% CI [+1.84, +2.17] ms: B is slower
+
+gate failed
+[exit 1]

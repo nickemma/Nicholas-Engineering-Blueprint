@@ -1,0 +1,11 @@
+--- a/src/kload/load.py
++++ b/src/kload/load.py
+@@ -80,7 +80,7 @@
+         async with in_flight:
+             sent = clock()
+             status, error = await _attempt(send, i, timeout_s)
+-        return Result(i, due - start, sent - start, clock() - due, status, error)
++        return Result(i, due - start, sent - start, clock() - sent, status, error)
+ 
+     tasks = []
+     for i in range(round(rate * duration_s)):
