@@ -1,0 +1,14 @@
+networkpolicy.networking.k8s.io/prometheus-from-adapter created
+"prometheus-community" already exists with the same configuration, skipping
+Release "llm-adapter" does not exist. Installing it now.
+NAME: llm-adapter
+LAST DEPLOYED: Tue Nov 24 01:46:35 2026
+NAMESPACE: observability
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+llm-adapter-prometheus-adapter has been deployed.
+In a few minutes you should be able to list metrics using the following command(s):
+
+  kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1

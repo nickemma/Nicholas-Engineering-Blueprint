@@ -2,7 +2,7 @@
 
 **Checked in CI:** the tenant-limit tests, with a fake Redis. **Run locally:** a flood of agents from one tenant while another tenant asks a question, before and after the limits.
 
-Step 4's limits bound one run. They say nothing about how many runs a tenant starts. The model server is shared, and Phase 8's gateway admits a bounded number of requests for everyone together: its admission limit isn't per tenant, as Phase 8 noted. So one tenant running many agents at once can crowd every other tenant out: threat **A11** again, now across tenants.
+Lesson 04's limits bound one run. They say nothing about how many runs a tenant starts. The model server is shared, and the gateway admits a bounded number of requests for everyone together: its admission limit isn't per tenant, as Serving and scaling models noted. So one tenant running many agents at once can crowd every other tenant out: threat **A11** again, now across tenants.
 
 ## Attack: one tenant floods, another asks
 
@@ -16,7 +16,7 @@ def from_env(user: User) -> Agent:
     env = os.environ
     tools = env.get("TOOLS_URL", "http://127.0.0.1:18095")
     return Agent(
-        GatewayModel(env.get("RUNWAY_URL", "http://127.0.0.1:18081"), env["RUNWAY_TOKEN"]),
+        GatewayModel(env.get("SWITCHYARD_URL", "http://127.0.0.1:18081"), env["SWITCHYARD_TOKEN"]),
         Search(env["RAG_DATABASE_URL"], env.get("RAG_EMBED_URL", "http://127.0.0.1:18090")),
         Tools(tools, issue_token(tools, env["TOOLS_SERVICE_TOKEN"], user)),
 ~~~
@@ -26,19 +26,19 @@ to:
 ~~~python
 
 
-def from_env(user: User, runway_token: str = "") -> Agent:
+def from_env(user: User, api_token: str = "") -> Agent:
     env = os.environ
     tools = env.get("TOOLS_URL", "http://127.0.0.1:18095")
-    token = runway_token or env["RUNWAY_TOKEN"]
+    token = api_token or env["SWITCHYARD_TOKEN"]
     return Agent(
-        GatewayModel(env.get("RUNWAY_URL", "http://127.0.0.1:18081"), token),
+        GatewayModel(env.get("SWITCHYARD_URL", "http://127.0.0.1:18081"), token),
         Search(env["RAG_DATABASE_URL"], env.get("RAG_EMBED_URL", "http://127.0.0.1:18090")),
         Tools(tools, issue_token(tools, env["TOOLS_SERVICE_TOKEN"], user)),
 ~~~
 
 <!-- file: experiments/agent/flood.py -->
 ~~~python
-"""Step 11: while Acme runs many agents at once, can Hooli still ask a question?
+"""Lesson 11: while Acme runs many agents at once, can Hooli still ask a question?
 
 Usage: flood.py ACME_TOKEN_FILE HOOLI_TOKEN_FILE AGENTS SECONDS > rows.jsonl
 AGENTS = 0 measures Hooli on a quiet system.
@@ -124,7 +124,7 @@ There's a cheaper way to waste a tenant's money: a long question. Every turn sen
 ValueError: embedding text bound
 ~~~
 
-It crashed before reaching the model: Step 3's embedding client refuses text over 1,200 characters. A bound you set for one reason caught this attack too, but as an exception, after the run had started. The fix below refuses it up front, with a reason.
+It crashed before reaching the model: Lesson 03's embedding client refuses text over 1,200 characters. A bound you set for one reason caught this attack too, but as an exception, after the run had started. The fix below refuses it up front, with a reason.
 
 ## Fix: per-tenant limits, shared through Redis
 
@@ -255,17 +255,17 @@ to:
 
 <!-- edit: serve/src/serve/agent.py -->
 ~~~python
-        cache=AnswerCache(env["RUNWAY_REDIS_URL"]) if env.get("RUNWAY_REDIS_URL") else None,
-        trace=Trace(env.get("RUNWAY_AGENT_TRACE", "")),
+        cache=AnswerCache(env["AGENT_REDIS_URL"]) if env.get("AGENT_REDIS_URL") else None,
+        trace=Trace(env.get("SWITCHYARD_AGENT_TRACE", "")),
     )
 ~~~
 
 to:
 
 ~~~python
-        cache=AnswerCache(env["RUNWAY_REDIS_URL"]) if env.get("RUNWAY_REDIS_URL") else None,
-        trace=Trace(env.get("RUNWAY_AGENT_TRACE", "")),
-        tenants=TenantLimits(env["RUNWAY_REDIS_URL"]) if env.get("RUNWAY_REDIS_URL") else None,
+        cache=AnswerCache(env["AGENT_REDIS_URL"]) if env.get("AGENT_REDIS_URL") else None,
+        trace=Trace(env.get("SWITCHYARD_AGENT_TRACE", "")),
+        tenants=TenantLimits(env["AGENT_REDIS_URL"]) if env.get("AGENT_REDIS_URL") else None,
     )
 ~~~
 
@@ -355,7 +355,7 @@ FAILED tests/test_tenant_limits.py::test_a_tenant_gets_two_runs_at_once_and_othe
 1 failed, 2 passed in 1.22s
 ~~~
 
-The same flood, with `RUNWAY_REDIS_URL` set:
+The same flood, with `AGENT_REDIS_URL` set:
 
 ~~~text
 quiet.jsonl
@@ -390,7 +390,7 @@ With the limits, Gavin's median was 18 seconds and none of his eight questions f
 # A11 (part 2): one tenant's agents crowd out another
 
 1. Threat: a tenant's agents use up the shared model server.
-2. Assumption: per-run limits (Step 4) are enough.
+2. Assumption: per-run limits (lesson 04) are enough.
 3. Test: eight Acme agents in a loop for 150 s while Hooli asks a question
    every few seconds; an 11,783-character question.
 4. Observed: Hooli's median went from 7.6 s (quiet) to 30 s (the gateway's

@@ -1,16 +1,186 @@
 # 06 Deploy a slow-starting dependency
 
-A model server isn't like the Switchyard API. Its image is hundreds of megabytes, its weights are hundreds more, and it can take seconds or minutes before it can answer. Kubernetes' defaults assume a process that's ready in a second and can be replaced at any moment. This step deploys the model into Phase 5's cluster and measures what those differences cost:
+A model server isn't like the Switchyard API. Its image is hundreds of megabytes, its weights are hundreds more, and it can take seconds or minutes before it can answer. Kubernetes' defaults assume a process that's ready in a second and can be replaced at any moment. This lesson deploys the model into a kind cluster and measures what those differences cost:
 
 | You'll measure | Why it matters |
 |---|---|
-| Whether the weights in the cluster are the ones you verified | A model is code you didn't write; the bytes must match the digest from Step 2 |
+| Whether the weights in the cluster are the ones you verified | A model is code you didn't write; the bytes must match the digest from lesson 02 |
 | Cold start and warm start, phase by phase | Scaling up only helps if a new copy is ready before the queue overflows |
 | What users see while the model Pod is replaced | "Graceful shutdown" is a claim; measure it |
 | What a too-short startup allowance does | The most common way to turn a slow start into an outage |
 | Scaling on queue depth | CPU use says little about a decoder; waiting requests say a lot |
 
-You need Phase 5's kind cluster, with Phase 5's Prometheus in `observability` and Phase 6's default-deny policies in `runway`.
+## A cluster for the lesson
+
+This lesson runs on its own kind cluster, built the way [Kubernetes and delivery](../../../shared-units/kubernetes-and-delivery/README.md) taught: a namespace that refuses privileged Pods and denies all traffic until a policy allows it, and Prometheus in a namespace of its own. One control-plane node and one worker:
+
+<!-- file: deploy/cluster/kind.yaml -->
+~~~yaml
+# The lesson's cluster: a control plane and one worker, where the model runs.
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+  - role: worker
+~~~
+
+The `switchyard` namespace enforces the **restricted** Pod Security level and starts with every connection denied. Pods may still look up names, so DNS gets its own rule:
+
+<!-- file: deploy/cluster/namespace.yaml -->
+~~~yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: switchyard
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+---
+# Nothing in, nothing out, until a policy says otherwise.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: default-deny, namespace: switchyard }
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+---
+# Every Pod may ask the cluster's DNS for names, and nothing else by this rule.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: dns, namespace: switchyard }
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: kube-system } }
+          podSelector: { matchLabels: { k8s-app: kube-dns } }
+      ports: [{ port: 53, protocol: UDP }, { port: 53, protocol: TCP }]
+~~~
+
+Prometheus finds Pods through the Kubernetes API and scrapes those annotated `prometheus.io/scrape: "true"`, adding each series' `namespace` and `pod` labels. Only Grafana may query it:
+
+<!-- file: deploy/cluster/prometheus.yaml -->
+~~~yaml
+apiVersion: v1
+kind: Namespace
+metadata: { name: observability }
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: { name: prometheus, namespace: observability }
+---
+# Read-only access to Pods, the one thing it needs to find its targets.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata: { name: prometheus-pods }
+rules:
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [get, list, watch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata: { name: prometheus-pods }
+roleRef: { apiGroup: rbac.authorization.k8s.io, kind: ClusterRole, name: prometheus-pods }
+subjects: [{ kind: ServiceAccount, name: prometheus, namespace: observability }]
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: prometheus, namespace: observability }
+data:
+  prometheus.yml: |
+    global: { scrape_interval: 5s }
+    scrape_configs:
+      - job_name: pods
+        kubernetes_sd_configs: [{ role: pod }]
+        relabel_configs:
+          # Only Pods that ask to be scraped, on the port and path they name.
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            regex: "true"
+            action: keep
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            regex: (.+)
+            target_label: __metrics_path__
+          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: prometheus, namespace: observability }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: prometheus } }
+  template:
+    metadata: { labels: { app: prometheus } }
+    spec:
+      serviceAccountName: prometheus
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: prometheus
+          image: prom/prometheus:v3.15.0
+          args: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/prometheus",
+                 "--storage.tsdb.retention.time=1d"]
+          ports: [{ name: http, containerPort: 9090 }]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: [ALL] }
+          resources:
+            requests: { cpu: 100m, memory: 256Mi }
+            limits: { memory: 512Mi }
+          volumeMounts:
+            - { name: config, mountPath: /etc/prometheus }
+            - { name: data, mountPath: /prometheus }
+      volumes:
+        - { name: config, configMap: { name: prometheus } }
+        - { name: data, emptyDir: {} }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: prometheus, namespace: observability }
+spec:
+  selector: { app: prometheus }
+  ports: [{ name: http, port: 9090, targetPort: http }]
+---
+# Only Grafana may query Prometheus. Scraping is outbound, so it isn't affected.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: prometheus, namespace: observability }
+spec:
+  podSelector: { matchLabels: { app: prometheus } }
+  policyTypes: [Ingress]
+  ingress:
+    - from: [{ podSelector: { matchLabels: { app: grafana } } }]
+      ports: [{ port: 9090 }]
+~~~
+
+Keep the lab's kubeconfig separate from your other clusters, then create the cluster and apply both files:
+
+~~~bash
+mkdir -p .lab
+export KUBECONFIG="$PWD/.lab/kubeconfig"
+kind create cluster --name blueprint-serving --config deploy/cluster/kind.yaml --kubeconfig "$KUBECONFIG"
+kubectl apply -f deploy/cluster/namespace.yaml -f deploy/cluster/prometheus.yaml
+kubectl -n observability rollout status deployment/prometheus --timeout=3m
+~~~
+
+~~~text
+deployment "prometheus" successfully rolled out
+NAME                              STATUS   ROLES           AGE   VERSION
+blueprint-serving-control-plane   Ready    control-plane   85s   v1.37.0
+blueprint-serving-worker          Ready    <none>          72s   v1.37.0
+~~~
+
+This needs kind v0.33 or later: its built-in network plugin enforces NetworkPolicies. An older kind accepts the policies and ignores them, and every policy check below would wrongly pass.
 
 ## Weights into the cluster
 
@@ -23,8 +193,8 @@ The model needs a volume, and something to copy the file into it:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: phase8-weights
-  namespace: runway
+  name: model-weights
+  namespace: switchyard
 spec:
   accessModes: [ReadWriteOnce] # one node at a time: every replica lands on that node
   resources:
@@ -34,9 +204,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: weights-loader
-  namespace: runway
+  namespace: switchyard
 spec:
-  # The namespace refuses root Pods (Phase 5's "restricted" Pod Security).
+  # The namespace refuses root Pods ("restricted" Pod Security).
   securityContext:
     runAsNonRoot: true
     runAsUser: 65534
@@ -52,10 +222,10 @@ spec:
         - { name: weights, mountPath: /models }
   volumes:
     - name: weights
-      persistentVolumeClaim: { claimName: phase8-weights }
+      persistentVolumeClaim: { claimName: model-weights }
 ~~~
 
-Phase 5 set the `runway` namespace to the **restricted** Pod Security level, so every Pod must say it runs as a non-root user, can't gain privileges, drops all Linux capabilities and uses the default seccomp filter. Leave those settings out and the namespace refuses the Pod:
+The `switchyard` namespace enforces the **restricted** Pod Security level, so every Pod must say it runs as a non-root user, can't gain privileges, drops all Linux capabilities and uses the default seccomp filter. Leave those settings out and the namespace refuses the Pod:
 
 ~~~text
 Error from server (Forbidden): pods "pss-check" is forbidden: violates PodSecurity "restricted:latest": allowPrivilegeEscalation != false (container "pss-check" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (container "pss-check" must set securityContext.capabilities.drop=["ALL"]), runAsNonRoot != true (pod or container "pss-check" must set securityContext.runAsNonRoot=true), seccompProfile (pod or container "pss-check" must set securityContext.seccompProfile.type to "RuntimeDefault" or "Localhost")
@@ -65,22 +235,22 @@ Copy the verified file in, then check its digest *inside* the cluster:
 
 ~~~bash
 kubectl apply -f deploy/inference/weights.yaml
-kubectl -n runway wait --for=condition=Ready pod/weights-loader --timeout=3m
-kubectl -n runway cp models/qwen2.5-0.5b-instruct-q4_k_m.gguf weights-loader:/models/model.gguf
-kubectl -n runway exec weights-loader -- sha256sum /models/model.gguf
+kubectl -n switchyard wait --for=condition=Ready pod/weights-loader --timeout=3m
+kubectl -n switchyard cp models/qwen2.5-0.5b-instruct-q4_k_m.gguf weights-loader:/models/model.gguf
+kubectl -n switchyard exec weights-loader -- sha256sum /models/model.gguf
 ~~~
 
 ~~~text
 74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db  /models/model.gguf
 ~~~
 
-That's the digest Step 2 recorded. The copy took 9 s. Delete the loader; the volume and the file stay:
+That's the digest lesson 02 recorded. The copy took 7 s. Delete the loader; the volume and the file stay:
 
 ~~~bash
-kubectl -n runway delete pod weights-loader
+kubectl -n switchyard delete pod weights-loader
 ~~~
 
-The volume is `ReadWriteOnce`: it can be mounted on one node at a time. kind's storage puts it on one node (`runway-worker`, for me), so every replica of the model must run on that node. On a real cluster, that's the first thing that stops scaling. Weight distribution (a read-only copy per node, or an image that contains the weights) is part of the design, not a detail.
+The volume is `ReadWriteOnce`: it can be mounted on one node at a time. kind's storage puts it on one node (`blueprint-serving-worker`), so every replica of the model must run on that node. On a real cluster, that's the first thing that stops scaling. Weight distribution (a read-only copy per node, or an image that contains the weights) is part of the design, not a detail.
 
 ## The model Deployment
 
@@ -90,7 +260,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: llm
-  namespace: runway
+  namespace: switchyard
 spec:
   replicas: 1
   strategy:
@@ -100,7 +270,7 @@ spec:
   template:
     metadata:
       labels: { app: llm }
-      annotations: # Phase 5's Prometheus scrapes Pods that ask for it
+      annotations: # Prometheus scrapes Pods that ask for it
         prometheus.io/scrape: "true"
         prometheus.io/port: "8080"
         prometheus.io/path: /metrics
@@ -137,11 +307,11 @@ spec:
             - { name: weights, mountPath: /models, readOnly: true }
       volumes:
         - name: weights
-          persistentVolumeClaim: { claimName: phase8-weights, readOnly: true }
+          persistentVolumeClaim: { claimName: model-weights, readOnly: true }
 ---
 apiVersion: v1
 kind: Service
-metadata: { name: llm, namespace: runway }
+metadata: { name: llm, namespace: switchyard }
 spec:
   selector: { app: llm }
   ports: [{ name: http, port: 8080, targetPort: http }]
@@ -153,19 +323,19 @@ Three probes, three questions:
 - The **readiness probe** asks "should it get traffic right now?" A Pod that fails it is taken out of the Service but not restarted.
 - There's no **liveness probe**. One that's too strict would restart a model that's busy decoding a long answer. A restart costs a reload, so add one only for a failure you've actually seen, with a generous threshold.
 
-The annotations ask Phase 5's Prometheus to scrape the server's `/metrics`. `readOnlyRootFilesystem` works because llama-server writes nothing to disk.
+The annotations ask Prometheus to scrape the server's `/metrics`. `readOnlyRootFilesystem` works because llama-server writes nothing to disk.
 
-Phase 6's default-deny policy blocks everything until a policy allows it. The model answers the API, Prometheus and, in this lab, a probe Pod; it calls nobody:
+The namespace's default-deny policy blocks everything until a policy allows it. The model answers the API, Prometheus and, in this lab, a probe Pod; it calls nobody:
 
 <!-- file: deploy/inference/llm-policy.yaml -->
 ~~~yaml
-# The namespace denies all traffic by default (Phase 6). The model answers only
+# The namespace denies all traffic by default. The model answers only
 # the API, Prometheus and, in this lab, the probe Pod; it calls nobody.
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: llm
-  namespace: runway
+  namespace: switchyard
 spec:
   podSelector: { matchLabels: { app: llm } }
   policyTypes: [Ingress, Egress]
@@ -183,7 +353,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: llm-probe
-  namespace: runway
+  namespace: switchyard
 spec:
   podSelector: { matchLabels: { role: llm-probe } }
   policyTypes: [Ingress, Egress]
@@ -193,7 +363,7 @@ spec:
       ports: [{ port: 8080 }]
 ~~~
 
-When you wire Step 5's API into the cluster, its own egress policy needs `llm:8080` too.
+When you wire lesson 05's API into the cluster, its own egress policy needs `llm:8080` too.
 
 ## Measure start-up
 
@@ -203,7 +373,7 @@ Kubernetes records when each Pod was scheduled, when its container started and w
 ~~~python
 """How long did a pod take to be scheduled, start and become ready? Ask Kubernetes.
 
-  kubectl -n runway get pods -l app=llm -o json | uv run python -m serve.podtimes
+  kubectl -n switchyard get pods -l app=llm -o json | uv run python -m serve.podtimes
 
 Times are seconds after the pod was created. Kubernetes stores them to the second,
 so differences of a second or two are noise.
@@ -297,22 +467,22 @@ Now deploy. The image isn't on any node yet, so this is a true cold start:
 
 ~~~bash
 kubectl apply -f deploy/inference/llm-policy.yaml -f deploy/inference/llm.yaml
-kubectl -n runway rollout status deployment/llm --timeout=10m
-kubectl -n runway get pods -l app=llm -o json | (cd serve && uv run python -m serve.podtimes)
-kubectl -n runway get events --field-selector reason=Pulled -o custom-columns=MESSAGE:.message
+kubectl -n switchyard rollout status deployment/llm --timeout=10m
+kubectl -n switchyard get pods -l app=llm -o json | (cd serve && uv run python -m serve.podtimes)
+kubectl -n switchyard get events --field-selector reason=Pulled -o custom-columns=MESSAGE:.message
 ~~~
 
 ~~~text
 pod                        scheduled  started  ready restarts
-llm-75974b7f6c-fddvp               0      169    175        0
-Successfully pulled image "ghcr.io/ggml-org/llama.cpp@sha256:e67d88af...f78b" in 2m48.799s (2m48.799s including waiting). Image size: 309499562 bytes.
+llm-85b6db66cc-4z6kv               0      334    335        0
+Successfully pulled image "ghcr.io/ggml-org/llama.cpp@sha256:e67d88af...f78b" in 5m33.456s (5m33.456s including waiting). Image size: 309499562 bytes.
 ~~~
 
-Of the 175 seconds, 169 were spent pulling a 309 MB image. Loading the model took about 6 seconds. A node pulls an image once, so the next start on the same node skips that part. If a new replica lands on a node that has never run the model, it pays the whole 169 s again. That's why clusters that serve models pre-pull images onto their nodes.
+Of the 335 seconds, 334 went by before the container even started: pulling the 309 MB image took 5 minutes 33 seconds on this connection. Loading the model took about a second, because the copy had just put the weights in the node's page cache. A node pulls an image once, so the next start on the same node skips the pull. If a new replica lands on a node that has never run the model, it pays the whole wait again. That's why clusters that serve models pre-pull images onto their nodes.
 
 ## Probe from inside the cluster
 
-To see what users see, send requests from inside the cluster, through the Service, as the API would. This needs only the standard library and Step 2's `stream.py`:
+To see what users see, send requests from inside the cluster, through the Service, as the API would. This needs only the standard library and lesson 02's `stream.py`:
 
 <!-- file: serve/src/serve/probe.py -->
 ~~~python
@@ -426,7 +596,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: llm-probe
-  namespace: runway
+  namespace: switchyard
   labels: { role: llm-probe }
 spec:
   automountServiceAccountToken: false
@@ -453,23 +623,23 @@ spec:
 ~~~
 
 ~~~bash
-kubectl -n runway create configmap llm-probe-code \
+kubectl -n switchyard create configmap llm-probe-code \
   --from-file=serve/src/serve/stream.py --from-file=serve/src/serve/probe.py
 kubectl apply -f deploy/inference/probe.yaml
-kubectl -n runway wait --for=condition=Ready pod/llm-probe --timeout=5m
-kubectl -n runway exec llm-probe -- python -m serve.probe http://llm:8080 --seconds 5
+kubectl -n switchyard wait --for=condition=Ready pod/llm-probe --timeout=5m
+kubectl -n switchyard exec llm-probe -- python -m serve.probe http://llm:8080 --seconds 5
 ~~~
 
 ~~~text
-{"requests": 6, "completed": 6, "failed": {}, "ttft_p50": 0.55, "ttft_max": 0.63, "outage_seconds": null}
+{"requests": 7, "completed": 7, "failed": {}, "ttft_p50": 0.39, "ttft_max": 0.47, "outage_seconds": null}
 ~~~
 
 Check that the policy really is what lets it through. Remove the probe's label, and the same request has nowhere to go:
 
 ~~~bash
-kubectl -n runway label pod llm-probe role-
-kubectl -n runway exec llm-probe -- python -m serve.probe http://llm:8080 --seconds 1
-kubectl -n runway label pod llm-probe role=llm-probe
+kubectl -n switchyard label pod llm-probe role-
+kubectl -n switchyard exec llm-probe -- python -m serve.probe http://llm:8080 --seconds 1
+kubectl -n switchyard label pod llm-probe role=llm-probe
 ~~~
 
 ~~~text
@@ -483,23 +653,23 @@ The request waited out its full 60-second timeout: the policy dropped the connec
 Kubernetes replaces Pods all the time: node upgrades, rollouts, evictions. Delete the model Pod while three probe workers keep sending requests:
 
 ~~~bash
-kubectl -n runway exec llm-probe -- \
+kubectl -n switchyard exec llm-probe -- \
   python -m serve.probe http://llm:8080 --seconds 60 --workers 3 --rows > replace.txt &
 sleep 10
-kubectl -n runway delete pod -l app=llm --wait=false
+kubectl -n switchyard delete pod -l app=llm --wait=false
 wait
 tail -1 replace.txt
 grep -v '"error": ""' replace.txt | head -3
 ~~~
 
 ~~~text
-{"requests": 47, "completed": 44, "failed": {"Remote end closed connection without response": 2, "incomplete or empty stream": 1}, "ttft_p50": 1.7, "ttft_max": 2.0, "outage_seconds": 31.76}
-{"start": 7.82, "total": 31.5, "error": "incomplete or empty stream", "ttft": 1.71}
-{"start": 8.51, "total": 30.82, "error": "Remote end closed connection without response", "ttft": null}
-{"start": 9.25, "total": 30.08, "error": "Remote end closed connection without response", "ttft": null}
+{"requests": 122, "completed": 96, "failed": {"incomplete or empty stream": 1, "[Errno 111] Connection refused": 23, "Remote end closed connection without response": 2}, "ttft_p50": 0.98, "ttft_max": 1.42, "outage_seconds": 7.18}
+{"start": 8.51, "total": 1.12, "error": "incomplete or empty stream", "ttft": 1.12}
+{"start": 8.98, "total": 30.55, "error": "Remote end closed connection without response", "ttft": null}
+{"start": 9.46, "total": 30.07, "error": "Remote end closed connection without response", "ttft": null}
 ~~~
 
-The replacement Pod was ready about 5 s after it was created. But the three requests that were on the old Pod when it was deleted, one streaming and two queued behind it, hung for **30 seconds** and then failed. Kubernetes sent the server SIGTERM; it stopped generating but didn't close its connections. Kubernetes waited out the default 30-second grace period, then killed it. For those users, a routine Pod replacement was a 30-second failure.
+Kubernetes sent the server SIGTERM at about 8.5 s, and three things went wrong at once. The answer that was streaming stopped mid-way. The two requests queued behind it got no answer at all: they hung for **30 seconds**, the default grace period, until Kubernetes killed the server. And for the 7 seconds until the replacement was ready, every new request was refused, because the old server had stopped listening while the Service still sent traffic its way: 23 more failures. For those users, a routine Pod replacement was an outage.
 
 The fix is a **preStop hook**: a command Kubernetes runs *before* it sends SIGTERM. Wait two seconds for the Service to stop sending new work here, then wait until the server's own counters show nothing in progress and nothing queued:
 
@@ -535,60 +705,62 @@ The fix is a **preStop hook**: a command Kubernetes runs *before* it sends SIGTE
 
 ~~~bash
 kubectl apply -f deploy/inference/llm.yaml
-kubectl -n runway rollout status deployment/llm --timeout=5m
+kubectl -n switchyard rollout status deployment/llm --timeout=5m
 ~~~
 
 Run the same replacement again, twice:
 
 ~~~text
-{"requests": 84, "completed": 84, "failed": {}, "ttft_p50": 1.76, "ttft_max": 2.33, "outage_seconds": null}
-{"requests": 89, "completed": 89, "failed": {}, "ttft_p50": 1.68, "ttft_max": 1.96, "outage_seconds": null}
+{"requests": 130, "completed": 130, "failed": {}, "ttft_p50": 1.03, "ttft_max": 1.46, "outage_seconds": null}
+{"requests": 127, "completed": 127, "failed": {}, "ttft_p50": 1.02, "ttft_max": 2.04, "outage_seconds": null}
 ~~~
 
 Every request completed, both times. There's a detail of current Kubernetes behind this. When a Service has no ready Pods, it keeps sending traffic to Pods that are shutting down but still pass their readiness probe. With the hook, the old server keeps working, so it carries the traffic until the new Pod is ready. Then it goes idle, the hook exits, and SIGTERM finds nothing to interrupt.
 
 The hook must fit inside the grace period: 2 s plus at most 25 s of waiting, within 30 s. If your longest answer takes longer than that, raise `terminationGracePeriodSeconds`, or the kill arrives mid-answer anyway.
 
-**Break it:** give the model less time to start than it needs. One second, one try:
+**Break it:** give the model less time to start than it needs. One second, one try, while the probe keeps sending requests:
 
 ~~~bash
-kubectl -n runway patch deployment llm --type=json -p='[
+kubectl -n switchyard exec llm-probe -- \
+  python -m serve.probe http://llm:8080 --seconds 90 --rows > break.txt &
+sleep 5
+kubectl -n switchyard patch deployment llm --type=json -p='[
   {"op":"replace","path":"/spec/template/spec/containers/0/startupProbe/periodSeconds","value":1},
   {"op":"replace","path":"/spec/template/spec/containers/0/startupProbe/failureThreshold","value":1}]'
-sleep 100
-kubectl -n runway get pods -l app=llm
-kubectl -n runway get events --field-selector reason=Unhealthy -o custom-columns=COUNT:.count,MSG:.message
-kubectl -n runway exec llm-probe -- python -m serve.probe http://llm:8080 --seconds 5
+wait
+tail -1 break.txt
+kubectl -n switchyard get pods -l app=llm
+grep -v '"error": ""' break.txt | head -2
 ~~~
 
 ~~~text
-NAME                  READY   STATUS             RESTARTS      AGE
-llm-867bfcbd9-m87xt   0/1     CrashLoopBackOff   4 (38s ago)   98s
-1       Startup probe failed: HTTP probe failed with statuscode: 503
-6       Readiness probe failed: Get "http://10.244.2.5:8080/health": dial tcp 10.244.2.5:8080: connect: connection refused
-5       Startup probe failed: HTTP probe failed with statuscode: 503
-{"requests": 1, "completed": 0, "failed": {"timed out": 1}, "ttft_p50": null, "ttft_max": null, "outage_seconds": null}
+{"requests": 40, "completed": 38, "failed": {"[Errno 111] Connection refused": 1, "timed out": 1}, "ttft_p50": 0.4, "ttft_max": 0.47, "outage_seconds": 60.57}
+NAME                   READY   STATUS    RESTARTS      AGE
+llm-86f69ccbdc-gxm5c   1/1     Running   4 (55s ago)   83s
+{"start": 7.31, "total": 0.0, "error": "[Errno 111] Connection refused", "ttft": null}
+{"start": 7.56, "total": 60.06, "error": "timed out", "ttft": null}
 ~~~
 
-The server answers 503 while it loads, so the first check fails, Kubernetes kills it, and it starts loading again: four restarts in 98 seconds, and the back-off between attempts keeps growing. And because the Deployment uses `Recreate`, the old, working Pod was removed *first*, so nothing at all was serving. A bad configuration change became a complete outage. With `RollingUpdate`, the old Pod would have kept serving while the new one failed, but that needs room for a second copy of the weights. Restore the measured allowance:
+The server answers 503 while it loads, so a check one second after the start fails, Kubernetes kills it, and it starts loading again. Here the weights were already in the page cache, so a load took about a second and one attempt in five happened to be quick enough: four restarts, then it stayed up. With a cold cache or a bigger model, no attempt is ever quick enough, and the Pod stays in `CrashLoopBackOff` with a growing back-off. Either way, because the Deployment uses `Recreate`, the old, working Pod was removed *first*, so nothing at all was serving: one request was refused, the next hung for its whole 60-second timeout, and nothing completed for 60.6 seconds. A bad configuration change became a complete outage. With `RollingUpdate`, the old Pod would have kept serving while the new one failed, but that needs room for a second copy of the weights. Restore the measured allowance:
 
 ~~~bash
 kubectl apply -f deploy/inference/llm.yaml
-kubectl -n runway rollout status deployment/llm --timeout=5m
+kubectl -n switchyard rollout status deployment/llm --timeout=5m
 ~~~
 
-Mine was ready again 6 s later, and all six probe requests completed.
+Mine was ready again 9 s later, and all seven probe requests completed.
 
 ## Scale on queue depth
 
-CPU is a poor scaling signal for a decoder. It's limited by memory bandwidth, and it can look much the same idle or swamped. A better signal is how many requests are waiting. llama-server exports that as `llamacpp:requests_deferred`, and Phase 5's Prometheus is already scraping it:
+CPU is a poor scaling signal for a decoder. It's limited by memory bandwidth, and it can look much the same idle or swamped. A better signal is how many requests are waiting. llama-server exports that as `llamacpp:requests_deferred`, and Prometheus is already scraping it:
 
 ~~~bash
 kubectl -n observability port-forward svc/prometheus 19090:9090 &
 curl -s 127.0.0.1:19090/api/v1/query --data-urlencode 'query=llamacpp:requests_deferred'
 ~~~
 
-The result carries `namespace="runway"` and `pod="llm-..."` labels, from Phase 5's scrape configuration. A HorizontalPodAutoscaler can't query Prometheus, though; it reads metrics from the Kubernetes API. The **Prometheus adapter** sits between them: it serves chosen Prometheus series as Kubernetes metrics.
+The result carries `namespace="switchyard"` and `pod="llm-..."` labels, from the scrape configuration. A HorizontalPodAutoscaler can't query Prometheus, though; it reads metrics from the Kubernetes API. The **Prometheus adapter** sits between them: it serves chosen Prometheus series as Kubernetes metrics.
 
 <!-- file: deploy/inference/adapter-values.yaml -->
 ~~~yaml
@@ -602,7 +774,7 @@ metricsRelistInterval: 15s # how soon a new Pod's series is found
 rules:
   default: false # serve only what we ask for
   custom:
-    # Requests waiting inside each model server, per Pod. Phase 5's scrape
+    # Requests waiting inside each model server, per Pod. Prometheus's scrape
     # config adds the namespace and pod labels the adapter maps to objects.
     - seriesQuery: 'llamacpp:requests_deferred{namespace!="",pod!=""}'
       resources:
@@ -618,12 +790,12 @@ resources:
   limits: { memory: 384Mi }
 ~~~
 
-Phase 5 lets only Grafana query Prometheus. Policies add up, so a second one admits the adapter, without editing Phase 5's:
+The `observability` namespace lets only Grafana query Prometheus. Policies add up, so a second one admits the adapter, without editing the first:
 
 <!-- file: deploy/inference/adapter-policy.yaml -->
 ~~~yaml
-# Phase 5 lets only Grafana query Prometheus. Policies add up, so this one
-# admits the adapter as well, without editing Phase 5's file.
+# Only Grafana may query Prometheus. Policies add up, so this one
+# admits the adapter as well, without editing that policy.
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -642,10 +814,10 @@ kubectl apply -f deploy/inference/adapter-policy.yaml
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm upgrade --install llm-adapter prometheus-community/prometheus-adapter --version 5.4.1 \
   -n observability -f deploy/inference/adapter-values.yaml --wait
-kubectl get --raw "/apis/custom.metrics.k8s.io/v1beta1/namespaces/runway/pods/*/llm_requests_waiting"
+kubectl get --raw "/apis/custom.metrics.k8s.io/v1beta1/namespaces/switchyard/pods/*/llm_requests_waiting"
 ~~~
 
-After about 20 seconds, the Kubernetes API answers with one item per model Pod: `"metricName": "llm_requests_waiting"` and `"value": "0"`.
+Within about 10 seconds, the Kubernetes API answers with one item per model Pod: `"metricName": "llm_requests_waiting"` and `"value": "0"`.
 
 Now the autoscaler. It aims for an average of two waiting requests per Pod:
 
@@ -655,7 +827,7 @@ Now the autoscaler. It aims for an average of two waiting requests per Pod:
 # is limited by memory bandwidth, and its CPU can look the same idle or swamped.
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
-metadata: { name: llm, namespace: runway }
+metadata: { name: llm, namespace: switchyard }
 spec:
   scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: llm }
   minReplicas: 1
@@ -680,7 +852,7 @@ This script prints what the autoscaler sees every 2 seconds:
 # Print the autoscaler's view every 2 seconds: what it measured, how many
 # replicas it wants, and how many model Pods are ready. Stop with Ctrl-C.
 start=$(date +%s)
-get() { kubectl -n runway get "$1" -o jsonpath="$2" 2>/dev/null; }
+get() { kubectl -n switchyard get "$1" -o jsonpath="$2" 2>/dev/null; }
 while true; do
   waiting=$(get hpa/llm '{.status.currentMetrics[0].pods.current.averageValue}')
   desired=$(get hpa/llm '{.status.desiredReplicas}')
@@ -698,7 +870,7 @@ Apply the autoscaler, start the watcher in a second terminal, then offer six lon
 ~~~bash
 kubectl apply -f deploy/inference/hpa.yaml
 sh deploy/inference/watch-hpa.sh            # in a second terminal
-kubectl -n runway exec llm-probe -- \
+kubectl -n switchyard exec llm-probe -- \
   python -m serve.probe http://llm:8080 --seconds 150 --workers 6 --max-tokens 128
 ~~~
 
@@ -709,53 +881,57 @@ The watcher, from just before the load started:
   11s  waiting/pod=0     desired=1  ready=1
   14s  waiting/pod=0     desired=1  ready=1
   17s  waiting/pod=5     desired=2  ready=1
-  19s  waiting/pod=5     desired=2  ready=1
-  22s  waiting/pod=5     desired=2  ready=2
-  25s  waiting/pod=5     desired=2  ready=2
-  28s  waiting/pod=5     desired=2  ready=2
-  31s  waiting/pod=4     desired=2  ready=2
-  34s  waiting/pod=4     desired=2  ready=2
+  20s  waiting/pod=5     desired=2  ready=1
+  23s  waiting/pod=5     desired=2  ready=2
+  26s  waiting/pod=5     desired=2  ready=2
+  29s  waiting/pod=5     desired=2  ready=2
+  32s  waiting/pod=2     desired=2  ready=2
+  35s  waiting/pod=2     desired=2  ready=2
+  38s  waiting/pod=2     desired=2  ready=2
+  41s  waiting/pod=2     desired=2  ready=2
+  44s  waiting/pod=2     desired=2  ready=2
 ~~~
 
-The load started at about 4 s. By 17 s the adapter reported five requests waiting and the autoscaler asked for a second replica, which was ready at 22 s. That's quick because the image was already on the node and the weights were in its page cache: on a node that had never run the model, add the 169-second pull from earlier. Later samples show values such as `2500m` and `1500m`: Kubernetes' way of writing 2.5 and 1.5, averages across the two Pods.
+The load started at about 8 s. By 17 s the adapter reported five requests waiting and the autoscaler asked for a second replica, which was ready at 23 s. That's quick because the image was already on the node and the weights were in its page cache: on a node that had never run the model, add the 334-second wait from earlier. Later samples show values such as `2500m`, `1500m` and `500m`: Kubernetes' way of writing 2.5, 1.5 and 0.5, averages across the two Pods.
 
 The load stopped at about 158 s. The autoscaler waited out its 300-second stabilisation window, then removed the second replica:
 
 ~~~text
- 463s  waiting/pod=0     desired=2  ready=2
- 466s  waiting/pod=0     desired=2  ready=2
- 468s  waiting/pod=0     desired=1  ready=1
- 471s  waiting/pod=0     desired=1  ready=1
- 473s  waiting/pod=0     desired=1  ready=1
- 475s  waiting/pod=0     desired=1  ready=1
+ 456s  waiting/pod=0     desired=2  ready=2
+ 459s  waiting/pod=0     desired=2  ready=2
+ 462s  waiting/pod=0     desired=2  ready=2
+ 464s  waiting/pod=0     desired=2  ready=2
+ 467s  waiting/pod=0     desired=1  ready=1
+ 470s  waiting/pod=0     desired=1  ready=1
+ 472s  waiting/pod=0     desired=1  ready=1
 ~~~
 
 The probe's summary, then each Pod's token counter, read from inside the cluster (run the loop before the load too, and subtract):
 
 ~~~bash
-for ip in $(kubectl -n runway get pods -l app=llm -o jsonpath='{.items[*].status.podIP}'); do
-  kubectl -n runway exec llm-probe -- python -c "import urllib.request
+for ip in $(kubectl -n switchyard get pods -l app=llm -o jsonpath='{.items[*].status.podIP}'); do
+  kubectl -n switchyard exec llm-probe -- python -c "import urllib.request
 for line in urllib.request.urlopen('http://$ip:8080/metrics').read().decode().splitlines():
     if line.startswith('llamacpp:tokens_predicted_total'): print('$ip', line)"
 done
 ~~~
 
 ~~~text
-{"requests": 34, "completed": 34, "failed": {}, "ttft_p50": 25.52, "ttft_max": 56.1, "outage_seconds": null}
-10.244.2.14 llamacpp:tokens_predicted_total 1280
-10.244.2.13 llamacpp:tokens_predicted_total 5504
+{"requests": 37, "completed": 37, "failed": {}, "ttft_p50": 25.89, "ttft_max": 40.03, "outage_seconds": null}
+10.244.1.16 llamacpp:tokens_predicted_total 1664
+10.244.1.14 llamacpp:tokens_predicted_total 3072
 ~~~
 
 | | Requests started in the first 20 s (mostly one Pod) | Requests started after 60 s (two Pods) |
 |---|---|---|
-| Median time to decode one 128-token answer | 5.8 s | 8.1 s |
-| Tokens per second, all Pods together (128 ÷ decode time × Pods) | about 22 | about 32 |
+| Median time to decode one 128-token answer | 7.6 s | 7.8 s |
+| Tokens per second, all Pods together (128 ÷ decode time × Pods) | about 17 | about 33 |
 
-Before the load, the first Pod's counter read 2,432 and the second Pod didn't exist. So the old Pod generated 3,072 tokens during the run (24 answers of 128 tokens) and the new one 1,280 (10 answers). Every request completed, and both Pods did work. But two things in these numbers matter more than the scaling itself:
+Before the load, the first Pod's counter read 0 and the second Pod didn't exist. So the old Pod generated 3,072 tokens during the run (24 answers of 128 tokens) and the new one 1,664 (13 answers). Every request completed, and both Pods did work. But two things in these numbers matter more than the scaling itself:
 
-- **The second replica added about 40% throughput, not 100%.** Both Pods run on `runway-worker`, because the `ReadWriteOnce` volume is there, so they share its CPUs and memory bandwidth, and each decodes more slowly. A replica on another node wouldn't share them; I couldn't measure that here, because the volume pins every replica to one node. That's the weight-distribution problem from the start of this step, now measured.
-- **The target decides the latency, and this one is too loose.** "Two waiting per Pod" means a request waits for about two 8-second answers before its own starts. The median wait for first content was 25.5 s, and the slowest was 56 s. Choose the target the way Step 9 chose the queue length: from the time budget. Waiting requests × time per answer must fit inside your time-to-first-token objective. For Step 5's one second, no number of waiting requests fits, so the honest conclusion is that this laptop can't offer that objective for long answers at this load. Measuring tells you that before users do.
+- **The second replica nearly doubled throughput here, and that's a property of this machine.** Both Pods run on `blueprint-serving-worker`, because the `ReadWriteOnce` volume is there. This laptop has 16 CPUs and each Pod may use 2, so they didn't compete, and each decoded almost as fast as one alone. On an earlier run, on a node with less to spare, the second replica added only about 40%, because the two shared CPUs and memory bandwidth. Measure it on the node you'll run on. And a replica on another node needs its own copy of the weights: the volume pins every replica to one node. That's the weight-distribution problem from the start of this lesson.
+- **The target decides the latency, and this one is too loose.** "Two waiting per Pod" means a request waits for about two 8-second answers before its own starts. The median wait for first content was 25.9 s, and the slowest was 40 s. Choose the target the way lesson 09 chose the queue length: from the time budget. Waiting requests × time per answer must fit inside your time-to-first-token objective. For lesson 05's one second, no number of waiting requests fits, so the honest conclusion is that this laptop can't offer that objective for long answers at this load. Measuring tells you that before users do.
 
-**Done when:** the weights' digest matches inside the cluster, you have cold and warm start timelines, a Pod replacement under load completes every request, and the model scales out on queue depth and back in. Keep the outputs; Step 14's report uses them. Mine are in [evidence/2026-11-13-kubernetes](../evidence/2026-11-13-kubernetes/README.md).
+**Done when:** the weights' digest matches inside the cluster, you have cold and warm start timelines, a Pod replacement under load completes every request, and the model scales out on queue depth and back in. Keep the outputs; lesson 14's report uses them. Mine are in [evidence/2026-11-24-kubernetes](../evidence/2026-11-24-kubernetes/README.md).
 
-**What this proves, and what it doesn't.** It proves the model runs under the namespace's security rules and network policy, that replacing it no longer drops requests, and that queue depth drives scaling on this cluster. It doesn't prove anything about a cluster with many nodes: here every replica shares one node and one copy of the volume, so a second replica adds a second decoder, not more memory bandwidth from a second machine. Nor does it cover the gateway: in the full system the queue sits in Step 4's admission queue, and you'd scale on the gateway's waiting gauge instead. The [platform report](../evidence/platform-validation/report.md) did that once, through the real API.
+**What this proves, and what it doesn't.** It proves the model runs under the namespace's security rules and network policy, that replacing it no longer drops requests, and that queue depth drives scaling on this cluster. It doesn't prove anything about a cluster with many nodes: here every replica shares one node and one copy of the volume, so a second replica adds a second decoder, not more memory bandwidth from a second machine. Nor does it cover the gateway: in the full system the queue sits in lesson 04's admission queue, and you'd scale on the gateway's waiting gauge instead. The [platform report](../evidence/platform-validation/report.md) did that once, through the real API.

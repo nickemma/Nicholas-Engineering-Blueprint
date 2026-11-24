@@ -1,6 +1,6 @@
 # Track: AI infrastructure
 
-> About 27 weeks: 19 of its own, plus 8 in shared units · Builds on: the end of the core · Status: ready
+> About 34 weeks: 26 of its own, plus 8 in shared units · Builds on: the end of the core · Status: ready
 
 ## Who it's for
 

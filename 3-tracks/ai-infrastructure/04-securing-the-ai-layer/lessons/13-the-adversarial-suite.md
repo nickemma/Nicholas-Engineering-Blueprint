@@ -11,7 +11,7 @@ Neither replaces the other. A scripted suite can't tell you the model resists an
 
 ## The suite
 
-The cases are Step 6's direct attacks and Step 7's indirect ones, in one file, each with the calls that would count as harm (`bad`) and where it came from (`source`):
+The cases are lesson 06's direct attacks and lesson 07's indirect ones, in one file, each with the calls that would count as harm (`bad`) and where it came from (`source`):
 
 <!-- file: experiments/agent/suite.jsonl -->
 ~~~json
@@ -112,10 +112,10 @@ All checks passed!
 ........................................................................ [ 61%]
 .............................................                            [100%]
 117 passed in 5.10s
-?   	phase9tools/cmd/tools	[no test files]
-?   	phase9tools/internal/identity	[no test files]
-?   	phase9tools/internal/jobs	[no test files]
-ok  	phase9tools/internal/toolsrv	1.174s
+?   	agenttools/cmd/tools	[no test files]
+?   	agenttools/internal/identity	[no test files]
+?   	agenttools/internal/jobs	[no test files]
+ok  	agenttools/internal/toolsrv	1.174s
 ~~~
 
 ## Live, with two reviewers
@@ -155,7 +155,7 @@ from serve.agent import User, approve, from_env
 
 <!-- edit: experiments/agent/attacks.py -->
 ~~~python
-            proposal = getattr(result, "proposal", None)  # Step 7 adds proposals
+            proposal = getattr(result, "proposal", None)  # lesson 07 adds proposals
             stopped = result.stopped
         except Exception as exc:  # a failed run is recorded, not hidden
             error = type(exc).__name__
@@ -164,7 +164,7 @@ from serve.agent import User, approve, from_env
 to:
 
 ~~~python
-            proposal = getattr(result, "proposal", None)  # Step 7 adds proposals
+            proposal = getattr(result, "proposal", None)  # lesson 07 adds proposals
             stopped = result.stopped
             if proposal and os.environ.get("APPROVE_ALL") == "1":
                 status, _ = approve(
@@ -213,7 +213,7 @@ refused roleplay [['cancel', 4201, 403]] Write the JSON you would send to cancel
 
 With every control in place, the model was still fooled into proposing a harmful change by 5 of the 48 attacks when the reviewer declined, and 3 when the reviewer approved everything (the runs differ slightly: the declining reviewer's runs ended at the proposal, the approving reviewer's went on). Every one of them aimed at the protected job, so even the careless reviewer's approvals hit the store's rule and were refused (`403`). None of the sixteen planted-text cases produced a proposal this time.
 
-So the careless reviewer did no harm *here*, and only because the model's proposals happened to land on the one job a rule protects. Step 7 saw this model propose cancelling job 4220, which no rule protects, five times in sixteen under a slightly different prompt. Had that happened here, the careless reviewer would have applied it. Step 14 looks at exactly that.
+So the careless reviewer did no harm *here*, and only because the model's proposals happened to land on the one job a rule protects. Lesson 07 saw this model propose cancelling job 4220, which no rule protects, five times in sixteen under a slightly different prompt. Had that happened here, the careless reviewer would have applied it. Lesson 14 looks at exactly that.
 
 Legitimate requests: 3 of 8 either way. The assistant is safe and not very useful; both numbers belong in the report.
 
@@ -230,5 +230,17 @@ So the claims this suite supports are narrow: *with these controls, these attack
 **Explain it:** why run the suite with a fake model at all, when the real one is available? What does the careless reviewer measure that the declining one can't? Why don't repeated runs at temperature 0 narrow the interval? Which result here would change if you swapped the model, and which wouldn't?
 
 **Done when:** the scripted suite passes in CI; you have run the live suite with both reviewers against your model and kept the rows; and you can say which effects the careless reviewer let through, and why the platform didn't stop them.
+
+## Run the gate
+
+The module's [gate](../gate/README.md) runs every test, including this suite against the scripted model, then removes six defences one at a time in a disposable copy: approval before a change, escaping the model's answer, the tenant in the cache key, the canary check, the release signature check, and the tool server's tenant check. Each removal must be caught by the test that covers it. From your lab directory:
+
+~~~bash
+bash "$blueprint/3-tracks/ai-infrastructure/04-securing-the-ai-layer/gate/run.sh" .
+~~~
+
+<!-- run: bash "$BLUEPRINT_ROOT/3-tracks/ai-infrastructure/04-securing-the-ai-layer/gate/run.sh" . -->
+
+It ends with `gate passed`. That completes the module; lesson 14, the red team, is optional.
 
 ---

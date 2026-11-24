@@ -140,7 +140,7 @@ class Decoder:
         self.model = Tiny(Shape()).eval()
 
     async def __call__(self, request):
-        # This teaching model is random, not the generation API from step 4.
+        # This teaching model is random, not the generation API from lesson 04.
         return {"ready": True, "parameters": sum(p.numel() for p in self.model.parameters())}
 
 

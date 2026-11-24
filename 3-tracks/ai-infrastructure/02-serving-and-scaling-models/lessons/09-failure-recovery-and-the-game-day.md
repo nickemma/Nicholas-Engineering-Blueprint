@@ -1,19 +1,19 @@
 # 09 Failure, recovery and the game day
 
-Steps 4 to 8 built defences. The API returns 502 when the model is gone and 503 when the shared budget can't be checked. Admission refuses work it can't serve. Cancellation frees the model when a client leaves. A **game day** tests those defences on purpose: you break one thing at a time, watch what happens, and write it down. Finding out that a defence doesn't work is much cheaper on a quiet afternoon than during a real outage.
+Lessons 04 to 08 built defences. The API returns 502 when the model is gone and 503 when the shared budget can't be checked. Admission refuses work it can't serve. Cancellation frees the model when a client leaves. A **game day** tests those defences on purpose: you break one thing at a time, watch what happens, and write it down. Finding out that a defence doesn't work is much cheaper on a quiet afternoon than during a real outage.
 
 The rules:
 
 1. **Write down what you expect first.** For each fault: what users should see, how you'll notice, what you'll do, and what counts as fixed. A drill with no prediction can't fail, so it can't teach you anything.
 2. **One fault at a time.** With two faults at once, you can't tell which one caused what. If a drill fails, stop and fix the system before starting the next one.
-3. **Four timestamps:** when the fault was injected, detected, mitigated and recovered. Use a monotonic clock: Phase 7 showed that the wall clock can jump.
+3. **Four timestamps:** when the fault was injected, detected, mitigated and recovered. Use a monotonic clock: [Core 07](../../../../2-core/07-distributed-systems-fundamentals/lessons/01-what-a-node-can-know.md) showed that the wall clock can jump.
 4. **Recovered means users are served.** Here, that's ten requests in a row through the API that stream a complete, nonempty answer. A green `/health` only says a process started. One failure among the ten restarts the count.
 5. **Run every drill twice.** A fault that recovered once might have been luck.
 
 | Fault | How you cause it | What users should see | Mitigation | Fixed when |
 |---|---|---|---|---|
 | Model exits | `docker kill` the model | 502, at once | Restart the same verified release | Ten good streams |
-| Redis is down | `docker stop` Redis | 503: without the shared budget there's no generation (Step 4 fails closed) | Restart Redis | Ten good streams |
+| Redis is down | `docker stop` Redis | 503: without the shared budget there's no generation (lesson 04 fails closed) | Restart Redis | Ten good streams |
 | Overload | 18 long requests at the same instant | Some 503s within milliseconds; admitted requests still get answers | None: admission sheds the excess | The queue drains, then ten good streams |
 | Client leaves mid-answer | Reset the connection while tokens stream | Nothing: that client is gone | Cancellation reaches the model | The model's slot is idle within 8 s |
 | Scraper is down | `docker stop` Prometheus | Nothing: requests still succeed | Restart Prometheus | Ten good streams |
@@ -290,7 +290,7 @@ def client_disconnect(lab: Lab, case: Case) -> None:
     head = (
         f"POST /v1/chat/completions HTTP/1.1\r\nHost: {api.hostname}\r\n"
         f"Content-Type: application/json\r\nContent-Length: {len(body)}\r\n"
-        f"Authorization: Bearer {os.environ['RUNWAY_TOKEN']}\r\n\r\n"
+        f"Authorization: Bearer {os.environ['SWITCHYARD_TOKEN']}\r\n\r\n"
     ).encode()
     conn = socket.create_connection((api.hostname, api.port), timeout=10)
     conn.sendall(head + body)
@@ -356,9 +356,9 @@ def main() -> None:
     p.add_argument("--api", default="http://127.0.0.1:18081")
     p.add_argument("--model", default="http://127.0.0.1:18080")
     p.add_argument("--scraper", default="http://127.0.0.1:19090")
-    p.add_argument("--model-container", default="blueprint-phase8-llm")
-    p.add_argument("--redis-container", default="blueprint-phase8-redis")
-    p.add_argument("--scraper-container", default="blueprint-phase8-prometheus")
+    p.add_argument("--model-container", default="blueprint-serve-llm")
+    p.add_argument("--redis-container", default="blueprint-serve-redis")
+    p.add_argument("--scraper-container", default="blueprint-serve-prometheus")
     p.add_argument("--faults", default=",".join(FAULTS))
     p.add_argument("--repeat", type=int, default=2)
     p.add_argument("--out", type=Path, default=Path("results/gameday.json"))
@@ -403,21 +403,21 @@ How each drill works:
 
 - **`model_exit` and `redis_unavailable`** kill or stop a container, send one request, check that it fails with the expected status, then restart the container. `expect` checks the exact error: a 500 where you designed a 503 means the failure took a path you didn't plan for.
 - **`overload`** uses a `Barrier` to hold 18 threads until all of them are ready, so the requests arrive at the same instant. With one slot and a queue of eight, nine should be admitted and nine refused.
-- **`client_disconnect`** writes the HTTP request by hand on a raw socket and waits for the first streamed event. Then it closes the socket with `SO_LINGER` set to zero. That sends a TCP reset, like a phone losing signal, instead of a polite goodbye. Finally it polls the model server's `/slots` until no slot is busy. The Go context being cancelled isn't enough: as Step 4 showed, the model server itself has to stop generating.
+- **`client_disconnect`** writes the HTTP request by hand on a raw socket and waits for the first streamed event. Then it closes the socket with `SO_LINGER` set to zero. That sends a TCP reset, like a phone losing signal, instead of a polite goodbye. Finally it polls the model server's `/slots` until no slot is busy. The Go context being cancelled isn't enough: as lesson 04 showed, the model server itself has to stop generating.
 - **`scraper_loss`** checks that Prometheus really is down, then expects a request to *succeed*.
 - **`model_oom`** lowers the memory limit below what the model needs, waits until Docker reports the container stopped with `OOMKilled`, checks for the 502, and puts the 2 GiB limit back *before* restarting. The order matters, as the second Break it shows.
 - **`main`** saves the JSON after every drill, so a drill that hangs still leaves the earlier records. It also stops at the first failure.
 
 ## Run it
 
-The drills need the live stack from Steps 4 and 5:
+The drills need the live stack from lessons 04 and 05:
 
 | Service | Address | Notes |
 |---|---|---|
-| Model, `blueprint-phase8-llm` | 127.0.0.1:18080 | As in Step 8, plus a 2 GiB memory limit |
-| Redis, `blueprint-phase8-redis` | 127.0.0.1:16379 | Holds the shared token budget |
-| Switchyard's API with the inference route | 127.0.0.1:18081 | From Step 5, with `INFERENCE_UPSTREAM=http://127.0.0.1:18080`, `INFERENCE_REDIS_ADDR=127.0.0.1:16379`, `INFERENCE_SLOTS=1`, `INFERENCE_QUEUE=8` and authentication required |
-| Prometheus, `blueprint-phase8-prometheus` | 127.0.0.1:19090 | Scrapes the API every 2 seconds |
+| Model, `blueprint-serve-llm` | 127.0.0.1:18080 | As in lesson 08, plus a 2 GiB memory limit |
+| Redis, `blueprint-serve-redis` | 127.0.0.1:16379 | Holds the shared token budget |
+| Switchyard's API with the inference route | 127.0.0.1:18081 | From lesson 05, with `INFERENCE_UPSTREAM=http://127.0.0.1:18080`, `INFERENCE_REDIS_ADDR=127.0.0.1:16379`, `INFERENCE_SLOTS=1`, `INFERENCE_QUEUE=8` and authentication required |
+| Prometheus, `blueprint-serve-prometheus` | 127.0.0.1:19090 | Scrapes the API every 2 seconds |
 
 Prometheus needs a small config file:
 
@@ -426,28 +426,28 @@ Prometheus needs a small config file:
 global:
   scrape_interval: 2s
 scrape_configs:
-  - job_name: runway-api
+  - job_name: switchyard-api
     static_configs:
       - targets: ['127.0.0.1:18081']
 ~~~
 
-Start the three containers. If Step 8's model container is still there, remove it first (`docker rm -f blueprint-phase8-llm`): it has no memory limit, and the out-of-memory drill restores 2 GiB.
+Start the three containers. If lesson 08's model container is still there, remove it first (`docker rm -f blueprint-serve-llm`): it has no memory limit, and the out-of-memory drill restores 2 GiB.
 
 ~~~bash
-# From the lab root; PHASE8_MODELS is the verified model directory from Step 8.
-docker run -d --name blueprint-phase8-llm -p 127.0.0.1:18080:8080 \
-  --memory 2g --memory-swap 2g -v "$PHASE8_MODELS:/models:ro" \
+# From the lab root; SERVE_MODELS is the verified model directory from lesson 08.
+docker run -d --name blueprint-serve-llm -p 127.0.0.1:18080:8080 \
+  --memory 2g --memory-swap 2g -v "$SERVE_MODELS:/models:ro" \
   ghcr.io/ggml-org/llama.cpp@sha256:e67d88af487390098c76d7982b1761484339fa147b7e41d3c64ae1318759f78b \
   -m /models/qwen2.5-0.5b-instruct-q4_k_m.gguf -c 4096 -t 4 \
   --parallel 1 --metrics --host 0.0.0.0 --port 8080
-docker run -d --name blueprint-phase8-redis -p 127.0.0.1:16379:6379 redis:8
-docker run -d --name blueprint-phase8-prometheus --network host \
+docker run -d --name blueprint-serve-redis -p 127.0.0.1:16379:6379 redis:8
+docker run -d --name blueprint-serve-prometheus --network host \
   -v "$PWD/experiments/gameday/prometheus.yaml:/etc/prometheus/prometheus.yml:ro" \
   prom/prometheus:v3.15.0 \
   --config.file=/etc/prometheus/prometheus.yml --web.listen-address=127.0.0.1:19090
 ~~~
 
-Start the API as in Step 5. Put a token for a client with the `generator` role in `RUNWAY_TOKEN`; it's a secret, so never commit it or paste it into notes. Check that one stream works, then run the game day:
+Start the API as in lesson 05. Put a token for a client with the `generator` role in `SWITCHYARD_TOKEN`; it's a secret, so never commit it or paste it into notes. Check that one stream works, then run the game day:
 
 ~~~bash
 cd serve
@@ -475,8 +475,8 @@ model-oom            2      0.57        4.6  passed
 
 Your times will differ. Here's what mine say:
 
-- **Detection is fast because the drill is watching.** A dead model shows up in about half a second, because the drill sends a request straight after `docker kill`. In real life nobody sends that request on cue: you find out from Step 5's alerts, which take minutes. The detect column measures the system's error path, not your monitoring.
-- **The Redis 503 takes half a second.** That's the 500 ms Redis timeout from Step 4's `SharedReservation`. Failing closed is right, but while Redis is down, every request waits that long before it's refused.
+- **Detection is fast because the drill is watching.** A dead model shows up in about half a second, because the drill sends a request straight after `docker kill`. In real life nobody sends that request on cue: you find out from lesson 05's alerts, which take minutes. The detect column measures the system's error path, not your monitoring.
+- **The Redis 503 takes half a second.** That's the 500 ms Redis timeout from lesson 04's `SharedReservation`. Failing closed is right, but while Redis is down, every request waits that long before it's refused.
 - **Most of the recovery time is the check itself.** Restarting the model until `/health` is ok took 1.5–2 s. The ten checks took another 3–4 s, about 0.3 s each.
 - **The cancelled request freed the model's slot 0.11 s after the reset,** in both runs.
 - **Docker reported `OOMKilled: true`** both times, so the memory drill really did run the model out of memory.
@@ -515,8 +515,8 @@ model-oom            1      0.80          -  FAILED TimeoutError: model not read
 The restarted model was killed again while it loaded its weights, and the drill gave up after 60 s. Restarting a process doesn't fix anything while the cause is still there. Roll back the whole release, meaning the image, the weights and their resource limits, not just the process. Fix it by hand, the way the runbook says:
 
 ~~~bash
-docker update --memory 2g --memory-swap 2g blueprint-phase8-llm
-docker start blueprint-phase8-llm
+docker update --memory 2g --memory-swap 2g blueprint-serve-llm
+docker start blueprint-serve-llm
 ~~~
 
 Then put the line back.
@@ -530,11 +530,11 @@ Write the runbook before the first drill, and correct it after every drill that 
 3. Look at queue depth, memory use and error rates. Don't look at prompts.
 4. Shed excess work.
 5. Restore the last tested **image + model + template** release, including its resource limits.
-6. Verify the signatures (Step 7) and wait for readiness.
-7. Run the ten-request check, and compare the all-arrivals objective from Step 5.
+6. Verify the signatures (lesson 07) and wait for readiness.
+7. Run the ten-request check, and compare the all-arrivals objective from lesson 05.
 8. Record the detection and recovery times.
 
-Two more rules. **Never automatically retry a partly delivered answer:** the user may already have seen part of it, and would get duplicate text. In Phase 7, a failed optional prediction could fall back to a default; a generation endpoint can't pretend a partial answer is complete. And **size the queue from the deadline:** slots × deadline ÷ time per long answer is the most work you can promise to finish.
+Two more rules. **Never automatically retry a partly delivered answer:** the user may already have seen part of it, and would get duplicate text. A failed optional prediction, like ML for infrastructure's, can fall back to a default; a generation endpoint can't pretend a partial answer is complete. And **size the queue from the deadline:** slots × deadline ÷ time per long answer is the most work you can promise to finish.
 
 **Done when:** every fault has passed twice, `results/gameday.json` is kept, the queue is sized from your measured answer time, and the runbook matches what you actually did. My raw results for every run above are in [evidence/2026-11-13-game-day](../evidence/2026-11-13-game-day/). The [platform report](../evidence/platform-validation/report.md) keeps an earlier run of the same six faults, plus Kubernetes drills (rolling back corrupt weights) that this local stack doesn't cover.
 

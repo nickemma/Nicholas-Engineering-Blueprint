@@ -1,6 +1,6 @@
 # 02 How to attack a system
 
-The threat model is a set of hypotheses. Now turn one into a request, observe which boundary it crosses, and keep enough evidence for someone else to repeat it. Start with the Phase 8 gateway, before adding retrieval or tools.
+The threat model is a set of hypotheses. Now turn one into a request, observe which boundary it crosses, and keep enough evidence for someone else to repeat it. Start with the gateway from [Serving and scaling models](../../02-serving-and-scaling-models/README.md), before adding retrieval or tools.
 
 ## Scope and rules
 
@@ -11,7 +11,7 @@ Write the scope before sending requests. A target is an address and a deployment
 # Gateway assessment scope
 
 - Target: this lab's gateway and its scripted model dependency on loopback.
-- Optional live target: my own local Runway API and model server from Phase 8.
+- Optional live target: my own local Switchyard API and model server from Serving and scaling models.
   Record their exact addresses, source revision and image digest before use.
 - Actors: no credentials, and a synthetic tenant user allowed to generate.
 - Allowed: single-request mutations of JSON, headers and output limits.
@@ -28,7 +28,7 @@ The numerical limits make the exercise reproducible. They are not permission to 
 
 ## Map the attack surface
 
-Read `gateway/internal/inference/gateway.go`, `tokenizer.go`, and the Switchyard adapter from Phase 8. Follow one request in order:
+Read `gateway/internal/inference/gateway.go`, `tokenizer.go`, and the Switchyard adapter from Serving and scaling models. Follow one request in order:
 
 | Surface | Who controls it? | Boundary and question |
 |---|---|---|
@@ -48,7 +48,7 @@ The existing queue and deadline still bound concurrent work. The claim to test i
 
 ## Reproduce before fixing
 
-Use the actual gateway and `LlamaTokenizer` HTTP adapter with a scripted dependency. The dependency rejects null or empty message lists, returns four synthetic tokens for a valid list, and streams a fixed answer. That makes the boundary test deterministic, without downloading weights. The identity callback is Phase 8's **test-only** callback: these tests do not validate JWT signatures or the API's generator-role policy.
+Use the actual gateway and `LlamaTokenizer` HTTP adapter with a scripted dependency. The dependency rejects null or empty message lists, returns four synthetic tokens for a valid list, and streams a fixed answer. That makes the boundary test deterministic, without downloading weights. The identity callback is the gateway's **test-only** callback: these tests do not validate JWT signatures or the API's generator-role policy.
 
 Create the following file. The assertions describe the desired secure behaviour, so the first run must fail on the existing gateway.
 
@@ -116,7 +116,7 @@ func newBoundaryLab(t *testing.T) *boundaryLab {
 	}))
 	t.Cleanup(backend.Close)
 	// Test-only identity callback. JWT signatures, expiry and the generator
-	// role remain the existing Runway middleware's responsibility.
+	// role remain the existing Switchyard middleware's responsibility.
 	lab.gateway = New(backend.URL, identity, LlamaTokenizer(backend.URL), 1, 0, 100)
 	lab.gateway.UseReservation(func(_ context.Context, tenant string, cost int) (bool, error) {
 		lab.reserved.Add(1)
@@ -238,7 +238,7 @@ Read the four observations together: `502`, one template call, no reservation, n
 
 ## Fix the boundary before allocating capacity
 
-Make the gateway's supported contract explicit: 1–64 messages, each with a `system`, `user` or `assistant` role and nonempty text content. This route supports text chat; tool results and multimodal content will need their own schemas when they are introduced. Reject extra message fields. Keep Phase 8's top-level allowlist: unknown outer fields are discarded, not forwarded.
+Make the gateway's supported contract explicit: 1–64 messages, each with a `system`, `user` or `assistant` role and nonempty text content. This route supports text chat; tool results and multimodal content will need their own schemas when they are introduced. Reject extra message fields. Keep the gateway's top-level allowlist: unknown outer fields are discarded, not forwarded.
 
 `system` remains a supported chat role here. It gives a caller no platform permissions. Later the operations assistant will construct its own model conversation; its trusted instructions and retrieved text must have separate provenance. This input validator does not stop prompt injection inside valid text.
 
@@ -304,19 +304,19 @@ to:
 
 The original 64 KiB body limit bounds parsing. This new check bounds the shape before either the admitted or active semaphore is acquired. Template failures for *valid* messages still return 502: a dependency can really be unavailable, and that needs different handling from a caller's invalid request.
 
-Now run the same probes, plus Phase 8's existing gateway tests. Keep the output separately from the pre-fix evidence.
+Now run the same probes, plus the gateway's existing tests. Keep the output separately from the pre-fix evidence.
 
 <!-- run: cd gateway && gofmt -w internal && go vet ./... && go test -race -timeout=30s -count=1 -v ./... > ../docs/security/evidence/g1-after.txt 2>&1 && cat ../docs/security/evidence/g1-after.txt -->
 
 The [recorded component assessment](../evidence/gateway-assessment/report.md) retains the before/after test output and its limits.
 
-Each malformed-message subtest must now report `status=400 template=0 reservation=0 generation=0`. The positive controls must still stream `[DONE]`, charge the verified tenant, accept the 64-message boundary, and discard forbidden outer fields. The 65-message case must fail. Switchyard's existing JWT and shared-reservation integration test remains a separate live check from Phase 8.
+Each malformed-message subtest must now report `status=400 template=0 reservation=0 generation=0`. The positive controls must still stream `[DONE]`, charge the verified tenant, accept the 64-message boundary, and discard forbidden outer fields. The 65-message case must fail. Switchyard's existing JWT and shared-reservation integration test remains a separate live check from Serving and scaling models.
 
 ## Inspect and change a live request
 
 An **intercepting proxy** pauses a request between your client and your service so you can inspect or edit it. Use [mitmproxy's interception tutorial](https://docs.mitmproxy.org/stable/mitmproxytutorial-interceptrequests/) and [request-editing tutorial](https://docs.mitmproxy.org/stable/mitmproxytutorial-modifyrequests/) as references. The exercise below is learner-run; the automated probes above do not require a proxy or a model server.
 
-Copy the updated `internal/inference` package into your existing Switchyard module, preserving its `shared.go` and integration tests, then rebuild the API. Use the existing Phase 8 issuer to mint a short-lived synthetic `generator` token. Start your local model server, Redis and API as in Phase 8. For this exercise expose the development API on `127.0.0.1:8080`; the model's own port is not the target. Keep any existing mTLS listener intact.
+Copy the updated `internal/inference` package into your existing Switchyard module, preserving its `shared.go` and integration tests, then rebuild the API. Use the existing issuer from Tenancy and abuse control to mint a short-lived synthetic `generator` token. Start your local model server, Redis and API as in Serving and scaling models. For this exercise expose the development API on `127.0.0.1:8080`; the model's own port is not the target. Keep any existing mTLS listener intact.
 
 In one terminal, start an installed mitmproxy on loopback:
 
@@ -324,13 +324,13 @@ In one terminal, start an installed mitmproxy on loopback:
 mitmproxy --listen-host 127.0.0.1 --listen-port 8081
 ~~~
 
-Press `i` and set the interception filter to `~u /v1/chat/completions & ~q`. In another terminal, from the lab directory, send the same valid request. `RUNWAY_TOKEN` is the synthetic token already exported by your Phase 8 setup. `--noproxy ''` makes curl use the proxy even if your environment bypasses loopback addresses.
+Press `i` and set the interception filter to `~u /v1/chat/completions & ~q`. In another terminal, from the lab directory, send the same valid request. `SWITCHYARD_TOKEN` is the synthetic token already exported by your setup from Serving and scaling models. `--noproxy ''` makes curl use the proxy even if your environment bypasses loopback addresses.
 
 ~~~bash
 curl --noproxy '' --proxy http://127.0.0.1:8081 \
   --max-time 60 --no-buffer --include \
   http://127.0.0.1:8080/v1/chat/completions \
-  -H "Authorization: Bearer $RUNWAY_TOKEN" \
+  -H "Authorization: Bearer $SWITCHYARD_TOKEN" \
   -H 'Content-Type: application/json' \
   --data '{"messages":[{"role":"user","content":"Say river"}],"max_tokens":8,"stream":true}'
 ~~~
@@ -357,7 +357,7 @@ Related threat: A11 (resource abuse). Preconditions: authenticated caller.
 2. Security assumption: malformed message structures are refused at the
    gateway before model capacity or model endpoints are used.
 3. Test: TestGatewayRejectsMalformedMessages/null sends messages:null
-   through the Phase 8 gateway and its real HTTP tokenizer adapter.
+   through the gateway and its real HTTP tokenizer adapter.
 4. What happened: before the fix, HTTP 502; template=1, reservation=0,
    generation=0. After the fix, HTTP 400; all three counters are zero.
    Raw output: evidence/g1-before.txt and evidence/g1-after.txt.
@@ -371,20 +371,20 @@ Related threat: A11 (resource abuse). Preconditions: authenticated caller.
 7. Regression: TestGatewayRejectsMalformedMessages checks 13 mutations;
    TestGatewayBoundaryControls checks successful streaming, identity-based
    reservations, discarded caller fields, size/output limits and 64/65
-   message boundaries. The original Phase 8 gateway suite still passes.
+   message boundaries. The gateway's original suite still passes.
 
 Remaining: valid text can contain prompt injection. This fix is not a
 prompt defence or an authorization policy. Live JWT, model and proxy
-checks require the learner's running Phase 8 environment.
+checks require the learner's running environment from Serving and scaling models.
 ~~~
 
-Keep hypotheses that *didn't* find a bug too. The missing-token, forged-tenant and outer-field probes exercise controls Phase 8 already had. A security assessment is allowed to conclude a boundary held.
+Keep hypotheses that *didn't* find a bug too. The missing-token, forged-tenant and outer-field probes exercise controls the gateway already had. A security assessment is allowed to conclude a boundary held.
 
 **Break it:** temporarily remove the `validateMessages` call from `ServeHTTP`, rerun the null-message regression and watch it fail with the original counters. Restore the call and rerun the suite. Do this in the lab copy; keep the fixed guide as the source of truth.
 
 **Explain it:** why isn't a 502 alone enough evidence? Why do these tests use a real tokenizer adapter and a scripted model? What does a forged tenant header prove here, and which JWT checks remain untested? Why can a valid string still carry an injection? What additional experiment would justify claiming denial of service?
 
-**Done when:** you have the scope, a failing pre-fix probe, a passing post-fix suite, and the seven-part finding. You can identify exactly which boundary each observation tests. If you also ran the proxy exercise, keep its redacted evidence and environment details separately. Step 3 adds retrieval.
+**Done when:** you have the scope, a failing pre-fix probe, a passing post-fix suite, and the seven-part finding. You can identify exactly which boundary each observation tests. If you also ran the proxy exercise, keep its redacted evidence and environment details separately. Lesson 03 adds retrieval.
 
 ---
 

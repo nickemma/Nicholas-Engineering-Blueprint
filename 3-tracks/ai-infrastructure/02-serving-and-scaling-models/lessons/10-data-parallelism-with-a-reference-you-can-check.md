@@ -415,7 +415,7 @@ What the measurements do support is a simple model you can use to plan:
 
 With six round trips for the big model, it predicts 6 × 40 + 692 = 932 ms at 40 ms and 100 Mbit/s. I measured 889 and 928 ms. Without any shaping, the big model's step took 35–53 ms, of which the all-reduce was only 8 ms: computation dominated. On the 100 Mbit/s link, the all-reduce was more than 90% of every step. That's why real clusters put GPUs on links a thousand times faster, and why frameworks overlap communication with the backward pass.
 
-**Your turn:** add a fifth row with loss, `link.sh 40ms 100mbit 1%`, and predict it first. The Networking Bridge measured what 1% loss does to a single TCP download.
+**Your turn:** add a fifth row with loss, `link.sh 40ms 100mbit 1%`, and predict it first. Core 06 measured what 1% loss does to a single TCP download.
 
 ## Break it: lose a rank, lose the link
 

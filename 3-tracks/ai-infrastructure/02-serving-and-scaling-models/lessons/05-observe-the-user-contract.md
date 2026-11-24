@@ -6,17 +6,17 @@ Write the objective before measuring: for this lab, at least 99% of offered vali
 
 Scrape `/internal/inference/metrics` on the internal listener. Plot admitted minus active as waiting, active versus slots, rejection responses from Switchyard's existing HTTP metrics, backend token throughput and process RSS. A useful symptom is sustained waiting plus a falling share of good requests. CPU utilisation alone misses a memory-bandwidth-bound decoder.
 
-For traces, keep Phase 6/7's existing instrumentation: start at the authenticated API, add queue wait, template/tokenizer calls and upstream streaming spans; end the stream span only on the terminal event, EOF, cancellation or failure. Propagate the existing trace context via the instrumented HTTP transport. Never record prompts, bearer tokens, model answers or tenant IDs as unbounded metric labels. Compare the client TTFT with queue wait plus backend prefill plus network delay.
+For traces, keep Switchyard's existing instrumentation (Core 06 and Kubernetes and delivery): start at the authenticated API, add queue wait, template/tokenizer calls and upstream streaming spans; end the stream span only on the terminal event, EOF, cancellation or failure. Propagate the existing trace context via the instrumented HTTP transport. Never record prompts, bearer tokens, model answers or tenant IDs as unbounded metric labels. Compare the client TTFT with queue wait plus backend prefill plus network delay.
 
 **Break it:** introduce a 2-second delay before the fake server's first content, while sending its role event immediately. Show that first-byte diagnostics can pass while the TTFT objective fails. Disable buffering at every proxy and verify with a timestamped client; a fast backend behind a buffering proxy still feels slow.
 
 ## Mount the real API and record first-content evidence
 
-The earlier route fragment explains the boundary; this adapter connects it to the real Phase 7 `cmd/api` process. Copy the following file to `cmd/api/inference.go` in your Switchyard checkout, alongside the gateway and shared-reservation files already copied into `internal/inference`. It reuses Switchyard's JWT middleware, metric registry, trace provider and identity claims. The separate `generator` role (or `admin`) authorises generation; a job reader does not gain inference access merely by having a valid JWT.
+The earlier route fragment explains the boundary; this adapter connects it to the real Switchyard `cmd/api` process. Copy the following file to `cmd/api/inference.go` in your Switchyard checkout, alongside the gateway and shared-reservation files already copied into `internal/inference`. It reuses Switchyard's JWT middleware, metric registry, trace provider and identity claims. The separate `generator` role (or `admin`) authorises generation; a job reader does not gain inference access merely by having a valid JWT.
 
 The streaming route stays outside the jobs request-deadline middleware. Jobs retain their original write deadline; inference has a thirty-second admission/stream deadline and a per-write slow-consumer deadline. The server's outer write allowance accommodates that contract. Redis reservations fail closed across API instances; the adapter refuses to enable inference with authentication disabled.
 
-<!-- file: runway-integration/api_inference.go -->
+<!-- file: switchyard-integration/api_inference.go -->
 ~~~go
 package main
 
@@ -33,11 +33,11 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
-	"runway/internal/auth"
-	"runway/internal/authz"
-	"runway/internal/envconfig"
-	"runway/internal/httpapi"
-	"runway/internal/inference"
+	"switchyard/internal/auth"
+	"switchyard/internal/authz"
+	"switchyard/internal/envconfig"
+	"switchyard/internal/httpapi"
+	"switchyard/internal/inference"
 )
 
 // mountInference extends the actual API composition root. Jobs retain their
@@ -69,7 +69,7 @@ func mountInference(getenv envconfig.Getenv, metrics *httpapi.Metrics, authentic
 	client := redis.NewClient(&redis.Options{Addr: addr})
 	transport := otelhttp.NewTransport(http.DefaultTransport)
 	g := inference.New(url, func(r *http.Request) (string, bool) { c, ok := auth.FromContext(r.Context()); return c.Tenant, ok }, inference.LlamaTokenizerWithClient(url, &http.Client{Transport: transport}), slots, queue, budget)
-	g.UseReservation(inference.SharedReservation(client, "runway:inference:v1", budget))
+	g.UseReservation(inference.SharedReservation(client, "switchyard:inference:v1", budget))
 	g.UseTransport(transport)
 	outcomes := prometheus.NewCounterVec(prometheus.CounterOpts{Name: "inference_outcomes_total", Help: "Authenticated generation outcomes, including rejections and incomplete streams."}, []string{"outcome"})
 	good := prometheus.NewCounter(prometheus.CounterOpts{Name: "inference_good_total", Help: "Completed requests with first content observed at the gateway within one second."})
@@ -80,7 +80,7 @@ func mountInference(getenv envconfig.Getenv, metrics *httpapi.Metrics, authentic
 	metrics.MustRegister(outcomes, good, ttft, waiting, tokens, statuses,
 		prometheus.NewGaugeFunc(prometheus.GaugeOpts{Name: "inference_active", Help: "Active inference requests."}, func() float64 { a, _ := g.InFlight(); return float64(a) }),
 		prometheus.NewGaugeFunc(prometheus.GaugeOpts{Name: "inference_waiting", Help: "Admitted requests waiting for active capacity."}, func() float64 { a, n := g.InFlight(); return float64(max(0, n-a)) }))
-	tracer := otel.Tracer("runway.inference")
+	tracer := otel.Tracer("switchyard.inference")
 	g.UseHooks(inference.Hooks{
 		Stage: func(ctx context.Context, name string) (context.Context, func()) {
 			ctx, span := tracer.Start(ctx, name)
@@ -164,7 +164,7 @@ if getenv("INFERENCE_UPSTREAM") != "" { writeTimeout = 35*time.Second }
 server := &http.Server{
 ~~~
 
-Set that server's existing `WriteTimeout` field to `writeTimeout`. All other startup/shutdown, TLS, workers, persistence and gRPC wiring stays in the existing composition root. This integration source depends on the Phase 7 module; the stdlib-only gateway replay does not pretend to compile the entire API or deploy telemetry.
+Set that server's existing `WriteTimeout` field to `writeTimeout`. All other startup/shutdown, TLS, workers, persistence and gRPC wiring stays in the existing composition root. This integration source depends on your Switchyard module; the stdlib-only gateway replay does not pretend to compile the entire API or deploy telemetry.
 
 Configure `INFERENCE_UPSTREAM`, `INFERENCE_REDIS_ADDR`, `INFERENCE_SLOTS`, `INFERENCE_QUEUE` and `INFERENCE_TOKEN_BUDGET` on the API process. Keep the raw model and Redis endpoints private. Register a synthetic issuer client with `generator+submitter+reader`, and another with only `reader` for the denial test. Never put their secrets or bearer tokens in committed commands/evidence.
 

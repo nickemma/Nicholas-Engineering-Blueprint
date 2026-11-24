@@ -1,15 +1,15 @@
 # 01 A threat model for the AI layer
 
-Phase 6 threat-modelled a system that already existed. This time you model one that doesn't exist yet. That's the cheapest moment: a design flaw found on paper costs an afternoon, and the same flaw found in production costs an incident.
+[Core 08](../../../../2-core/08-shipping-safely/lessons/02-model-the-trust-boundary.md) threat-modelled a system that already existed. This time you model one that doesn't exist yet. That's the cheapest moment: a design flaw found on paper costs an afternoon, and the same flaw found in production costs an incident.
 
-Phase 6's method still applies, as Adam Shostak's four questions:
+Core 08's method still applies, as Adam Shostak's four questions:
 
 1. **What are we working on?** A diagram, the assets, the actors.
 2. **What can go wrong?** Threats, found systematically, not by inspiration.
 3. **What are we going to do about it?** A decision for every threat, including "accept it".
-4. **Did we do a good job?** Checked against the running system, at the end (Step 14).
+4. **Did we do a good job?** Checked against the running system, at the end (lesson 14).
 
-Two things are new here. First, **the model is not a component you can trust to follow its code**: its output depends on everything in its context, including text an attacker wrote. Second, there's a list made for exactly this kind of system, the [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/) (2025 edition). Use it the way Phase 6 used STRIDE: as a checklist that stops you missing whole categories, not as a substitute for thinking.
+Two things are new here. First, **the model is not a component you can trust to follow its code**: its output depends on everything in its context, including text an attacker wrote. Second, there's a list made for exactly this kind of system, the [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/) (2025 edition). Use it the way Core 08 used STRIDE: as a checklist that stops you missing whole categories, not as a substitute for thinking.
 
 | ID | OWASP name | In one line |
 |---|---|---|
@@ -26,18 +26,18 @@ Two things are new here. First, **the model is not a component you can trust to 
 
 ## What we're building
 
-The assistant sits behind Switchyard's API, so every request already carries a verified identity and tenant (Phase 6). Steps 3 and 4 build the pieces in this diagram. The dashed lines are **trust boundaries**: places where data crosses from something less trusted to something more trusted, and must be checked.
+The assistant sits behind Switchyard's API, so every request already carries a verified identity and tenant ([Tenancy and abuse control](../../../shared-units/tenancy-and-abuse-control/README.md)). Lessons 03 and 04 build the pieces in this diagram. The dashed lines are **trust boundaries**: places where data crosses from something less trusted to something more trusted, and must be checked.
 
 ```mermaid
 flowchart LR
-  user[Tenant user] -->|JWT| api[Runway API]
+  user[Tenant user] -->|JWT| api[Switchyard API]
   api -->|user, tenant, question| agent[Agent loop<br/>Python]
-  agent -->|prompt| gw[Phase 8 gateway] --> model[Model server]
+  agent -->|prompt| gw[Inference gateway] --> model[Model server]
   model -.->|model output: untrusted| agent
   agent -->|search| rag[(Retrieval<br/>PostgreSQL + pgvector)]
   rag -.->|runbooks, job text: untrusted| agent
   agent -->|tool call + user's token| tools[Tool server<br/>Go]
-  tools --> jobs[Runway jobs API]
+  tools --> jobs[Switchyard jobs API]
   tools -.->|signed webhook| ext[Tenant's webhook URL]
   writers[Runbook authors,<br/>job submitters, workers] -.->|text| rag
 ```
@@ -67,24 +67,24 @@ The actors:
 | A compromised component | One service: the tool server, a worker, a dependency | To widen its access |
 | A malicious publisher | A model file, a library, a tool definition | To run code, or steer the agent, from inside |
 
-The third actor is the one this phase is really about. They never authenticate. They only need their text to be *read* by an agent that can act. In Switchyard, a job's description is written by whoever submitted it, and its failure message comes from the work it ran. If either can reach the agent, either can carry instructions.
+The third actor is the one this module is really about. They never authenticate. They only need their text to be *read* by an agent that can act. In Switchyard, a job's description is written by whoever submitted it, and its failure message comes from the work it ran. If either can reach the agent, either can carry instructions.
 
 ## What can go wrong
 
-Write the model into your lab as a file. Every later step attacks one or more of its rows by ID, and Step 14 checks them all on the running system.
+Write the model into your lab as a file. Every later step attacks one or more of its rows by ID, and lesson 14 checks them all on the running system.
 
 <!-- file: docs/security/ai-threat-model.md -->
 ~~~markdown
-# Runway operations assistant: threat model
+# Switchyard operations assistant: threat model
 
-Status: design, before building. Checked against the running system in Step 14.
+Status: design, before building. Checked against the running system in lesson 14.
 
 ## What we're building
 
-An agent behind Runway's API. It answers a tenant's questions from that
+An agent behind Switchyard's API. It answers a tenant's questions from that
 tenant's runbooks and job history (retrieval), and calls tools to retry or
 cancel a job, add a note, or send the tenant's webhook. The model runs on
-the Phase 8 server, behind the Phase 8 gateway.
+the model server and gateway from Serving and scaling models.
 
 Trust boundaries: the internet to the API; the API to the agent; the
 model's output back into the agent; retrieved text into the agent; the
@@ -105,10 +105,10 @@ decision depends on the model behaving.
 | A6 | Model output reaches a SQL query or a shell | Tampering | LLM05 | Structured output, validated; parameters, never string building | 8 |
 | A7 | Retrieval returns another tenant's runbooks or jobs | Information disclosure | LLM08 | Row-level security on the vector store, tested from the other side | 3, 9 |
 | A8 | The shared prompt cache reveals another tenant's prompt through timing | Information disclosure | LLM02 | No cache sharing across tenants | 9 |
-| A9 | Prompts, answers or retrieved text with personal data end up in logs | Information disclosure | LLM02 | Phase 6 redaction applied to the agent's telemetry | 9 |
+| A9 | Prompts, answers or retrieved text with personal data end up in logs | Information disclosure | LLM02 | Core 08's redaction applied to the agent's telemetry | 9 |
 | A10 | A credential placed in the prompt is revealed by asking for it | Information disclosure | LLM02, LLM07 | No credentials in any prompt; canary tokens to detect leaks | 10 |
 | A11 | Loops, huge outputs or padded context burn the budget | Denial of service | LLM10 | Per-tenant step, token and time budgets, enforced outside the model | 4, 11 |
-| A12 | A model file runs code when it's loaded | Elevation | LLM03 | Safe formats only; verify signatures before loading (Phase 8) | 12 |
+| A12 | A model file runs code when it's loaded | Elevation | LLM03 | Safe formats only; verify signatures before loading (Serving and scaling models) | 12 |
 | A13 | A tool's description tells the model to misuse other tools | Tampering | LLM03, LLM01 | Tool definitions are reviewed code, signed and pinned | 12 |
 | A14 | Poisoned documents make retrieval return wrong or harmful guidance | Tampering | LLM04, LLM09 | Provenance on documents; answers cite their sources | 3, 7 |
 | A15 | An action can't be traced to a user, a request and a reason | Repudiation | LLM06 | Every tool call audited with user, tenant, request and arguments | 4, 5 |
@@ -122,7 +122,7 @@ decision depends on the model behaving.
 
 ## Did we do a good job?
 
-Step 14 attacks every row on the running system and records the result.
+Lesson 14 attacks every row on the running system and records the result.
 ~~~
 
 Two rows deserve a closer look.
@@ -133,7 +133,7 @@ Two rows deserve a closer look.
 
 The **Step** column is a promise: each row will be attacked in that step, and it isn't mitigated until the attack fails and stays failing.
 
-**Your turn:** add at least two rows of your own before going on. Walk the diagram arrow by arrow and ask STRIDE's six questions of each one, as in Phase 6. One hint: what happens to a job the agent retries, if that job's description was the injection?
+**Your turn:** add at least two rows of your own before going on. Walk the diagram arrow by arrow and ask STRIDE's six questions of each one, as in Core 08. One hint: what happens to a job the agent retries, if that job's description was the injection?
 
 **Done when:** `docs/security/ai-threat-model.md` exists, every row has a mitigation and a step, and you can explain, without notes, why "the model's output is untrusted input" puts the mitigations where they are.
 

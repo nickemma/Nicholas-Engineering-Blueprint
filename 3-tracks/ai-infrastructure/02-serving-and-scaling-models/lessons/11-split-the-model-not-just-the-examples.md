@@ -1,5 +1,7 @@
 # 11 Split the model, not just the examples
 
+> **Optional.** The required path skips this lesson; the module's gate doesn't depend on it.
+
 When a replicated model does not fit, split its weights. For a two-layer MLP `relu(XA)B`, split A by columns and B by corresponding rows. Each rank produces part of the hidden dimension; summing their outputs reconstructs the layer. That sum becomes a collective in a distributed implementation. **Pipeline parallelism** instead puts the first layer on one stage and the second on another: forward activations and backward gradients cross the boundary.
 
 Start in one process so numerical mistakes cannot hide behind network code. This is a decomposition reference, not a claim of distributed tensor/pipeline training.
@@ -118,7 +120,7 @@ if __name__ == "__main__":
 
 <!-- run: cd serve && uv run python -m torch.distributed.run --standalone --nproc-per-node=2 -m serve.distributed_split -->
 
-The assertions compare each rank's weight gradients with the unsplit reference. This is real two-process communication with a sequential pipeline schedule; it does not claim overlap or speedup. Run the same program across the shaped link with step 10's launcher arguments to expose communication cost.
+The assertions compare each rank's weight gradients with the unsplit reference. This is real two-process communication with a sequential pipeline schedule; it does not claim overlap or speedup. Run the same program across the shaped link with lesson 10's launcher arguments to expose communication cost.
 
 Read [Megatron-LM's parallelism guide](https://github.com/NVIDIA/Megatron-LM/blob/main/docs/user-guide/parallelism-guide.md), then `megatron/core/tensor_parallel/layers.py` and `pipeline_parallel/schedules.py` at a recorded commit. Find the column/row parallel linear layers, their gradient collectives, and the schedule that alternates forward/backward work. Draw which tensors cross which boundary. With p stages and m microbatches, a simple fill/drain schedule has ideal bubble fraction (p−1)/(m+p−1), assuming equal stage times and ignoring communication; increasing m trades bubbles for scheduling/activation costs. A sequential two-process exercise proves transport, not overlap.
 

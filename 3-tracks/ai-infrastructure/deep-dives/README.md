@@ -13,3 +13,4 @@ Use these after [ML for infrastructure](../01-ml-for-infrastructure/README.md). 
 
 - [Build a Rust job-status service](rust-as-a-service.md). Use REST, gRPC and WebSockets over shared state, then verify a containerized deployment with PostgreSQL.
 
+For more questions and a place to record your evidence, use the [extended review](extended-review.md).

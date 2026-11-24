@@ -1,22 +1,22 @@
 # 04 Put an admission boundary on Switchyard
 
-A model server is an expensive dependency. Switchyard authenticates before allocating its capacity. Keep Phase 6's JWT issuer, audience, expiry and tenant checks; never trust an `X-Tenant` header. The serving boundary below accepts a verified identity callback so its logic can be tested without replaying the database and broker phases.
+A model server is an expensive dependency. Switchyard authenticates before allocating its capacity. Keep [Tenancy and abuse control](../../../shared-units/tenancy-and-abuse-control/README.md)'s JWT issuer, audience, expiry and tenant checks; never trust an `X-Tenant` header. The serving boundary below accepts a verified identity callback so its logic can be tested without replaying the database and broker modules.
 
-Create a separate lab module. When integrating, copy `internal/inference` into your existing `runway` module; keep its existing `go.mod`.
+Create a separate lab module. When integrating, copy `internal/inference` into your existing `switchyard` module; keep its existing `go.mod`.
 
 <!-- file: gateway/go.mod -->
 ~~~text
-module phase8gateway
+module inferencegateway
 
 go 1.26
 ~~~
 
-Reserve prompt tokens plus the maximum output, using the **same chat template and tokenizer** as generation. Counting words is not a token limit. A reservation survives cancellation and backend failure, which is conservative but stops a retry from evading the budget. This lab uses a per-process fixed-minute budget; a multi-replica deployment must use Phase 6's atomic Redis limiter, or explicitly partition budgets. A minute boundary allows a double burst. Production billing would reconcile actual usage in a durable ledger.
+Reserve prompt tokens plus the maximum output, using the **same chat template and tokenizer** as generation. Counting words is not a token limit. A reservation survives cancellation and backend failure, which is conservative but stops a retry from evading the budget. This lab uses a per-process fixed-minute budget; a multi-replica deployment must use Tenancy and abuse control's shared Redis bucket, or explicitly partition budgets. A minute boundary allows a double burst. Production billing would reconcile actual usage in a durable ledger.
 
 
 <!-- file: gateway/internal/inference/gateway.go -->
 ~~~go
-// Package inference implements bounded admission for an authenticated Runway route.
+// Package inference implements bounded admission for an authenticated Switchyard route.
 package inference
 
 import (
@@ -465,7 +465,7 @@ func TestSharedReservationAcrossGatewaysAndFailClosed(t *testing.T) {
 }
 ~~~
 
-The telemetry hooks below are inert until Step 5 configures them. The stream observer keeps transport first byte separate from first nonempty content, requires the terminal event for successful completion, bounds SSE line buffering and uses authoritative usage rather than counting text chunks. A tokenizer transport failure is a backend error, not an invalid prompt.
+The telemetry hooks below are inert until lesson 05 configures them. The stream observer keeps transport first byte separate from first nonempty content, requires the terminal event for successful completion, bounds SSE line buffering and uses authoritative usage rather than counting text chunks. A tokenizer transport failure is a backend error, not an invalid prompt.
 
 <!-- file: gateway/internal/inference/observe.go -->
 ~~~go
@@ -601,7 +601,7 @@ func TestContentTimingAndIncompleteStreams(t *testing.T) {
 
 <!-- run: cd gateway && gofmt -w internal && go vet ./... && go test -race -timeout=30s -count=1 ./... -->
 
-Mount the package on the Phase 6 API's mux where its verifier `v` and logger already exist. This integration fragment belongs in your existing startup function (it is not a second standalone program):
+Mount the package on the Switchyard API's mux, where Tenancy and abuse control's verifier `v` and the logger already exist. This integration fragment belongs in your existing startup function (it is not a second standalone program):
 
 ~~~go
 modelURL := "http://llm:8080"
@@ -613,15 +613,15 @@ mux.Handle("/v1/chat/completions", auth.Require(v, logger, g))
 mux.HandleFunc("/internal/inference/metrics", g.Metrics)
 ~~~
 
-Import `runway/internal/inference` and `runway/internal/auth`. Put metrics on the existing internal listener or protect them with the existing network policy. The model URL is operator configuration, never request data. TLS, JWT verification and tenant resolution stay in Switchyard. Confirm `/apply-template` and `/tokenize` against the pinned server before enabling the route; a changed template is a new deployment artifact. Backend context rejection is safe but does not prove your accounting is exact.
+Import `switchyard/internal/inference` and `switchyard/internal/auth`. Put metrics on the existing internal listener or protect them with the existing network policy. The model URL is operator configuration, never request data. TLS, JWT verification and tenant resolution stay in Switchyard. Confirm `/apply-template` and `/tokenize` against the pinned server before enabling the route; a changed template is a new deployment artifact. Backend context rejection is safe but does not prove your accounting is exact.
 
 ## Shared reservations in the existing Switchyard module
 
 The phase-6 request bucket charges one request at a time; calling it once does not reserve an arbitrary number of model tokens. Keep its atomic Redis approach, but use a weighted reservation that charges prompt plus maximum output in one operation. The server clock defines the minute, tenant keys are isolated, and Redis failure returns 503 rather than silently multiplying capacity through local fallback.
 
-These next two files are integration material. Copy them into `internal/inference` in your existing `runway` checkout, alongside the gateway package. The standalone `gateway` module deliberately has no Redis or JWT dependency. The live test reuses Phase 6's actual EdDSA JWT verifier and the real model server, not a replacement authentication scheme.
+These next two files are integration material. Copy them into `internal/inference` in your existing `switchyard` checkout, alongside the gateway package. The standalone `gateway` module deliberately has no Redis or JWT dependency. The live test reuses Tenancy and abuse control's actual EdDSA JWT verifier and the real model server, not a replacement authentication scheme.
 
-<!-- file: runway-integration/shared.go -->
+<!-- file: switchyard-integration/shared.go -->
 ~~~go
 package inference
 
@@ -647,7 +647,7 @@ redis.call('PEXPIRE', KEYS[1], 120000)
 return 1
 `)
 
-// SharedReservation belongs in the existing runway module, which already has
+// SharedReservation belongs in the existing switchyard module, which already has
 // the Redis driver. It is deliberately not part of the stdlib-only lab module.
 func SharedReservation(client redis.UniversalClient, prefix string, budget int) Reservation {
 	if budget < 1 {
@@ -663,7 +663,7 @@ func SharedReservation(client redis.UniversalClient, prefix string, budget int) 
 }
 ~~~
 
-<!-- file: runway-integration/live_test.go -->
+<!-- file: switchyard-integration/live_test.go -->
 ~~~go
 package inference_test
 
@@ -677,8 +677,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
-	"runway/internal/auth"
-	"runway/internal/inference"
+	"switchyard/internal/auth"
+	"switchyard/internal/inference"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -687,7 +687,7 @@ import (
 )
 
 func TestLiveRunwayJWTTokenizerAndSharedBudget(t *testing.T) {
-	upstream, addr := os.Getenv("PHASE8_MODEL_URL"), os.Getenv("PHASE8_REDIS_ADDR")
+	upstream, addr := os.Getenv("SERVE_MODEL_URL"), os.Getenv("SERVE_REDIS_ADDR")
 	if upstream == "" || addr == "" {
 		t.Skip("live model and Redis required")
 	}
@@ -710,15 +710,15 @@ func TestLiveRunwayJWTTokenizerAndSharedBudget(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	verifier := auth.Verifier{Issuer: "phase8-lab", Audience: "runway", Keys: auth.StaticKeys(auth.JWKS{Keys: []auth.JWK{key.Public()}})}
+	verifier := auth.Verifier{Issuer: "serving-lab", Audience: "switchyard", Keys: auth.StaticKeys(auth.JWKS{Keys: []auth.JWK{key.Public()}})}
 	issue := func(tenant string) string {
-		token, err := auth.Sign(auth.Claims{Issuer: "phase8-lab", Audience: auth.Audience{"runway"}, Expiry: time.Now().Add(time.Hour).Unix(), Tenant: tenant}, key)
+		token, err := auth.Sign(auth.Claims{Issuer: "serving-lab", Audience: auth.Audience{"switchyard"}, Expiry: time.Now().Add(time.Hour).Unix(), Tenant: tenant}, key)
 		if err != nil {
 			t.Fatal(err)
 		}
 		return token
 	}
-	prefix := fmt.Sprintf("phase8:test:%d", time.Now().UnixNano())
+	prefix := fmt.Sprintf("serve:test:%d", time.Now().UnixNano())
 	var servers []*httptest.Server
 	for range 2 {
 		g := inference.New(upstream, func(r *http.Request) (string, bool) { c, ok := auth.FromContext(r.Context()); return c.Tenant, ok }, tokenize, 1, 4, count+8)
@@ -803,19 +803,19 @@ func TestLiveRunwayJWTTokenizerAndSharedBudget(t *testing.T) {
 Mount the route as above, then configure it before serving:
 
 ~~~go
-g.UseReservation(inference.SharedReservation(redisClient, "runway:inference", 8192))
+g.UseReservation(inference.SharedReservation(redisClient, "switchyard:inference", 8192))
 ~~~
 
 Here `redisClient` is the existing Redis client from Switchyard's startup. All replicas must share its authoritative service and budget configuration. This is conservative fixed-minute accounting, not durable billing; a minute boundary permits a burst. Neither shared accounting nor a semaphore establishes tenant scheduling fairness.
 
 ~~~bash
-# In the existing Runway checkout, with a local model and Redis running:
-PHASE8_MODEL_URL=http://127.0.0.1:18080 PHASE8_REDIS_ADDR=127.0.0.1:16379 \
+# In the existing Switchyard checkout, with a local model and Redis running:
+SERVE_MODEL_URL=http://127.0.0.1:18080 SERVE_REDIS_ADDR=127.0.0.1:16379 \
   go test -race -timeout=60s -run TestLiveRunwayJWTTokenizerAndSharedBudget -v ./internal/inference
 ~~~
 
 The test checks that the real tokenizer/template reservation exactly matches backend prompt usage, completion, unauthenticated rejection, two gateways sharing one tenant budget, separate budgets for another tenant, and twenty concurrent weighted reservations. Ephemeral signing keys/tokens remain in test memory. It does not establish cluster deployment, GPU cancellation or complete API startup integration.
 
-**Run it:** export Phase 6's acme bearer token as `RUNWAY_TOKEN`, point the load client at Switchyard's local tunnel instead of the raw server, and stream a request, then remove the bearer token (401), exceed the reservation budget (429), exceed admission capacity (503 with Retry-After), and disconnect while generating. The upstream slot must return to idle, not merely the Go channel. The unit test proves HTTP cancellation propagation; the real server experiment proves whether the backend honours it. Keep that distinction in the report.
+**Run it:** export an acme bearer token from Tenancy and abuse control's issuer as `SWITCHYARD_TOKEN`, point the load client at Switchyard's local tunnel instead of the raw server, and stream a request, then remove the bearer token (401), exceed the reservation budget (429), exceed admission capacity (503 with Retry-After), and disconnect while generating. The upstream slot must return to idle, not merely the Go channel. The unit test proves HTTP cancellation propagation; the real server experiment proves whether the backend honours it. Keep that distinction in the report.
 
-**Break it:** replace the request context with `context.Background()`. The disconnect test must fail. Restore it. Predict what happens if a tenant opens all admitted requests: this semaphore is bounded but does not provide tenant fairness. Apply Phase 6's per-tenant admission limits before exposing it to mutually untrusted tenants.
+**Break it:** replace the request context with `context.Background()`. The disconnect test must fail. Restore it. Predict what happens if a tenant opens all admitted requests: this semaphore is bounded but does not provide tenant fairness. Apply Tenancy and abuse control's per-tenant limits before exposing it to mutually untrusted tenants.

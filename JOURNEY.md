@@ -30,9 +30,9 @@ It is **not** a technology checklist. Every tool appears because the system need
 
 | Who | Path | Weeks |
 |---|---|---|
-| Beginner, one track | Foundations + core + track | about 68–70 |
-| Experienced developer, one track | Test-out + core + track | about 60–62 |
-| Each extra track | Its own parts, plus any shared units not yet done | +13–19 |
+| Beginner, one track | Foundations + core + track | about 68–77 |
+| Experienced developer, one track | Test-out + core + track | about 60–69 |
+| Each extra track | Its own parts, plus any shared units not yet done | +13–26 |
 
 ---
 
@@ -176,7 +176,7 @@ Each module's lessons say exactly what to install, with a command to check it wo
      ┌──────────┼──────────────┐
      ▼          ▼              ▼
  AI INFRA    STORAGE       CLOUD & NETWORK
- (~27 wk)    (~26 wk)      (~25 wk)
+ (~34 wk)    (~26 wk)      (~25 wk)
      └──── each pulls the SHARED UNITS it needs ────┘
 ```
 
@@ -239,14 +239,14 @@ Written once, and pulled by the tracks that need them. If you take a second trac
 
 Pick one. Each lists the shared units it needs.
 
-**[AI infrastructure](3-tracks/ai-infrastructure/README.md)** (~27 weeks with units). Needs: Kubernetes and delivery; Tenancy and abuse control.
+**[AI infrastructure](3-tracks/ai-infrastructure/README.md)** (~34 weeks with units). Needs: Kubernetes and delivery; Tenancy and abuse control.
 
 | Module | You build | Gate | Weeks | Status |
 |---|---|---|---|---|
 | [01 ML for infrastructure](3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md) | A Parquet pipeline and CPU PyTorch job-duration model with a versioned registry | Beat the held-out baselines, refuse a weak release, detect a shifted input window, and restore the previous prediction over HTTP | 5 | Ready |
-| [02 Serving and scaling models](3-tracks/ai-infrastructure/02-serving-and-scaling-models/README.md) | A serving lab and a bounded inference gateway; batching, data and model parallelism, Ray, CUDA | Set at outline | 6 | Ready |
+| [02 Serving and scaling models](3-tracks/ai-infrastructure/02-serving-and-scaling-models/README.md) | A serving lab and a bounded inference gateway; batching, data and model parallelism, Ray, CUDA | Pass every test and two-process training parity; remove the causal mask, the truncation check, failures from the denominator and a slot release, and see each caught | 7 | Ready |
 | [03 A Rust inference gateway](3-tracks/ai-infrastructure/03-rust-inference-gateway/README.md) | A bounded Rust chat proxy with SSE framing and weighted tenant token buckets | Drop a client, observe the upstream body close, and verify the slot returns while the reservation stays charged | 3 | Ready |
-| [04 Securing the AI layer](3-tracks/ai-infrastructure/04-securing-the-ai-layer/README.md) | A tool-using agent, attacked with real prompt injection, then defended outside the model | Set at outline | 3 | Ready |
+| [04 Securing the AI layer](3-tracks/ai-infrastructure/04-securing-the-ai-layer/README.md) | A tool-using agent, attacked with real prompt injection, then defended outside the model | Pass the adversarial suite against a scripted model; remove each of six defences, from approval to the tool server's tenant check, and see each caught | 9 | Ready |
 | [05 Capstone: an inference gateway](3-tracks/ai-infrastructure/05-capstone-inference-gateway/README.md) | A packaged streaming chat gateway with a CPU model benchmark and before-and-after profiles | Match the stream contract in both decoder builds, exclude incomplete streams from goodput, and separate parser speed from client latency | 2 | Ready |
 
 **[Storage engines](3-tracks/storage-engines/README.md)** (~26 weeks with units). Needs: Kubernetes and delivery; Event streams; Caching; Tenancy and abuse control.

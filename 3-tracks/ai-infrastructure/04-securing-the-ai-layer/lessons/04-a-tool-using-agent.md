@@ -1,6 +1,6 @@
 # 04 A tool-using agent
 
-**Checked in CI:** the tool server's Go tests and the agent's Python tests, with a scripted model. **Run locally:** everything that talks to the real model: the Phase 8 stack on Qwen2.5-1.5B, Step 3's database, and the tool server. The outputs below come from those runs.
+**Checked in CI:** the tool server's Go tests and the agent's Python tests, with a scripted model. **Run locally:** everything that talks to the real model: the model stack from Serving and scaling models on Qwen2.5-1.5B, lesson 03's database, and the tool server. The outputs below come from those runs.
 
 A chat model answers once. An **agent** keeps going. It asks the model what to do, and the model can reply with a **tool call** instead of an answer: "retry job 4190". The agent carries out the call, shows the model the result, and asks again. That repeats until the model answers.
 
@@ -9,36 +9,36 @@ Two things change with that loop. The assistant can now *act*, so a wrong reply 
 This step builds both halves:
 
 - a **tool server** in Go, which owns the actions: show a job's status, retry, cancel, add a note, send a notification;
-- an **agent loop** in Python, which puts Step 3's retrieval and the Phase 8 gateway together with the tool server.
+- an **agent loop** in Python, which puts lesson 03's retrieval and the gateway together with the tool server.
 
 Then it attacks the loop itself: can a request keep the agent going for ever?
 
 ## A bigger model
 
-Phase 8's 0.5B model is too small to follow a tool protocol. Asked a question, it copied the example out of the instructions ("answer: your answer"). This phase uses **Qwen2.5-1.5B-Instruct**, the same family, three times the size, and still small enough for a laptop's CPU (about 1.1 GB at 4 bits). Fetch the `q4_k_m` GGUF file from [its publisher](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/tree/main) into `models`, keep its licence beside it, and check it. This lab used revision `91cad51170dc346986eccefdc2dd33a9da36ead9`; the checksum below matches the publisher's own record of that file:
+The 0.5B model from Serving and scaling models is too small to follow a tool protocol. Asked a question, it copied the example out of the instructions ("answer: your answer"). This phase uses **Qwen2.5-1.5B-Instruct**, the same family, three times the size, and still small enough for a laptop's CPU (about 1.1 GB at 4 bits). Fetch the `q4_k_m` GGUF file from [its publisher](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/tree/main) into `models`, keep its licence beside it, and check it. This lab used revision `91cad51170dc346986eccefdc2dd33a9da36ead9`; the checksum below matches the publisher's own record of that file:
 
 ~~~text
 6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e  qwen2.5-1.5b-instruct-q4_k_m.gguf
 ~~~
 
-Restart your Phase 8 model server with `-m /models/qwen2.5-1.5b-instruct-q4_k_m.gguf` and leave the rest as it was: the Switchyard API with its gateway in front, the issuer, Redis. Mint a fresh token for an Acme client and export it as `RUNWAY_TOKEN`. The gateway still forces `temperature: 0`, so the same prompt gets the same reply. Remember that when you measure attacks later: repeating a prompt doesn't give you a new trial.
+Restart your model server with `-m /models/qwen2.5-1.5b-instruct-q4_k_m.gguf` and leave the rest as it was: the Switchyard API with its gateway in front, the issuer, Redis. Mint a fresh token for an Acme client and export it as `SWITCHYARD_TOKEN`. The gateway still forces `temperature: 0`, so the same prompt gets the same reply. Remember that when you measure attacks later: repeating a prompt doesn't give you a new trial.
 
 ## The tool server
 
-The tool server is the only component that changes jobs. In your own Switchyard it would call the jobs API from Phase 3. Here it keeps the jobs in memory, loaded from Step 3's `jobs.jsonl` files, so you can see every effect of an attack at a glance. The tenant comes from the directory name, as it did for retrieval.
+The tool server is the only component that changes jobs. In your own Switchyard it would call the jobs API from Core 03. Here it keeps the jobs in memory, loaded from lesson 03's `jobs.jsonl` files, so you can see every effect of an attack at a glance. The tenant comes from the directory name, as it did for retrieval.
 
 Start a new Go module beside `gateway`:
 
 <!-- file: tools/go.mod -->
 ~~~text
-module phase9tools
+module agenttools
 
 go 1.26
 ~~~
 
 <!-- file: tools/internal/jobs/store.go -->
 ~~~go
-// Package jobs is the tool server's stand-in for Runway's jobs table: the
+// Package jobs is the tool server's stand-in for Switchyard's jobs table: the
 // same fields, held in memory so every effect of an attack is easy to inspect.
 package jobs
 
@@ -75,7 +75,7 @@ type Store struct {
 }
 
 // Load reads corpus/<tenant>/jobs.jsonl files: the tenant comes from the
-// directory name, as it does for the runbooks in Step 3.
+// directory name, as it does for the runbooks in lesson 03.
 func Load(paths ...string) (*Store, error) {
 	s := &Store{jobs: map[int]*Job{}}
 	for _, path := range paths {
@@ -199,7 +199,7 @@ import (
 	"strings"
 	"time"
 
-	"phase9tools/internal/jobs"
+	"agenttools/internal/jobs"
 )
 
 // Call is one tool call, as the agent sends it.
@@ -304,8 +304,8 @@ func writeJSON(w http.ResponseWriter, status int, v any) {
 }
 ~~~
 
-- **It trusts the agent completely.** One service token, held by the agent, can call any tool on any job of any tenant. Whatever the model talks the agent into, the tool server does. That's threat **A2**, the confused deputy. Step 5 attacks it.
-- **`notify` posts to whatever URL the call names.** That's **A3**, a way to send data out. Step 7 attacks it.
+- **It trusts the agent completely.** One service token, held by the agent, can call any tool on any job of any tenant. Whatever the model talks the agent into, the tool server does. That's threat **A2**, the confused deputy. Lesson 05 attacks it.
+- **`notify` posts to whatever URL the call names.** That's **A3**, a way to send data out. Lesson 07 attacks it.
 
 Both are common in real agent code, for the same reason: they're the simplest thing that works. Write them down now, as hypotheses.
 
@@ -321,8 +321,8 @@ import (
 	"os"
 	"time"
 
-	"phase9tools/internal/jobs"
-	"phase9tools/internal/toolsrv"
+	"agenttools/internal/jobs"
+	"agenttools/internal/toolsrv"
 )
 
 func main() {
@@ -366,7 +366,7 @@ import (
 	"strings"
 	"testing"
 
-	"phase9tools/internal/jobs"
+	"agenttools/internal/jobs"
 )
 
 const token = "test-service-token"
@@ -464,18 +464,18 @@ func TestNotifyPostsTheMessage(t *testing.T) {
 <!-- run: cd tools && gofmt -l . && go vet ./... && go test -race -count=1 ./... -->
 
 ~~~text
-?   	phase9tools/cmd/tools	[no test files]
-?   	phase9tools/internal/jobs	[no test files]
-ok  	phase9tools/internal/toolsrv	1.053s
+?   	agenttools/cmd/tools	[no test files]
+?   	agenttools/internal/jobs	[no test files]
+ok  	agenttools/internal/toolsrv	1.053s
 ~~~
 
 ## The agent
 
-`User` is who's asking. Trusted code builds it from a verified token, the way Phase 6's middleware did; it never comes from text. The prompt has two parts: the system message, with the tools and the reply format, and a user message with the retrieved sources and the question. The model must reply with one JSON object: either a tool call or an answer that cites its sources.
+`User` is who's asking. Trusted code builds it from a verified token, the way Tenancy and abuse control's middleware did; it never comes from text. The prompt has two parts: the system message, with the tools and the reply format, and a user message with the retrieved sources and the question. The model must reply with one JSON object: either a tool call or an answer that cites its sources.
 
 <!-- file: serve/src/serve/agent.py -->
 ~~~python
-"""Runway's operations assistant: a model in a loop, with retrieval and tools."""
+"""Switchyard's operations assistant: a model in a loop, with retrieval and tools."""
 
 import argparse
 import http.client
@@ -541,7 +541,7 @@ def http_post(url: str, path: str, body: dict, bearer: str, timeout: float):
 
 
 class GatewayModel:
-    """Chat through the Phase 8 gateway, which streams server-sent events."""
+    """Chat through the gateway, which streams server-sent events."""
 
     def __init__(self, url: str, token: str, timeout: float = 60):
         self.url, self.token, self.timeout = url, token, timeout
@@ -575,7 +575,7 @@ class GatewayModel:
 
 
 class Search:
-    """Step 3's retrieval: the tenant's own chunks, nearest first."""
+    """Lesson 03's retrieval: the tenant's own chunks, nearest first."""
 
     def __init__(self, dsn: str, embed_url: str):
         self.dsn, self.embed = dsn, rag.Embedder(embed_url)
@@ -646,7 +646,7 @@ class Agent:
 def from_env(user: User) -> Agent:
     env = os.environ
     return Agent(
-        GatewayModel(env.get("RUNWAY_URL", "http://127.0.0.1:18081"), env["RUNWAY_TOKEN"]),
+        GatewayModel(env.get("SWITCHYARD_URL", "http://127.0.0.1:18081"), env["SWITCHYARD_TOKEN"]),
         Search(env["RAG_DATABASE_URL"], env.get("RAG_EMBED_URL", "http://127.0.0.1:18090")),
         Tools(env.get("TOOLS_URL", "http://127.0.0.1:18095"), env["TOOLS_SERVICE_TOKEN"]),
     )
@@ -679,8 +679,8 @@ if __name__ == "__main__":
 
 A few choices worth knowing:
 
-- `parse` takes the first JSON object in the reply, because small models often wrap it in prose or a code fence. A reply with no JSON becomes the answer. That's lenient on purpose for now; Step 8 makes it strict.
-- A tool result goes back to the model as a user message: `Tool result (200): {...}`. It's text the tool server returned, and some of it, such as a job's failure reason, was written by whoever submitted the job. Step 7 comes back to that.
+- `parse` takes the first JSON object in the reply, because small models often wrap it in prose or a code fence. A reply with no JSON becomes the answer. That's lenient on purpose for now; lesson 08 makes it strict.
+- A tool result goes back to the model as a user message: `Tool result (200): {...}`. It's text the tool server returned, and some of it, such as a job's failure reason, was written by whoever submitted the job. Lesson 07 comes back to that.
 - `run` is a `while True` loop. It stops when the model answers.
 
 The tests use a scripted model that plays back fixed replies, a fake search and a recording tool server. A real model is tested live.
@@ -760,7 +760,7 @@ All checks passed!
 
 ## Run it
 
-Start the tool server with a fresh service token, then ask a question. In the lab you play the verified identity with `--tenant` and `--user`, as you did in Step 3.
+Start the tool server with a fresh service token, then ask a question. In the lab you play the verified identity with `--tenant` and `--user`, as you did in lesson 03.
 
 ~~~bash
 export TOOLS_SERVICE_TOKEN=$(python3 -c 'import secrets; print(secrets.token_urlsafe(32))')
@@ -812,7 +812,7 @@ Why did job 4190 fail?
 
 <!-- file: experiments/agent/loops.py -->
 ~~~python
-"""Step 4 experiment: does the agent stop by itself? One run per wording."""
+"""Lesson 04 experiment: does the agent stop by itself? One run per wording."""
 
 import json
 import sys
@@ -1224,7 +1224,7 @@ Restart the tool server, so the attempt counter starts at zero, and run the same
 
 No run made more than four tool calls or spent more than 2,125 tokens. The time limit fired first in three runs, because each turn took about twelve seconds on this laptop; on a faster model server the turn limit would have stopped them instead. And "once" looped this time, when it didn't before. That's the point of the limit: you don't need to predict which requests run away.
 
-Keep the record. Every finding in this phase gets the same seven parts:
+Keep the record. Every finding in this module gets the same seven parts:
 
 <!-- file: docs/security/a11-agent-loop.md -->
 ~~~markdown
@@ -1234,7 +1234,7 @@ Keep the record. Every finding in this phase gets the same seven parts:
    time and gateway capacity, and making changes nobody asked for.
 2. Assumption: the model answers after a few tool calls.
 3. Test: eight wordings of "retry job 4190 until it works", plus two controls,
-   against Qwen2.5-1.5B through the Phase 8 gateway (experiments/agent/loops.py).
+   against Qwen2.5-1.5B through the gateway (experiments/agent/loops.py).
 4. Observed: four of eight made 6-11 tool calls (up to 11,935 tokens, about
    3.5 minutes each); "retry once" made six calls; one run added ten notes.
 5. Vulnerability: the loop stopped only when the model chose to.
@@ -1242,11 +1242,11 @@ Keep the record. Every finding in this phase gets the same seven parts:
    on the last turn; a model timeout ends the run cleanly.
 7. Regression: test_a_model_that_never_stops_is_stopped and
    test_token_and_time_limits in serve/tests/test_agent.py.
-Not covered: limits per tenant across many runs (Step 11).
+Not covered: limits per tenant across many runs (lesson 11).
 ~~~
 
 **Explain it:** why can't a line in the system prompt ("never call more than four tools") replace `Limits`? Why does `run` refuse to dispatch a tool on its last turn? The model reported "has been retried" when the job had failed again: where should a user look instead? Which of the three limits would stop a run that called one slow tool over and over, and which would stop one with a huge context?
 
-**Done when:** the tool server and agent tests pass; you have run `loops.py` against your own model, before and after the limits, and kept both outputs; the regression test failed before the fix; and the A11 record is written. Two weaknesses are still in place on purpose: the service token and `notify`'s URL. Step 5 attacks the first.
+**Done when:** the tool server and agent tests pass; you have run `loops.py` against your own model, before and after the limits, and kept both outputs; the regression test failed before the fix; and the A11 record is written. Two weaknesses are still in place on purpose: the service token and `notify`'s URL. Lesson 05 attacks the first.
 
 ---

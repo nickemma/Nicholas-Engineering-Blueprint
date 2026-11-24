@@ -15,7 +15,7 @@ That loop is what you're serving, so build it small enough to read. This model i
 [project]
 name = "serve"
 version = "0.1.0"
-description = "Serve a language model on Runway"
+description = "Serve a language model on Switchyard"
 requires-python = ">=3.12"
 dependencies = [
     "numpy>=2",

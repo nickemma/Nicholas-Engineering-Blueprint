@@ -1,11 +1,11 @@
 # 03 Retrieval over the tenant's runbooks and jobs
 
-**Checked in CI:** Python formatting, lint and offline tests. **Run locally:** Docker, the CPU embedding model, database attacks, retrieval evaluation and query plans. Historical outputs below come from the saved Step 3 lab captures; [the evidence report](../evidence/retrieval/report.md) distinguishes these from the new replay and live checks.
+**Checked in CI:** Python formatting, lint and offline tests. **Run locally:** Docker, the CPU embedding model, database attacks, retrieval evaluation and query plans. Historical outputs below come from the saved lesson 03 lab captures; [the evidence report](../evidence/retrieval/report.md) distinguishes these from the new replay and live checks.
 
 
 The assistant answers from a tenant's own runbooks and job history. It can't read them all for every question: a small model's context holds a few pages at most. So it **retrieves**: it finds the handful of passages most likely to help, and puts only those in the prompt. That's retrieval-augmented generation (RAG), and this step builds the retrieval half.
 
-Retrieval is where tenant data first meets the model, which puts two rows of the threat model in play straight away: **A7** (retrieval returns another tenant's data) and **A14** (poisoned documents steer the answer). This step attacks A7. Step 7 comes back to A14.
+Retrieval is where tenant data first meets the model, which puts two rows of the threat model in play straight away: **A7** (retrieval returns another tenant's data) and **A14** (poisoned documents steer the answer). This step attacks A7. Lesson 07 comes back to A14.
 
 ## Embeddings, briefly
 
@@ -13,7 +13,7 @@ An **embedding model** turns a piece of text into a vector: a list of numbers, h
 
 Closeness is measured as **cosine distance**: 0 when two vectors point the same way, 1 for orthogonal vectors, and 2 for opposite vectors. Geometry alone does not establish whether two passages are relevant. To retrieve, you embed the question, then return the stored chunks with the smallest distance to it. That's nearest-neighbour search, and pgvector adds it to PostgreSQL: a `vector` column type and a `<=>` operator for cosine distance.
 
-The model is [bge-small-en-v1.5](https://huggingface.co/BAAI/bge-small-en-v1.5) (MIT licence): a small model that runs on a laptop CPU. It uses the same pinned llama.cpp server image as Phase 8, but the embedding weights are a new dependency to verify. Fetch the GGUF file from [ggml-org](https://huggingface.co/ggml-org/bge-small-en-v1.5-Q8_0-GGUF/tree/main) into your `models` directory. Keep its publisher, repository revision and licence beside it, and run `sha256sum models/bge-small-en-v1.5-q8_0.gguf`. The retained lab asset has this checksum:
+The model is [bge-small-en-v1.5](https://huggingface.co/BAAI/bge-small-en-v1.5) (MIT licence): a small model that runs on a laptop CPU. It uses the same pinned llama.cpp server image as Serving and scaling models, but the embedding weights are a new dependency to verify. Fetch the GGUF file from [ggml-org](https://huggingface.co/ggml-org/bge-small-en-v1.5-Q8_0-GGUF/tree/main) into your `models` directory. Keep its publisher, repository revision and licence beside it, and run `sha256sum models/bge-small-en-v1.5-q8_0.gguf`. The retained lab asset has this checksum:
 
 ~~~text
 f046db1dc724cf4f6f0a0c5917e922823b73eb1d27b8f9a9c2797f7866974804  bge-small-en-v1.5-q8_0.gguf
@@ -21,12 +21,12 @@ f046db1dc724cf4f6f0a0c5917e922823b73eb1d27b8f9a9c2797f7866974804  bge-small-en-v
 
 ## Start the database and the embedding model
 
-Phase 3's PostgreSQL image doesn't include pgvector, so this lab runs the pgvector project's image: the same PostgreSQL 17, with the extension built in. Both images are pinned by digest.
+Core 03's PostgreSQL image doesn't include pgvector, so this lab runs the pgvector project's image: the same PostgreSQL 17, with the extension built in. Both images are pinned by digest.
 
 <!-- file: experiments/rag/compose.yaml -->
 ~~~yaml
-# Retrieval lab (Phase 9, step 3): PostgreSQL with pgvector, and an
-# embedding model on the same pinned llama.cpp server as Phase 8.
+# Retrieval lab (lesson 03): PostgreSQL with pgvector, and an
+# embedding model on the same pinned llama.cpp server as Serving and scaling models.
 #   export MODELS="$PWD/models"
 #   docker compose -f experiments/rag/compose.yaml up -d --wait
 # Lab-only passwords: never reuse them, and never publish these ports
@@ -72,7 +72,7 @@ docker compose -f experiments/rag/compose.yaml up -d --wait
 
 ## The table
 
-One row per **chunk**: a passage small enough to put in a prompt, with its embedding. Two columns matter for security later. `source` says where the text came from, so an answer can cite it (A14). `author` records who wrote it: a runbook comes from the tenant's admins, but a job's description comes from whoever submitted the job, and Step 7 will show why that difference matters.
+One row per **chunk**: a passage small enough to put in a prompt, with its embedding. Two columns matter for security later. `source` says where the text came from, so an answer can cite it (A14). `author` records who wrote it: a runbook comes from the tenant's admins, but a job's description comes from whoever submitted the job, and lesson 07 will show why that difference matters.
 
 <!-- file: experiments/rag/schema.sql -->
 ~~~sql
@@ -505,7 +505,7 @@ if __name__ == "__main__":
     sys.exit(main())
 ~~~
 
-Two details. Vectors travel to PostgreSQL as a parameter in pgvector's text form, never pasted into the SQL: a vector is data like any other. And the CLI's `--tenant` flag stands in for the verified identity, which Step 4 wires to the token. In this module the tenant is always an argument chosen by the caller, never something found in a question or a document.
+Two details. Vectors travel to PostgreSQL as a parameter in pgvector's text form, never pasted into the SQL: a vector is data like any other. And the CLI's `--tenant` flag stands in for the verified identity, which lesson 04 wires to the token. In this module the tenant is always an argument chosen by the caller, never something found in a question or a document.
 
 <!-- file: serve/tests/test_rag.py -->
 ~~~python
@@ -680,24 +680,24 @@ rag --tenant acme similar "runbooks/stuck-jobs.md#escalate" -k 100 | grep -i -e 
 
 Rank 27 is the chunk with Hooli's bridge code, `HOOLI-BRIDGE-4471`, readable by any Acme user. Save the output as evidence.
 
-Notice what the bug *wasn't*. Nobody bypassed authentication or crafted an injection: the attacker used a feature as designed. And notice why it was there to be found: every query had to remember the tenant, so the system was exactly as safe as its most forgetful query. Step 4 will put a model in charge of *choosing* queries.
+Notice what the bug *wasn't*. Nobody bypassed authentication or crafted an injection: the attacker used a feature as designed. And notice why it was there to be found: every query had to remember the tenant, so the system was exactly as safe as its most forgetful query. Lesson 04 will put a model in charge of *choosing* queries.
 
 ## Fix it: let PostgreSQL keep tenants apart
 
-Phase 6 solved this for jobs (migration 0007): **row-level security** (RLS). The [PostgreSQL row-security documentation](https://www.postgresql.org/docs/17/ddl-rowsecurity.html) explains how policies constrain visible rows. The serving role must neither own the table nor have superuser or BYPASSRLS privileges; those roles bypass ordinary RLS. This lab keeps schema administration separate. Apply the same design here:
+[Tenancy and abuse control](../../../shared-units/tenancy-and-abuse-control/README.md) solved this for jobs ([lesson 04](../../../shared-units/tenancy-and-abuse-control/lessons/04-scope-postgresql-to-the-tenant.md)): **row-level security** (RLS). The [PostgreSQL row-security documentation](https://www.postgresql.org/docs/17/ddl-rowsecurity.html) explains how policies constrain visible rows. The serving role must neither own the table nor have superuser or BYPASSRLS privileges; those roles bypass ordinary RLS. This lab keeps schema administration separate. Apply the same design here:
 
 <!-- file: experiments/rag/rls.sql -->
 ~~~sql
 -- The fix for finding R1: PostgreSQL keeps tenants apart, so a query that
 -- forgets its tenant filter returns nothing it shouldn't. The same design
--- as Runway's migration 0007 (Phase 6, step 4). Run as the superuser:
+-- as Switchyard's tenant migration (Tenancy and abuse control, lesson 04). Run as the superuser:
 --   docker compose -f experiments/rag/compose.yaml exec -T db \
 --     psql -U postgres -d rag -v ON_ERROR_STOP=1 < experiments/rag/rls.sql
 BEGIN;
 
 -- The role every request switches to. It can't log in, owns nothing, and
 -- row-level security applies to it.
-CREATE ROLE runway_tenant NOLOGIN NOSUPERUSER NOBYPASSRLS;
+CREATE ROLE switchyard_tenant NOLOGIN NOSUPERUSER NOBYPASSRLS;
 
 -- The tenant this transaction acts for, or an error: a forgotten tenant
 -- must fail loudly, not quietly match nothing.
@@ -714,17 +714,17 @@ END
 $$;
 
 ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
-CREATE POLICY tenant_isolation ON documents TO runway_tenant
+CREATE POLICY tenant_isolation ON documents TO switchyard_tenant
     USING (tenant = current_tenant())
     WITH CHECK (tenant = current_tenant());
 
 -- Only the tenant role may touch the table. The application's own login
 -- holds no rights on it at all, so a query run outside a tenant fails.
-GRANT SELECT, INSERT, UPDATE, DELETE ON documents TO runway_tenant;
+GRANT SELECT, INSERT, UPDATE, DELETE ON documents TO switchyard_tenant;
 REVOKE ALL ON documents FROM rag_app;
--- INHERIT FALSE: rag_app may become runway_tenant, but doesn't hold its
+-- INHERIT FALSE: rag_app may become switchyard_tenant, but doesn't hold its
 -- rights while it is itself (PostgreSQL 16 and later).
-GRANT runway_tenant TO rag_app WITH INHERIT FALSE;
+GRANT switchyard_tenant TO rag_app WITH INHERIT FALSE;
 
 COMMIT;
 ~~~
@@ -755,7 +755,7 @@ psycopg.errors.InsufficientPrivilege: permission denied for table documents
 (exit 1)
 ~~~
 
-Refusing everything is the right failure. Now change the code so that every query runs inside one tenant: a transaction that switches to `runway_tenant` and sets `app.tenant`. `SET LOCAL` and `set_config(..., true)` last until the transaction ends, so the state is reset at the end of the outer transaction. A later check explicitly refuses nested transactions and tests reuse after both commit and rollback.
+Refusing everything is the right failure. Now change the code so that every query runs inside one tenant: a transaction that switches to `switchyard_tenant` and sets `app.tenant`. `SET LOCAL` and `set_config(..., true)` last until the transaction ends, so the state is reset at the end of the outer transaction. A later check explicitly refuses nested transactions and tests reuse after both commit and rollback.
 
 <!-- edit: serve/src/serve/rag.py -->
 ~~~python
@@ -783,7 +783,7 @@ def as_tenant(conn, tenant: str):
     if not tenant:
         raise ValueError("no tenant: refusing to query")
     with conn.transaction():
-        conn.execute("SET LOCAL ROLE runway_tenant")
+        conn.execute("SET LOCAL ROLE switchyard_tenant")
         conn.execute("SELECT set_config('app.tenant', %s, true)", (tenant,))
         yield conn
 
@@ -911,7 +911,7 @@ def test_the_tenant_role_without_a_tenant_fails_loudly(two_tenants):
     conn, _, _ = two_tenants
     with pytest.raises(psycopg.errors.RaiseException, match="app.tenant is not set"):
         with conn.transaction():
-            conn.execute("SET LOCAL ROLE runway_tenant")
+            conn.execute("SET LOCAL ROLE switchyard_tenant")
             conn.execute("SELECT count(*) FROM documents")
 
 
@@ -942,7 +942,7 @@ The first time this check ran, only two failed. The cross-tenant test passed wit
 
 ## Write the finding
 
-Use Step 2's seven-part record:
+Use lesson 02's seven-part record:
 
 <!-- file: docs/security/r1-retrieval-cross-tenant.md -->
 ~~~markdown
@@ -965,7 +965,7 @@ an authenticated user of any tenant.
    `similar()` filtered the row it started from and forgot the outer query,
    and the application's login could read every row. One forgotten filter
    exposed every tenant.
-6. Mitigation: row-level security on `documents` for a `runway_tenant` role;
+6. Mitigation: row-level security on `documents` for a `switchyard_tenant` role;
    every query runs in a transaction that switches to it and sets
    `app.tenant` from the verified identity; the application's login has no
    rights on the table itself. The buggy query was deliberately left
@@ -1171,7 +1171,7 @@ Ask PostgreSQL how it runs the search:
 <!-- file: experiments/rag/explain.sql -->
 ~~~sql
 BEGIN;
-SET LOCAL ROLE runway_tenant;
+SET LOCAL ROLE switchyard_tenant;
 SELECT set_config('app.tenant', 'acme', true);
 EXPLAIN (COSTS OFF) SELECT source FROM documents WHERE tenant = 'acme'
 ORDER BY embedding <=> (SELECT embedding FROM documents WHERE source = 'job/4190') LIMIT 5;
@@ -1216,7 +1216,7 @@ to:
 | A16 | Another tenant's data makes a tenant's search come back short or empty | Denial of service | LLM08, LLM09 | No approximate index shared between tenants; exact search per tenant | 3 |
 ~~~
 
-Threat models change when you learn something. This row wasn't in Step 1 because nobody had measured it yet.
+Threat models change when you learn something. This row wasn't in lesson 01 because nobody had measured it yet.
 
 ## Fix it: search one tenant exactly
 
@@ -1540,7 +1540,7 @@ def as_tenant(conn, tenant: str):
     if not tenant:
         raise ValueError("no tenant: refusing to query")
     with conn.transaction():
-        conn.execute("SET LOCAL ROLE runway_tenant")
+        conn.execute("SET LOCAL ROLE switchyard_tenant")
         conn.execute("SELECT set_config('app.tenant', %s, true)", (tenant,))
         yield conn
 ~~~
@@ -1557,7 +1557,7 @@ def as_tenant(conn, tenant: str):
         raise ValueError("tenant scope needs an idle autocommit connection")
     with conn.transaction():
         conn.execute("SET LOCAL statement_timeout = '2s'")
-        conn.execute("SET LOCAL ROLE runway_tenant")
+        conn.execute("SET LOCAL ROLE switchyard_tenant")
         conn.execute("SELECT set_config('app.tenant', %s, true)", (tenant,))
         yield conn
 ~~~
@@ -1857,7 +1857,7 @@ def test_rls_even_when_the_query_has_no_filter(two_tenants):
     conn, a, b = two_tenants
     with as_tenant(conn, a):
         assert {r[0] for r in conn.execute("SELECT tenant FROM documents")} == {a}
-        assert conn.execute("SELECT current_user").fetchone() == ("runway_tenant",)
+        assert conn.execute("SELECT current_user").fetchone() == ("switchyard_tenant",)
         assert conn.execute(
             "SELECT rolsuper, rolbypassrls FROM pg_roles WHERE rolname = current_user"
         ).fetchone() == (False, False)
@@ -1907,12 +1907,12 @@ def test_missing_foreign_and_injection_shaped_sources(two_tenants):
 
 Run the live file again with `RAG_DATABASE_URL` set. Confirm that the login and tenant role are non-superusers, the tenant role owns no table, a missing or foreign source returns no rows, SQL-shaped source and tenant strings remain data, and commit and rollback clear the tenant on the same connection. The CLI's tenant flag is a lab impersonation mechanism, not authentication. Any code with this database credential can select a tenant; RLS protects against missing filters, not a compromised application or arbitrary SQL execution.
 
-The [retrieval evidence report](../evidence/retrieval/report.md) retains the new checks and the historical quality measurements. No generated answers, live JWT integration, calibrated no-answer threshold, or production ingestion are claimed here. Step 4 supplies the authenticated agent boundary.
+The [retrieval evidence report](../evidence/retrieval/report.md) retains the new checks and the historical quality measurements. No generated answers, live JWT integration, calibrated no-answer threshold, or production ingestion are claimed here. Lesson 04 supplies the authenticated agent boundary.
 
 **Break it:** recreate the index (`CREATE INDEX documents_embedding ON documents USING hnsw (embedding vector_cosine_ops);` as the superuser, then `ANALYZE documents`), score Acme, and watch hit@1 fall again and the live test fail. Then try the attack from the other side: as Hooli, ask `similar` for a source that exists only in Acme's runbooks. What comes back, and why?
 
 **Explain it:** why did fixing `similar()`'s query matter less than enabling row-level security? Why does `as_tenant` use `SET LOCAL` instead of `SET`? Why is `INHERIT FALSE` on the grant to `rag_app`? Why did the R2 failure depend on table statistics, and what does that mean for testing it? When would you put an approximate index back, and on what?
 
-**Done when:** both tenants are indexed; you have the evaluation baseline; you have reproduced R1 and R2, with saved evidence; `rls.sql` and `exact.sql` are applied; the unit tests pass and the live tests pass against your lab database; you have watched each regression test fail without its fix; and the missing-source and transaction-reuse checks pass; and both findings are written up. Step 4 puts an agent in front of this retrieval.
+**Done when:** both tenants are indexed; you have the evaluation baseline; you have reproduced R1 and R2, with saved evidence; `rls.sql` and `exact.sql` are applied; the unit tests pass and the live tests pass against your lab database; you have watched each regression test fail without its fix; and the missing-source and transaction-reuse checks pass; and both findings are written up. Lesson 04 puts an agent in front of this retrieval.
 
 ---

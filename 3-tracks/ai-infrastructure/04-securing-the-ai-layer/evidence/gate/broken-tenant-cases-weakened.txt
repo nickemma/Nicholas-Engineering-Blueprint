@@ -1,0 +1,20 @@
+$ bash gate/run.sh .
+== serve: format, lint, every test (the adversarial suite runs against the scripted model)
+42 files already formatted
+All checks passed!
+.............ssss......................sssssssss........................ [ 61%]
+...........................................s..                           [100%]
+104 passed, 14 skipped in 2.93s
+== tools: format, vet, race tests
+?   	agenttools/cmd/tools	[no test files]
+?   	agenttools/internal/identity	[no test files]
+?   	agenttools/internal/jobs	[no test files]
+ok  	agenttools/internal/toolsrv	1.114s
+negative control: without approval before a change -> caught by test_changes_wait_for_approval
+negative control: without escaping the model's answer -> caught by test_answer_is_shown_as_text
+negative control: without the tenant in the cache key -> caught by test_cache_keys_belong_to_one_tenant
+negative control: without the canary check -> caught by test_canary_in_a_reply_stops_it
+negative control: without the release signature check -> caught by test_another_key_or_an_unapproved_release_is_refused
+ok  	agenttools/internal/toolsrv	0.019s
+removing 'the tenant check on every tool call' was not caught by TestNoConfusedDeputy
+[exit 1]

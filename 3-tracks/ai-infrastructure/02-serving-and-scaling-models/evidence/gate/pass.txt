@@ -1,0 +1,16 @@
+$ bash gate/run.sh .
+== serve: format, lint, tests
+26 files already formatted
+All checks passed!
+..............                                                           [100%]
+14 passed in 2.18s
+== gateway: format, vet, race tests
+ok  	inferencegateway/internal/inference	1.199s
+== data parallelism: two processes match the serial reference
+{"world": 2, "seconds": 0.0081769069947768, "serial_parity": true}
+negative control: attention sees the future -> caught by test_a_token_cannot_see_the_future
+negative control: a truncated stream counts as success -> caught by test_usage_is_not_chunk_count_and_truncated_stream_is_failure
+negative control: failed requests leave the denominator -> caught by test_failures_stay_in_denominator_and_unknown_tokens_cannot_pass
+negative control: a finished request keeps its slot -> caught by TestDisconnectCancelsUpstreamAndReleasesSlot
+gate passed
+[exit 0]

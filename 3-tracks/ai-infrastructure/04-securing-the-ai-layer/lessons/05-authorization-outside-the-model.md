@@ -2,13 +2,13 @@
 
 **Checked in CI:** the tool server's Go tests. **Run locally:** the attacks through the real model, and the contract test between the Python client and the Go server.
 
-Step 4's tool server trusts the agent completely. The agent holds one service token, and that token can do anything to any job. So whatever a user can talk the model into, the tool server does, with the agent's power rather than the user's. That's the **confused deputy** (threat **A2**): a component with authority is tricked into using it for someone who has none.
+Lesson 04's tool server trusts the agent completely. The agent holds one service token, and that token can do anything to any job. So whatever a user can talk the model into, the tool server does, with the agent's power rather than the user's. That's the **confused deputy** (threat **A2**): a component with authority is tricked into using it for someone who has none.
 
 In Switchyard, Sam is a **reader** at Acme: Sam may look at Acme's jobs and change nothing. Hooli's jobs are none of Sam's business at all. Does the agent know that? Nothing in its code says so.
 
 ## Attack: a reader, and someone else's job
 
-Start Step 4's tool server fresh and play Sam:
+Start lesson 04's tool server fresh and play Sam:
 
 ~~~bash
 uv run --project serve python -m serve.agent --tenant acme --user sam --role reader "Retry job 4182."
@@ -62,7 +62,7 @@ The tool server's log shows the cancellation, and nothing about who asked for it
 {"time":"2026-11-16T01:28:34.351429972-08:00","level":"INFO","msg":"tool call","tool":"cancel","job":9001,"status":200}
 ~~~
 
-Notice what *didn't* matter. Sam's role was passed on the command line, but nothing checked it. The prompt never said "readers can't change jobs", and adding that sentence wouldn't help: Step 6 shows how easily a prompt rule bends. The check has to sit where the change happens, in code the model can't talk to.
+Notice what *didn't* matter. Sam's role was passed on the command line, but nothing checked it. The prompt never said "readers can't change jobs", and adding that sentence wouldn't help: Lesson 06 shows how easily a prompt rule bends. The check has to sit where the change happens, in code the model can't talk to.
 
 ## Fix: the user's identity on every call
 
@@ -70,7 +70,7 @@ The tool server must decide every call with the *user's* rights. So the agent st
 
 The service token keeps one power only: asking for user tokens. It can no longer call a tool.
 
-The token format is deliberately small: the claims as JSON, signed with Ed25519, both base64url-encoded. A real deployment would use the Phase 6 issuer and a standard JWT library; this shows what such a token has to carry.
+The token format is deliberately small: the claims as JSON, signed with Ed25519, both base64url-encoded. A real deployment would use Tenancy and abuse control's issuer and a standard JWT library; this shows what such a token has to carry.
 
 <!-- file: tools/internal/identity/identity.go -->
 ~~~go
@@ -88,7 +88,7 @@ import (
 )
 
 // Claims say who the call is for. The issuer copies them from the user's
-// verified Runway identity; nothing in a prompt or a model reply sets them.
+// verified Switchyard identity; nothing in a prompt or a model reply sets them.
 type Claims struct {
 	User     string `json:"user"`
 	Tenant   string `json:"tenant"`
@@ -150,7 +150,7 @@ to:
 ~~~go
 	"time"
 
-	"phase9tools/internal/jobs"
+	"agenttools/internal/jobs"
 )
 
 // Call is one tool call, as the agent sends it.
@@ -161,8 +161,8 @@ to:
 ~~~go
 	"time"
 
-	"phase9tools/internal/identity"
-	"phase9tools/internal/jobs"
+	"agenttools/internal/identity"
+	"agenttools/internal/jobs"
 )
 
 // Allowed lists what each role may do. Anything not listed is refused.
@@ -171,7 +171,7 @@ var Allowed = map[string]map[string]bool{
 	"operator": {"status": true, "retry": true, "cancel": true, "note": true, "notify": true},
 }
 
-const audience = "runway-tools"
+const audience = "switchyard-tools"
 
 // Call is one tool call, as the agent sends it.
 ~~~
@@ -341,7 +341,7 @@ The tests now get user tokens the way the API does, and a new test states the ru
 	"strings"
 	"testing"
 
-	"phase9tools/internal/jobs"
+	"agenttools/internal/jobs"
 ~~~
 
 to:
@@ -351,7 +351,7 @@ to:
 	"testing"
 	"time"
 
-	"phase9tools/internal/jobs"
+	"agenttools/internal/jobs"
 ~~~
 
 <!-- edit: tools/internal/toolsrv/server_test.go -->
@@ -368,7 +368,7 @@ to:
 }
 
 // issue asks the tool server for a user token, as the trusted API does after
-// verifying the user's Runway token.
+// verifying the user's Switchyard token.
 func issue(t *testing.T, srv *httptest.Server, user, tenant, role string) string {
 	t.Helper()
 	body := `{"user":"` + user + `","tenant":"` + tenant + `","role":"` + role + `"}`
@@ -502,10 +502,10 @@ to:
 <!-- run: cd tools && gofmt -l . && go vet ./... && go test -race -count=1 ./... -->
 
 ~~~text
-?   	phase9tools/cmd/tools	[no test files]
-?   	phase9tools/internal/identity	[no test files]
-?   	phase9tools/internal/jobs	[no test files]
-ok  	phase9tools/internal/toolsrv	1.121s
+?   	agenttools/cmd/tools	[no test files]
+?   	agenttools/internal/identity	[no test files]
+?   	agenttools/internal/jobs	[no test files]
+ok  	agenttools/internal/toolsrv	1.121s
 ~~~
 
 A regression test only protects you if it fails without its check. Replace `job.Tenant != who.Tenant` with `job.Tenant != job.Tenant` (always false), and run it:
@@ -517,7 +517,7 @@ A regression test only protects you if it fails without its check. Replace `job.
     server_test.go:120: other tenant's job can't be read: got 200 {"id":9001,"tenant":"hooli","author":"gavin","state":"cancelled","description":"compress uploads","failure_reason":"out of memory","attempts":0,"notes":null}
         , want 404
 FAIL
-FAIL	phase9tools/internal/toolsrv	0.021s
+FAIL	agenttools/internal/toolsrv	0.021s
 FAIL
 (exit 1)
 ~~~
@@ -560,7 +560,7 @@ class Tools:
 def from_env(user: User) -> Agent:
     env = os.environ
     return Agent(
-        GatewayModel(env.get("RUNWAY_URL", "http://127.0.0.1:18081"), env["RUNWAY_TOKEN"]),
+        GatewayModel(env.get("SWITCHYARD_URL", "http://127.0.0.1:18081"), env["SWITCHYARD_TOKEN"]),
         Search(env["RAG_DATABASE_URL"], env.get("RAG_EMBED_URL", "http://127.0.0.1:18090")),
         Tools(env.get("TOOLS_URL", "http://127.0.0.1:18095"), env["TOOLS_SERVICE_TOKEN"]),
     )
@@ -573,7 +573,7 @@ def from_env(user: User) -> Agent:
     env = os.environ
     tools = env.get("TOOLS_URL", "http://127.0.0.1:18095")
     return Agent(
-        GatewayModel(env.get("RUNWAY_URL", "http://127.0.0.1:18081"), env["RUNWAY_TOKEN"]),
+        GatewayModel(env.get("SWITCHYARD_URL", "http://127.0.0.1:18081"), env["SWITCHYARD_TOKEN"]),
         Search(env["RAG_DATABASE_URL"], env.get("RAG_EMBED_URL", "http://127.0.0.1:18090")),
         Tools(tools, issue_token(tools, env["TOOLS_SERVICE_TOKEN"], user)),
     )
@@ -683,7 +683,7 @@ The three calls with the same timestamp are the contract test. Every refusal now
 7. Regression: TestNoConfusedDeputy and TestUserTokensExpire (Go);
    test_tools_live.py (Python client against the Go server).
 Not covered: an operator acting on their own tenant's jobs because something
-they read told the model to (Step 7).
+they read told the model to (lesson 07).
 ~~~
 
 **Explain it:** why does the tool server return 404, not 403, for another tenant's job? Why can't the agent's service token call tools any more? The token expires in two minutes: what does that bound, and what doesn't it? The model said "The job has been canceled" with no tool call: which part of the system would have told you the truth?

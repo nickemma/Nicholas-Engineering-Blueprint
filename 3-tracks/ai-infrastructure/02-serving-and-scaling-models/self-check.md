@@ -1,4 +1,4 @@
-# Phase 8: explain what you built
+# Serving and scaling models · Self-check
 
 Answer from your own code and evidence. A term's definition is not enough: predict an outcome and identify the check that could disprove your prediction.
 
@@ -11,7 +11,7 @@ Answer from your own code and evidence. A term's definition is not enough: predi
 5. Static batching, continuous batching and request concurrency: describe the different scheduling decisions. Where does the tick model stop predicting reality?
 6. Why does a closed-loop client hide overload? How can an open-loop client still become the bottleneck?
 7. Explain the distinction between arrival-order warmup and completion-order warmup. Why retain failed arrivals in an SLO denominator?
-8. Which of the historical captures can support a prefill trend? Why does this guide refuse to publish the old knee as established capacity?
+8. Which of the historical captures can support a prefill trend? Why does this module refuse to publish the old knee as established capacity?
 
 ## Gateway and operation
 
@@ -53,10 +53,10 @@ Answer from your own code and evidence. A term's definition is not enough: predi
 38. Why is Q4 llama.cpp versus FP16 vLLM not a pure serving-engine comparison?
 39. Pick one report claim and identify its threshold, evidence, uncertainty, verdict and strongest threat to validity.
 
-## Self-test
+## From memory
 
 
-Close the guide. Use your own diagrams, code and retained measurements.
+Close the lessons. Use your own diagrams, code and retained measurements.
 
 1. Trace one request through JWT verification, token reservation, waiting, prefill, decode, streaming completion and settlement. Mark every deadline and capacity bound.
 2. Estimate KV memory for a model of your choice using its actual KV-head count, then compare with observed allocation. Explain the difference.
@@ -71,4 +71,4 @@ Close the guide. Use your own diagrams, code and retained measurements.
 11. On a GPU, show a partial-block kernel check and repeated transfer/matmul completion timings. Without a GPU, explain the method and mark the results not measured.
 12. Present one supported, one inconclusive/contradicted and one unmeasured claim from the report. State what evidence would change each verdict.
 
-Pass when you can predict each failure before running it, reproduce the relevant evidence, and explain every remaining limit. Return to the [phase](README.md) for any step you cannot yet defend.
+Pass when you can predict each failure before running it, reproduce the relevant evidence, and explain every remaining limit. Return to the [module](README.md) for any lesson you can't yet defend. Questions on lessons 11 and 13 apply if you did those optional lessons.

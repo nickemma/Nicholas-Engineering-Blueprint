@@ -30,7 +30,7 @@ uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)
 loaded
 ~~~
 
-The command ran inside `pickle.loads`, between the two prints, before any code looked at the "weights". In the container it ran as `nobody`, with no network; on your laptop it would have run as you. Nobody called anything; loading was enough. This lab's model is a GGUF file, and the embedding model too: both are data formats, parsed by llama.cpp, with no instruction to call a function. That's why Phase 8 chose them, and why you should prefer GGUF or safetensors over pickles from anywhere you don't control. A safe format still doesn't tell you *who* made the file, or that it's the one you tested. That needs a signature.
+The command ran inside `pickle.loads`, between the two prints, before any code looked at the "weights". In the container it ran as `nobody`, with no network; on your laptop it would have run as you. Nobody called anything; loading was enough. This lab's model is a GGUF file, and the embedding model too: both are data formats, parsed by llama.cpp, with no instruction to call a function. That's why Serving and scaling models chose them, and why you should prefer GGUF or safetensors over pickles from anywhere you don't control. A safe format still doesn't tell you *who* made the file, or that it's the one you tested. That needs a signature.
 
 ## Poisoned tool descriptions
 
@@ -122,7 +122,7 @@ to:
 @functools.cache
 def tool_text() -> str:
     """The tool list for the prompt. The tool server's team ships the descriptions."""
-    path = os.environ.get("RUNWAY_TOOLS_FILE") or Path(__file__).with_name("tools.json")
+    path = os.environ.get("SWITCHYARD_TOOLS_FILE") or Path(__file__).with_name("tools.json")
     tools = json.loads(Path(path).read_bytes())
     return "\n".join(f"- {t['signature']}: {t['description']}" for t in tools)
 
@@ -180,7 +180,7 @@ Every function and argument is unchanged. Only the words describing `status` gre
 
 ~~~bash
 uv run --project serve python experiments/agent/attacks.py clean experiments/agent/status.jsonl > clean.jsonl
-RUNWAY_TOOLS_FILE=experiments/agent/poison/tools.json \
+SWITCHYARD_TOOLS_FILE=experiments/agent/poison/tools.json \
   uv run --project serve python experiments/agent/attacks.py poisoned experiments/agent/status.jsonl > poisoned.jsonl
 uv run --project serve python experiments/agent/rates.py clean.jsonl poisoned.jsonl
 ~~~
@@ -349,7 +349,7 @@ SYSTEM = """You are the operations assistant for the tenant {tenant} on Runway, 
 @functools.cache
 def tool_text() -> str:
     """The tool list for the prompt. The tool server's team ships the descriptions."""
-    path = os.environ.get("RUNWAY_TOOLS_FILE") or Path(__file__).with_name("tools.json")
+    path = os.environ.get("SWITCHYARD_TOOLS_FILE") or Path(__file__).with_name("tools.json")
     tools = json.loads(Path(path).read_bytes())
     return "\n".join(f"- {t['signature']}: {t['description']}" for t in tools)
 ~~~
@@ -360,10 +360,10 @@ to:
 @functools.cache
 def tool_text() -> str:
     """The tool list for the prompt, only from the approved, signed release."""
-    path = os.environ.get("RUNWAY_TOOLS_FILE") or Path(__file__).with_name("tools.json")
+    path = os.environ.get("SWITCHYARD_TOOLS_FILE") or Path(__file__).with_name("tools.json")
     env = os.environ
     data = release.verified(
-        Path(path), env.get("RUNWAY_RELEASE_KEY", ""), env.get("RUNWAY_RELEASE_DIGEST", "")
+        Path(path), env.get("SWITCHYARD_RELEASE_KEY", ""), env.get("SWITCHYARD_RELEASE_DIGEST", "")
     )
     tools = json.loads(data)
     return "\n".join(f"- {t['signature']}: {t['description']}" for t in tools)
@@ -372,19 +372,19 @@ def tool_text() -> str:
 <!-- edit: serve/src/serve/agent.py -->
 ~~~python
     tools = env.get("TOOLS_URL", "http://127.0.0.1:18095")
-    token = runway_token or env["RUNWAY_TOKEN"]
+    token = api_token or env["SWITCHYARD_TOKEN"]
     return Agent(
-        GatewayModel(env.get("RUNWAY_URL", "http://127.0.0.1:18081"), token),
+        GatewayModel(env.get("SWITCHYARD_URL", "http://127.0.0.1:18081"), token),
 ~~~
 
 to:
 
 ~~~python
     tools = env.get("TOOLS_URL", "http://127.0.0.1:18095")
-    token = runway_token or env["RUNWAY_TOKEN"]
+    token = api_token or env["SWITCHYARD_TOKEN"]
     tool_text()  # check the release before serving anyone: refuse to start if it fails
     return Agent(
-        GatewayModel(env.get("RUNWAY_URL", "http://127.0.0.1:18081"), token),
+        GatewayModel(env.get("SWITCHYARD_URL", "http://127.0.0.1:18081"), token),
 ~~~
 
 <!-- edit: serve/src/serve/agent.py -->
@@ -501,8 +501,8 @@ approved digest a83ca9c8c86f7ac76309a54a324a631e042eb5bc6aed1a0b77e30c6cbe640a31
 Pin the two values where the deployment's configuration lives, and check the model file before the model server starts:
 
 ~~~bash
-export RUNWAY_RELEASE_KEY=<public key>  RUNWAY_RELEASE_DIGEST=<approved digest>
-uv run --project serve python -m serve.release verify "$RUNWAY_RELEASE_KEY" "$RUNWAY_RELEASE_DIGEST" \
+export SWITCHYARD_RELEASE_KEY=<public key>  SWITCHYARD_RELEASE_DIGEST=<approved digest>
+uv run --project serve python -m serve.release verify "$SWITCHYARD_RELEASE_KEY" "$SWITCHYARD_RELEASE_DIGEST" \
   serve/src/serve/tools.json models/qwen2.5-1.5b-instruct-q4_k_m.gguf
 ~~~
 
@@ -549,7 +549,7 @@ Not covered: who reviews a release before it's approved, the training data,
 and whether the model itself was tampered with before it was published.
 ~~~
 
-**Explain it:** why does the release pin the manifest's digest as well as the public key? A safe format (GGUF) and a valid signature answer different questions: which? Why does the agent check the release before serving anyone, rather than on first use? With approvals from Step 7 in place, the poisoned description could only *propose* a notification: why is that still a problem?
+**Explain it:** why does the release pin the manifest's digest as well as the public key? A safe format (GGUF) and a valid signature answer different questions: which? Why does the agent check the release before serving anyone, rather than on first use? With approvals from lesson 07 in place, the poisoned description could only *propose* a notification: why is that still a problem?
 
 **Done when:** you have watched the pickle run code in the container; measured the poisoned descriptions against your model; signed your tool descriptions and model file; and seen the agent refuse a changed file.
 

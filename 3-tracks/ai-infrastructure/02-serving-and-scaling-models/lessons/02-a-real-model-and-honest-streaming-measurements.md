@@ -6,7 +6,7 @@ The tiny model explains the work; it cannot answer a useful question. Run a smal
 74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db  qwen2.5-0.5b-instruct-q4_k_m.gguf
 ~~~
 
-A checksum detects a different file. Step 7 adds publisher identity. This image digest is the historical CPU server; inspect its architecture and vulnerability scan before deploying it. These are manual Docker commands, outside CI.
+A checksum detects a different file. Lesson 07 adds publisher identity. This image digest is the historical CPU server; inspect its architecture and vulnerability scan before deploying it. These are manual Docker commands, outside CI.
 
 
 <!-- file: experiments/llm/server.sh -->
@@ -18,8 +18,8 @@ slots=${2:-1}
 : "${MODELS:?set MODELS to the directory containing the GGUF file}"
 image=ghcr.io/ggml-org/llama.cpp@sha256:e67d88af487390098c76d7982b1761484339fa147b7e41d3c64ae1318759f78b
 # Stop only the container owned by this lab.
-docker rm -f runway-phase8-llm >/dev/null 2>&1 || true
-docker run -d --name runway-phase8-llm -p 127.0.0.1:8000:8080 \
+docker rm -f switchyard-llm >/dev/null 2>&1 || true
+docker run -d --name switchyard-llm -p 127.0.0.1:8000:8080 \
   -v "$MODELS:/models:ro" "$image" \
   -m /models/qwen2.5-0.5b-instruct-q4_k_m.gguf \
   -c "$((4096 * slots))" -t "$threads" --parallel "$slots" --metrics --host 0.0.0.0
@@ -27,7 +27,7 @@ for attempt in $(seq 1 120); do
   if curl -fsS http://127.0.0.1:8000/health >/dev/null; then exit 0; fi
   sleep 1
 done
-docker logs runway-phase8-llm >&2
+docker logs switchyard-llm >&2
 exit 1
 ~~~
 
@@ -84,8 +84,8 @@ def chat(url: str, prompt: str, max_tokens: int = 64, timeout: float = 60) -> Ti
             }
         )
         headers = {"Content-Type": "application/json"}
-        if os.environ.get("RUNWAY_TOKEN"):
-            headers["Authorization"] = "Bearer " + os.environ["RUNWAY_TOKEN"]
+        if os.environ.get("SWITCHYARD_TOKEN"):
+            headers["Authorization"] = "Bearer " + os.environ["SWITCHYARD_TOKEN"]
         conn.request("POST", "/v1/chat/completions", body, headers)
         response = conn.getresponse()
         if response.status != 200:

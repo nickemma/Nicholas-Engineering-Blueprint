@@ -1,5 +1,7 @@
 # 13 CUDA, transfers, and vLLM
 
+> **Optional, and needs an NVIDIA GPU you rent.** The required path skips this lesson; the module's gate doesn't depend on it.
+
 Read the [linear-algebra guide](../../../../math/03-linear-algebra/README.md) first: arithmetic intensity and the roofline explain why prefill, decode and tiny kernels hit different limits. CUDA has a host and device address space; transfer time and launch overhead are work too. Pinned host buffers allow efficient DMA, but pinning costs memory and setup, and `non_blocking=True` alone does not prove overlap. See [NVIDIA's CUDA best practices](https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/).
 
 **Evidence status:** no GPU is available in this checkout. These scripts are provided for a run on an authorised NVIDIA host. They have no measured output yet. If using a rented host, agree its budget first, record the rate, and stop/destroy the instance afterwards. First capture `nvidia-smi`, driver/CUDA versions, CPU/RAM, image/environment digest and the model revision. Use a fresh GPU-specific environment rather than the lab's CPU-only PyTorch index.
@@ -180,6 +182,6 @@ not measured: CUDA device unavailable
 
 This proves the code compiles and that both programs fail cleanly without a GPU. It proves nothing about correctness or speed on one: those need the run above, on real hardware.
 
-**Done when:** the kernel passes sanitizer, transfer and matmul parity pass, the repeated timing records exist, vLLM completes the frozen quality/performance suite, and the instance is destroyed. Until those artifacts exist, step 13 remains **not measured**, never an expected numerical output invented from a spec sheet.
+**Done when:** the kernel passes sanitizer, transfer and matmul parity pass, the repeated timing records exist, vLLM completes the frozen quality/performance suite, and the instance is destroyed. Until those artifacts exist, lesson 13 remains **not measured**, never an expected numerical output invented from a spec sheet.
 
 <!-- run: cd serve && uv run ruff format --check . && uv run ruff check . && uv run pytest -q -->

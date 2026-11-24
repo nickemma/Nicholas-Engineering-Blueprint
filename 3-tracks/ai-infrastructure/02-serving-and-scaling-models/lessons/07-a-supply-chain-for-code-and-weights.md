@@ -7,7 +7,7 @@ Run the following in a release directory with Syft and [Cosign](https://docs.sig
 ~~~bash
 cosign generate-key-pair
 syft "$IMAGE" -o spdx-json > image.spdx.json
-syft dir:weights --source-name phase8-weights --source-version release-1 \
+syft dir:weights --source-name model-weights --source-version release-1 \
   --select-catalogers file-metadata,digest -o spdx-json > weights.spdx.json
 mv weights.spdx.json weights/weights.spdx.json
 # Write weights/provenance.json with origin, revision, license, template/tokenizer
@@ -59,7 +59,7 @@ PY
 
 Build a derived server image containing this verifier, Python and the pinned Cosign binary. Its entrypoint runs the verifier and `exec`s llama-server only after success. Set `EXPECTED_MANIFEST_SHA256` from the reviewed release configuration (the SHA-256 of the exact authorised manifest), and mount the public trust key and artifacts read-only; the signing private key never enters the cluster. Put verification in the entrypoint, rather than just an init container that checks a mutable volume long before the server reads it. Use an immutable model artifact or a private copy if another process can change the volume: read-only in one container does not prevent another writer from changing a PVC.
 
-Deploy [Sigstore policy-controller](https://docs.sigstore.dev/policy-controller/overview/) in the lab cluster, label `runway` for inclusion, and install a `ClusterImagePolicy` matching your registry prefix with a `key.data` authority containing `cosign.pub`. Set `no-match-policy: deny` in its config and `failurePolicy: Fail` on the validating webhook. Keep an explicit trusted policy for the verifier image too. Test on a disposable namespace first; a policy that matches no workload is not enforcement.
+Deploy [Sigstore policy-controller](https://docs.sigstore.dev/policy-controller/overview/) in the lab cluster, label `switchyard` for inclusion, and install a `ClusterImagePolicy` matching your registry prefix with a `key.data` authority containing `cosign.pub`. Set `no-match-policy: deny` in its config and `failurePolicy: Fail` on the validating webhook. Keep an explicit trusted policy for the verifier image too. Test on a disposable namespace first; a policy that matches no workload is not enforcement.
 
 Create the image policy from this template. Replace both the registry glob and the entire key placeholder before applying; a placeholder is not a trust root. Install and enable policy-controller first, following its version-matched chart instructions. The registry policy must cover every container and init container admitted to the enforced namespace; scope the disposable test namespace accordingly.
 
@@ -68,10 +68,10 @@ Create the image policy from this template. Replace both the registry glob and t
 apiVersion: policy.sigstore.dev/v1beta1
 kind: ClusterImagePolicy
 metadata:
-  name: runway-inference
+  name: switchyard-inference
 spec:
   images:
-    - glob: "ghcr.io/YOUR_ORG/runway-inference**"
+    - glob: "ghcr.io/YOUR_ORG/switchyard-inference**"
   authorities:
     - key:
         data: |
@@ -79,7 +79,7 @@ spec:
 ~~~
 ~~~bash
 # After replacing the template values and installing the controller:
-kubectl label namespace runway policy.sigstore.dev/include=true --overwrite
+kubectl label namespace switchyard policy.sigstore.dev/include=true --overwrite
 kubectl apply -f deploy/inference/image-policy.template.yaml
 # Verify fail-closed webhook/no-match settings before the negative cases.
 ~~~
@@ -195,7 +195,7 @@ func main() {
 }
 ~~~
 
-<!-- run: CGO_ENABLED=0 go build -o /tmp/phase8-launcher-check deploy/inference/launcher.go -->
+<!-- run: CGO_ENABLED=0 go build -o /tmp/serve-launcher-check deploy/inference/launcher.go -->
 
 For the release build, set `-ldflags "-X main.expectedManifest=$MANIFEST_SHA256"` to the reviewed manifest hash. Copy the compiled launcher and checksum-verified Cosign binary to `/usr/local/bin/`, and the model public key and verified public Sigstore trust root to `/trust/model.pub` and `/trust/trusted_root.json` in your derived server image. Set its entrypoint to the launcher, clear the inherited CMD, and run as UID/GID 1000. Mount only `/models` read-only, a private disk-backed `/verified` emptyDir, and `/tmp`; grant the nonroot user access to its emptyDirs with `fsGroup`. Never put the private signing key into this build context.
 

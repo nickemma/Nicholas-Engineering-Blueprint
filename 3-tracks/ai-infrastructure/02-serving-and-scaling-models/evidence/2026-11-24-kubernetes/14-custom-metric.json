@@ -1,0 +1,1 @@
+{"kind":"MetricValueList","apiVersion":"custom.metrics.k8s.io/v1beta1","metadata":{},"items":[{"describedObject":{"kind":"Pod","namespace":"switchyard","name":"llm-7c859d6f69-pxp2g","apiVersion":"/v1"},"metricName":"llm_requests_waiting","timestamp":"2026-11-24T09:48:29Z","value":"0","selector":null}]}

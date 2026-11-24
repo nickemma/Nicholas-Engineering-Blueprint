@@ -1,6 +1,6 @@
 # buildcast, build times for a shared build farm
 
-Build this **on your own**, in a new repository, after finishing [TEACHING.md](README.md). It's a different system from Switchyard, so you can't copy the guide's code. But to build it and measure it well, you need every Phase 7 idea:
+Build this **on your own**, in a new repository, after finishing [the module](README.md). It's a different system from Switchyard, so you can't copy the guide's code. But to build it and measure it well, you need every idea in this module:
 - an experiment with a plan written first, A/A runs and intervals;
 - a workload that models its users, and a data contract;
 - a pipeline from events to partitioned Parquet;

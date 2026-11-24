@@ -2,11 +2,11 @@
 
 **Checked in CI:** the cache-key and log tests. **Run locally:** the shared cache with two tenants' real tokens, the timing experiment against the model server and the gateway, and the debug log.
 
-Step 3 kept tenants apart in retrieval, and Step 8 found a way round it. This step looks for the other places where one tenant's data can reach another: anything *shared*. Three suspects: a cache in front of the model (threat **A7**), the model server's own prompt cache (**A8**), and the logs (**A9**).
+Lesson 03 kept tenants apart in retrieval, and lesson 08 found a way round it. This step looks for the other places where one tenant's data can reach another: anything *shared*. Three suspects: a cache in front of the model (threat **A7**), the model server's own prompt cache (**A8**), and the logs (**A9**).
 
 ## A cache to save tokens
 
-The same questions come up again and again, and every answer costs a model call. A cache in Redis, the one Phase 8's gateway already uses, keyed by the question, answers repeats for free. And while you're there, a debug log of every prompt and reply makes the agent much easier to understand:
+The same questions come up again and again, and every answer costs a model call. A cache in Redis, the one the gateway already uses, keyed by the question, answers repeats for free. And while you're there, a debug log of every prompt and reply makes the agent much easier to understand:
 
 <!-- edit: serve/pyproject.toml -->
 ~~~toml
@@ -204,8 +204,8 @@ to:
 ~~~python
         Tools(tools, issue_token(tools, env["TOOLS_SERVICE_TOKEN"], user)),
         history=History(env["RAG_DATABASE_URL"]),
-        cache=AnswerCache(env["RUNWAY_REDIS_URL"]) if env.get("RUNWAY_REDIS_URL") else None,
-        trace=Trace(env.get("RUNWAY_AGENT_TRACE", "")),
+        cache=AnswerCache(env["AGENT_REDIS_URL"]) if env.get("AGENT_REDIS_URL") else None,
+        trace=Trace(env.get("SWITCHYARD_AGENT_TRACE", "")),
     )
 ~~~
 
@@ -231,7 +231,7 @@ to:
 Both are switched on by environment variables:
 
 ~~~bash
-export RUNWAY_REDIS_URL=redis://127.0.0.1:16379/0 RUNWAY_AGENT_TRACE=trace.jsonl
+export AGENT_REDIS_URL=redis://127.0.0.1:16379/0 SWITCHYARD_AGENT_TRACE=trace.jsonl
 ~~~
 
 ## Attack: the same question from two tenants
@@ -239,7 +239,7 @@ export RUNWAY_REDIS_URL=redis://127.0.0.1:16379/0 RUNWAY_AGENT_TRACE=trace.jsonl
 Gavin works at Hooli. He asks about his incident bridge, using Hooli's token for the gateway:
 
 ~~~bash
-RUNWAY_TOKEN=$HOOLI_TOKEN uv run --project serve python -m serve.agent --tenant hooli --user gavin \
+SWITCHYARD_TOKEN=$HOOLI_TOKEN uv run --project serve python -m serve.agent --tenant hooli --user gavin \
   "What's our incident bridge code?"
 ~~~
 
@@ -269,17 +269,17 @@ And the debug log:
       2 HOOLI-BRIDGE-4471
 ~~~
 
-The debug log has the bridge code twice: once in the prompt (the retrieved runbook) and once in the reply. Whoever can read the agent's logs, which usually means every operator of the platform and the log pipeline from Phase 5, can read every tenant's runbooks.
+The debug log has the bridge code twice: once in the prompt (the retrieved runbook) and once in the reply. Whoever can read the agent's logs, which usually means every operator of the platform and the log pipeline from Kubernetes and delivery, can read every tenant's runbooks.
 
 ## The model server's own cache
 
-There's a less obvious shared thing: the model server. llama.cpp keeps the processed prompt of the last request (its KV cache, from Phase 8) and reuses it when the next prompt starts the same way. That saves a lot of work: a matching prefix skips its prompt processing. It also means the time to the first token says something about what the *previous* request contained, even when it came from another tenant.
+There's a less obvious shared thing: the model server. llama.cpp keeps the processed prompt of the last request (its KV cache, from Serving and scaling models, lesson 01) and reuses it when the next prompt starts the same way. That saves a lot of work: a matching prefix skips its prompt processing. It also means the time to the first token says something about what the *previous* request contained, even when it came from another tenant.
 
-Measure it. Hooli sends a prompt holding its incident-bridge runbook. Straight after, Acme sends a probe that starts either with the same text, or with the same words in a fresh random order (never sent before, about the same length), in a shuffled order, and times the first token. Run it against the model server directly, where caching is on by default, and through the Phase 8 gateway, which sends `cache_prompt: false` on every request:
+Measure it. Hooli sends a prompt holding its incident-bridge runbook. Straight after, Acme sends a probe that starts either with the same text, or with the same words in a fresh random order (never sent before, about the same length), in a shuffled order, and times the first token. Run it against the model server directly, where caching is on by default, and through the gateway, which sends `cache_prompt: false` on every request:
 
 <!-- file: experiments/agent/prefix_timing.py -->
 ~~~python
-"""Step 9: can one tenant tell, from timing alone, what another tenant just sent?
+"""Lesson 09: can one tenant tell, from timing alone, what another tenant just sent?
 
 A victim (Hooli) sends a prompt holding its incident-bridge runbook. Straight
 after, the attacker (Acme) sends a probe that starts either with the same text,
@@ -422,7 +422,7 @@ to:
 ~~~python
 
 
-MODEL = os.environ.get("RUNWAY_MODEL", "qwen2.5-1.5b-instruct-q4_k_m")
+MODEL = os.environ.get("SWITCHYARD_MODEL", "qwen2.5-1.5b-instruct-q4_k_m")
 
 
 class AnswerCache:

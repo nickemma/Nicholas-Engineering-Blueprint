@@ -27,4 +27,16 @@ python3 scripts/replay_lessons.py 3-tracks/ai-infrastructure/02-serving-and-scal
 
 The replay extracts the inline files into a fresh temporary directory. Docker, kind, signing services, the shaped link, Ray and a GPU are manual experiments, explicitly outside that command. Run the entire repository workflow when you have the earlier phases' broker/database services available. Never relabel syntax checking as a deployed result.
 
-Finish [the questions](../self-check.md), build [the independent exercise](../exercises.md), and take [the self-test](../self-check.md). Then move to [Phase 9](../../04-securing-the-ai-layer/README.md): put an operations assistant on the platform and attack its boundaries. The capstone follows that security assessment.
+## Run the gate
+
+The module's [gate](../gate/README.md) checks your lab: every test, two-process training parity, and four negative controls that remove a guarantee each and expect the matching test to fail. From your lab directory:
+
+~~~bash
+bash "$blueprint/3-tracks/ai-infrastructure/02-serving-and-scaling-models/gate/run.sh" .
+~~~
+
+<!-- run: bash "$BLUEPRINT_ROOT/3-tracks/ai-infrastructure/02-serving-and-scaling-models/gate/run.sh" . -->
+
+It ends with `gate passed`. If a negative control isn't caught, the test it names no longer checks what it claims; fix the test, not the gate.
+
+Finish [the questions](../self-check.md), build [the independent exercise](../exercises.md), and take [the self-test](../self-check.md). Then move to [Securing the AI layer](../../04-securing-the-ai-layer/README.md): put an operations assistant on the platform and attack its boundaries. The capstone follows that security assessment.

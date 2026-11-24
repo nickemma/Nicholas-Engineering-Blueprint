@@ -1,0 +1,2 @@
+10.244.1.16 llamacpp:tokens_predicted_total 1664
+10.244.1.14 llamacpp:tokens_predicted_total 3072

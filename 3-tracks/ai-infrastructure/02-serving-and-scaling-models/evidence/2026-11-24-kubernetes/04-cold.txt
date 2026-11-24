@@ -1,0 +1,15 @@
+networkpolicy.networking.k8s.io/llm created
+networkpolicy.networking.k8s.io/llm-probe created
+deployment.apps/llm created
+service/llm created
+Waiting for deployment "llm" rollout to finish: 0 of 1 updated replicas are available...
+deployment "llm" successfully rolled out
+   Building serve @ file://~/lab/serve
+      Built serve @ file://~/lab/serve
+Uninstalled 1 package in 3ms
+Installed 1 package in 2ms
+pod                        scheduled  started  ready restarts
+llm-85b6db66cc-4z6kv               0      334    335        0
+MESSAGE
+Successfully pulled image "ghcr.io/ggml-org/llama.cpp@sha256:e67d88af487390098c76d7982b1761484339fa147b7e41d3c64ae1318759f78b" in 5m33.456s (5m33.456s including waiting). Image size: 309499562 bytes.
+Successfully pulled image "busybox:1.37" in 11.853s (11.854s including waiting). Image size: 2222118 bytes.

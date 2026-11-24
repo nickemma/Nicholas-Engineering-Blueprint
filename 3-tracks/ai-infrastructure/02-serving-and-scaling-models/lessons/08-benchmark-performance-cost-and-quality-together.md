@@ -1,6 +1,6 @@
 # 08 Benchmark performance, cost and quality together
 
-Write a plan first. Compare slots 1/2/4, Q4/Q8 and two thread counts. Fix prompt/output limits, randomise configuration order, repeat at least five independent runs, and retain raw arrivals, failures and usage. Include both short and long prompts with no accidental shared prefix. Record image, model and tokenizer hashes, host CPU/memory and runtime versions, load seed and wall-clock start/end. Record cold starts separately. Use Phase 7's block bootstrap for correlated measurements; a thousand requests in one run are not a thousand independent runs.
+Write a plan first. Compare slots 1/2/4, Q4/Q8 and two thread counts. Fix prompt/output limits, randomise configuration order, repeat at least five independent runs, and retain raw arrivals, failures and usage. Include both short and long prompts with no accidental shared prefix. Record image, model and tokenizer hashes, host CPU/memory and runtime versions, load seed and wall-clock start/end. Record cold starts separately. Resample whole runs, as [Core 02, lesson 08](../../../../2-core/02-python-runtime-and-honest-measurement/lessons/08-repeat-runs-and-confidence-intervals.md) does, for correlated measurements; a thousand requests in one run are not a thousand independent runs.
 
 Cost per million **completed output tokens** is billed hourly price × elapsed hours × 1,000,000 / completed output tokens. Include idle time and unused reserved capacity for a deployment-cost comparison. For a rented benchmark also report model download/load costs separately. A synthetic price is an assumption, never a current vendor quote. Do not substitute chunk counts when the server omits token usage.
 
@@ -22,7 +22,7 @@ def score(rows, seconds, hourly, quality):
     tokens_known = all(r.get("output_tokens") is not None for r in valid)
     tokens = sum(r["output_tokens"] for r in valid) if tokens_known else None
     # A one-sided 95% Wilson lower bound; requests are treated as independent.
-    # Correlated overload requires run/block resampling as in Phase 7 instead.
+    # Correlated overload requires resampling whole runs instead (Core 02, lesson 08).
     n, p, z = len(rows), len(good) / len(rows), 1.645
     lower = (p + z * z / (2 * n) - z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n))) / (
         1 + z * z / n
@@ -76,7 +76,7 @@ cd serve
 uv run python -m serve.score ../results/slots1-rate02.jsonl --seconds 500 --hourly 0.10
 ~~~
 
-Replace 500 with the actual full run duration and 0.10 with the explicitly assumed or billed hourly cost. The command returns `not established` when quality is unknown. Its Wilson bound assumes independent requests; for the real load grid, replace it with Phase 7's interval across runs/blocks. A point estimate of 100% on ten requests cannot establish a 99% objective.
+Replace 500 with the actual full run duration and 0.10 with the explicitly assumed or billed hourly cost. The command returns `not established` when quality is unknown. Its Wilson bound assumes independent requests; for the real load grid, replace it with an interval across whole runs, as in Core 02. A point estimate of 100% on ten requests cannot establish a 99% objective.
 
 Freeze twenty held-out prompts before comparing quantisation: extraction with exact fields, grounded questions with expected facts, short arithmetic and refusal of an unsupported answer. Store the expected outputs and a scoring rubric. Score blind to configuration, check every slice, and decide the minimum acceptable score before running. Small instruction models may fail the quality target entirely. Report that result rather than loosening the target after seeing it. `--quality pass` means the retained rubric evidence passed; it is not an automatic quality measurement.
 
@@ -86,7 +86,7 @@ Freeze twenty held-out prompts before comparing quantisation: extraction with ex
 
 The [2026-11-07 experiment plan](../evidence/2026-11-07/plan.md) fixes a short eight-output-token workload, twenty toy quality prompts, five repetitions and rates chosen from a separate low-load baseline. It compares Q4/Q8 and one/two slots at four threads. It does not replace the longer-context, additional-thread-count and GPU experiments above.
 
-The runner below owns only the Docker container `blueprint-phase8-llm` on loopback port 18080. Start that container with the exact one-slot Q4 settings before invoking the runner. Use a fresh result directory: rerunning into a partial directory would append incompatible runs. Never point it at a directory containing accepted evidence. The published capture used the same algorithm with local model/output paths substituted; its environment and frozen inputs are retained beside the results.
+The runner below owns only the Docker container `blueprint-serve-llm` on loopback port 18080. Start that container with the exact one-slot Q4 settings before invoking the runner. Use a fresh result directory: rerunning into a partial directory would append incompatible runs. Never point it at a directory containing accepted evidence. The published capture used the same algorithm with local model/output paths substituted; its environment and frozen inputs are retained beside the results.
 
 <!-- file: serve/src/serve/experiment.py -->
 ~~~python
@@ -104,15 +104,15 @@ from pathlib import Path
 
 from serve.stream import chat
 
-OUT = Path(os.environ["PHASE8_RESULTS"])
+OUT = Path(os.environ["SERVE_RESULTS"])
 OUT.mkdir(parents=True, exist_ok=True)
-MODEL = os.environ["PHASE8_MODELS"]
+MODEL = os.environ["SERVE_MODELS"]
 IMAGE = (
     "ghcr.io/ggml-org/llama.cpp@sha256:"
     "e67d88af487390098c76d7982b1761484339fa147b7e41d3c64ae1318759f78b"
 )
 URL = "http://127.0.0.1:18080"
-NAME = "blueprint-phase8-llm"
+NAME = "blueprint-serve-llm"
 
 
 def save(name, value):
@@ -329,12 +329,12 @@ finally:
 <!-- run: cd serve && uv run ruff format --check . && uv run ruff check . -->
 
 ~~~bash
-# From the lab root; PHASE8_MODELS must contain both verified GGUF files.
-export PHASE8_MODELS="$PWD/models"
-export PHASE8_RESULTS="$PWD/results/cpu-grid-new"
-mkdir -p "$PHASE8_RESULTS"
-docker run -d --name blueprint-phase8-llm -p 127.0.0.1:18080:8080 \
-  -v "$PHASE8_MODELS:/models:ro" \
+# From the lab root; SERVE_MODELS must contain both verified GGUF files.
+export SERVE_MODELS="$PWD/models"
+export SERVE_RESULTS="$PWD/results/cpu-grid-new"
+mkdir -p "$SERVE_RESULTS"
+docker run -d --name blueprint-serve-llm -p 127.0.0.1:18080:8080 \
+  -v "$SERVE_MODELS:/models:ro" \
   ghcr.io/ggml-org/llama.cpp@sha256:e67d88af487390098c76d7982b1761484339fa147b7e41d3c64ae1318759f78b \
   -m /models/qwen2.5-0.5b-instruct-q4_k_m.gguf -c 4096 -t 4 \
   --parallel 1 --metrics --host 0.0.0.0
@@ -426,5 +426,5 @@ if __name__ == "__main__":
 
 ~~~bash
 cd serve
-uv run python -m serve.report "$PHASE8_RESULTS" > "$PHASE8_RESULTS/summary.json"
+uv run python -m serve.report "$SERVE_RESULTS" > "$SERVE_RESULTS/summary.json"
 ~~~

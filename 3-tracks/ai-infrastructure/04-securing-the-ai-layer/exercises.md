@@ -1,14 +1,16 @@
-# Exercise: incidentdesk
+# Securing the AI layer · Exercises
+
+## incidentdesk
 
 Build an incident assistant for two organizations sharing a support platform. This is an independent project: this specification gives requirements, not a solution.
 
-## Product contract
+### Product contract
 
 The assistant answers questions using organization-owned tickets and runbooks. It can propose reopening a ticket, adding a private note, or notifying an organization-approved destination. An ordinary reader may ask questions; an operator may confirm a permitted mutation. Identity and organization come from verified authentication, never request text or model output.
 
 Every answer cites the exact document revisions used. The browser renders output without executing HTML, fetching images or producing automatic previews. Documents and tool results remain untrusted even when imported by a trusted integration.
 
-## Security contract
+### Security contract
 
 - Retrieve through a least-privilege database role with row security. An intentionally omitted application filter must not reveal another organization's rows. Show missing-context and pooled-connection behaviour.
 - Validate model output with a bounded schema. Expose no arbitrary SQL, shell, filesystem, URL-fetch or executable-plugin tool.
@@ -19,7 +21,7 @@ Every answer cites the exact document revisions used. The browser renders output
 - Keep credentials out of model context, results and public telemetry. Add a synthetic canary incident and explain what encoded variants your detector misses.
 - Release pinned, authorized model and tool-definition artifacts. Verify signatures and digests before loading the same verified bytes; no fallback to unsafe serialization. A valid signature for an unapproved revision must fail.
 
-## Assessment
+### Assessment
 
 Freeze at least twelve attacks across direct prompts, poisoned runbooks, ticket output and tool responses. Include a compound attack: a retrieved instruction changes the content or target of an otherwise legitimate proposed action. Keep deliberately vulnerable baselines in isolated test fixtures.
 
@@ -27,7 +29,7 @@ Run the same attacks against a scripted adversarial model and a real CPU model. 
 
 Compare prompt-only instructions with independently enforced controls. State the experimental unit, repeats, seed/order, confidence method and limits. Do not claim broad prompt-injection resistance from zero observed effects on a small fixed corpus.
 
-## Done when
+### Done when
 
 - A clean checkout runs the deterministic suite and provides a separate live profile.
 - Negative tests cover tenant separation, exact confirmation, replay, revoked/expired grants, changed artifacts, output rendering, canaries, overload and deadlines.

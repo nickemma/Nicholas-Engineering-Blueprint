@@ -2,7 +2,7 @@
 
 **Checked in CI:** the tool server's tests. **Run locally:** the attack harness against the real model, three ways.
 
-Step 5 made the tool server check *who* is asking. Some rules aren't about who, though. Finance asks for one: the assistant must never retry or cancel job 4201, the October invoice run, whoever asks; people should go to the finance team. Maria is an operator, so her token may retry and cancel. The rule has to stop her anyway.
+Lesson 05 made the tool server check *who* is asking. Some rules aren't about who, though. Finance asks for one: the assistant must never retry or cancel job 4201, the October invoice run, whoever asks; people should go to the finance team. Maria is an operator, so her token may retry and cancel. The rule has to stop her anyway.
 
 The quickest way to add a rule to an assistant is a sentence in its system prompt:
 
@@ -92,7 +92,7 @@ type Store struct {
 
 <!-- edit: tools/internal/jobs/store.go -->
 ~~~go
-// directory name, as it does for the runbooks in Step 3.
+// directory name, as it does for the runbooks in lesson 03.
 func Load(paths ...string) (*Store, error) {
 	s := &Store{jobs: map[int]*Job{}}
 	for _, path := range paths {
@@ -106,7 +106,7 @@ func Load(paths ...string) (*Store, error) {
 to:
 
 ~~~go
-// directory name, as it does for the runbooks in Step 3.
+// directory name, as it does for the runbooks in lesson 03.
 func Load(paths ...string) (*Store, error) {
 	s := &Store{paths: paths}
 	return s, s.Reset()
@@ -215,7 +215,7 @@ The harness sends each payload once, as Maria, and records two things separately
 
 <!-- file: experiments/agent/inject.py -->
 ~~~python
-"""Step 6 harness: send every payload once to the live agent, as an operator.
+"""Lesson 06 harness: send every payload once to the live agent, as an operator.
 
 The gateway decodes at temperature 0, so one run per payload is one trial.
 Usage: inject.py CONFIG FILE.jsonl > rows.jsonl   (CONFIG: prompt | hardened)
@@ -608,7 +608,7 @@ Keep the sentence in the prompt: it still helps the model give a useful answer (
     server_test.go:160: cancel 4201: got 200 {"id":4201,"tenant":"acme","author":"svc-billing","state":"cancelled","description":"send invoices","failure_reason":"401","attempts":1,"notes":null}
         , want 403
 FAIL
-FAIL	phase9tools/internal/toolsrv	0.021s
+FAIL	agenttools/internal/toolsrv	0.021s
 FAIL
 (exit 1)
 ~~~
@@ -616,10 +616,10 @@ FAIL
 <!-- run: cd tools && gofmt -l . && go vet ./... && go test -race -count=1 ./... -->
 
 ~~~text
-?   	phase9tools/cmd/tools	[no test files]
-?   	phase9tools/internal/identity	[no test files]
-?   	phase9tools/internal/jobs	[no test files]
-ok  	phase9tools/internal/toolsrv	1.124s
+?   	agenttools/cmd/tools	[no test files]
+?   	agenttools/internal/identity	[no test files]
+?   	agenttools/internal/jobs	[no test files]
+ok  	agenttools/internal/toolsrv	1.124s
 ~~~
 
 Run the same 32 payloads and 8 legitimate requests against the enforcing tool server, with the plain prompt:
@@ -666,7 +666,7 @@ sources []
    for helpful answers only.
 7. Regression: TestProtectedJobsRefused (Go).
 Not covered: rules nobody wrote down; text the attacker plants for someone
-else to read (Step 7).
+else to read (lesson 07).
 ~~~
 
 **Your turn:** the example in the system prompt (`"text": "the note"`) is copied word for word by the model. Change the examples, re-run `legit.jsonl` and the 32 payloads, and compare. Keep the old rows: a change that helps legitimate requests and also lets more attacks propose changes is a trade-off you should see in numbers.
