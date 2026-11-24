@@ -1,6 +1,6 @@
 # hookshot, a webhook delivery service
 
-Build this **on your own**, in a new repository, after the [checkpoint](README.md). It's a different system, but it needs every Phase 2 idea:
+Build this **on your own**, in a new repository, after the [checkpoint](README.md). It's a different system, but it needs every idea in this unit:
 - separate processes connected by a broker;
 - at-least-once delivery;
 - idempotency on both sides;
@@ -68,7 +68,7 @@ cmd/receiver/          a test receiver: logs requests and can be told to fail
 internal/subscriptions/ domain: Subscription, matching, validation
 internal/delivery/      domain: Delivery state machine, transient vs permanent
 internal/messages/      envelopes and versioned message types
-internal/rabbit/        RabbitMQ adapter (reuse your Phase 2 design)
+internal/rabbit/        RabbitMQ adapter (reuse this unit's design)
 internal/retry/         backoff with full jitter
 internal/breaker/       a breaker per host
 internal/signing/       HMAC signatures
@@ -109,7 +109,7 @@ You're done when all of these are true:
 1. Every row of the HTTP contract has a test.
 2. Unit tests cover the delivery state machine, transient-vs-permanent classification (a table over status codes), backoff ceilings (deterministic, with an injected random source) and the per-host breaker (with a fake clock).
 3. A signing test: a receiver can verify `Webhook-Signature` with the secret, and a changed body fails verification.
-4. Integration tests against real RabbitMQ (skipped without `RUNWAY_AMQP_URL`) show redelivery after a consumer stops, and dead-lettering of an unreadable command.
+4. Integration tests against real RabbitMQ (skipped without `SWITCHYARD_AMQP_URL`) show redelivery after a consumer stops, and dead-lettering of an unreadable command.
 5. **The kill test:** kill a worker with SIGKILL mid-delivery to a slow receiver. The receiver sees the same `Webhook-Id` twice, and the delivery ends `delivered`, once.
 6. **The isolation test:** with one receiver down and another healthy, the healthy receiver's p95 delivery latency is within 20% of its latency when both are healthy. Measure it with your Python tools.
 7. The idempotent `POST /events` test: two identical requests with one key create one set of deliveries.
@@ -125,5 +125,5 @@ You're done when all of these are true:
 
 - Classify errors first, as a pure function with a table test. Everything else depends on getting that right.
 - The breaker map needs its own mutex. Think about when a host's breaker is created.
-- In-memory delivery state is acceptable for this exercise; Phase 3 shows how to make it durable. Say so in your README, along with what's lost on restart.
+- In-memory delivery state is acceptable for this exercise; [Core 03](../../../2-core/03-docker-and-postgres/README.md) shows how to make it durable. Say so in your README, along with what's lost on restart.
 - Revisit step 4's table of "three defences", and fill it in for hookshot before you write any code.

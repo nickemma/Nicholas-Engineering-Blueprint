@@ -14,7 +14,7 @@ target=$(cargo metadata --manifest-path storage/Cargo.toml --locked --no-deps --
     python3 -c 'import json, sys; print(json.load(sys.stdin)["target_directory"])')
 export AUDIT_WRITER="$target/debug/audit-writer"
 export AUDIT_FEED="$work/auditfeed"
-export INTEGRITY_KAFKA_BROKERS=${INTEGRITY_KAFKA_BROKERS:-${RUNWAY_KAFKA_BROKERS:-}}
+export INTEGRITY_KAFKA_BROKERS=${INTEGRITY_KAFKA_BROKERS:-}
 
 (
     cd "$root/audit"

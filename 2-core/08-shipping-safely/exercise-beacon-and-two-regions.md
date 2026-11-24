@@ -1,6 +1,6 @@
 # beacon, synthetic monitoring
 
-Build this **on your own**, in a new repository, after the [checkpoint](README.md). It is a different service from Switchyard, so you can't copy the guide's code. But to build it and run it well you need every Phase 5 idea:
+Build this **on your own**, in a new repository, after the [checkpoint](README.md). It is a different service from Switchyard, so you can't copy the guide's code. But to build it and run it well you need every idea in this module:
 - a small, locked-down image and a Helm chart;
 - a controller that reconciles desired state from the Kubernetes API;
 - traces and metrics, an SLO and tested burn-rate alerts;
@@ -20,11 +20,11 @@ There's no solution in this repository. This page shows exactly what the finishe
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: runway-health
-  namespace: runway
+  name: switchyard-health
+  namespace: switchyard
   labels: { beacon.dev/probe: "true" }
 data:
-  url: http://api.runway:8080/health
+  url: http://api.switchyard:8080/health
   interval: 5s
   timeout: 2s
   expectStatus: "200"
@@ -32,7 +32,7 @@ data:
 
 `beacon` has two parts:
 - **`beacon-controller`**: watches probe ConfigMaps in every namespace, and keeps a `Probe` record per ConfigMap in PostgreSQL in step with them: created, changed or deleted within 10 seconds of the ConfigMap. Level-triggered: if it is down while ConfigMaps change, it catches up on start.
-- **`beacon-runner`**: runs every probe on its interval, records each result (`probe`, `at`, `ok`, `status`, `duration_ms`, `error`) in PostgreSQL, and exports Prometheus metrics. Several runners share the work: each probe is run by exactly one runner at a time (use leases, as in Phase 4, or PostgreSQL advisory locks, as in Phase 3).
+- **`beacon-runner`**: runs every probe on its interval, records each result (`probe`, `at`, `ok`, `status`, `duration_ms`, `error`) in PostgreSQL, and exports Prometheus metrics. Several runners share the work: each probe is run by exactly one runner at a time (use leases, as in Core 07, or PostgreSQL advisory locks, as in Core 03).
 
 And an HTTP API on the runner:
 - `GET /probes` lists probes with their last result and their availability over the last hour;
@@ -68,21 +68,21 @@ Install it and declare a probe for Switchyard:
 
 ~~~bash
 helm install beacon deploy/helm/beacon -n beacon --create-namespace --wait
-kubectl apply -f examples/runway-health.yaml
+kubectl apply -f examples/switchyard-health.yaml
 sleep 15
 kubectl -n beacon port-forward svc/beacon-runner 8090:8090 &
 curl -s localhost:8090/probes
 ~~~
 
 ~~~json
-[{"namespace":"runway","name":"runway-health","url":"http://api.runway:8080/health","interval":"5s","last":{"at":"...","ok":true,"status":200,"duration_ms":3},"availability_1h":1}]
+[{"namespace":"switchyard","name":"switchyard-health","url":"http://api.switchyard:8080/health","interval":"5s","last":{"at":"...","ok":true,"status":200,"duration_ms":3},"availability_1h":1}]
 ~~~
 
 Delete the ConfigMap, and within 10 seconds the probe is gone from `/probes` and from `beacon_probes`. Stop the controller, create two probes and delete one, start it again: the records match the ConfigMaps within 10 seconds of start.
 
 Scale the runners to 3 while they work, and to 1, and back to 2: the results table never shows two runs of the same probe less than one interval apart, and never a gap of more than two intervals.
 
-Break the target (scale Switchyard's API to 0): `beacon_probe_success{name="runway-health"}` drops to 0 within one interval, and the per-probe page fires within the time your promtool test predicts. Bring it back, and the alert resolves.
+Break the target (scale Switchyard's API to 0): `beacon_probe_success{name="switchyard-health"}` drops to 0 within one interval, and the per-probe page fires within the time your promtool test predicts. Bring it back, and the alert resolves.
 
 The game day must include:
 - a slow target (netem on its Pod): what happens to the runners when every probe waits for its timeout?
@@ -103,7 +103,7 @@ Your repository's CI runs the tests, the promtool tests and the smoke test. Then
 
 ---
 
-# Phase 5 exercise 2: Switchyard in two regions
+# Exercise 2: Switchyard in two regions
 
 Build this **on your own**, after beacon. Everything Switchyard does so far happens in one place: one cluster, one database, one region. If that place goes, so does Switchyard. This exercise runs Switchyard in two simulated regions, and rehearses losing one. It's the multi-region and disaster-recovery work that design interviews ask about ([the multi-region prompt](../../system-design/cloud-infra/README.md#1-a-multi-region-web-service)), done for real at small scale.
 
@@ -121,13 +121,13 @@ You decide two numbers before building anything, and measure them at the end:
 ## Requirements
 
 **Two regions.**
-1. Two clusters (or Compose projects), each running Switchyard from your Phase 5 chart, with region-specific values.
+1. Two clusters (or Compose projects), each running Switchyard from your Helm chart (Kubernetes and delivery), with region-specific values.
 2. 40 ms of delay each way between them (`tc netem` on the link, or on the containers that cross it), so replication lag is real.
 
 **Data.**
 3. PostgreSQL streaming replication from A to B ([the PostgreSQL manual, *High Availability, Load Balancing, and Replication*](https://www.postgresql.org/docs/current/high-availability.html)). Asynchronous to start.
 4. A metric and a dashboard panel for **replication lag**, in bytes and in seconds, with an alert when it exceeds your RPO.
-5. Decide what happens to the queue (RabbitMQ) and to Kafka in a failover, and write it down: what's lost, what's replayed, what's duplicated. Your idempotency keys and inbox from Phases 2–3 should make duplicates harmless; show that they do.
+5. Decide what happens to the queue (RabbitMQ) and to Kafka in a failover, and write it down: what's lost, what's replayed, what's duplicated. Your idempotency keys (Cores 01 and 03) and inbox (Event streams) should make duplicates harmless; show that they do.
 
 **Failover.**
 6. A **runbook** a teammate could follow at 3 a.m.:

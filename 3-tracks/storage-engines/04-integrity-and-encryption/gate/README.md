@@ -9,7 +9,7 @@ export INTEGRITY_KAFKA_BROKERS=127.0.0.1:9092
 bash "$BLUEPRINT_ROOT/3-tracks/storage-engines/04-integrity-and-encryption/gate/run.sh" "$PWD"
 ~~~
 
-CI supplies `RUNWAY_KAFKA_BROKERS`. Without either broker variable, the storage, Rust-child protocol, Merkle, and witness checks run and the live Kafka check is skipped.
+CI supplies `INTEGRITY_KAFKA_BROKERS`. Without it, the storage, Rust-child protocol, Merkle, and witness checks run and the live Kafka check is skipped.
 
 | Check | Required result |
 |---|---|
