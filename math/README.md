@@ -4,9 +4,9 @@ The mathematics that systems work actually uses, tied to systems you've built. E
 
 | # | Guide | The question | Serves | You'll measure |
 |---|---|---|---|---|
-| 01 | [Probability and queueing](01-queueing/README.md) | Why does a service at 90% feel broken when one at 70% feels fine? | Phases 2–5; the [Performance Bridge](../2-core/06-linux-networking-and-profiling/README.md) | Little's law and Pollaczek–Khinchine, on your own Switchyard |
-| 02 | [Proofs and invariants](02-proofs-invariants/README.md) | How do you know something holds in **every** case? | Phase 4; the Research MSc | Every state of a Raft election, with a model checker you write |
-| 03 | [Linear algebra for ML and GPUs](03-linear-algebra/README.md) | Why does AI run on GPUs? | Phase 8 | Arithmetic intensity and the roofline, on your own CPU |
+| 01 | [Probability and queueing](01-queueing/README.md) | Why does a service at 90% feel broken when one at 70% feels fine? | Core 01's queue; [Core 06](../2-core/06-linux-networking-and-profiling/README.md)'s knee | Little's law and Pollaczek–Khinchine, on your own Switchyard |
+| 02 | [Proofs and invariants](02-proofs-invariants/README.md) | How do you know something holds in **every** case? | Core 07 and Consensus in depth; the Research MSc | Every state of a Raft election, with a model checker you write |
+| 03 | [Linear algebra for ML and GPUs](03-linear-algebra/README.md) | Why does AI run on GPUs? | Serving and scaling models | Arithmetic intensity and the roofline, on your own CPU |
 | 04 | [Capacity planning with headroom](04-capacity-planning/README.md) | What load can the fleet serve after losing a replica? | Core 08 and the capstones | Mean in-flight requests against a recorded proxy trial |
 
 ## How to work through it

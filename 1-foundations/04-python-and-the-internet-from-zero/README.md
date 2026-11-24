@@ -26,8 +26,6 @@ A **TCP echo server in Go**, and a **Python script** that sends it 1,000 request
 | 08 | [`asyncio` basics](lessons/08-asyncio-basics.md) | Coroutines and the event loop; `await`; running many connections with `asyncio.gather`; talking to the echo server; a reply that arrives in pieces | ~5 h |
 | 09 | [1,000 requests and a latency plot](lessons/09-1000-requests-and-a-latency-plot.md) | Timing with `time.perf_counter`; percentiles by nearest rank; saving raw results to CSV; a histogram with matplotlib; what the numbers do and don't show. Build: the measurement script | ~5 h |
 
-**Absorbs** the old Phase 0 Step 2 (what a request and a response are) and the Python Bridge's Step 1 (a first script, function and test).
-
 ## The gate
 
 `gate/run.sh` builds and starts your echo server, and runs your script against it and against servers of its own:

@@ -1,6 +1,6 @@
 # Design: a multi-tenant LLM inference gateway
 
-**Track:** ai-infrastructure · **Built in:** [Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md) (tokens, rate limits), [Phase 7](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md) (serving with a fallback), [Phase 8](../../3-tracks/ai-infrastructure/02-serving-and-scaling-models/README.md) (model serving), [the track's capstone](../../3-tracks/ai-infrastructure/05-capstone-inference-gateway/README.md) · **Time:** 45 minutes
+**Track:** ai-infrastructure · **Built in:** [Tenancy and abuse control](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md) (tokens, rate limits), [Serving and scaling models](../../3-tracks/ai-infrastructure/02-serving-and-scaling-models/README.md) (model serving, the admission gateway), [A Rust inference gateway](../../3-tracks/ai-infrastructure/03-rust-inference-gateway/README.md) (streaming, token buckets), [the track's capstone](../../3-tracks/ai-infrastructure/05-capstone-inference-gateway/README.md) · **Time:** 45 minutes
 
 This is a worked reference. Do the design yourself first, with a timer, then read this and note what you missed.
 
@@ -40,7 +40,7 @@ Routing decides the first two: which worker gets each request, considering what 
 - **Output tokens at peak:** 500 requests/s × 300 = 150,000 tokens/s.
 - **Prompt tokens at peak:** 500 × 1,000 = 500,000 tokens/s to prefill. Prefill is compute-bound but processes many tokens at once; shared prefixes cut it.
 - **GPUs needed:**
-  - Assume a medium model reaches about 3,000 output tokens/s per GPU at batch sizes that still meet the latency targets. **This number must be measured, not assumed**: it depends on the model, the GPU, the batching and the prompt lengths. (Capstone 9 and Phase 8's benchmark measure it.)
+  - Assume a medium model reaches about 3,000 output tokens/s per GPU at batch sizes that still meet the latency targets. **This number must be measured, not assumed**: it depends on the model, the GPU, the batching and the prompt lengths. (The [gateway capstone](../../3-tracks/ai-infrastructure/05-capstone-inference-gateway/README.md) and Serving and scaling models' benchmark measure it.)
   - Then 150,000 ÷ 3,000 = 50 GPUs at peak, before headroom; plan ~65.
 - **Cost:** at an assumed $2–4 per GPU-hour, 65 GPUs cost $130–260 an hour.
   - Per million output tokens: 150,000 tokens/s × 3,600 = 540 million an hour, so $0.25–0.50 per million at full use.
@@ -137,7 +137,7 @@ flowchart LR
 | A tenant floods | Others' queues stall | Per-tenant queue share | Fair share; token budgets |
 | A very long prompt | KV-cache exhausted; others preempted | KV-cache use near 100% | Cap context length per tier; route long prompts to workers set aside for them |
 | One hot prefix | Its worker overloads under pure affinity | Load imbalance | Bounded-load affinity |
-| Redis (budgets) down | Quotas can't be checked | Limiter errors | Fail open to local per-gateway limits (Phase 6's fallback) |
+| Redis (budgets) down | Quotas can't be checked | Limiter errors | Fail closed with `503` (Tenancy and abuse control's choice), or open to local per-gateway limits if availability matters more: say which, and why |
 | A model loads slowly or fails | Scale-up stalls | Readiness never passes | Warm pool; readiness probes that actually run a token |
 
 ## 9. With more time
@@ -150,10 +150,10 @@ flowchart LR
 
 ## 10. Where you've built this
 
-- [Phase 2](../../3-tracks/shared-units/messaging-and-resilience/README.md): queues, backpressure, retries and breakers.
-- [Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md): tokens, per-tenant rate limits through Redis with a fallback, and tenant isolation.
-- [Phase 7](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md): serving a model behind the Go API with a timeout, a breaker and a fallback.
-- [Phase 8](../../3-tracks/ai-infrastructure/02-serving-and-scaling-models/README.md): model serving with batching, KV caches and a cost benchmark.
+- [Core 01](../../2-core/01-go-runtime-and-reliable-services/README.md) and [Messaging and resilience](../../3-tracks/shared-units/messaging-and-resilience/README.md): queues, backpressure, retries and breakers.
+- [Tenancy and abuse control](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md): tokens, per-tenant rate limits shared through Redis, and tenant isolation.
+- [ML for infrastructure](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md): serving a model's active version over HTTP, and rolling it back.
+- [Serving and scaling models](../../3-tracks/ai-infrastructure/02-serving-and-scaling-models/README.md): model serving with batching, KV caches and a cost benchmark.
 - [The AI infrastructure track's capstone](../../3-tracks/ai-infrastructure/05-capstone-inference-gateway/README.md) builds an inference gateway you can run that routing experiment on.
 
 ## 11. What an interviewer will push on

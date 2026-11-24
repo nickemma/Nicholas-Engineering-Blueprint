@@ -11,7 +11,7 @@ A linked list is nodes joined by pointers. You can't jump to the *i*-th element,
 - detecting a cycle;
 - a sequence that changes order on every access.
 
-**Real systems:** an **LRU cache** (least recently used) is a hash map plus a doubly linked list, and worked problem 2 builds one. [Phase 3's Redis cache](../../3-tracks/shared-units/caching/lessons/02-add-cache-aside.md) evicts with an approximation of LRU when it's full. Go's `container/list` is a doubly linked list, and the Linux kernel's lists are the same structure in C.
+**Real systems:** an **LRU cache** (least recently used) is a hash map plus a doubly linked list, and worked problem 2 builds one. [Caching's Redis cache](../../3-tracks/shared-units/caching/lessons/02-add-cache-aside.md) evicts with an approximation of LRU when it's full. Go's `container/list` is a doubly linked list, and the Linux kernel's lists are the same structure in C.
 
 ## Worked problem 1: Reverse Linked List
 

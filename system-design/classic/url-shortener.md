@@ -1,6 +1,6 @@
 # Design: a URL shortener
 
-**Track:** classic · **Built in:** [Phase 1's exercise](../../2-core/01-go-runtime-and-reliable-services/exercises.md) (shortlinks), [Phase 3](../../2-core/03-docker-and-postgres/README.md) (cache), [Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md) (rate limits) · **Time:** 45 minutes
+**Track:** classic · **Built in:** [Core 01's exercise](../../2-core/01-go-runtime-and-reliable-services/exercises.md) (shortlinks), [Caching](../../3-tracks/shared-units/caching/README.md) (cache), [Tenancy and abuse control](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md) (rate limits) · **Time:** 45 minutes
 
 This is a worked reference. Do the design yourself first, with a timer, then read this and note what you missed.
 
@@ -142,9 +142,10 @@ Custom domains. Link editing (invalidate the cache on write).
 
 ## 10. Where you've built this
 
-- [Phase 1's shortlinks exercise](../../2-core/01-go-runtime-and-reliable-services/exercises.md): the core, with exact concurrency guarantees.
-- [Phase 3](../../2-core/03-docker-and-postgres/README.md): cache-aside and stampede protection, and idempotency keys.
-- [Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md): rate limiting per key.
+- [Core 01's shortlinks exercise](../../2-core/01-go-runtime-and-reliable-services/exercises.md): the core, with exact concurrency guarantees.
+- [Caching](../../3-tracks/shared-units/caching/README.md): cache-aside and stampede protection.
+- [Core 03, lesson 06](../../2-core/03-docker-and-postgres/lessons/06-a-retried-submission-survives-a-restart.md): idempotency keys.
+- [Tenancy and abuse control](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md): rate limiting per tenant.
 - [DSA guide 01](../../dsa/01-arrays-hashing/README.md): the hashing underneath.
 
 ## 11. What an interviewer will push on

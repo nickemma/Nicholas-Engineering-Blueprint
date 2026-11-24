@@ -23,9 +23,7 @@ How Python runs your code (objects, reference counting, bytecode, the GIL, and w
 | 07 | [Three experiments on Switchyard](lessons/07-three-experiments-on-switchyard.md) | pandas and matplotlib; a baseline on `GET /health`; freezing the control plane with `SIGSTOP`, measured open and closed (the same freeze, answers hundreds of times apart); `POST /jobs` past the queue's capacity, where the `503`s from core 01 lesson 13 appear; finding the rate where `kload` itself becomes the bottleneck | ~4 h |
 | 08 | [Repeat runs and confidence intervals](lessons/08-repeat-runs-and-confidence-intervals.md) | Why one run proves nothing; bootstrap confidence intervals over repeat runs; saved settings that rerun an experiment; Switchyard's plain and `-race` builds compared in a random order, with an A/A test first, and what a fixed order does | ~3 h |
 
-**Absorbs** the Python Bridge's steps 2–6 (its step 1 is in Foundations 04, lesson 06). Lessons 04–07 are those steps, re-based on Foundations 04 and pointed at Switchyard instead of the old Phase 1 service; lesson 06 replaces httpx with its own client, and its closed loop now follows the same schedule as the open one. Lessons 01–03 and 08 are new.
-
-**Not here any more:** the Python Bridge's "7-second tail" (SYN retransmissions during a freeze) becomes a question carried into core 06, where you capture the packets.
+**Carried forward:** the "7-second tail" (SYN retransmissions during a freeze) is a question for Core 06, where you capture the packets.
 
 ## The gate
 

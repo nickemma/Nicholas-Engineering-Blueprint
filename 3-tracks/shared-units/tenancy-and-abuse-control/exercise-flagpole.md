@@ -1,6 +1,6 @@
 # flagpole, multi-tenant feature flags
 
-Build this **on your own**, in a new repository, after the [checkpoint](README.md). It's a different service from Switchyard, so you can't copy the guide's code. But to build it and secure it well, you need every Phase 6 idea:
+Build this **on your own**, in a new repository, after the [checkpoint](README.md). It's a different service from Switchyard, so you can't copy the guide's code. But to build it and secure it well, you need every idea in this unit:
 - a threat model first, with evidence, and a game day last;
 - tokens, one policy decision point, and tenants kept apart down to the rows;
 - per-tenant rate limits, shared across instances;

@@ -37,10 +37,10 @@ Name the SLIs and SLOs for the design, which metrics and traces show the crux wo
 
 ## Where you built it
 
-- [Phase 1, step 7](../../2-core/01-go-runtime-and-reliable-services/lessons/11-logs-metrics-and-panic-recovery.md): structured logs and Prometheus metrics.
-- [Phase 5](../../2-core/08-shipping-safely/README.md):
+- [Core 01, lesson 11](../../2-core/01-go-runtime-and-reliable-services/lessons/11-logs-metrics-and-panic-recovery.md): structured logs and Prometheus metrics.
+- [Core 08](../../2-core/08-shipping-safely/README.md) and [Kubernetes and delivery](../../3-tracks/shared-units/kubernetes-and-delivery/README.md):
   - [OpenTelemetry tracing](../../3-tracks/shared-units/kubernetes-and-delivery/lessons/07-follow-a-request-through-the-cluster.md) through the outbox and the broker;
   - [SLOs with tested burn-rate alerts](../../3-tracks/shared-units/kubernetes-and-delivery/lessons/08-alert-on-budget-burn.md);
   - a game day.
-- [Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md): redaction of secrets and personal data in logs and traces.
-- [Phase 7, step 12](../../3-tracks/ai-infrastructure/deep-dives/aiops.md): anomaly detection scored against burn-rate alerts.
+- [Core 08, lesson 04](../../2-core/08-shipping-safely/lessons/04-limit-what-the-gateway-can-read-and-record.md): a data inventory, and a canary that proves secrets and personal data stay out of the logs.
+- [The AI operations deep dive](../../3-tracks/ai-infrastructure/deep-dives/aiops.md): anomaly detection scored against burn-rate alerts.

@@ -1,4 +1,4 @@
-# Performance Bridge exercise: profile Switchyard
+# Exercise: profile Switchyard
 
 Do this **on your own**, after the [checkpoint](README.md#checkpoint). `hotspot` was small, and its problems were planted. Switchyard's aren't: nobody knows what you'll find, including the author. That's the point.
 
@@ -17,7 +17,7 @@ Take the Switchyard API from [Core 03](../03-docker-and-postgres/README.md) and 
 **Investigate.** Work through the [checklist](lessons/08-the-method-end-to-end.md#the-checklist-this-box-is-slow), at a load just below the knee and just above it.
 
 3. Apply USE to the machine, and to every container: which resources did you rule out, and how?
-4. Find the bottleneck. Is it the API, a worker, PostgreSQL, RabbitMQ, the outbox relay, Redis, or the network between them? Use a trace (Phase 5) to narrow it down before you open a profiler.
+4. Find the bottleneck. Is it the API, a worker, PostgreSQL, the Rust data plane, or the network between them? Use a trace ([lesson 13](lessons/13-trace-and-profile-the-wire.md)) to narrow it down before you open a profiler.
 5. Profile whatever you found, with at least two of: a CPU profile, a mutex or block profile, a heap profile, `perf stat`, and a `bpftrace` histogram.
 6. Make **one** change, and measure again at the same rates. Repeat for three changes.
 
@@ -28,15 +28,15 @@ Take the Switchyard API from [Core 03](../03-docker-and-postgres/README.md) and 
 
 ## What finished looks like
 
-A report in your repository, with a table like step 8's, and for each change a saved profile or flame graph. For example, the form of one entry (yours will differ):
+A report in your repository, with a table like lesson 08's, and for each change a saved profile or flame graph. For example, the form of one entry (yours will differ):
 
 ~~~text
-Change 2: outbox relay polling
+Change 2: workers polling for jobs
 
 Symptom:   above 1,800/s, p99 jumps from 30 ms to 400 ms; API CPU 40%, database CPU 95%
-Evidence:  pg_stat_statements: the relay's SELECT is 60% of database time
+Evidence:  pg_stat_statements: the workers' claim SELECT is 60% of database time
 Tool:      trace shows requests waiting on the pool; block profile confirms
-Change:    a partial index on unsent rows
+Change:    a partial index on queued rows
 Result:    three runs at 2,500/s, p99 390/410/402 ms before, 41/38/44 ms after
 ~~~
 
@@ -52,7 +52,7 @@ A reviewer (or you, honestly) reads the report and asks:
 
 ## Stretch goals
 
-- Compare your Phase 5 SLO alerts with what you found: would they have fired at the knee, and how early?
+- If you've done Core 08, compare your SLO with what you found: would they have fired at the knee, and how early?
 - Run a `bpftrace` run-queue histogram on a Kubernetes node with a CPU limit on the Pod, and show CFS throttling.
 - Send one fix upstream, if you find a problem in a library.
 

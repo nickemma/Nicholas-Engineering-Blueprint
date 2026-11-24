@@ -25,7 +25,7 @@ Vertical scaling gives an instance more CPU, memory, or I/O capacity. Horizontal
 - **The balancer is a single point of failure.** Run two or more, behind DNS or a virtual IP.
 - **Health checks that lie.** A server passes `/health` but fails real requests. Separate liveness ("restart me") from readiness ("send me traffic"), and check dependencies in readiness.
 - **Retry storms.** Every layer retries, so load multiplies exactly when servers are struggling. Use retry budgets.
-- **Uneven long connections.** One connection can carry a thousand requests to one server. Close connections periodically (Phase 6 found this, with certificates that weren't reloaded).
+- **Uneven long connections.** One connection can carry a thousand requests to one server. Close connections periodically: a long-lived connection also keeps the certificate it started with.
 - **Thundering herd** when a server comes back cold, or a new one starts with an empty cache.
 
 ## In an interview
@@ -34,9 +34,9 @@ Say which layer, which algorithm and why, how health is checked, and how the bal
 
 ## Where you built it
 
-[Phase 5, step 4](../../3-tracks/shared-units/kubernetes-and-delivery/lessons/02-reach-a-service-by-name.md):
-- Kubernetes Services and kube-proxy (L4);
+[Kubernetes and delivery, lesson 02](../../3-tracks/shared-units/kubernetes-and-delivery/lessons/02-reach-a-service-by-name.md):
+- Kubernetes Services (L4);
 - DNS;
-- a layer-7 balancer of your own, with readiness.
+- an HTTP router in front of stable and canary Services, with readiness.
 
-[Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md) found that busy HTTP/2 connections never moved, and fixed it by limiting connection age.
+Busy HTTP/2 connections never move to a new server on their own; limiting connection age is the usual fix.

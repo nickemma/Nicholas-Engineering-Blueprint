@@ -24,7 +24,7 @@ Start with [Before you start](lessons/00-before-you-start.md).
 | 4 | 08 | [Recover a transaction across two shards](lessons/08-recover-a-cross-shard-transfer.md) | Recover PostgreSQL prepared transactions after two coordinator crashes. Compare the outcome with a saga that exposes an intermediate state and retries its compensation. |
 | 4 | 09 | [Run the consensus and recovery gate](lessons/09-run-the-consensus-gate.md) | Rebuild the lessons and compare the client, replica, and disk evidence. |
 
-Lessons 02–03 adapt Phase 4 step 5, lesson 04 adapts step 6, lessons 01 and 05 adapt step 7, lesson 06 adapts step 9, and lesson 08 adapts step 12. Lesson 07 builds on the core's placement work by moving durable state between groups. The Cloud and network track will cover the network side of partial partitions. [Phase 4 teaching guide](../../../2-core/07-distributed-systems-fundamentals/README.md) · [Core 07 placement lesson](../../../2-core/07-distributed-systems-fundamentals/lessons/10-move-fewer-keys-with-consistent-hashing.md)
+Lesson 07 builds on [Core 07's placement lesson](../../../2-core/07-distributed-systems-fundamentals/lessons/10-move-fewer-keys-with-consistent-hashing.md) by moving durable state between groups. [Networking in depth](../../cloud-and-network/01-networking-in-depth/README.md) covers the network side of partial partitions.
 
 ## The gate
 

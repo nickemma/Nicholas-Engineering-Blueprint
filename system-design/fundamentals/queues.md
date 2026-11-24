@@ -47,10 +47,10 @@ Say queue or log and why, the delivery guarantee and how duplicates are handled,
 
 ## Where you built it
 
-- [Phase 2](../../3-tracks/shared-units/messaging-and-resilience/README.md):
-  - a bounded worker pool with Little's law;
+- [Core 01](../../2-core/01-go-runtime-and-reliable-services/lessons/13-worker-pools-and-backpressure.md): a bounded queue, checked with Little's law.
+- [Messaging and resilience](../../3-tracks/shared-units/messaging-and-resilience/README.md):
   - RabbitMQ;
   - at-least-once delivery with idempotency;
   - retries with jitter, and dead letters.
-- [Phase 3](../../2-core/03-docker-and-postgres/README.md): the transactional outbox, and Kafka next to RabbitMQ.
-- [Phase 7](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/07-test-scheduling-utility-and-input-drift.md): priority lanes, against head-of-line blocking.
+- [Event streams](../../3-tracks/shared-units/event-streams/README.md): the transactional outbox, and Kafka next to RabbitMQ.
+- [ML for infrastructure, lesson 07](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/07-test-scheduling-utility-and-input-drift.md): ordering ready jobs by predicted size, against FIFO's head-of-line blocking.

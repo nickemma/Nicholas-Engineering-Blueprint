@@ -26,7 +26,7 @@ For platform and developer-infrastructure roles. A platform is a product whose u
 - Measures of success: lead time, deployment frequency, change failure rate.
 </details>
 
-**Built in:** [Phase 5](../../2-core/08-shipping-safely/README.md) (Helm, CI/CD, a controller).
+**Built in:** [Kubernetes and delivery](../../3-tracks/shared-units/kubernetes-and-delivery/README.md) (Helm, promotion by digest, a controller).
 
 ## 2. A feature-flag service
 
@@ -44,7 +44,7 @@ Flags evaluated in every request of 500 services: 5 million evaluations a second
 - Experiments on top: exposure logging.
 </details>
 
-**Built in:** [Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md)'s exercise (flagpole: multi-tenant feature flags), [Phase 7](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md) (experiments).
+**Built in:** [Tenancy and abuse control](../../3-tracks/shared-units/tenancy-and-abuse-control/exercise-flagpole.md)'s exercise (flagpole: multi-tenant feature flags), [Core 02](../../2-core/02-python-runtime-and-honest-measurement/lessons/08-repeat-runs-and-confidence-intervals.md) (experiments).
 
 ## 3. Configuration management
 
@@ -62,7 +62,7 @@ Runtime configuration for 1,000 services in 3 regions: validated, versioned, rol
 - Secrets through a secrets manager, referenced (not embedded) by configuration.
 </details>
 
-**Built in:** [Phase 1, step 5](../../2-core/01-go-runtime-and-reliable-services/lessons/09-wiring-and-configuration.md), [Phase 5](../../2-core/08-shipping-safely/README.md) (Helm values), [Phase 6, step 9](../../2-core/08-shipping-safely/lessons/04-limit-what-the-gateway-can-read-and-record.md).
+**Built in:** [Core 01, lesson 09](../../2-core/01-go-runtime-and-reliable-services/lessons/09-wiring-and-configuration.md), [Kubernetes and delivery, lesson 05](../../3-tracks/shared-units/kubernetes-and-delivery/lessons/05-roll-out-a-canary-with-helm.md) (Helm values), [Core 08, lesson 04](../../2-core/08-shipping-safely/lessons/04-limit-what-the-gateway-can-read-and-record.md) (secrets kept out of code).
 
 ## 4. Multi-tenant Kubernetes
 
@@ -80,7 +80,7 @@ One large Kubernetes platform shared by 100 teams: fair resources, isolation bet
 - When to give a team its own cluster instead (the hard multi-tenancy limit).
 </details>
 
-**Built in:** [Phase 5](../../2-core/08-shipping-safely/README.md) (Kubernetes, RBAC), [Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md) (NetworkPolicies, Pod Security, tenant isolation).
+**Built in:** [Kubernetes and delivery](../../3-tracks/shared-units/kubernetes-and-delivery/lessons/10-enforce-the-deployment-boundary.md) (namespaces, NetworkPolicies, Pod Security), [Tenancy and abuse control](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md) (tenant isolation).
 
 ## 5. A service mesh control plane
 
@@ -98,4 +98,4 @@ mTLS, retries, timeouts and traffic shifting for 2,000 services, configured cent
 - Retries in the mesh multiplied by retries in the application: retry budgets.
 </details>
 
-**Built in:** [Phase 6, steps 7–8](../../2-core/08-shipping-safely/lessons/03-issue-certificates-and-require-mtls.md) (your own CA, mTLS, rotation, a sidecar and its measured cost).
+**Built in:** [Core 08, lesson 03](../../2-core/08-shipping-safely/lessons/03-issue-certificates-and-require-mtls.md) (your own CA and mTLS), [The proxy's control plane, lessons 03–04](../../3-tracks/cloud-and-network/03-proxy-control-plane/lessons/03-bind-management-peer-identities.md) (per-peer identity, rotation, a sidecar).

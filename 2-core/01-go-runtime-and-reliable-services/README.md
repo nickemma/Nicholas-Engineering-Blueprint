@@ -31,8 +31,6 @@ How Go runs your code (the scheduler, goroutine stacks, escape analysis, the gar
 | 15 | [gRPC and Protocol Buffers](lessons/15-grpc-and-protocol-buffers.md) | A `.proto` contract; generated code; a gRPC server next to HTTP; a client; deadlines over gRPC | ~5 h |
 | 16 | [The reconciliation loop](lessons/16-the-reconciliation-loop.md) | Desired vs actual state; workers as separate processes that report in over gRPC; leases and heartbeats; fencing tokens; cancelling a running job; a loop that notices a dead worker and hands its jobs on; the pattern behind Kubernetes controllers | ~7 h |
 
-**Absorbs** the old Phase 0 steps 3–7, Phase 1 steps 1–8, and Phase 2 steps 1, 4 and 6 and step 5's retries, all without RabbitMQ. Lessons 01, 02 and 16 are new.
-
 **Not here any more:** RabbitMQ, message versioning, dead letters and the circuit breaker (the *Messaging and resilience* unit); looking at the wire with `ss` and `tcpdump` (core 06).
 
 ## The gate

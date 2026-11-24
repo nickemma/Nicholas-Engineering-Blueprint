@@ -17,7 +17,7 @@ Every version of `hotspot`, at every rate, for 10 seconds, on a fresh process. E
 
 From a collapse at 800 requests a second to 8,000 with a p99 of 27 ms: **more than ten times the load, on the same hardware, in about 110 changed lines, most of them the bounded store.** The last row wasn't pushed further, so its limit is unknown.
 
-Each cell is **one run**, so treat small differences as noise. The last row's 26 ms at 3,000/s, worse than its 8 ms at 5,000/s, is a good example: a stray pause, not a real effect. To claim a small improvement, you'd repeat and interleave the runs, as [Phase 7, step 1](../../02-python-runtime-and-honest-measurement/lessons/08-repeat-runs-and-confidence-intervals.md) does.
+Each cell is **one run**, so treat small differences as noise. The last row's 26 ms at 3,000/s, worse than its 8 ms at 5,000/s, is a good example: a stray pause, not a real effect. To claim a small improvement, you'd repeat and interleave the runs, as [Core 02, lesson 08](../../02-python-runtime-and-honest-measurement/lessons/08-repeat-runs-and-confidence-intervals.md) does.
 
 Each fix moved the knee, and each used a different tool, because each problem was a different kind of problem:
 
@@ -33,12 +33,12 @@ Each fix moved the knee, and each used a different tool, because each problem wa
 
 On a machine you've never seen, in this order. It takes minutes, and each step narrows the next:
 
-1. **What does "slow" mean?** Which request, how slow, since when? Find the metric (the SLO from Phase 5). What changed?
+1. **What does "slow" mean?** Which request, how slow, since when? Find the metric (an SLO, if the service has one). What changed?
 2. **Is anything saturated?** `uptime`, `vmstat 1`, `free -m`. CPU? Run queue? Swapping?
 3. **Which process?** `top`, `pidstat 1`.
 4. **Is it running or waiting?** Voluntary context switches, `%usr` against `%system`.
    - **Running:** a CPU profile, then a flame graph.
-   - **Waiting:** mutex and block profiles. Traces (Phase 5) show which dependency.
+   - **Waiting:** mutex and block profiles. Traces ([lesson 13](13-trace-and-profile-the-wire.md)) show which dependency.
    - **In the kernel:** count the system calls with `bpftrace`, not `strace`, if it's busy.
 5. **Is memory growing?** RSS over time, `gctrace`, heap profiles.
 6. **Disk and network?** `iostat -x 1` (from `sysstat`), `ss -s`, retransmits.

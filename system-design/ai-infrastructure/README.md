@@ -1,6 +1,6 @@
 # AI infrastructure
 
-For AI infrastructure, inference, ML platform and MLOps roles. These designs are about the systems underneath AI products: serving models, scheduling GPUs, training at scale, and data and monitoring for models. They lean on [Phase 7](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md) and [Phase 8](../../3-tracks/ai-infrastructure/02-serving-and-scaling-models/README.md).
+For AI infrastructure, inference, ML platform and MLOps roles. These designs are about the systems underneath AI products: serving models, scheduling GPUs, training at scale, and data and monitoring for models. They lean on the [AI infrastructure track](../../3-tracks/ai-infrastructure/README.md), above all [ML for infrastructure](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md) and [Serving and scaling models](../../3-tracks/ai-infrastructure/02-serving-and-scaling-models/README.md).
 
 Use the [systems template](../_template.md) for the infrastructure designs, and the [ML template](../_template-ml.md) when the model's behaviour is the question.
 
@@ -27,7 +27,7 @@ Schedule training, fine-tuning, batch inference and online serving on a shared c
 - A simulator to evaluate policies before changing production.
 </details>
 
-**Built in:** [Phase 5](../../2-core/08-shipping-safely/README.md) (Kubernetes, a controller), [Phase 7, step 9](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/07-test-scheduling-utility-and-input-drift.md) (scheduling with predictions).
+**Built in:** [Kubernetes and delivery](../../3-tracks/shared-units/kubernetes-and-delivery/README.md) (Kubernetes, a controller), [ML for infrastructure, lesson 07](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/07-test-scheduling-utility-and-input-drift.md) (scheduling with predictions).
 
 ## 2. A distributed training platform
 
@@ -45,7 +45,7 @@ Let researchers train models from 1 to 512 GPUs with one command: data loading, 
 - Experiment tracking and reproducibility (seeds, data versions, code versions).
 </details>
 
-**Built in:** [Phase 7](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md) (training, MLflow), [Phase 8](../../3-tracks/ai-infrastructure/02-serving-and-scaling-models/README.md) (PyTorch Distributed, Ray).
+**Built in:** [ML for infrastructure](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md) (training, a versioned registry), [Serving and scaling models](../../3-tracks/ai-infrastructure/02-serving-and-scaling-models/README.md) (PyTorch Distributed, Ray).
 
 ## 3. A model-serving platform
 
@@ -63,7 +63,7 @@ Serve 300 models (from small tabular models to medium language models) for 40 te
 - Monitoring per model: latency, errors, input drift.
 </details>
 
-**Built in:** [Phase 7, steps 8 and 10](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/06-serve-the-active-version.md) (serving, MLflow registry, the gate, promotion and rollback).
+**Built in:** [ML for infrastructure, lessons 05–06](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/05-promote-versioned-artifacts.md) (versioned promotion, serving the active version, rollback, the lifecycle gate).
 
 ## 4. A feature store
 
@@ -80,7 +80,7 @@ Features for training and serving across 50 models: point-in-time-correct traini
 - Ownership, discovery, reuse across teams.
 </details>
 
-**Built in:** [Phase 7, steps 5 and 8](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/03-split-by-time-and-plan-the-comparison.md) (point-in-time features, a parity test that found a real leak).
+**Built in:** [ML for infrastructure, lesson 03](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/03-split-by-time-and-plan-the-comparison.md) (time splits that keep late labels out of training).
 
 ## 5. Retrieval-augmented generation and vector search
 
@@ -98,7 +98,7 @@ Answer questions over a company's 50 million documents with an LLM: retrieve the
 - Caching; cost per answer.
 </details>
 
-**Built in:** the [security track's authorization design](../security/authorization-service.md), [Phase 7](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md) (evaluation).
+**Built in:** the [security track's authorization design](../security/authorization-service.md), [Securing the AI layer, lesson 03](../../3-tracks/ai-infrastructure/04-securing-the-ai-layer/lessons/03-retrieval-over-the-tenants-runbooks-and-jobs.md) (retrieval with pgvector, tenant-scoped, quality measured).
 
 ## 6. Model monitoring
 
@@ -115,4 +115,4 @@ Monitor 300 production models: detect input drift, prediction drift and quality 
 - Automatic retraining triggers gated by evaluation beyond noise.
 </details>
 
-**Built in:** [Phase 7, steps 11–12](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/07-test-scheduling-utility-and-input-drift.md) (drift, a shadow, anomaly detection scored against incidents).
+**Built in:** [ML for infrastructure, lesson 07](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/07-test-scheduling-utility-and-input-drift.md) (input drift), [the AI operations deep dive](../../3-tracks/ai-infrastructure/deep-dives/aiops.md) (anomaly detection scored against incidents).

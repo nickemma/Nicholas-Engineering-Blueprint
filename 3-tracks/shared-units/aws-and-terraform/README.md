@@ -19,8 +19,6 @@ Start with [Before you start](lessons/00-before-you-start.md).
 | 2 | 05 | [Exercise queue delivery and observe failures](lessons/05-delivery-and-observability.md) | Use a local SQS-compatible fixture to check receipt, acknowledgment, and redelivery without changing who owns job state. Add CloudWatch logs and alarms and a budget notification configuration. |
 | 2 | 06 | [Review the plan and prove the policy checks](lessons/06-review-and-verify.md) | Run the offline gate, inspect the planned access paths, and catch an intentionally broadened access rule. Document apply, verify, and teardown as an optional cloud exercise. |
 
-These lessons rebase the former Phase 5 AWS lab onto the current Switchyard stack.
-
 ## The gate
 
 Use the [automated gate](gate/README.md) to validate the configuration and run plan assertions with a mocked AWS provider. Check the public entry point, private tasks and database, role and resource scope, queue redrive, alarms, and budget configuration. Run the queue adapter against the local fixture and verify that a failed delivery returns without acknowledging the message.

@@ -34,6 +34,6 @@ State the pattern, what's cached, the TTL and how invalidation works, the expect
 
 ## Where you built it
 
-- [Phase 3, step 7](../../3-tracks/shared-units/caching/lessons/02-add-cache-aside.md): cache-aside with Redis, stampede protection (singleflight), and failing open, so a Redis outage only slows things down. [Step 9](../../3-tracks/shared-units/messaging-and-resilience/lessons/05-stop-calling-a-failing-dependency.md) puts a breaker on the database, under the cache.
-- [Phase 4, step 11](../../2-core/07-distributed-systems-fundamentals/lessons/10-move-fewer-keys-with-consistent-hashing.md): the cache spread over several servers.
-- [Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md): the cache key gained the tenant. A test now proves it's there, after a review found it missing.
+- [Caching](../../3-tracks/shared-units/caching/lessons/02-add-cache-aside.md): cache-aside with Redis, stampede protection (singleflight), and failing open, so a Redis outage only slows things down. [Messaging and resilience](../../3-tracks/shared-units/messaging-and-resilience/lessons/05-stop-calling-a-failing-dependency.md) puts a breaker on a failing dependency.
+- [Core 07, lesson 10](../../2-core/07-distributed-systems-fundamentals/lessons/10-move-fewer-keys-with-consistent-hashing.md): the cache spread over several servers.
+- [Securing the AI layer, lesson 09](../../3-tracks/ai-infrastructure/04-securing-the-ai-layer/lessons/09-leaks-between-tenants.md): the agent's answer cache keys on the tenant, and a test proves it's there.

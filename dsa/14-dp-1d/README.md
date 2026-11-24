@@ -13,7 +13,7 @@ Every DP solution is the same four decisions. Write them down before any code:
 
 **Recognise it when** the problem asks for a **count** of ways, a **minimum** or **maximum**, or whether something is **possible**, and each choice affects what's possible later. If greedy (guide 17) has a counterexample, it's usually DP.
 
-**Real systems:** [PostgreSQL's planner](../../3-tracks/storage-engines/01-postgres-in-depth/lessons/04-claim-and-recover-background-jobs.md), whose plans you read with `EXPLAIN` in Phase 3, chooses the order of a query's joins by dynamic programming: the best plan for joining a set of tables is built from the best plans for its subsets. (Above a dozen or so tables it switches to a genetic search, because the table of subsets grows too fast.) Speech recognition, sequence alignment and `diff` (guide 15) are DP too.
+**Real systems:** [PostgreSQL's planner](../../3-tracks/storage-engines/01-postgres-in-depth/lessons/02-read-the-plan-before-adding-an-index.md), whose plans you read with `EXPLAIN` in Postgres in depth, chooses the order of a query's joins by dynamic programming: the best plan for joining a set of tables is built from the best plans for its subsets. (Above a dozen or so tables it switches to a genetic search, because the table of subsets grows too fast.) Speech recognition, sequence alignment and `diff` (guide 15) are DP too.
 
 ## Worked problem 1: Climbing Stairs
 

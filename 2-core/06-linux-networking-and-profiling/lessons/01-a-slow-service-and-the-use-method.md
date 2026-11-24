@@ -15,7 +15,7 @@ Read it as you type it. Some of what's below is bad on purpose, but don't go loo
 <!-- file: store.go -->
 ~~~go
 // Package hotspot is a small jobs service with performance problems
-// planted in it, for the Performance Bridge to find.
+// planted in it, for this module to find.
 package hotspot
 
 import (

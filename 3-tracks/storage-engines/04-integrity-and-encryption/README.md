@@ -21,8 +21,6 @@ Use the [setup card](lessons/00-before-you-start.md) to assemble the learner wor
 | 2 | 05 | [Carry the last checkpoint forward with a witness](lessons/05-keep-an-independent-witness-head.md) | Persist a trusted head, then check consistency before advancing it after restart. |
 | 2 | 06 | [Run the tenant, encryption, and audit gate](lessons/06-run-the-integrity-gate.md) | Verify the storage and audit properties against live fixtures and negative controls. |
 
-Lesson 03 rebases Phase 3 step 10 onto the shared event-stream unit and the current `klog`. Lessons 04–05 adapt Phase 6 step 10’s Rust and Go trees, signed checkpoints, and witness. The storage namespace and encryption lessons are new. [Phase 3 audit feed](lessons/03-append-events-before-offset-commit.md) · [Phase 6 witnessed log](lessons/04-check-a-signed-merkle-root.md)
-
 ## The gate
 
 - Give two tenants the same user keys and different values. Check point reads, writes, deletes, scans, and pinned snapshots for both tenants before and after reopen. Require a scan with a deliberately weakened tenant bound to fail the isolation assertion.

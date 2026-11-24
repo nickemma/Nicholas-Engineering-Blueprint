@@ -27,7 +27,7 @@ One-to-one and group chat (groups up to 500), 50 million daily users, messages d
 - Failure: a gateway dies, so its clients reconnect elsewhere and resync.
 </details>
 
-**Built in:** [Phase 2](../../3-tracks/shared-units/messaging-and-resilience/README.md) (messaging, ordering, idempotency), [Phase 4](../../2-core/07-distributed-systems-fundamentals/README.md) (partitioning).
+**Built in:** [Messaging and resilience](../../3-tracks/shared-units/messaging-and-resilience/README.md) (messaging, ordering, idempotency), [Core 07](../../2-core/07-distributed-systems-fundamentals/README.md) (partitioning).
 
 ## 2. A news feed
 
@@ -45,7 +45,7 @@ Users follow others; the home feed shows recent posts from people they follow, r
 - Failure: the fan-out queue lags, so feeds are late but correct; deleted posts are filtered at read time.
 </details>
 
-**Built in:** [Phase 2](../../3-tracks/shared-units/messaging-and-resilience/README.md) (queues), [Phase 3](../../2-core/03-docker-and-postgres/README.md) (caching), [DSA guide 08](../../dsa/08-heaps/README.md) (merge *k* sorted lists).
+**Built in:** [Messaging and resilience](../../3-tracks/shared-units/messaging-and-resilience/README.md) (queues), [Caching](../../3-tracks/shared-units/caching/README.md) (caching), [DSA guide 08](../../dsa/08-heaps/README.md) (merge *k* sorted lists).
 
 ## 3. Ride matching
 
@@ -64,7 +64,7 @@ Match riders with nearby drivers in under 2 seconds. 5 million rides a day in 50
 - Surge pricing and dispatch optimisation as extensions.
 </details>
 
-**Built in:** [Phase 4](../../2-core/07-distributed-systems-fundamentals/README.md) (leases, fencing, partitioning), [Phase 1](../../2-core/01-go-runtime-and-reliable-services/README.md) (compare-and-swap).
+**Built in:** [Core 07](../../2-core/07-distributed-systems-fundamentals/README.md) (leases, fencing, partitioning), [Core 01](../../2-core/01-go-runtime-and-reliable-services/README.md) (compare-and-swap).
 
 ## 4. Ticket booking
 
@@ -83,4 +83,4 @@ Sell 50,000 seats for a concert that goes on sale at 10:00, when 2 million peopl
 - Failure: payment succeeds after the hold expired. Decide what happens: refund, or honour it if the seat is still free.
 </details>
 
-**Built in:** [Phase 3](../../2-core/03-docker-and-postgres/README.md) (transactions, `SKIP LOCKED`), [Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md) (rate limiting), [Phase 2](../../3-tracks/shared-units/messaging-and-resilience/README.md) (idempotency).
+**Built in:** [Core 03](../../2-core/03-docker-and-postgres/README.md) (transactions), [Postgres in depth](../../3-tracks/storage-engines/01-postgres-in-depth/lessons/04-claim-and-recover-background-jobs.md) (`SKIP LOCKED`), [Tenancy and abuse control](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md) (rate limiting), [Core 01](../../2-core/01-go-runtime-and-reliable-services/lessons/14-timeouts-retries-and-idempotency.md) (idempotency).

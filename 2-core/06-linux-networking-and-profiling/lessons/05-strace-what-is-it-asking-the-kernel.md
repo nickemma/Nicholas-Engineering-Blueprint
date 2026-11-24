@@ -141,7 +141,7 @@ Timing must come **without** `strace`. Each pair below is a fresh process, sent 
 
 At 3,000/s, **no difference**: the two runs of the old code differ more than old from new. At 5,000/s, near saturation, the fix cuts p50 by a third or more, and p99 by a third to two thirds. A fix can be real and still invisible below the knee. That's why you measure at the load you care about. Two runs aren't many, so the direction is clear but the sizes are rough.
 
-There's a durability question here too: this write reaches the operating system, not the disk. A crash of the **process** keeps it; a crash of the **machine** can lose it, unless you `fsync`. `fsync` per job would cost far more than these writes did. Phase 3 and the Rust Bridge dealt with exactly this trade-off.
+There's a durability question here too: this write reaches the operating system, not the disk. A crash of the **process** keeps it; a crash of the **machine** can lose it, unless you `fsync`. `fsync` per job would cost far more than these writes did. [Core 04](../../04-rust-foundations/lessons/09-measure-syncs-and-prove-recovery.md) measured exactly this trade-off.
 
 **Explain it:** What is a system call, and why does it cost more than a function call? Why did `strace` hurt the service so much? What does `ptrace_scope` protect against? Why was the fix invisible at 3,000/s? What does this write guarantee, and what doesn't it?
 

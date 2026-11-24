@@ -24,7 +24,7 @@ Compute per-merchant payment totals and fraud signals in 1-minute and 1-hour win
 - Back-pressure; hot keys (one giant merchant).
 </details>
 
-**Built in:** [Phase 7, step 3](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/02-build-private-parquet-snapshots.md) (late events, deduplication).
+**Built in:** [ML for infrastructure, lesson 02](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/02-build-private-parquet-snapshots.md) (late events, deduplication).
 
 ## 2. Change data capture
 
@@ -42,7 +42,7 @@ Stream every change from 50 PostgreSQL databases into Kafka and a search index, 
 - Comparison with the transactional outbox.
 </details>
 
-**Built in:** [Phase 3](../../2-core/03-docker-and-postgres/README.md) (the WAL, the outbox, Kafka).
+**Built in:** [Event streams](../../3-tracks/shared-units/event-streams/README.md) (the outbox, Kafka), [Postgres in depth](../../3-tracks/storage-engines/01-postgres-in-depth/README.md) (the WAL).
 
 ## 3. A data lake with compaction
 
@@ -59,7 +59,7 @@ Land 2 TB of events a day as Parquet in object storage, queryable by several eng
 - COST: does a single machine with DuckDB beat the cluster at this size?
 </details>
 
-**Built in:** [Phase 7, steps 3–4](../../3-tracks/ai-infrastructure/deep-dives/mapreduce-spark-and-cost.md) (Parquet, compaction measured, MapReduce, Spark and COST).
+**Built in:** [ML for infrastructure, lesson 02](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/02-build-private-parquet-snapshots.md) (Parquet), [the MapReduce, Spark and COST deep dive](../../3-tracks/ai-infrastructure/deep-dives/mapreduce-spark-and-cost.md).
 
 ## 4. A time-series database
 
@@ -76,7 +76,7 @@ Store 10 million metrics series at 15-second resolution for a year, with fast ra
 - Cardinality limits.
 </details>
 
-**Built in:** [Phase 5, step 10](../../3-tracks/shared-units/kubernetes-and-delivery/lessons/08-alert-on-budget-burn.md) (Prometheus).
+**Built in:** [Kubernetes and delivery, lesson 08](../../3-tracks/shared-units/kubernetes-and-delivery/lessons/08-alert-on-budget-burn.md) (Prometheus).
 
 ## 5. Batch job orchestration
 
@@ -94,4 +94,4 @@ Run 5,000 daily data jobs with dependencies between them (a DAG), retries, backf
 - Workers on a queue; resource pools per team.
 </details>
 
-**Built in:** [Phase 3, step 8](../../3-tracks/storage-engines/01-postgres-in-depth/lessons/04-claim-and-recover-background-jobs.md), [DSA guide 09](../../dsa/09-graphs/README.md) (topological sort).
+**Built in:** [Postgres in depth, lesson 04](../../3-tracks/storage-engines/01-postgres-in-depth/lessons/04-claim-and-recover-background-jobs.md), [DSA guide 09](../../dsa/09-graphs/README.md) (topological sort).

@@ -21,7 +21,7 @@ Start with [Before you start](lessons/00-before-you-start.md). The lab uses two 
 | 3 | 07 | [Count traffic from the kernel](lessons/07-count-traffic-at-xdp.md) | Attach a pass-through XDP counter in a disposable Linux network namespace. Compare the counter before and after known fixture traffic and correlate it with the origin's request count. |
 | 3 | 08 | [Run the control-plane game day](lessons/08-run-the-control-plane-gate.md) | Exercise a bad route candidate, lost acknowledgement, certificate rotation, and a webhook key change. Use request outcomes and applied generations to show recovery, then run the negative control. |
 
-Lessons 03–04 rebase the sidecar and peer identity work from Phase 6. Lessons 05–06 rebase the signed webhook and OpenBao work, and lesson 08 reworks the security game day for the proxy. Lesson 07 extends the core's kernel observations. [Phase 6 migration map](../../../step-map.md#phase-6-lessons06-safe-shared-queries) · [Lab certificate authority](../../../2-core/08-shipping-safely/lessons/03-issue-certificates-and-require-mtls.md)
+Lessons 03–04 use the [lab certificate authority](../../../2-core/08-shipping-safely/lessons/03-issue-certificates-and-require-mtls.md) from Core 08. Lesson 07 extends Core 06's kernel observations.
 
 ## The gate
 

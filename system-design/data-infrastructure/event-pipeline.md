@@ -1,6 +1,6 @@
 # Design: an event pipeline from services to a warehouse
 
-**Track:** data-infrastructure · **Built in:** [Phase 3](../../2-core/03-docker-and-postgres/README.md) (outbox, Kafka), [Phase 7, step 3](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/02-build-private-parquet-snapshots.md) (a data contract, Kafka to Parquet, late events) · **Time:** 45 minutes
+**Track:** data-infrastructure · **Built in:** [Event streams](../../3-tracks/shared-units/event-streams/README.md) (outbox, Kafka), [ML for infrastructure, lesson 02](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/02-build-private-parquet-snapshots.md) (events to Parquet, late events) · **Time:** 45 minutes
 
 This is a worked reference. Do the design yourself first, with a timer, then read this and note what you missed.
 
@@ -37,7 +37,7 @@ The difficulty is in the seams: the database-to-broker gap, the broker-to-files 
 - **Per day:** 20,000 × 86,400 ≈ 1.7 × 10⁹ events × 1 KB ≈ 1.7 TB of JSON.
 - **In columnar Parquet:** compression is typically 5–10× on event data, so ~200–350 GB a day; ~150–250 TB over two years.
 - **The broker:** 50 MB/s at peak; 7 days at the average 20 MB/s ≈ 12 TB, × 3 replicas ≈ 36 TB of Kafka storage. That's partitions spread over ~6–10 brokers.
-- **Files:** writing every few minutes per partition makes many small files. **Compaction is required**, or queries spend their time opening files (Phase 7 measured 742 files → 31: ~12% faster and smaller).
+- **Files:** writing every few minutes per partition makes many small files. **Compaction is required**, or queries spend their time opening files.
 
 **What this decides:**
 - **Object storage plus Parquet**, not a row database, for the warehouse.
@@ -135,13 +135,9 @@ Each seam, and what makes it safe:
 
 ## 10. Where you've built this
 
-- [Phase 3](../../2-core/03-docker-and-postgres/README.md): the transactional outbox, and Kafka.
-- [Phase 7, step 3](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/02-build-private-parquet-snapshots.md):
-  - a versioned data contract;
-  - Kafka to Parquet with hourly partitions;
-  - offsets committed after the atomic write;
-  - deduplication, late events and a rebuild, queried with DuckDB.
-- [Phase 7, step 4](../../3-tracks/ai-infrastructure/deep-dives/mapreduce-spark-and-cost.md): compaction measured.
+- [Event streams](../../3-tracks/shared-units/event-streams/README.md): the transactional outbox, and Kafka.
+- [ML for infrastructure, lessons 01–02](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/lessons/02-build-private-parquet-snapshots.md): versioned events captured at admission and completion, written to private Parquet snapshots, with deduplication and late events.
+- [The MapReduce, Spark and COST deep dive](../../3-tracks/ai-infrastructure/deep-dives/mapreduce-spark-and-cost.md): when one machine beats a cluster.
 
 ## 11. What an interviewer will push on
 

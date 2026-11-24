@@ -38,8 +38,10 @@ Don't design consensus; **use** it, and say for what: *"leader election and the 
 
 ## Where you built it
 
-[Phase 4](../../2-core/07-distributed-systems-fundamentals/README.md), steps 1–9:
-- your own Raft on a deterministic simulated network: elections, log replication, persistence and snapshots;
+[Core 07](../../2-core/07-distributed-systems-fundamentals/README.md): your own Raft on a deterministic simulated network, with elections, log replication and persistence.
+
+[Consensus in depth](../../3-tracks/storage-engines/02-consensus-in-depth/README.md):
+- snapshots;
 - PreVote and CheckQuorum;
 - linearizability checks;
 - a TLA+ model of elections.

@@ -43,7 +43,8 @@ Pick the type from the access pattern, and say why: *"Jobs are looked up by ID a
 
 ## Where you built it
 
-- [Rust Bridge](../../2-core/04-rust-foundations/README.md): an append-only log with checksums that survives torn writes.
-- [Phase 3](../../2-core/03-docker-and-postgres/README.md): PostgreSQL with migrations, indexes and `EXPLAIN ANALYZE`; B-trees against LSM trees; the WAL and `fsync`; backup and restore.
-- [Phase 5](../../2-core/08-shipping-safely/README.md): S3 on AWS.
-- [Phase 7](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md): Parquet and DuckDB.
+- [Core 04](../../2-core/04-rust-foundations/README.md): an append-only log with checksums that survives torn writes.
+- [Core 03](../../2-core/03-docker-and-postgres/README.md): PostgreSQL with migrations and connection pooling.
+- [Postgres in depth](../../3-tracks/storage-engines/01-postgres-in-depth/README.md): indexes and `EXPLAIN ANALYZE`; B-trees against LSM trees; the WAL and `fsync`; backup and restore.
+- [AWS and Terraform](../../3-tracks/shared-units/aws-and-terraform/README.md): S3 on AWS.
+- [ML for infrastructure](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md): Parquet.

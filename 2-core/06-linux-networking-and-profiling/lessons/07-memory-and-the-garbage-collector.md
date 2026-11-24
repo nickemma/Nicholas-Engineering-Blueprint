@@ -115,7 +115,7 @@ The real problem is the unbounded store. A fixed-size **ring** keeps the most re
 <!-- file: store.go -->
 ~~~go
 // Package hotspot is a small jobs service with performance problems
-// planted in it, for the Performance Bridge to find.
+// planted in it, for this module to find.
 package hotspot
 
 import (
@@ -230,7 +230,7 @@ func (s *Store) writeAudit(j Job) error {
 }
 ~~~
 
-- **There's a trade here, and it's in the comment:** a duplicate older than the ring counts as a new job. Keep more than your longest retry window (you met this in [Phase 3](../../03-docker-and-postgres/README.md)'s idempotency keys).
+- **There's a trade here, and it's in the comment:** a duplicate older than the ring counts as a new job. Keep more than your longest retry window (you met this in [Core 03](../../03-docker-and-postgres/README.md)'s idempotency keys).
 - **`List` still copies under the lock,** on purpose: it must not hold the lock while writing to a slow client. That's step 2's lesson.
 
 Add the flag in `cmd/hotspot/main.go`:

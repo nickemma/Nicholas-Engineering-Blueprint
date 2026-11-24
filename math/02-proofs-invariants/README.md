@@ -4,7 +4,7 @@
 
 Tests show a program works on the cases you tried. A distributed system runs through more cases than you could ever try, and the ones that break it are the rare ones. This guide teaches the mathematics that covers every case: **induction** and **invariants**. It ends with Raft's safety argument, and with a working model checker you've written yourself, so that TLA+ stops being magic.
 
-**Real systems:** [Phase 4](../../2-core/07-distributed-systems-fundamentals/README.md) builds Raft, and models elections in [TLA+ in step 9](../../3-tracks/storage-engines/02-consensus-in-depth/lessons/06-model-election-safety.md). [DSA's binary search](../../dsa/05-binary-search/README.md) relies on a loop invariant. For AI-generated code, this is the sharpest tool you have: asking "what stays true on every step?" finds bugs that a passing test suite won't.
+**Real systems:** [Core 07](../../2-core/07-distributed-systems-fundamentals/README.md) builds Raft, and [Consensus in depth](../../3-tracks/storage-engines/02-consensus-in-depth/README.md) models elections in [TLA+ in lesson 06](../../3-tracks/storage-engines/02-consensus-in-depth/lessons/06-model-election-safety.md). [DSA's binary search](../../dsa/05-binary-search/README.md) relies on a loop invariant. For AI-generated code, this is the sharpest tool you have: asking "what stays true on every step?" finds bugs that a passing test suite won't.
 
 ## Induction
 
@@ -115,7 +115,7 @@ Election Safety isn't enough. What clients care about is **State Machine Safety*
 | **Leader Completeness** | A committed entry is in the log of every later leader | The commit's majority overlaps the voters' majority, and a voter refuses a less up-to-date candidate |
 | **State Machine Safety** | No two servers apply different commands at one index | Follows from the two above |
 
-Leader Completeness is the deep one. Suppose an entry was committed in term *T*, and a leader of a later term lacks it. Take the first such leader. Some server that stored the entry also voted for that leader, since the two majorities overlap. That voter's log was at least as up to date as the candidate's, or it wouldn't have voted, and following Log Matching through, that forces the candidate to have the entry. Contradiction. The full proof has a subtle case, which is why Raft only counts replicas to commit entries from the **current** term. You met that rule in Phase 4: it's there because a proof needed it, and the paper's Figure 8 shows the failure without it.
+Leader Completeness is the deep one. Suppose an entry was committed in term *T*, and a leader of a later term lacks it. Take the first such leader. Some server that stored the entry also voted for that leader, since the two majorities overlap. That voter's log was at least as up to date as the candidate's, or it wouldn't have voted, and following Log Matching through, that forces the candidate to have the entry. Contradiction. The full proof has a subtle case, which is why Raft only counts replicas to commit entries from the **current** term. You met that rule in [Core 07, lesson 04](../../2-core/07-distributed-systems-fundamentals/lessons/04-decide-what-is-committed.md): it's there because a proof needed it, and the paper's Figure 8 shows the failure without it.
 
 ## A model checker of your own
 
@@ -434,7 +434,7 @@ Each line of a trace is one step: the votes in term 0 and term 1, with `-1` for 
 - **Let a server vote twice,** and in six steps server 0 votes for itself, and for server 1, and both win term 0. The trace is the bug report.
 - **Make a quorum one vote,** and it takes four steps. Those are the two rules the three-line proof used, and the checker finds the same two. A passing test of "elect a leader" wouldn't have.
 
-Breadth-first search means that the trace is a shortest one. A real system's failure might need a thousand unrelated steps, but the checker hands you only the ones that matter. That's what you saw in Phase 4, where TLC found a broken vote rule.
+Breadth-first search means that the trace is a shortest one. A real system's failure might need a thousand unrelated steps, but the checker hands you only the ones that matter. That's what you see in Consensus in depth, lesson 06, where TLC finds a broken vote rule.
 
 ## True isn't the same as inductive
 
@@ -459,7 +459,7 @@ You've now written the core of TLC, and TLA+ names the same parts:
 | `check` | TLC |
 | `describe(trace)` | TLC's error trace |
 
-What does TLA+ add? A precise language that isn't tied to one implementation; a far faster checker, with symmetry reduction, temporal properties for liveness, and history variables; and TLAPS for machine-checked proofs. Most important is the discipline: writing a spec shows up the unclear parts of a design before any code exists. Amazon reported finding serious bugs in DynamoDB and S3 designs this way. And a spec is a model: it says nothing about whether your **code** matches. That's why Phase 4 also has a deterministic simulator and Porcupine's linearizability checks.
+What does TLA+ add? A precise language that isn't tied to one implementation; a far faster checker, with symmetry reduction, temporal properties for liveness, and history variables; and TLAPS for machine-checked proofs. Most important is the discipline: writing a spec shows up the unclear parts of a design before any code exists. Amazon reported finding serious bugs in DynamoDB and S3 designs this way. And a spec is a model: it says nothing about whether your **code** matches. That's why Core 07 also has a deterministic simulator, and Consensus in depth has Porcupine's linearizability checks.
 
 ## What to do with this
 
@@ -477,7 +477,7 @@ Solve these alone. There are no solutions here.
 3. Change `search` to `high = middle - 1`, keeping the half-open range. Use the `check` hook to find the failing input, and say which part of the proof breaks.
 4. Add a `persist` rule to `election.py`: a server can crash and forget its vote. Does the checker find the bug? This is why votes go to disk before the reply.
 5. Add a third term. How does the number of states grow? Add a fourth server: what does a quorum need to be, and what happens with a quorum of 2?
-6. Model a simple lock server with a lease: a client holds the lock until its lease expires. Add a slow client that writes after expiry. What invariant fails, and how does Phase 4's fencing token fix it?
+6. Model a simple lock server with a lease: a client holds the lock until its lease expires. Add a slow client that writes after expiry. What invariant fails, and how does Core 07's fencing token fix it?
 7. Prove that R + W > N means that a read overlaps the latest write. What does it stop guaranteeing during a sloppy quorum?
 
 ## Read

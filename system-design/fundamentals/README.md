@@ -46,17 +46,17 @@ An API gateway gives clients an entry point for routing, authentication and limi
 
 | Page | The question it answers | Built in |
 |---|---|---|
-| [Estimation](estimation.md) | How big is this, really? | Core 02, Phase 5 |
+| [Estimation](estimation.md) | How big is this, really? | Core 02, Core 08 |
 | [Latency and throughput numbers](latency-numbers.md) | How long does each thing take? | Every phase's measurements |
-| [Load balancing](load-balancing.md) | How is work spread over many servers? | Phase 5 |
-| [Caching](caching.md) | How do you avoid doing the same work twice? | Phase 3 |
-| [Queues and logs](queues.md) | How do you decouple producers from consumers? | Phases 2, 3 |
-| [Replication](replication.md) | How does data survive a machine dying? | Phase 4 |
-| [Partitioning](partitioning.md) | How do you split data too big for one machine? | Phase 4 |
+| [Load balancing](load-balancing.md) | How is work spread over many servers? | Kubernetes and delivery |
+| [Caching](caching.md) | How do you avoid doing the same work twice? | Caching |
+| [Queues and logs](queues.md) | How do you decouple producers from consumers? | Core 01, Messaging and resilience, Event streams |
+| [Replication](replication.md) | How does data survive a machine dying? | Core 07, Consensus in depth |
+| [Partitioning](partitioning.md) | How do you split data too big for one machine? | Core 07, Consensus in depth |
 | [Sharding decisions](sharding.md) | How do you choose, size, and move a shard under load? | Storage engines, consensus in depth |
-| [Consistency models](consistency.md) | What will a reader see? | Phase 4 |
-| [Consensus](consensus.md) | How do machines agree? | Phase 4 |
-| [Rate limiting](rate-limiting.md) | How do you stop one client taking everything? | Phase 6 |
-| [Idempotency](idempotency.md) | How do you make retries safe? | Phases 2, 3 |
-| [Storage engines and types](storage.md) | Where does the data live, and in what shape? | Phase 3, Rust Bridge |
-| [Observability](observability.md) | How do you know it's working? | Phases 1, 5 |
+| [Consistency models](consistency.md) | What will a reader see? | Core 07, Consensus in depth |
+| [Consensus](consensus.md) | How do machines agree? | Core 07, Consensus in depth |
+| [Rate limiting](rate-limiting.md) | How do you stop one client taking everything? | Tenancy and abuse control |
+| [Idempotency](idempotency.md) | How do you make retries safe? | Core 01, Core 03 |
+| [Storage engines and types](storage.md) | Where does the data live, and in what shape? | Core 03, Core 04, Postgres in depth |
+| [Observability](observability.md) | How do you know it's working? | Core 01, Core 08, Kubernetes and delivery |

@@ -23,8 +23,6 @@ Continue Switchyard from [Core 01's reconciliation loop](../01-go-runtime-and-re
 | 07 | [Pick up unfinished jobs after a crash](lessons/07-pick-up-unfinished-jobs-after-a-crash.md) | Recover queued and interrupted jobs from PostgreSQL with one active control plane. Keep the outstanding-work limit and make old lease tokens invalid after recovery. Kill the control plane with a job running and watch a worker pick it up again. | ~6 h |
 | 08 | [Run the stack and measure it](lessons/08-run-the-stack-and-measure-it.md) | Build the Switchyard image and wire up the control plane, workers, and Postgres with Compose. Recreate the database container with its volume attached. Compare job submissions under the same offered load with `kload`, accounting for send lag, errors, and variation across runs. | ~4 h |
 
-This module adapts Phase 3’s repository, pooling, transactions, and idempotency lessons and Phase 5’s Compose lesson to Switchyard. Restart recovery and the matched `kload` comparison are new.
-
 ## Restart behavior
 
 - A committed submission can be found by job ID after an API crash. A retry within the idempotency retention window returns the original result. A crash before commit leaves neither a job nor a claimed key.

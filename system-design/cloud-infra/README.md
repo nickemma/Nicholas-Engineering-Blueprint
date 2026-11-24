@@ -25,7 +25,7 @@ Take a single-region service (an API, a PostgreSQL database, a cache, a queue) t
 - Cost: cross-region traffic is billed. Estimate it.
 </details>
 
-**Built in:** [Phase 5](../../2-core/08-shipping-safely/README.md) (AWS with Terraform, game day), [Phase 4](../../2-core/07-distributed-systems-fundamentals/README.md) (replication, fencing).
+**Built in:** [AWS and Terraform](../../3-tracks/shared-units/aws-and-terraform/README.md), [Core 08](../../2-core/08-shipping-safely/README.md) (game day), [Core 07](../../2-core/07-distributed-systems-fundamentals/README.md) (replication, fencing).
 
 ## 2. Object storage, like S3
 
@@ -44,7 +44,7 @@ Store objects from bytes to terabytes; 100 billion objects; 11 nines of durabili
 - Garbage collection of orphaned chunks.
 </details>
 
-**Built in:** [the Rust Bridge](../../2-core/04-rust-foundations/README.md) (checksums), [Phase 4](../../2-core/07-distributed-systems-fundamentals/README.md) (consensus, ranges).
+**Built in:** [Core 04](../../2-core/04-rust-foundations/README.md) (checksums), [Core 07](../../2-core/07-distributed-systems-fundamentals/README.md) (consensus), [Consensus in depth](../../3-tracks/storage-engines/02-consensus-in-depth/README.md) (shards).
 
 ## 3. A DNS service
 
@@ -62,7 +62,7 @@ Authoritative DNS for 10 million domains; 1 million queries a second worldwide; 
 - Health-checked records for failover.
 </details>
 
-**Built in:** [Phase 5, step 4](../../3-tracks/shared-units/kubernetes-and-delivery/lessons/02-reach-a-service-by-name.md) (DNS inside Kubernetes), [Phase 2, step 7](../../2-core/06-linux-networking-and-profiling/lessons/10-watch-tcp-on-a-lossy-link.md).
+**Built in:** [Kubernetes and delivery, lesson 02](../../3-tracks/shared-units/kubernetes-and-delivery/lessons/02-reach-a-service-by-name.md) (DNS inside Kubernetes), [Core 06, lesson 10](../../2-core/06-linux-networking-and-profiling/lessons/10-watch-tcp-on-a-lossy-link.md).
 
 ## 4. A CI/CD system
 
@@ -81,4 +81,4 @@ Build, test and deploy for 1,000 engineers: 5,000 builds a day, builds under 10 
 - Failure: a compromised build worker. What can it sign?
 </details>
 
-**Built in:** [core 01, lesson 04](../../2-core/01-go-runtime-and-reliable-services/lessons/04-tests-at-three-levels-and-ci.md#step-5-your-own-repository-and-ci) (CI), [Phase 5, step 8](../../3-tracks/shared-units/kubernetes-and-delivery/lessons/06-build-once-and-promote-by-digest.md).
+**Built in:** [core 01, lesson 04](../../2-core/01-go-runtime-and-reliable-services/lessons/04-tests-at-three-levels-and-ci.md#step-5-your-own-repository-and-ci) (CI), [Kubernetes and delivery, lesson 06](../../3-tracks/shared-units/kubernetes-and-delivery/lessons/06-build-once-and-promote-by-digest.md).

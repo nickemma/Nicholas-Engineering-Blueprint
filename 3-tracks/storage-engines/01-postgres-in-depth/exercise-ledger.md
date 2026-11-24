@@ -1,6 +1,6 @@
 # ledger, a money-transfer service
 
-Build this **on your own**, in a new repository, after the [checkpoint](README.md). It's a different system from Switchyard, and money makes every Phase 3 idea non-negotiable:
+Build this **on your own**, in a new repository, after the [checkpoint](README.md). It's a different system from Switchyard, and money makes every idea in this module non-negotiable:
 - a balance must never be lost to a race;
 - a retried transfer must never move money twice;
 - an event must leave exactly when the money moves;

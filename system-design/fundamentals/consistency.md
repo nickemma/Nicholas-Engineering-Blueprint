@@ -32,6 +32,6 @@ For each piece of data, state the model it needs, and why. Balances, inventory, 
 
 ## Where you built it
 
-- [Phase 1](../../2-core/01-go-runtime-and-reliable-services/README.md): compare-and-swap against lost updates.
-- [Phase 3, step 3](../../2-core/03-docker-and-postgres/lessons/05-complete-a-job-in-one-transaction.md): isolation anomalies reproduced and fixed.
-- [Phase 4, step 7](../../3-tracks/storage-engines/02-consensus-in-depth/lessons/05-check-a-client-history.md): a key-value store checked for linearizability with Porcupine.
+- [Core 01](../../2-core/01-go-runtime-and-reliable-services/lessons/07-a-race-a-mutex-cant-fix.md): compare-and-swap against lost updates.
+- [Postgres in depth, lesson 01](../../3-tracks/storage-engines/01-postgres-in-depth/lessons/01-reproduce-isolation-anomalies.md): isolation anomalies reproduced and fixed.
+- [Consensus in depth, lesson 05](../../3-tracks/storage-engines/02-consensus-in-depth/lessons/05-check-a-client-history.md): a key-value store checked for linearizability with Porcupine.

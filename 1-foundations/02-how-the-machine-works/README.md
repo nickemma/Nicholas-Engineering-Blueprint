@@ -26,8 +26,6 @@ A **system monitor** in shell that reports load, memory and disk use from what t
 | 06 | [Git](lessons/06-git.md) | Repositories, commits, `log` and `diff`; branches and merging; `.gitignore`; undoing a commit safely. Put the monitor under version control | ~3 h |
 | 07 | [Rotating a log without losing a line](lessons/07-rotating-a-log-without-losing-a-line.md) | The problem: copying a log then truncating it loses whatever the writer adds in between. The fix: rename the file, signal the writer to reopen, and compress the old file later. Build: the log rotator | ~4 h |
 
-**Absorbs** the old Phase 0 Step 0 (the terminal) and the program-versus-process half of Step 1.
-
 ## The gate
 
 `gate/run.sh` runs your two scripts:

@@ -1,6 +1,6 @@
 # Distributed systems
 
-For distributed-systems, storage and SRE roles. These designs are mostly the things the others are built on, and [Phase 4](../../2-core/07-distributed-systems-fundamentals/README.md) built most of their cores.
+For distributed-systems, storage and SRE roles. These designs are mostly the things the others are built on, and [Core 07](../../2-core/07-distributed-systems-fundamentals/README.md) and [Consensus in depth](../../3-tracks/storage-engines/02-consensus-in-depth/README.md) built most of their cores.
 
 **Worked design:** [a distributed key-value store](key-value-store.md). Do it yourself first, then compare.
 
@@ -25,7 +25,7 @@ Locks for thousands of services, to elect leaders and to guard jobs that must ru
 - Failure: a holder pauses past its lease, so a second holder starts, and the token stops the first one's late write.
 </details>
 
-**Built in:** [Phase 4, step 10](../../2-core/07-distributed-systems-fundamentals/lessons/09-fence-a-worker-that-outlives-its-lease.md).
+**Built in:** [Core 07, lesson 09](../../2-core/07-distributed-systems-fundamentals/lessons/09-fence-a-worker-that-outlives-its-lease.md).
 
 ## 2. A Kafka-style log
 
@@ -44,7 +44,7 @@ A durable, partitioned, replicated log: 1 GB/s in, many consumer groups out, 7 d
 - Failure: a follower falls behind, so it's dropped from the in-sync set.
 </details>
 
-**Built in:** [Phase 3, step 6](../../3-tracks/shared-units/event-streams/lessons/03-relay-and-resend.md), the [Rust Bridge](../../2-core/04-rust-foundations/README.md)'s append-only log, [Phase 4](../../2-core/07-distributed-systems-fundamentals/README.md)'s Raft log.
+**Built in:** [Event streams, lesson 03](../../3-tracks/shared-units/event-streams/lessons/03-relay-and-resend.md), [Core 04](../../2-core/04-rust-foundations/README.md)'s append-only log, [Core 07](../../2-core/07-distributed-systems-fundamentals/README.md)'s Raft log.
 
 ## 3. A distributed job scheduler
 
@@ -63,7 +63,7 @@ Run millions of jobs a day: one-off, delayed and recurring (cron), each exactly 
 - Failure: a thundering herd at midnight, so add jitter.
 </details>
 
-**Built in:** [Phase 3, step 8](../../3-tracks/storage-engines/01-postgres-in-depth/lessons/04-claim-and-recover-background-jobs.md) (`SKIP LOCKED`), [Phase 2](../../3-tracks/shared-units/messaging-and-resilience/README.md) (retries, dead letters), Switchyard itself.
+**Built in:** [Postgres in depth, lesson 04](../../3-tracks/storage-engines/01-postgres-in-depth/lessons/04-claim-and-recover-background-jobs.md) (`SKIP LOCKED`), [Messaging and resilience](../../3-tracks/shared-units/messaging-and-resilience/README.md) (retries, dead letters), Switchyard itself.
 
 ## 4. A unique ID generator
 
@@ -80,7 +80,7 @@ IDs for every object in a large system: 100,000 a second, unique across 1,000 ma
 - Why sortable IDs help B-tree indexes (inserts land at the end).
 </details>
 
-**Built in:** [Phase 4](../../2-core/07-distributed-systems-fundamentals/README.md) (leases, clocks), the [classic URL shortener](../classic/url-shortener.md).
+**Built in:** [Core 07](../../2-core/07-distributed-systems-fundamentals/README.md) (leases, clocks), the [classic URL shortener](../classic/url-shortener.md).
 
 ## 5. A distributed cache
 
@@ -99,7 +99,7 @@ A shared cache for many services: 1 million reads a second, 50,000 writes a seco
 - Invalidation from writes; key versioning.
 </details>
 
-**Built in:** [Phase 3, step 7](../../3-tracks/shared-units/caching/lessons/02-add-cache-aside.md), [Phase 4, step 11](../../2-core/07-distributed-systems-fundamentals/lessons/10-move-fewer-keys-with-consistent-hashing.md), [DSA guides 06 and 19](../../dsa/19-design/README.md).
+**Built in:** [Caching, lesson 02](../../3-tracks/shared-units/caching/lessons/02-add-cache-aside.md), [Core 07, lesson 10](../../2-core/07-distributed-systems-fundamentals/lessons/10-move-fewer-keys-with-consistent-hashing.md), [DSA guides 06 and 19](../../dsa/19-design/README.md).
 
 ## 6. A distributed rate limiter
 
@@ -119,4 +119,4 @@ Per-customer limits for an API served by 200 gateway instances in 3 regions: 500
 - Hot customers: shard their counters.
 </details>
 
-**Built in:** [Phase 6, step 5](../../3-tracks/shared-units/tenancy-and-abuse-control/lessons/05-authorize-routes-and-budget-each-tenant.md), [DSA guide 19](../../dsa/19-design/README.md).
+**Built in:** [Tenancy and abuse control, lessons 05–06](../../3-tracks/shared-units/tenancy-and-abuse-control/lessons/05-authorize-routes-and-budget-each-tenant.md), [DSA guide 19](../../dsa/19-design/README.md).

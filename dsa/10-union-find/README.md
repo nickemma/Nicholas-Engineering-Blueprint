@@ -21,7 +21,7 @@ With both, a long run of operations costs O(α(*n*)) each. α is the inverse Ack
 - you're grouping by equivalence ("these two accounts share an email").
 
 **Real systems:**
-- **Partition analysis.** During a network partition, which nodes can reach each other? Each live link unions two nodes, and every group with a majority could elect a leader. Those are the partitions [Phase 4](../../3-tracks/storage-engines/02-consensus-in-depth/lessons/04-protect-a-healthy-majority.md) injects, and the ones KESTREL studies.
+- **Partition analysis.** During a network partition, which nodes can reach each other? Each live link unions two nodes, and every group with a majority could elect a leader. Those are the partitions [Consensus in depth](../../3-tracks/storage-engines/02-consensus-in-depth/lessons/04-protect-a-healthy-majority.md) injects, and the ones KESTREL studies.
 - **Kruskal's minimum-spanning-tree algorithm,** and type inference in compilers.
 
 ## Worked problem: Redundant Connection

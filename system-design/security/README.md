@@ -1,6 +1,6 @@
 # Security
 
-For infrastructure security, platform and SRE roles, and for every senior loop that asks "and how would you secure it?". These designs put the controls you built in [Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md) at system scale.
+For infrastructure security, platform and SRE roles, and for every senior loop that asks "and how would you secure it?". These designs put the controls you built in [Core 08](../../2-core/08-shipping-safely/README.md) and [Tenancy and abuse control](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md) at system scale.
 
 **Worked design:** [an authorization service for sharing](authorization-service.md). Do it yourself first, then compare.
 
@@ -25,7 +25,7 @@ Deliver database passwords, API keys and certificates to 5,000 services: no secr
 - Failure: the secrets manager is down. What do running services do?
 </details>
 
-**Built in:** [Phase 6, step 9](../../2-core/08-shipping-safely/lessons/04-limit-what-the-gateway-can-read-and-record.md) (OpenBao, per-Pod database logins, transit encryption, a sealed vault).
+**Built in:** [Core 08, lesson 04](../../2-core/08-shipping-safely/lessons/04-limit-what-the-gateway-can-read-and-record.md) (secrets kept out of code and logs), [The proxy's control plane, lesson 06](../../3-tracks/cloud-and-network/03-proxy-control-plane/lessons/06-load-a-key-from-openbao.md) (a key loaded from OpenBao).
 
 ## 2. A tamper-evident audit log
 
@@ -42,7 +42,7 @@ Record every security-relevant action for 300 services: 50,000 events a second, 
 - What the design does not prevent (a compromised source writing lies).
 </details>
 
-**Built in:** [Phase 6, step 10](../../3-tracks/storage-engines/04-integrity-and-encryption/lessons/04-check-a-signed-merkle-root.md) (a Merkle-tree log, signed checkpoints, a witness), the [Rust Bridge](../../2-core/04-rust-foundations/README.md).
+**Built in:** [Integrity and encryption, lessons 04–05](../../3-tracks/storage-engines/04-integrity-and-encryption/lessons/04-check-a-signed-merkle-root.md) (a Merkle-tree log, signed checkpoints, a witness), [Core 04](../../2-core/04-rust-foundations/README.md).
 
 ## 3. Certificates for a fleet
 
@@ -60,7 +60,7 @@ Issue and rotate TLS certificates for 50,000 workloads: mutual TLS between all s
 - Monitoring: expiry metrics, rotation failures.
 </details>
 
-**Built in:** [Phase 6, step 7](../../2-core/08-shipping-safely/lessons/03-issue-certificates-and-require-mtls.md) (your own CA, rotation in three phases, the connection-age finding).
+**Built in:** [Core 08, lesson 03](../../2-core/08-shipping-safely/lessons/03-issue-certificates-and-require-mtls.md) (your own CA and mTLS), [The proxy's control plane, lesson 04](../../3-tracks/cloud-and-network/03-proxy-control-plane/lessons/04-rotate-management-certificates.md) (rotation without dropping peers).
 
 ## 4. Tenant isolation for a SaaS
 
@@ -78,7 +78,7 @@ A SaaS with 10,000 business customers on shared infrastructure: no customer can 
 - Tests that try cross-tenant access on every endpoint.
 </details>
 
-**Built in:** [Phase 6, step 4](../../3-tracks/shared-units/tenancy-and-abuse-control/lessons/04-scope-postgresql-to-the-tenant.md) (tenants down to row-level security, cache keys, idempotency keys).
+**Built in:** [Tenancy and abuse control, lesson 04](../../3-tracks/shared-units/tenancy-and-abuse-control/lessons/04-scope-postgresql-to-the-tenant.md) (tenants down to row-level security).
 
 ## 5. API abuse protection
 
@@ -96,4 +96,4 @@ Protect a public API (login, sign-up, search) from credential stuffing, scraping
 - The OWASP API Security Top 10 as a checklist.
 </details>
 
-**Built in:** [Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md) (rate limiting, the OWASP tests in the game day, signed webhooks safe from SSRF).
+**Built in:** [Tenancy and abuse control](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md) (rate limiting), [The proxy's control plane, lesson 05](../../3-tracks/cloud-and-network/03-proxy-control-plane/lessons/05-deliver-signed-events.md) (signed webhooks with a destination policy).

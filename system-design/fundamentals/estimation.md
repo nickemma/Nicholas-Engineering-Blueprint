@@ -52,4 +52,4 @@ Say: *"Let me estimate only what changes the design: peak QPS, the read/write ra
 
 ## Where you built it
 
-[Core 02](../../2-core/02-python-runtime-and-honest-measurement/README.md) measured throughput and latency honestly. [Phase 5](../../2-core/08-shipping-safely/README.md) used capacity numbers for SLOs and autoscaling.
+[Core 02](../../2-core/02-python-runtime-and-honest-measurement/README.md) measured throughput and latency honestly. [Core 08](../../2-core/08-shipping-safely/README.md) uses capacity numbers for SLOs, and [Kubernetes and delivery](../../3-tracks/shared-units/kubernetes-and-delivery/README.md) for autoscaling.

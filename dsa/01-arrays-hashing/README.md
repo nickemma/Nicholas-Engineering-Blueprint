@@ -11,7 +11,7 @@ A hash map answers "have I seen this before?" in O(1) on average. Most problems 
 - which items belong together (the same letters, the same key);
 - for two values that combine to something ("find a pair that sums to...").
 
-**Real systems:** [Phase 2's idempotency keys](../../2-core/01-go-runtime-and-reliable-services/lessons/14-timeouts-retries-and-idempotency.md) are this pattern. "Have I processed this key before?" is a lookup in a map (later, in [PostgreSQL](../../2-core/03-docker-and-postgres/lessons/06-a-retried-submission-survives-a-restart.md)). So is grouping by a key: Switchyard's cache groups jobs by tenant.
+**Real systems:** [Core 01's idempotency keys](../../2-core/01-go-runtime-and-reliable-services/lessons/14-timeouts-retries-and-idempotency.md) are this pattern. "Have I processed this key before?" is a lookup in a map (later, in [PostgreSQL](../../2-core/03-docker-and-postgres/lessons/06-a-retried-submission-survives-a-restart.md)). So is grouping by a key: Switchyard's cache groups jobs by tenant.
 
 ## Worked problem 1: Two Sum
 

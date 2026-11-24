@@ -92,4 +92,4 @@ Order the posts in a social feed: 300 million users, a few thousand candidate po
 - Integrity and diversity constraints applied after ranking.
 </details>
 
-**Built in for all of these:** [Phase 7](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md): time splits and leakage, baselines first, gradient-boosted trees and neural networks compared honestly, serving with a fallback, drift and shadows.
+**Built in for all of these:** [ML for infrastructure](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md): time splits and leakage, baselines first, a model that must beat them, versioned promotion and rollback, input drift. The [gradient-boosted trees deep dive](../../3-tracks/ai-infrastructure/deep-dives/gradient-boosted-trees.md) compares trees honestly.

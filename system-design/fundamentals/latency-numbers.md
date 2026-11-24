@@ -52,6 +52,6 @@ Build a **latency budget**: list the steps on the request path, give each a numb
 ## Where you built it
 
 - **The tail:** [core 02](../../2-core/02-python-runtime-and-honest-measurement/README.md) measured percentiles and coordinated omission.
-- **Little's law:** [Phase 2](../../3-tracks/shared-units/messaging-and-resilience/README.md) sized a worker pool with it.
-- **The cost of a hop:** [Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md) measured what a TLS sidecar adds, and found it was the extra hops, not the encryption.
-- **A whole request path:** [Phase 7](../../3-tracks/ai-infrastructure/01-ml-for-infrastructure/README.md) broke a prediction's cost into its pieces.
+- **Little's law:** [Core 01](../../2-core/01-go-runtime-and-reliable-services/lessons/13-worker-pools-and-backpressure.md) checks it against a live queue: the sampled queue length matches arrival rate times wait.
+- **The cost of a hop:** a TLS sidecar's cost is usually the extra hops, not the encryption. Measure a plain relay beside it before you blame TLS; [The proxy's control plane](../../3-tracks/cloud-and-network/03-proxy-control-plane/README.md) builds the sidecar to try it on.
+- **A whole request path:** [Core 06](../../2-core/06-linux-networking-and-profiling/README.md) breaks one request's time into its pieces, from the socket to the profile.

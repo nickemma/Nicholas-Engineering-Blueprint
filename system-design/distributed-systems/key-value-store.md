@@ -1,6 +1,6 @@
 # Design: a distributed key-value store
 
-**Track:** distributed-systems · **Built in:** [Phase 4](../../2-core/07-distributed-systems-fundamentals/README.md) (Raft, linearizability checks, consistent hashing, leases) · **Time:** 45 minutes
+**Track:** distributed-systems · **Built in:** [Core 07](../../2-core/07-distributed-systems-fundamentals/README.md) (Raft, consistent hashing, leases) and [Consensus in depth](../../3-tracks/storage-engines/02-consensus-in-depth/README.md) (linearizability checks) · **Time:** 45 minutes
 
 This is a worked reference. Do the design yourself first, with a timer, then read this and note what you missed.
 
@@ -133,19 +133,15 @@ A dead node's ranges keep working on the other two replicas. After a **timeout o
 
 ## 9. With more time
 
-- **Multi-key transactions:** two-phase commit across ranges, with a transaction record in one of them (Phase 4, step 12).
+- **Multi-key transactions:** two-phase commit across ranges, with a transaction record in one of them ([Consensus in depth, lesson 08](../../3-tracks/storage-engines/02-consensus-in-depth/lessons/08-recover-a-cross-shard-transfer.md)).
 - **Multi-region**, with per-region leaseholders for local reads.
 - **Change-data-capture streams.**
 - **TTLs.**
 
 ## 10. Where you've built this
 
-[Phase 4](../../2-core/07-distributed-systems-fundamentals/README.md):
-- your own Raft: elections, replication, persistence, snapshots, PreVote and CheckQuorum;
-- a replicated key-value store, checked for linearizability with Porcupine;
-- leases and fencing tokens;
-- consistent hashing;
-- transactions across shards.
+- [Core 07](../../2-core/07-distributed-systems-fundamentals/README.md): your own Raft (elections, replication, persistence), leases and fencing tokens, consistent hashing.
+- [Consensus in depth](../../3-tracks/storage-engines/02-consensus-in-depth/README.md): snapshots, PreVote and CheckQuorum, a replicated key-value store checked for linearizability with Porcupine, transactions across shards.
 
 ## 11. What an interviewer will push on
 

@@ -36,7 +36,7 @@ Work through a skewed workload and a live move in the [sharding drill](sharding.
 
 ## Where you built it
 
-- [Phase 4, step 11](../../2-core/07-distributed-systems-fundamentals/lessons/10-move-fewer-keys-with-consistent-hashing.md): consistent hashing with virtual nodes, rebalancing measured.
-- [Phase 4, step 12](../../3-tracks/storage-engines/02-consensus-in-depth/lessons/08-recover-a-cross-shard-transfer.md): transactions across shards.
-- [Phase 6](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md): the tenant as the natural key for isolation.
+- [Core 07, lesson 10](../../2-core/07-distributed-systems-fundamentals/lessons/10-move-fewer-keys-with-consistent-hashing.md): consistent hashing with virtual nodes, rebalancing measured.
+- [Consensus in depth, lesson 08](../../3-tracks/storage-engines/02-consensus-in-depth/lessons/08-recover-a-cross-shard-transfer.md): transactions across shards.
+- [Tenancy and abuse control](../../3-tracks/shared-units/tenancy-and-abuse-control/README.md): the tenant as the natural key for isolation, down to PostgreSQL row-level security.
 - [DSA guide 19](../../dsa/19-design/README.md): the hash ring, rebuilt from scratch.
